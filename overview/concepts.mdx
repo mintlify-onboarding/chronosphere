@@ -1,0 +1,31 @@
+---
+title: Observability Platform concepts
+sidebarTitle: "Overview"
+---
+
+Chronosphere Observability Platform includes several distinct components, utilities, and features that give you insight into your telemetry data. This guide describes some of the most common concepts you’ll encounter while using Observability Platform.
+
+## Control Plane
+
+Use the Chronosphere [*Control Plane*](/control) to analyze and shape your telemetry data to control costs and improve performance. Keep the telemetry data you need to control costs and configure rules to drop the rest.
+
+* **Metrics data**: Analyze your [traffic](/investigate/metrics/analyzer) and [usage](/investigate/metrics/usage) to identify opportunities to reduce the overall volume of metrics and understand the impact of proposed [shaping rules](/control/sharping)
+* **Trace data**: Use [sampling](/control/sampling), [datasets](/control/sampling/datasets), and [behaviors](/control/sampling/behaviors) to manage the trace data you keep and discard to help control costs and maximize usefulness.
+* **Log data**: Use [datasets](/control/budgets/datasets) to map sets of logs to named groups in your organization, and then define [budgets](/control/budgets/budgeting) to assign percentages of your license consumption to each dataset.
+
+## Unified platform
+
+Observability Platform incorporates all of your telemetry data in a single platform so you can act on trends, correlate changes to incidents, and monitor status in real time, all from a single location.
+
+* [*Chronosphere Lens*](/observe/services) gives you visibility into the health and performance of your applications by ingesting metrics, traces, and change events.
+* [*Dashboards*](/observe/dashboards) are a visual representation of your telemetry data that you can customize, filter, and focus on [query results](/investigate/querying) to gain greater context of an issue.
+
+## Monitors and services
+
+To reduce downtime and fix issues efficiently, you need to view the full picture of connected microservices and reduce your mean time to repair (MTTR).
+
+[*Monitors*](/investigate/alerts/monitors) are a set of watch criteria that generates an [alert](/investigate/alerts) when those criteria are met. Create monitors to track the status of various conditions, like capacity, uptime, and error rates, and then determine whether a given condition is passing, failing, or critically failing.
+
+[*Services*](/observe/services) are the smallest measurable unit that emits telemetry data, such as a microservice, feature, or endpoint. Use services to determine potential issues, and apply that context across several [exploration tools](/investigate) to analyze metric, trace, log, and event data.
+
+A [*collection*](/administer/collections) is a group of resources associated with a service. These resources include [dashboards](/observe/dashboards) and [monitors](/investigate/alerts/monitors). Services are a special type of collection.

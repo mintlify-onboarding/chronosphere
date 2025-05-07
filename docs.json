@@ -1,0 +1,93 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Chronosphere Documentation",
+  "colors": {
+    "primary": "#28a561",
+    "light": "#28a561",
+    "dark": "#28a561"
+  },
+  "favicon": "/favicon.png",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": " ",
+            "pages": [
+              "index"
+            ]
+          },
+          {
+            "group": "OBSERVABILITY PLATFORM",
+            "pages": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "overview",
+                  {
+                    "group": "Concepts",
+                    "pages": [
+                      "overview/concepts",
+                      "overview/concepts/time-units"
+                    ]
+                  },
+                  "overview/architecture",
+                  "overview/authenticating"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "TELEMETRY PIPELINE",
+            "pages": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "pipelines",
+                  "pipelines/concepts",
+                  "pipelines/architecture",
+                  "pipelines/security"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Blog",
+          "href": "https://chronosphere.io/blog-hub/",
+          "icon": "newspaper"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/logo__chrono-black.ec69090f.svg",
+    "dark": "/logo/logo__chrono-white.c938dd3d.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Contact Us",
+        "href": "https://chronosphere.io/contact/"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Request Demo",
+      "href": "https://chronosphere.io/demo-request/"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/chronosphereio",
+      "github": "https://github.com/chronosphereio",
+      "linkedin": "https://www.linkedin.com/company/chronosphereio"
+    }
+  }
+}
