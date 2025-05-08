@@ -8,6 +8,9 @@
     "dark": "#28a561"
   },
   "favicon": "/favicon.png",
+  "background": {
+      "decoration": "gradient"
+  },
   "fonts": {
     "heading": {
       "family": "DM Sans"
