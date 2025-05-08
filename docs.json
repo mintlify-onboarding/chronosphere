@@ -8,6 +8,14 @@
     "dark": "#28a561"
   },
   "favicon": "/favicon.png",
+  "fonts": {
+    "heading": {
+      "family": "DM Sans"
+    },
+    "body": {
+      "family": "Poppins"
+    }
+  },
   "navigation": {
     "tabs": [
       {
