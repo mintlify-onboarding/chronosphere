@@ -65,6 +65,10 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "API Reference",
+        "openapi": "/openapi.yaml"
       }
     ],
     "global": {
