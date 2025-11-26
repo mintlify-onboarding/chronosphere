@@ -31,7 +31,7 @@ Administrators know how their users are organized - what teams they're on, who's
 responsible for what functions, and so on.
 
 <Columns cols={1}>
-  <Card icon="shield"
+  <Card horizontal icon="shield"
     title="Manage users, teams, and tokens to control access to Observability Platform"
     href="/administer"
   />
@@ -41,7 +41,7 @@ At the same time, you need to ingest data to observe. Observability Platform ing
 metrics, traces, and logs, meeting a variety of telemetry coverage needs.
 
 <Columns cols={1}>
-  <Card icon="paper-plane"
+  <Card horizontal icon="paper-plane"
     title="Send your telemetry data to Observability Platform for monitoring"
     href="/ingest"
   />
@@ -51,16 +51,16 @@ After data is flowing to Observability Platform, create dashboards, alerts, and
 services to monitor your data.
 
 <Columns cols={1}>
-  <Card icon="dashboard"
+  <Card horizontal icon="dashboard"
   title="Use dashboards to customize detailed views into specific data"
   href="/observe/dashboards"
   />
-  <Card icon="bell"
+  <Card horizontal icon="bell"
   title="Create alerts to make your DevOps and observability teams aware of problems"
   href="/investigate/alerts"
   />
 
-  <Card icon={<ServiceNavIcon />} title="Discover services for end to end
+  <Card horizontal icon={<ServiceNavIcon />} title="Discover services for end to end
   views" href="/administer/service-discovery"
   />
 </Columns>
@@ -70,7 +70,7 @@ interacting with the Observability Platform and Telemetry Pipeline products. The
 tools include Terraform, Chronoctl, and supported APIs.
 
 <Columns cols={1}>
-  <Card icon="robot"
+  <Card horizontal icon="robot"
     title="Use the provided tools to interact programatically with Chronosphere"
     href="/tooling-overview"
   />
@@ -82,7 +82,7 @@ of available information. When you optimize your telemetry data, on-call enginee
 can find the data they need to solve problems faster.
 
 <Columns cols={1}>
-  <Card icon="shapes"
+  <Card horizontal icon="shapes"
     title="Identify and eliminate telemetry data that isn't used"
     href="/control"
   />
@@ -99,7 +99,7 @@ monitors and alerts during incident response when you're trying to identify the
 source of an issue.
 
 <Columns cols={1}>
-  <Card icon="magnifying-glass-plus"
+  <Card horizontal icon="magnifying-glass-plus"
     title="Investigate issues in your services and environment"
     href="/investigate"
   />
@@ -110,7 +110,7 @@ Mark resources as favorites to display them in your
 you sign in.
 
 <Columns cols={1}>
-  <Card icon="star"
+  <Card horizontal icon="star"
   title="Favorite consistently used resources for ease of navigation"
   href="/navigate/favorites"
   />
@@ -120,7 +120,7 @@ PromQL is a complex query language, and users don't necessarily want to spend ti
 learning it while they're solving problems.
 
 <Columns cols={1}>
-  <Card icon="database-magnifying-glass"
+  <Card horizontal icon="database-magnifying-glass"
     title="Use the Query Builder to reduce time spent building PromQL queries"
     href="/investigate/querying/metrics/query-builder"
     />
@@ -131,7 +131,7 @@ administrator might create dashboards for you, or you can create your own with t
 data you need the most.
 
 <Columns cols={1}>
-  <Card icon="dashboard"
+  <Card horizontal icon="dashboard"
   title="Use dashboards to customize detailed views into specific data"
   href="/observe/dashboards"
   />
@@ -142,7 +142,7 @@ applications by ingesting metrics, traces, logs, and change events that you can
 observe using services, dashboards, and service level objectives (SLOs).
 
 <Columns cols={1}>
-  <Card icon="display"
+  <Card horizontal icon="display"
     title="Use services, dashboards, and SLOs to gain visibility into your environments"
     href="/observe"
   />
@@ -152,7 +152,7 @@ Some filters can follow you across pages as you dig into issues and narrow down
 where problems lie.
 
 <Columns cols={1}>
-  <Card icon="telescope"
+  <Card horizontal icon="telescope"
   title="Use Pinned scopes if you have specific filters you need across multiple
   pages"
   href="/navigate/pinned-scopes"
