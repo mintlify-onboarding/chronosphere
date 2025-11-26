@@ -112,7 +112,8 @@
                           "observe/dashboards/classic-dashboards/import-grafana-dashboards",
                           "observe/dashboards/classic-dashboards/classic-panels"
                         ]
-                      }
+                      },
+                      "observe/dashboards/endpoint_schema"
                     ]
                   },
                   {
