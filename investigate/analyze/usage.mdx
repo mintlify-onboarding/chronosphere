@@ -282,20 +282,20 @@ which can have multiple references in its group.
   unique users have a higher utility score.
 
   <Info>
-Utility scores match specific metric names or labels when calculating, and not by
-  regular expression. This means that metrics with wildcards in the name aren't
-  included in the calculation of the utility score. For example, if you include a
-  metric with a wildcard in the name like in the following example, and include that
-  metric name in a dashboard, that metric won't be calculated in the utility score:
+  Utility scores match specific metric names or labels when calculating, and not by
+    regular expression. This means that metrics with wildcards in the name aren't
+    included in the calculation of the utility score. For example, if you include a
+    metric with a wildcard in the name like in the following example, and include that
+    metric name in a dashboard, that metric won't be calculated in the utility score:
 
-  ```text copy
-  __name__=~"cache_atm_server_redis_grpc_.*request_time_count"
-  ```
+    ```text copy
+    __name__=~"cache_atm_server_redis_grpc_.*request_time_count"
+    ```
 
-  Including a metric with a wildcard in the name in queries, dashboards, aggregation
-  rules, monitors, and other areas that support regular expressions can result in a
-  utility score of zero in Telemetry Usage Analyzer.
-</Info>
+    Including a metric with a wildcard in the name in queries, dashboards, aggregation
+    rules, monitors, and other areas that support regular expressions can result in a
+    utility score of zero in Telemetry Usage Analyzer.
+  </Info>
 
   The formula used to calculate the utility score is
   `Utility score = (number of references)+(number of executions * %(unique users/total users))`.

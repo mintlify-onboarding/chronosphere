@@ -285,13 +285,13 @@ You can change the query a panel uses when the data doesn't match your needs.
 1. Optional: Add a **Series alias** to define the name displayed for the series
    in the panel's tooltip and legend.
 
-   <Info>
-If you select a **Logs** query that includes a field which contains a period (`.`)
-   in its name (such as `k8s.namespace`), and you want to use signals to group
-   notifications, use an
-   [alias for that field name](/investigate/querying/query-logs/query-syntax#alias-field-names).
-   Otherwise, periods are converted to underscores in the generated visualization.
-</Info>
+    <Info>
+    If you select a **Logs** query that includes a field which contains a period (`.`)
+      in its name (such as `k8s.namespace`), and you want to use signals to group
+      notifications, use an
+      [alias for that field name](/investigate/querying/query-logs/query-syntax#alias-field-names).
+      Otherwise, periods are converted to underscores in the generated visualization.
+    </Info>
 
 1. Optional: Change the **Resolution** of a query. This setting controls the maximum
    data points per series. Options are:
@@ -404,12 +404,12 @@ To copy a panel to any dashboard using keyboard shortcuts:
 
 1. Open a dashboard.
 1. Click the panel you want to copy.
-1. Press <kbd>Control+C</kbd> (<kbd>Command+C</kbd> on macOS) to copy the panel to
+1. Press `Control+C` (`Command+C` on macOS) to copy the panel to
    the clipboard.
 1. Open the target dashboard.
 1. Click a panel group to select it. If you don't select a group, the panel pastes
    into the last panel group on the page.
-1. Press <kbd>Control+V</kbd> (<kbd>Command+V</kbd> on macOS) to paste the panel into
+1. Press `Control+V` (`Command+V` on macOS) to paste the panel into
    the dashboard. The panel uses the same configuration as it had on the origin
    dashboard.
 1. Click **Save** to save the updated dashboard.

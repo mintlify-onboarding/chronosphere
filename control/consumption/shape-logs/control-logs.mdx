@@ -111,30 +111,30 @@ Define control rules in Observability Platform, and then
    - **Replace field**: Replace context within a log field using a regular
      expression.
 1. Enter a filter to return log data for the control rule, and then press
-   <kbd>Ctrl+Enter</kbd> (<kbd>Command+Return</kbd> on macOS) to submit the filter.
+   `Ctrl+Enter` (`Command+Return` on macOS) to submit the filter.
    This rule applies only to logs that match this filter at the time the log data was
    ingested.
 1. Review the returned data from the preview filter and make changes as necessary.
 
    <Info>
-Control rules are applied during ingestion, so the preview filter results might
-   differ from a filter submitted in Logs Explorer after ingestion. By default,
-   including a dot (`.`) in a filter indicates nesting within a field.
+    Control rules are applied during ingestion, so the preview filter results might
+    differ from a filter submitted in Logs Explorer after ingestion. By default,
+    including a dot (`.`) in a filter indicates nesting within a field.
 
-   In some instances, fields with a key that uses dot notation within the name,
-   such as `resource.type`, must be surrounded by double quotes and brackets in the
-   control rule filter.
+    In some instances, fields with a key that uses dot notation within the name,
+    such as `resource.type`, must be surrounded by double quotes and brackets in the
+    control rule filter.
 
-   If a warning message displays indicating that `This filter is applied at
-   ingestion` and the filter returns no results, wrap the key in double quotes
-   ( `"`) and brackets (`[]`). For example, the following filter contains the
-   `resource.type` key, which requires surrounding the field in double quotes and
-   brackets for this particular service:
+    If a warning message displays indicating that `This filter is applied at
+    ingestion` and the filter returns no results, wrap the key in double quotes
+    ( `"`) and brackets (`[]`). For example, the following filter contains the
+    `resource.type` key, which requires surrounding the field in double quotes and
+    brackets for this particular service:
 
-   ```sql copy
-   service = "nginx" and severity = "INFO" and ["resource.type"] = "k8s_container"
-   ```
-</Info>
+    ```sql copy
+    service = "nginx" and severity = "INFO" and ["resource.type"] = "k8s_container"
+    ```
+    </Info>
 
 1. Enter additional information for the specified action:
    <Tabs>

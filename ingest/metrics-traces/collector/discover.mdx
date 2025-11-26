@@ -112,11 +112,11 @@ changes:
      `serviceMonitorsEnabled` and `endpointsDiscoveryEnabled` to be set to `true`.
      EndpointSlices use less resources than Endpoints.
 
-     <Info>
-EndpointSlices are available with Chronosphere Collector v0.85.0 or later and
-     Kubernetes v1.21 or later. Chronosphere Collector v0.104.0 and later exclusively
-     use EndpointSlices and ignore the `useEndpointSlices` setting.
-</Info>
+      <Info>
+      EndpointSlices are available with Chronosphere Collector v0.85.0 or later and
+          Kubernetes v1.21 or later. Chronosphere Collector v0.104.0 and later exclusively
+          use EndpointSlices and ignore the `useEndpointSlices` setting.
+      </Info>
    - `podMatchingStrategy`: Determines how to use ServiceMonitors and annotations when
      discovering targets. Accepts the following settings for _`VALUE`_:
      - `all`: Allows any and all scrape jobs to be registered for a single pod.

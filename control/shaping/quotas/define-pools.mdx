@@ -101,18 +101,18 @@ pools must use fixed value for persisted writes.
   for more information.
 
   <Warning>
-The sum of fixed values across all defined pools must be less than or equal to the
-  total allotted capacity, defined by the
-  [capacity limit](/administer/limits-licensing/licensing#capacity-limits). If your
-  organization exceeds the capacity limit, where the sum of fixed values exceeds
-  total capacity, a penalty is applied to all pools proportional to fixed
-  allocations. A validation in Terraform penalizes any pool that exceeds its allotted
-  quota.
+  The sum of fixed values across all defined pools must be less than or equal to the
+    total allotted capacity, defined by the
+    [capacity limit](/administer/limits-licensing/licensing#capacity-limits). If your
+    organization exceeds the capacity limit, where the sum of fixed values exceeds
+    total capacity, a penalty is applied to all pools proportional to fixed
+    allocations. A validation in Terraform penalizes any pool that exceeds its allotted
+    quota.
 
-  In this penalty state, the default pool receives no allocation, and other pools are
-  adjusted down proportionally so that the sum of fixed values is equal to the
-  capacity limit.
-</Warning>
+    In this penalty state, the default pool receives no allocation, and other pools are
+    adjusted down proportionally so that the sum of fixed values is equal to the
+    capacity limit.
+  </Warning>
 
 ## Configure priority
 
@@ -235,11 +235,11 @@ When configuring the all priorities threshold, consider the following best pract
   the pool allocation instead.
 
   <Warning>
-Setting the threshold to a value that exceeds 100% of the pool allocation can cause
-  multiple pools to exceed their allocation, which can cause your system to hit the
-  [cardinality limit](/administer/limits-licensing/licensing#how-persisted-cardinality-limits-work)
-  and arbitrarily drop data.
-</Warning>
+  Setting the threshold to a value that exceeds 100% of the pool allocation can cause
+    multiple pools to exceed their allocation, which can cause your system to hit the
+    [cardinality limit](/administer/limits-licensing/licensing#how-persisted-cardinality-limits-work)
+    and arbitrarily drop data.
+  </Warning>
 
 - Use a percentage for this value rather than a fixed value in DPPS, especially if
   you want the threshold value to match the pool allocation. If the threshold is a

@@ -61,16 +61,16 @@ To use basic filtering:
      category = "alerts"
      ```
 
-     <Info>
-Change event categories are case sensitive, and must be all lowercase when
-     entering values in the filter box. For example, `category = "alerts"` is valid,
-     but entering `category = "Alerts"` returns no data.
-</Info>
+      <Info>
+      Change event categories are case sensitive, and must be all lowercase when
+          entering values in the filter box. For example, `category = "alerts"` is valid,
+          but entering `category = "Alerts"` returns no data.
+      </Info>
 
      If you're unsure what attributes you can search for, click the filter box and
-     press <kbd>Control+Space</kbd> to display all available attributes.
+     press `Control+Space` to display all available attributes.
 
-1. Click **Run**, or press <kbd>Shift+Enter</kbd> (<kbd>Shift+Return</kbd> on
+1. Click **Run**, or press `Shift+Enter` (`Shift+Return` on
    macOS) to submit your filter.
 
 1. Expand your filter by adding a type of change event to display. If you entered
@@ -83,9 +83,9 @@ Change event categories are case sensitive, and must be all lowercase when
     ```
 
     <Info>
-The operators `AND` plus `OR` are case insensitive, so you can use `AND`,
+    The operators `AND` plus `OR` are case insensitive, so you can use `AND`,
     `and`, `OR`, and `or` interchangeably.
-</Info>
+    </Info>
 
 1. As you refine your filter, click and select a portion of the time chart to zoom in
    to a smaller time window.
@@ -130,13 +130,13 @@ To use advanced filtering:
    `title`, such as `production_cluster=production-east` and
    `production_cluster=production-west`.
 
-   <Info>
-Including a `type` in your filter is a shortcut for narrowing focus to a particular
-     change event category. For example, `type="deploy_end"` displays only change events
-     of the `deploy` type, because only that `category` includes this `type`.
-</Info>
+    <Info>
+    Including a `type` in your filter is a shortcut for narrowing focus to a particular
+      change event category. For example, `type="deploy_end"` displays only change events
+      of the `deploy` type, because only that `category` includes this `type`.
+    </Info>
 
-1. Click **Run**, or press <kbd>Shift+Enter</kbd> (<kbd>Shift+Return</kbd> on
+1. Click **Run**, or press `Shift+Enter` (`Shift+Return` on
    macOS) to submit your filter.
 
 1. As you refine your filter, click and select a portion of the time chart to zoom in
@@ -233,7 +233,7 @@ must use `INGEST` in all uppercase as the category to query.
 The filtering syntax for change events supports the following features:
 
 - **Autocomplete**: Start typing a key to get autocomplete values. Press
-  <kbd>Control+Space</kbd> to display suggestions.
+  `Control+Space` to display suggestions.
 - **Nested queries**: Use parentheses `()` to establish the order of operations for
   complex filters.
 - **Label search**: Filter on labels by using a dot separator between the `labels`

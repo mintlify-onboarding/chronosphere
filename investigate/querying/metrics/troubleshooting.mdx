@@ -119,9 +119,11 @@ In the following graph, the empty portions are where metrics are being ingested.
 filled-in portions indicate where metrics aren't being sent. The length of the line
 indicates the duration of time where metrics weren't sent.
 
-<!-- Here's the query that's used to generate the graph in the following screenshot,
+{/* 
+Here's the query that's used to generate the graph in the following screenshot,
 in case we need to update it in the future:
-timestamp(sum by (instance) (rate(node_load1{instance=~".+"}[5m]))) unless(timestamp(sum by (instance) (rate(node_load1{instance=~".+"}[5m] offset 5m))))-->
+timestamp(sum by (instance) (rate(node_load1{instance=~".+"}[5m]))) unless(timestamp(sum by (instance) (rate(node_load1{instance=~".+"}[5m] offset 5m))))
+ */}
 
 ![Graph](/doc-assets/offset_graph.png)
 

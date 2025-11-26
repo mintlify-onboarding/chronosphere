@@ -52,11 +52,11 @@ To search traces:
 1. Choose the time period to display results for, which defaults to the last 15
    minutes.
 
-   <Info>
-When choosing a time window, selecting a period longer than one day greatly
-   impacts load time for search results. For optimal results, scope search queries to
-   shorter time periods.
-</Info>
+    <Info>
+    When choosing a time window, selecting a period longer than one day greatly
+      impacts load time for search results. For optimal results, scope search queries to
+      shorter time periods.
+    </Info>
 
 1. Use the **Query builder** to define the criteria of your search:
 
@@ -91,11 +91,11 @@ When choosing a time window, selecting a period longer than one day greatly
      service="billing-svc" operation=~"^execute*." build.version="v1.54"
      ```
 
-     <Info>
-You can also click **Trace ID** to enter a unique trace ID to search for a
-     specific trace, such as `19323ae9283b8fea000f63bff84524a0`. Use this feature if
-     you received an alert containing a trace ID to go directly to that trace.
-</Info>
+      <Info>
+      You can also click **Trace ID** to enter a unique trace ID to search for a
+          specific trace, such as `19323ae9283b8fea000f63bff84524a0`. Use this feature if
+          you received an alert containing a trace ID to go directly to that trace.
+      </Info>
 
    - Enter any tags for matching as key/value pairs. For example, you might want to
      return traces with any span that has `environment=production` to focus your
@@ -120,11 +120,11 @@ You can also click **Trace ID** to enter a unique trace ID to search for a
 1. Click **<Icon path={ mdiRefresh } />Run** to submit your query. You must click
    **<Icon path={ mdiRefresh } />Run** after each time you modify the query criteria.
 
-   <Info>
-You can press <kbd>Control+Return</kbd> or <kbd>Control+Enter</kbd> on your
-   keyboard instead of clicking **<Icon path={ mdiRefresh } />Run** to submit a
-   query.
-</Info>
+    <Info>
+    You can press `Control+Return` or `Control+Enter` on your
+    keyboard instead of clicking **<Icon path={ mdiRefresh } />Run** to submit a
+    query.
+    </Info>
 
    If the time range for your query is broad, such as the last five days, Trace
    Explorer loads results progressively. As results are available, you can click
@@ -146,15 +146,15 @@ You can press <kbd>Control+Return</kbd> or <kbd>Control+Enter</kbd> on your
 1. To refine your search, click <Icon icon="plus" />**Add span criteria** and
    specify additional span properties to include or exclude.
 
-   <Info>
-Each row is a separate span filter that Observability Platform evaluates against
-   individual spans. When you include
-   [multiple span filter rows](#query-with-multiple-span-criteria), Observability
-   Platform combines the filter rows as "and also" operations.
+    <Info>
+    Each row is a separate span filter that Observability Platform evaluates against
+    individual spans. When you include
+    [multiple span filter rows](#query-with-multiple-span-criteria), Observability
+    Platform combines the filter rows as "and also" operations.
 
-   Observability Platform finds traces where one span matches all criteria in the first row,
-   and also where _at least one_ other span matches all criteria in subsequent rows.
-</Info>
+    Observability Platform finds traces where one span matches all criteria in the first row,
+    and also where _at least one_ other span matches all criteria in subsequent rows.
+    </Info>
 
    As you modify your search, the search timeline graph updates in real time, along
    with the statistics, traces, and topology views. The timeline shows an overview of
@@ -166,10 +166,10 @@ Each row is a separate span filter that Observability Platform evaluates against
    click <Icon icon="link" /> **Copy URL**. Use this capability for sharing links
    of complicated queries that can generate long URLs.
 
-   <Info>
-Observability Platform permanently stores short URLs in your tenant so that they
-   don't expire.
-</Info>
+    <Info>
+    Observability Platform permanently stores short URLs in your tenant so that they
+    don't expire.
+    </Info>
 
 1. To learn more about the spans in a trace, click the **Trace list** tab. Click the name
    of a trace in the **Trace** column to open the trace details page, which displays
