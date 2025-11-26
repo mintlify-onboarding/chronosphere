@@ -1,6 +1,6 @@
 ---
 title: Ingest telemetry data with source plugins
-sidebarTitle: Source
+sidebarTitle: Overview
 'og:description': Ingest input data from various sources.
 ---
 import PipelineFlow from '/snippets/_partials/pipeline-flow-source.mdx';
@@ -18,47 +18,47 @@ of telemetry sources. Different source plugins support different data types,
 including logs, metrics, and traces.
 
 <Columns cols={2} rowGroup="2">
-  <Card icon="plug" title="Absolute" href="/pipeline-data/plugins/source-plugins/absolute"></Card>
-  <Card icon="plug" title="Amazon Kinesis Firehose" href="/pipeline-data/plugins/source-plugins/amazon-kinesis-firehose"></Card>
-  <Card icon="plug" title="Amazon Kinesis Stream Input" href="/pipeline-data/plugins/source-plugins/amazon-kinesis-stream"></Card>
-  <Card icon="plug" title="Azure Event Grid" href="/pipeline-data/plugins/source-plugins/azure-event-grid"></Card>
-  <Card icon="plug" title="Azure Event Hubs" href="/pipeline-data/plugins/source-plugins/azure-event-hub"></Card>
-  <Card icon="plug" title="Bash Command" href="/pipeline-data/plugins/source-plugins/bash"></Card>
-  <Card icon="plug" title="Cloudflare LogPush" href="/pipeline-data/plugins/source-plugins/cloudflare"></Card>
-  <Card icon="plug" title="Confluent Cloud" href="/pipeline-data/plugins/source-plugins/confluent-cloud"></Card>
-  <Card icon="plug" title="Datadog Agent" href="/pipeline-data/plugins/source-plugins/datadog-agent"></Card>
-  <Card icon="plug" title="Datagen" href="/pipeline-data/plugins/source-plugins/datagen"></Card>
-  <Card icon="plug" title="Dummy logs, metrics, and traces" href="/pipeline-data/plugins/source-plugins/dummy"></Card>
-  <Card icon="plug" title="Dummy HTTP" href="/pipeline-data/plugins/source-plugins/dummy-http"></Card>
-  <Card icon="plug" title="Elasticsearch HTTP" href="/pipeline-data/plugins/source-plugins/elasticsearch-http"></Card>
-  <Card icon="plug" title="Fluent Bit" href="/pipeline-data/plugins/source-plugins/fluent-bit"></Card>
-  <Card icon="plug" title="Fluentd" href="/pipeline-data/plugins/source-plugins/fluentd"></Card>
-  <Card icon="plug" title="Forward" href="/pipeline-data/plugins/source-plugins/forward"></Card>
-  <Card icon="plug" title="Google Cloud PubSub Input" href="/pipeline-data/plugins/source-plugins/google-cloud-pubsub"></Card>
-  <Card icon="plug" title="Google Workspace Audit Logs" href="/pipeline-data/plugins/source-plugins/google-workspace-audit"></Card>
-  <Card icon="plug" title="HTTP" href="/pipeline-data/plugins/source-plugins/http"></Card>
-  <Card icon="plug" title="HTTP API collector" href="/pipeline-data/plugins/source-plugins/http-api-collector"></Card>
-  <Card icon="plug" title="Kafka" href="/pipeline-data/plugins/source-plugins/kafka"></Card>
-  <Card icon="plug" title="Kubernetes Events " href="/pipeline-data/plugins/source-plugins/kubernetes"></Card>
-  <Card icon="plug" title="Mandiant ASM" href="/pipeline-data/plugins/source-plugins/mandiant-asm"></Card>
-  <Card icon="plug" title="Microsoft Intune - Audit event" href="/pipeline-data/plugins/source-plugins/intune"></Card>
-  <Card icon="plug" title="Mock Data" href="/pipeline-data/plugins/source-plugins/mock-data"></Card>
-  <Card icon="plug" title="Okta System Logs Collector" href="/pipeline-data/plugins/source-plugins/okta"></Card>
-  <Card icon="plug" title="OpenTelemetry" href="/pipeline-data/plugins/source-plugins/opentelemetry"></Card>
-  <Card icon="plug" title="Prometheus Remote Write" href="/pipeline-data/plugins/source-plugins/prometheus-remote"></Card>
-  <Card icon="plug" title="Prometheus Scrape" href="/pipeline-data/plugins/source-plugins/prometheus-scrape"></Card>
-  <Card icon="plug" title="S3 Input (One Time)" href="/pipeline-data/plugins/source-plugins/amazon-s3"></Card>
-  <Card icon="plug" title="S3 Input (SQS)" href="/pipeline-data/plugins/source-plugins/s3-sqs"></Card>
-  <Card icon="plug" title="Signal Sciences" href="/pipeline-data/plugins/source-plugins/signal-sciences"></Card>
-  <Card icon="plug" title="Slack" href="/pipeline-data/plugins/source-plugins/slack"></Card>
-  <Card icon="plug" title="Splunk HEC" href="/pipeline-data/plugins/source-plugins/splunk-hec"></Card>
-  <Card icon="plug" title="Splunk UF" href="/pipeline-data/plugins/source-plugins/splunk-uf"></Card>
-  <Card icon="plug" title="SQL DB Input" href="/pipeline-data/plugins/source-plugins/sqldb"></Card>
-  <Card icon="plug" title="Syslog" href="/pipeline-data/plugins/source-plugins/syslog"></Card>
-  <Card icon="plug" title="TCP" href="/pipeline-data/plugins/source-plugins/tcp"></Card>
-  <Card icon="plug" title="Telegraf" href="/pipeline-data/plugins/source-plugins/telegraf"></Card>
-  <Card icon="plug" title="Vectra M365 - Incident Detection" href="/pipeline-data/plugins/source-plugins/vectram365"></Card>
-  <Card icon="plug" title="Vercel Logs" href="/pipeline-data/plugins/source-plugins/vercel"></Card>
+  <Card icon="plug" title="Absolute" href="/pipeline-data/plugins/source-plugins/absolute"/>
+  <Card icon="plug" title="Amazon Kinesis Firehose" href="/pipeline-data/plugins/source-plugins/amazon-kinesis-firehose"/>
+  <Card icon="plug" title="Amazon Kinesis Stream Input" href="/pipeline-data/plugins/source-plugins/amazon-kinesis-stream"/>
+  <Card icon="plug" title="Azure Event Grid" href="/pipeline-data/plugins/source-plugins/azure-event-grid"/>
+  <Card icon="plug" title="Azure Event Hubs" href="/pipeline-data/plugins/source-plugins/azure-event-hub"/>
+  <Card icon="plug" title="Bash Command" href="/pipeline-data/plugins/source-plugins/bash"/>
+  <Card icon="plug" title="Cloudflare LogPush" href="/pipeline-data/plugins/source-plugins/cloudflare"/>
+  <Card icon="plug" title="Confluent Cloud" href="/pipeline-data/plugins/source-plugins/confluent-cloud"/>
+  <Card icon="plug" title="Datadog Agent" href="/pipeline-data/plugins/source-plugins/datadog-agent"/>
+  <Card icon="plug" title="Datagen" href="/pipeline-data/plugins/source-plugins/datagen"/>
+  <Card icon="plug" title="Dummy logs, metrics, and traces" href="/pipeline-data/plugins/source-plugins/dummy"/>
+  <Card icon="plug" title="Dummy HTTP" href="/pipeline-data/plugins/source-plugins/dummy-http"/>
+  <Card icon="plug" title="Elasticsearch HTTP" href="/pipeline-data/plugins/source-plugins/elasticsearch-http"/>
+  <Card icon="plug" title="Fluent Bit" href="/pipeline-data/plugins/source-plugins/fluent-bit"/>
+  <Card icon="plug" title="Fluentd" href="/pipeline-data/plugins/source-plugins/fluentd"/>
+  <Card icon="plug" title="Forward" href="/pipeline-data/plugins/source-plugins/forward"/>
+  <Card icon="plug" title="Google Cloud PubSub Input" href="/pipeline-data/plugins/source-plugins/google-cloud-pubsub"/>
+  <Card icon="plug" title="Google Workspace Audit Logs" href="/pipeline-data/plugins/source-plugins/google-workspace-audit"/>
+  <Card icon="plug" title="HTTP" href="/pipeline-data/plugins/source-plugins/http"/>
+  <Card icon="plug" title="HTTP API collector" href="/pipeline-data/plugins/source-plugins/http-api-collector"/>
+  <Card icon="plug" title="Kafka" href="/pipeline-data/plugins/source-plugins/kafka"/>
+  <Card icon="plug" title="Kubernetes Events " href="/pipeline-data/plugins/source-plugins/kubernetes"/>
+  <Card icon="plug" title="Mandiant ASM" href="/pipeline-data/plugins/source-plugins/mandiant-asm"/>
+  <Card icon="plug" title="Microsoft Intune - Audit event" href="/pipeline-data/plugins/source-plugins/intune"/>
+  <Card icon="plug" title="Mock Data" href="/pipeline-data/plugins/source-plugins/mock-data"/>
+  <Card icon="plug" title="Okta System Logs Collector" href="/pipeline-data/plugins/source-plugins/okta"/>
+  <Card icon="plug" title="OpenTelemetry" href="/pipeline-data/plugins/source-plugins/opentelemetry"/>
+  <Card icon="plug" title="Prometheus Remote Write" href="/pipeline-data/plugins/source-plugins/prometheus-remote"/>
+  <Card icon="plug" title="Prometheus Scrape" href="/pipeline-data/plugins/source-plugins/prometheus-scrape"/>
+  <Card icon="plug" title="S3 Input (One Time)" href="/pipeline-data/plugins/source-plugins/amazon-s3"/>
+  <Card icon="plug" title="S3 Input (SQS)" href="/pipeline-data/plugins/source-plugins/s3-sqs"/>
+  <Card icon="plug" title="Signal Sciences" href="/pipeline-data/plugins/source-plugins/signal-sciences"/>
+  <Card icon="plug" title="Slack" href="/pipeline-data/plugins/source-plugins/slack"/>
+  <Card icon="plug" title="Splunk HEC" href="/pipeline-data/plugins/source-plugins/splunk-hec"/>
+  <Card icon="plug" title="Splunk UF" href="/pipeline-data/plugins/source-plugins/splunk-uf"/>
+  <Card icon="plug" title="SQL DB Input" href="/pipeline-data/plugins/source-plugins/sqldb"/>
+  <Card icon="plug" title="Syslog" href="/pipeline-data/plugins/source-plugins/syslog"/>
+  <Card icon="plug" title="TCP" href="/pipeline-data/plugins/source-plugins/tcp"/>
+  <Card icon="plug" title="Telegraf" href="/pipeline-data/plugins/source-plugins/telegraf"/>
+  <Card icon="plug" title="Vectra M365 - Incident Detection" href="/pipeline-data/plugins/source-plugins/vectram365"/>
+  <Card icon="plug" title="Vercel Logs" href="/pipeline-data/plugins/source-plugins/vercel"/>
 </Columns>
 
 ## Push-based and pull-based source plugins
