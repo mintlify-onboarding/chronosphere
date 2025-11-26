@@ -1,9 +1,6 @@
-import React from 'react';
-import { SvgIcon } from './SvgIcon';
-
 export const ServiceIcon = (props) => {
   return (
-    <SvgIcon viewBox="0 0 22 20" {...props} aria-label="ServiceIcon">
+    <svg viewBox="0 0 22 20" {...props} className="inline-block h-6 w-6 fill-current" aria-label="ServiceIcon">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -19,6 +16,6 @@ export const ServiceIcon = (props) => {
         clipRule="evenodd"
         d="M15.7339 8.07668C15.8966 7.97444 16.1034 7.97444 16.2661 8.07668L21.2661 11.2195C21.4117 11.311 21.5 11.4709 21.5 11.6429V16.3571C21.5 16.5291 21.4117 16.689 21.2661 16.7805L16.2661 19.9233C16.1034 20.0256 15.8966 20.0256 15.7339 19.9233L10.7339 16.7805C10.5883 16.689 10.5 16.5291 10.5 16.3571V11.6429C10.5 11.4709 10.5883 11.311 10.7339 11.2195L15.7339 8.07668ZM11.5 12.5477V16.0809L15.5 18.5951V15.062L11.5 12.5477ZM16.5 15.062V18.5951L20.5 16.0809V12.5477L16.5 15.062ZM20.0605 11.6429L16 14.1951L11.9395 11.6429L16 9.09057L20.0605 11.6429Z"
       />
-    </SvgIcon>
+    </svg>
   );
 };
