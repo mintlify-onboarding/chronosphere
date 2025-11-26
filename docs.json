@@ -23,747 +23,830 @@
     "tabs": [
       {
         "tab": "Guides",
-        "groups": [
+        "pages": [
+          "index",
           {
-            "group": "Get Started",
+            "group": "OBSERVABILITY PLATFORM",
             "pages": [
-              "index"
-            ]
-          },
-          {
-            "group": "Overview",
-            "pages": [
-              "overview/get-started",
               {
-                "group": "Concepts",
+                "group": "Overview",
                 "pages": [
-                  "overview/concepts/change-events",
-                  "overview/concepts/time-units",
-                  "overview/concepts/dictionary",
-                  "overview/concepts/distributed-tracing"
-                ]
-              },
-              {
-                "group": "Data types",
-                "pages": [
-                  "overview/types/metrics",
-                  "overview/types/logs",
-                  "overview/types/traces",
-                  "overview/types/change-events"
-                ]
-              },
-              "overview/authenticating",
-              "overview/common-tasks"
-            ]
-          },
-          {
-            "group": "Navigate",
-            "pages": [
-              "navigate/pinned-scopes",
-              "navigate/time-ranges",
-              "navigate/comments",
-              "navigate/favorites"
-            ]
-          },
-          {
-            "group": "Observe",
-            "pages": [
-              "observe/personal-homepage",
-              {
-                "group": "Dashboards",
-                "pages": [
+                  "overview",
+                  "overview/get-started",
                   {
-                    "group": "Panels",
+                    "group": "Concepts",
                     "pages": [
-                      "observe/dashboards/panels/bar-chart",
-                      "observe/dashboards/panels/distribution-chart",
-                      "observe/dashboards/panels/gauge-chart",
-                      "observe/dashboards/panels/heat-map",
-                      "observe/dashboards/panels/markdown",
-                      "observe/dashboards/panels/pie-chart",
-                      "observe/dashboards/panels/service-topology",
-                      "observe/dashboards/panels/stat-chart",
-                      "observe/dashboards/panels/table",
-                      "observe/dashboards/panels/time-series-chart",
-                      "observe/dashboards/panels/json-representation"
+                      "overview/concepts",
+                      "overview/concepts/change-events",
+                      "overview/concepts/time-units",
+                      "overview/concepts/dictionary",
+                      "overview/concepts/distributed-tracing"
                     ]
                   },
                   {
-                    "group": "Customize",
+                    "group": "Data types",
                     "pages": [
-                      "observe/dashboards/customization/layouts",
-                      "observe/dashboards/customization/intervals",
-                      "observe/dashboards/customization/time-ranges",
-                      "observe/dashboards/customization/dashboard-variables"
+                      "overview/types",
+                      "overview/types/metrics",
+                      "overview/types/logs",
+                      "overview/types/traces",
+                      "overview/types/change-events"
                     ]
                   },
-                  "observe/dashboards/query-traces",
-                  "observe/dashboards/chronosphere-managed-dashboards",
+                  "overview/authenticating",
+                  "overview/common-tasks"
+                ]
+              },
+              {
+                "group": "Navigate",
+                "pages": [
+                  "navigate",
+                  "navigate/pinned-scopes",
+                  "navigate/time-ranges",
+                  "navigate/comments",
+                  "navigate/favorites"
+                ]
+              },
+              {
+                "group": "Observe",
+                "pages": [
+                  "observe",
+                  "observe/personal-homepage",
                   {
-                    "group": "Classic dashboards",
+                    "group": "Dashboards",
                     "pages": [
-                      "observe/dashboards/classic-dashboards/import-grafana-dashboards",
-                      "observe/dashboards/classic-dashboards/classic-panels"
+                      "observe/dashboards",
+                      {
+                        "group": "Panels",
+                        "pages": [
+                          "observe/dashboards/panels",
+                          "observe/dashboards/panels/bar-chart",
+                          "observe/dashboards/panels/distribution-chart",
+                          "observe/dashboards/panels/gauge-chart",
+                          "observe/dashboards/panels/heat-map",
+                          "observe/dashboards/panels/markdown",
+                          "observe/dashboards/panels/pie-chart",
+                          "observe/dashboards/panels/service-topology",
+                          "observe/dashboards/panels/stat-chart",
+                          "observe/dashboards/panels/table",
+                          "observe/dashboards/panels/time-series-chart",
+                          "observe/dashboards/panels/json-representation"
+                        ]
+                      },
+                      {
+                        "group": "Customize",
+                        "pages": [
+                          "observe/dashboards/customization",
+                          "observe/dashboards/customization/layouts",
+                          "observe/dashboards/customization/intervals",
+                          "observe/dashboards/customization/time-ranges",
+                          "observe/dashboards/customization/dashboard-variables"
+                        ]
+                      },
+                      "observe/dashboards/query-traces",
+                      "observe/dashboards/chronosphere-managed-dashboards",
+                      {
+                        "group": "Classic dashboards",
+                        "pages": [
+                          "observe/dashboards/classic-dashboards",
+                          "observe/dashboards/classic-dashboards/import-grafana-dashboards",
+                          "observe/dashboards/classic-dashboards/classic-panels"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Services",
+                    "pages": [
+                      "observe/services",
+                      "observe/services/service-pages",
+                      "observe/services/service-exploration"
+                    ]
+                  },
+                  {
+                    "group": "Events",
+                    "pages": [
+                      "observe/enable-events",
+                      "observe/enable-events/use-events",
+                      "observe/enable-events/dashboards",
+                      "observe/enable-events/services",
+                      "observe/enable-events/traces"
+                    ]
+                  },
+                  {
+                    "group": "Service level objectives (SLOs)",
+                    "pages": [
+                      "observe/slo",
+                      "observe/slo/manage",
+                      "observe/slo/design"
                     ]
                   }
                 ]
               },
               {
-                "group": "Services",
+                "group": "Investigate",
                 "pages": [
-                  "observe/services/service-pages",
-                  "observe/services/service-exploration"
-                ]
-              },
-              {
-                "group": "Events",
-                "pages": [
-                  "observe/enable-events/use-events",
-                  "observe/enable-events/dashboards",
-                  "observe/enable-events/services",
-                  "observe/enable-events/traces"
-                ]
-              },
-              {
-                "group": "Service level objectives (SLOs)",
-                "pages": [
-                  "observe/slo/manage",
-                  "observe/slo/design"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Investigate",
-            "pages": [
-              {
-                "group": "Query data",
-                "pages": [
-                  "investigate/querying/query-logs",
+                  "investigate",
                   {
-                    "group": "Search metrics",
+                    "group": "Query data",
                     "pages": [
-                      "investigate/querying/metrics/explorer",
-                      "investigate/querying/metrics/query-builder",
-                      "investigate/querying/metrics/metrics-catalog",
+                      "investigate/querying",
                       {
-                        "group": "Derived telemetry",
+                        "group": "Search logs",
                         "pages": [
-                          "investigate/querying/metrics/derived-telemetry/derived-metrics",
-                          "investigate/querying/metrics/derived-telemetry/derived-labels"
-                        ]
-                      },
-                      "investigate/querying/metrics/delta-queries",
-                      "investigate/querying/metrics/fixing",
-                      "investigate/querying/metrics/troubleshooting",
-                      "investigate/querying/metrics/explorer-classic",
-                      "investigate/querying/metrics/builder"
-                    ]
-                  },
-                  {
-                    "group": "Search traces",
-                    "pages": [
-                      "investigate/querying/traces/features",
-                      "investigate/querying/traces/examples"
-                    ]
-                  },
-                  "investigate/querying/filter-events",
-                  {
-                    "group": "Using PromQL",
-                    "pages": [
-                      "investigate/querying/promql/apply-functions",
-                      "investigate/querying/promql/promql-custom-functions",
-                      "investigate/querying/promql/experimental-functions"
-                    ]
-                  },
-                  "investigate/querying/dashboard-query",
-                  "investigate/querying/create-links",
-                  "investigate/querying/regular-expressions",
-                  "investigate/querying/glob-syntax"
-                ]
-              },
-              {
-                "group": "Analyze data",
-                "pages": [
-                  {
-                    "group": "Identify trends",
-                    "pages": [
-                      "investigate/analyze/differential-diagnosis/traces",
-                      "investigate/analyze/differential-diagnosis/metrics"
-                    ]
-                  },
-                  "investigate/analyze/telemetry-analyzer",
-                  "investigate/analyze/trace-analyzer",
-                  "investigate/analyze/usage",
-                  "investigate/analyze/logs-usage",
-                  "investigate/analyze/query-analyzer"
-                ]
-              },
-              {
-                "group": "Configure alerts",
-                "pages": [
-                  {
-                    "group": "Monitors",
-                    "pages": [
-                      "investigate/alerts/monitors/analyze-alerts",
-                      "investigate/alerts/monitors/monitor-actions",
-                      "investigate/alerts/monitors/data-model"
-                    ]
-                  },
-                  {
-                    "group": "Notifications",
-                    "pages": [
-                      {
-                        "group": "Notifiers",
-                        "pages": [
-                          "investigate/alerts/notifications/notifiers/discard",
-                          "investigate/alerts/notifications/notifiers/email",
-                          "investigate/alerts/notifications/notifiers/incident",
-                          "investigate/alerts/notifications/notifiers/opsgenie",
-                          "investigate/alerts/notifications/notifiers/pagerduty",
-                          "investigate/alerts/notifications/notifiers/slack",
-                          "investigate/alerts/notifications/notifiers/victorops",
-                          "investigate/alerts/notifications/notifiers/webhook"
-                        ]
-                      },
-                      "investigate/alerts/notifications/policies",
-                      "investigate/alerts/notifications/signals",
-                      "investigate/alerts/notifications/slack"
-                    ]
-                  },
-                  "investigate/alerts/muting-rules",
-                  "investigate/alerts/metrics",
-                  "investigate/alerts/troubleshooting"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Control",
-            "pages": [
-              "control/storage",
-              {
-                "group": "Metric shaping",
-                "pages": [
-                  "control/shaping/types",
-                  {
-                    "group": "Shaping rules",
-                    "pages": [
-                      "control/shaping/rules/rollup",
-                      "control/shaping/rules/recording",
-                      "control/shaping/rules/mapping",
-                      "control/shaping/rules/drop-rules",
-                      "control/shaping/rules/evaluation-failures"
-                    ]
-                  },
-                  {
-                    "group": "Quotas and pools",
-                    "pages": [
-                      "control/shaping/quotas/define-pools",
-                      "control/shaping/quotas/quotas-ui",
-                      "control/shaping/quotas/manage-pools"
-                    ]
-                  },
-                  "control/shaping/downsampling",
-                  {
-                    "group": "Reduce cardinality",
-                    "pages": [
-                      "control/shaping/reduce-cardinality/review-aggregation-rules",
-                      "control/shaping/reduce-cardinality/shaping-impact",
-                      "control/shaping/reduce-cardinality/recommendations"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Trace sampling",
-                "pages": [
-                  "control/sampling/datasets",
-                  "control/sampling/behaviors",
-                  "control/sampling/head-sampling",
-                  "control/sampling/tail-sampling",
-                  "control/sampling/trace-metrics"
-                ]
-              },
-              {
-                "group": "Log controls",
-                "pages": [
-                  "control/consumption/partitions",
-                  "control/consumption/analyze",
-                  "control/consumption/budgeting",
-                  {
-                    "group": "Shape logs",
-                    "pages": [
-                      "control/consumption/shape-logs/parse-logs",
-                      "control/consumption/shape-logs/control-logs"
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Administer",
-            "pages": [
-              {
-                "group": "Accounts and teams",
-                "pages": [
-                  "administer/accounts-teams/user-accounts",
-                  "administer/accounts-teams/personal-access-tokens",
-                  "administer/accounts-teams/service-accounts",
-                  "administer/accounts-teams/teams",
-                  "administer/accounts-teams/okta"
-                ]
-              },
-              {
-                "group": "Collections",
-                "pages": [
-                  "administer/collections/home",
-                  "administer/collections/migration"
-                ]
-              },
-              "administer/audit-logs",
-              "administer/pinned-scopes",
-              {
-                "group": "Licensing and limits",
-                "pages": [
-                  "administer/limits-licensing/licensing",
-                  {
-                    "group": "Limits",
-                    "pages": [
-                      "administer/limits-licensing/limits/event-limits",
-                      "administer/limits-licensing/limits/trace-limits",
-                      "administer/limits-licensing/limits/metric-limits",
-                      "administer/limits-licensing/limits/query-limits"
-                    ]
-                  },
-                  "administer/limits-licensing/definitions"
-                ]
-              },
-              "administer/service-discovery"
-            ]
-          },
-          {
-            "group": "Integrate",
-            "pages": [
-              {
-                "group": "MCP server",
-                "pages": [
-                  "integrate/mcp-server/authenticate",
-                  "integrate/mcp-server/resources"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Ingest",
-            "pages": [
-              {
-                "group": "Metrics and traces",
-                "pages": [
-                  {
-                    "group": "OpenTelemetry Collector",
-                    "pages": [
-                      "ingest/metrics-traces/otel/otel-ingest",
-                      "ingest/metrics-traces/otel/otel-ingest-config",
-                      "ingest/metrics-traces/otel/otlp-endpoints",
-                      "ingest/metrics-traces/otel/ingest-dogstatsd"
-                    ]
-                  },
-                  {
-                    "group": "Chronosphere Collector",
-                    "pages": [
-                      {
-                        "group": "Install",
-                        "pages": [
-                          "ingest/metrics-traces/collector/install/kubernetes",
-                          "ingest/metrics-traces/collector/install/tracing",
-                          "ingest/metrics-traces/collector/install/standalone",
-                          "ingest/metrics-traces/collector/install/upgrade"
+                          "investigate/querying/query-logs",
+                          "investigate/querying/query-logs/query-syntax"
                         ]
                       },
                       {
-                        "group": "Configure",
+                        "group": "Search metrics",
                         "pages": [
-                          "ingest/metrics-traces/collector/configure/optimizations",
-                          "ingest/metrics-traces/collector/configure/scrape-prometheus-native-histograms"
-                        ]
-                      },
-                      {
-                        "group": "Discover",
-                        "pages": [
-                          "ingest/metrics-traces/collector/discover/monitor-kubernetes",
-                          "ingest/metrics-traces/collector/discover/scrape-configuration"
-                        ]
-                      },
-                      {
-                        "group": "Verify and monitor",
-                        "pages": [
-                          "ingest/metrics-traces/collector/monitor/verify-metrics",
-                          "ingest/metrics-traces/collector/monitor/verify-traces",
-                          "ingest/metrics-traces/collector/monitor/monitor-collector"
-                        ]
-                      },
-                      {
-                        "group": "Mappings",
-                        "pages": [
+                          "investigate/querying/metrics",
+                          "investigate/querying/metrics/explorer",
+                          "investigate/querying/metrics/query-builder",
+                          "investigate/querying/metrics/metrics-catalog",
                           {
-                            "group": "Datadog",
+                            "group": "Derived telemetry",
                             "pages": [
-                              "ingest/metrics-traces/collector/mappings/datadog/dogstatsd",
-                              "ingest/metrics-traces/collector/mappings/datadog/migration-issues",
-                              "ingest/metrics-traces/collector/mappings/datadog/convert-monitors",
-                              "ingest/metrics-traces/collector/mappings/datadog/dashboards"
+                              "investigate/querying/metrics/derived-telemetry",
+                              "investigate/querying/metrics/derived-telemetry/derived-metrics",
+                              "investigate/querying/metrics/derived-telemetry/derived-labels"
+                            ]
+                          },
+                          "investigate/querying/metrics/delta-queries",
+                          "investigate/querying/metrics/fixing",
+                          "investigate/querying/metrics/troubleshooting",
+                          "investigate/querying/metrics/explorer-classic",
+                          "investigate/querying/metrics/builder"
+                        ]
+                      },
+                      {
+                        "group": "Search traces",
+                        "pages": [
+                          "investigate/querying/traces",
+                          "investigate/querying/traces/features",
+                          "investigate/querying/traces/examples"
+                        ]
+                      },
+                      "investigate/querying/filter-events",
+                      {
+                        "group": "Using PromQL",
+                        "pages": [
+                          "investigate/querying/promql",
+                          "investigate/querying/promql/apply-functions",
+                          "investigate/querying/promql/promql-custom-functions",
+                          "investigate/querying/promql/experimental-functions"
+                        ]
+                      },
+                      "investigate/querying/dashboard-query",
+                      "investigate/querying/create-links",
+                      "investigate/querying/regular-expressions",
+                      "investigate/querying/glob-syntax"
+                    ]
+                  },
+                  {
+                    "group": "Analyze data",
+                    "pages": [
+                      "investigate/analyze",
+                      {
+                        "group": "Identify trends",
+                        "pages": [
+                          "investigate/analyze/differential-diagnosis",
+                          "investigate/analyze/differential-diagnosis/traces",
+                          "investigate/analyze/differential-diagnosis/metrics"
+                        ]
+                      },
+                      "investigate/analyze/telemetry-analyzer",
+                      "investigate/analyze/trace-analyzer",
+                      "investigate/analyze/usage",
+                      "investigate/analyze/logs-usage",
+                      "investigate/analyze/query-analyzer"
+                    ]
+                  },
+                  {
+                    "group": "Configure alerts",
+                    "pages": [
+                      "investigate/alerts",
+                      {
+                        "group": "Monitors",
+                        "pages": [
+                          "investigate/alerts/monitors",
+                          "investigate/alerts/monitors/analyze-alerts",
+                          "investigate/alerts/monitors/monitor-actions",
+                          "investigate/alerts/monitors/data-model"
+                        ]
+                      },
+                      {
+                        "group": "Notifications",
+                        "pages": [
+                          "investigate/alerts/notifications",
+                          {
+                            "group": "Notifiers",
+                            "pages": [
+                              "investigate/alerts/notifications/notifiers",
+                              "investigate/alerts/notifications/notifiers/discard",
+                              "investigate/alerts/notifications/notifiers/email",
+                              "investigate/alerts/notifications/notifiers/incident",
+                              "investigate/alerts/notifications/notifiers/opsgenie",
+                              "investigate/alerts/notifications/notifiers/pagerduty",
+                              "investigate/alerts/notifications/notifiers/slack",
+                              "investigate/alerts/notifications/notifiers/victorops",
+                              "investigate/alerts/notifications/notifiers/webhook"
+                            ]
+                          },
+                          "investigate/alerts/notifications/policies",
+                          "investigate/alerts/notifications/signals",
+                          "investigate/alerts/notifications/slack"
+                        ]
+                      },
+                      "investigate/alerts/muting-rules",
+                      "investigate/alerts/metrics",
+                      "investigate/alerts/troubleshooting"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Control",
+                "pages": [
+                  "control",
+                  "control/storage",
+                  {
+                    "group": "Metric shaping",
+                    "pages": [
+                      "control/shaping",
+                      "control/shaping/types",
+                      {
+                        "group": "Shaping rules",
+                        "pages": [
+                          "control/shaping/rules",
+                          "control/shaping/rules/rollup",
+                          "control/shaping/rules/recording",
+                          "control/shaping/rules/mapping",
+                          "control/shaping/rules/drop-rules",
+                          "control/shaping/rules/evaluation-failures"
+                        ]
+                      },
+                      {
+                        "group": "Quotas and pools",
+                        "pages": [
+                          "control/shaping/quotas",
+                          "control/shaping/quotas/define-pools",
+                          "control/shaping/quotas/quotas-ui",
+                          "control/shaping/quotas/manage-pools"
+                        ]
+                      },
+                      "control/shaping/downsampling",
+                      {
+                        "group": "Reduce cardinality",
+                        "pages": [
+                          "control/shaping/reduce-cardinality",
+                          "control/shaping/reduce-cardinality/review-aggregation-rules",
+                          "control/shaping/reduce-cardinality/shaping-impact",
+                          "control/shaping/reduce-cardinality/recommendations"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Trace sampling",
+                    "pages": [
+                      "control/sampling",
+                      "control/sampling/datasets",
+                      "control/sampling/behaviors",
+                      "control/sampling/head-sampling",
+                      "control/sampling/tail-sampling",
+                      "control/sampling/trace-metrics"
+                    ]
+                  },
+                  {
+                    "group": "Log controls",
+                    "pages": [
+                      "control/consumption",
+                      "control/consumption/partitions",
+                      "control/consumption/analyze",
+                      "control/consumption/budgeting",
+                      {
+                        "group": "Shape logs",
+                        "pages": [
+                          "control/consumption/shape-logs",
+                          "control/consumption/shape-logs/parse-logs",
+                          "control/consumption/shape-logs/control-logs"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Administer",
+                "pages": [
+                  "administer",
+                  {
+                    "group": "Accounts and teams",
+                    "pages": [
+                      "administer/accounts-teams",
+                      "administer/accounts-teams/user-accounts",
+                      "administer/accounts-teams/personal-access-tokens",
+                      "administer/accounts-teams/service-accounts",
+                      "administer/accounts-teams/teams",
+                      "administer/accounts-teams/okta"
+                    ]
+                  },
+                  {
+                    "group": "Collections",
+                    "pages": [
+                      "administer/collections",
+                      "administer/collections/home",
+                      "administer/collections/migration"
+                    ]
+                  },
+                  "administer/audit-logs",
+                  "administer/pinned-scopes",
+                  {
+                    "group": "Licensing and limits",
+                    "pages": [
+                      "administer/limits-licensing",
+                      "administer/limits-licensing/licensing",
+                      {
+                        "group": "Limits",
+                        "pages": [
+                          "administer/limits-licensing/limits",
+                          "administer/limits-licensing/limits/event-limits",
+                          "administer/limits-licensing/limits/trace-limits",
+                          "administer/limits-licensing/limits/metric-limits",
+                          "administer/limits-licensing/limits/query-limits"
+                        ]
+                      },
+                      "administer/limits-licensing/definitions"
+                    ]
+                  },
+                  "administer/service-discovery"
+                ]
+              },
+              {
+                "group": "Integrate",
+                "pages": [
+                  "integrate",
+                  {
+                    "group": "MCP server",
+                    "pages": [
+                      "integrate/mcp-server",
+                      "integrate/mcp-server/authenticate",
+                      "integrate/mcp-server/resources"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Ingest",
+                "pages": [
+                  "ingest",
+                  {
+                    "group": "Metrics and traces",
+                    "pages": [
+                      "ingest/metrics-traces",
+                      {
+                        "group": "OpenTelemetry Collector",
+                        "pages": [
+                          "ingest/metrics-traces/otel",
+                          "ingest/metrics-traces/otel/otel-ingest",
+                          "ingest/metrics-traces/otel/otel-ingest-config",
+                          "ingest/metrics-traces/otel/otlp-endpoints",
+                          "ingest/metrics-traces/otel/ingest-dogstatsd"
+                        ]
+                      },
+                      {
+                        "group": "Chronosphere Collector",
+                        "pages": [
+                          "ingest/metrics-traces/collector",
+                          {
+                            "group": "Install",
+                            "pages": [
+                              "ingest/metrics-traces/collector/install",
+                              "ingest/metrics-traces/collector/install/kubernetes",
+                              "ingest/metrics-traces/collector/install/tracing",
+                              "ingest/metrics-traces/collector/install/standalone",
+                              "ingest/metrics-traces/collector/install/upgrade"
                             ]
                           },
                           {
-                            "group": "Prometheus",
+                            "group": "Configure",
                             "pages": [
-                              "ingest/metrics-traces/collector/mappings/prometheus/prometheus-recommendations",
-                              "ingest/metrics-traces/collector/mappings/prometheus/operator-collector"
+                              "ingest/metrics-traces/collector/configure",
+                              "ingest/metrics-traces/collector/configure/optimizations",
+                              "ingest/metrics-traces/collector/configure/scrape-prometheus-native-histograms"
                             ]
                           },
-                          "ingest/metrics-traces/collector/mappings/signalfx",
-                          "ingest/metrics-traces/collector/mappings/wavefront"
+                          {
+                            "group": "Discover",
+                            "pages": [
+                              "ingest/metrics-traces/collector/discover",
+                              "ingest/metrics-traces/collector/discover/monitor-kubernetes",
+                              "ingest/metrics-traces/collector/discover/scrape-configuration"
+                            ]
+                          },
+                          {
+                            "group": "Verify and monitor",
+                            "pages": [
+                              "ingest/metrics-traces/collector/monitor",
+                              "ingest/metrics-traces/collector/monitor/verify-metrics",
+                              "ingest/metrics-traces/collector/monitor/verify-traces",
+                              "ingest/metrics-traces/collector/monitor/monitor-collector"
+                            ]
+                          },
+                          {
+                            "group": "Mappings",
+                            "pages": [
+                              "ingest/metrics-traces/collector/mappings",
+                              {
+                                "group": "Datadog",
+                                "pages": [
+                                  "ingest/metrics-traces/collector/mappings/datadog",
+                                  "ingest/metrics-traces/collector/mappings/datadog/dogstatsd",
+                                  "ingest/metrics-traces/collector/mappings/datadog/migration-issues",
+                                  "ingest/metrics-traces/collector/mappings/datadog/convert-monitors",
+                                  "ingest/metrics-traces/collector/mappings/datadog/dashboards"
+                                ]
+                              },
+                              {
+                                "group": "Prometheus",
+                                "pages": [
+                                  "ingest/metrics-traces/collector/mappings/prometheus",
+                                  "ingest/metrics-traces/collector/mappings/prometheus/prometheus-recommendations",
+                                  "ingest/metrics-traces/collector/mappings/prometheus/operator-collector"
+                                ]
+                              },
+                              "ingest/metrics-traces/collector/mappings/signalfx",
+                              "ingest/metrics-traces/collector/mappings/wavefront"
+                            ]
+                          },
+                          {
+                            "group": "Additional metrics",
+                            "pages": [
+                              "ingest/metrics-traces/collector/addl-metrics",
+                              "ingest/metrics-traces/collector/addl-metrics/wavefront",
+                              "ingest/metrics-traces/collector/addl-metrics/signalfx",
+                              "ingest/metrics-traces/collector/addl-metrics/dogstatsd",
+                              "ingest/metrics-traces/collector/addl-metrics/statsd",
+                              "ingest/metrics-traces/collector/addl-metrics/carbon",
+                              "ingest/metrics-traces/collector/addl-metrics/prom-pushgateway",
+                              "ingest/metrics-traces/collector/addl-metrics/prom-openmetrics"
+                            ]
+                          },
+                          "ingest/metrics-traces/collector/debugging"
                         ]
                       },
                       {
-                        "group": "Additional metrics",
+                        "group": "Azure",
                         "pages": [
-                          "ingest/metrics-traces/collector/addl-metrics/wavefront",
-                          "ingest/metrics-traces/collector/addl-metrics/signalfx",
-                          "ingest/metrics-traces/collector/addl-metrics/dogstatsd",
-                          "ingest/metrics-traces/collector/addl-metrics/statsd",
-                          "ingest/metrics-traces/collector/addl-metrics/carbon",
-                          "ingest/metrics-traces/collector/addl-metrics/prom-pushgateway",
-                          "ingest/metrics-traces/collector/addl-metrics/prom-openmetrics"
+                          "ingest/metrics-traces/azure",
+                          "ingest/metrics-traces/azure/azure-metrics"
                         ]
                       },
-                      "ingest/metrics-traces/collector/debugging"
+                      "ingest/metrics-traces/gcp",
+                      "ingest/metrics-traces/aws-cloudwatch-metric-stream",
+                      "ingest/metrics-traces/troubleshooting"
                     ]
                   },
                   {
-                    "group": "Azure",
+                    "group": "Change events",
                     "pages": [
-                      "ingest/metrics-traces/azure/azure-metrics"
+                      "ingest/third-party",
+                      "ingest/third-party/aws-eventbridge",
+                      "ingest/third-party/buildkite",
+                      "ingest/third-party/circleci",
+                      "ingest/third-party/github",
+                      "ingest/third-party/gitlab",
+                      "ingest/third-party/google-cloud",
+                      "ingest/third-party/harness",
+                      "ingest/third-party/launchdarkly"
                     ]
                   },
-                  "ingest/metrics-traces/gcp",
-                  "ingest/metrics-traces/aws-cloudwatch-metric-stream",
-                  "ingest/metrics-traces/troubleshooting"
-                ]
-              },
-              {
-                "group": "Change events",
-                "pages": [
-                  "ingest/third-party/aws-eventbridge",
-                  "ingest/third-party/buildkite",
-                  "ingest/third-party/circleci",
-                  "ingest/third-party/github",
-                  "ingest/third-party/gitlab",
-                  "ingest/third-party/google-cloud",
-                  "ingest/third-party/harness",
-                  "ingest/third-party/launchdarkly"
-                ]
-              },
-              {
-                "group": "Logs",
-                "pages": [
-                  "ingest/logs/gcp-logs",
-                  "ingest/logs/http-logs",
-                  "ingest/logs/logstash-logs",
-                  "ingest/logs/otel-logs",
-                  "ingest/logs/pipeline-logs",
-                  "ingest/logs/verify-logs"
+                  {
+                    "group": "Logs",
+                    "pages": [
+                      "ingest/logs",
+                      "ingest/logs/gcp-logs",
+                      "ingest/logs/http-logs",
+                      "ingest/logs/logstash-logs",
+                      "ingest/logs/otel-logs",
+                      "ingest/logs/pipeline-logs",
+                      "ingest/logs/verify-logs"
+                    ]
+                  }
                 ]
               }
             ]
           },
           {
-            "group": "Telemetry Pipeline - Overview",
+            "group": "TELEMETRY PIPELINE",
             "pages": [
-              "pipelines/concepts",
-              "pipelines/architecture",
-              "pipelines/security",
-              "pipelines/release-notes",
-              "pipelines/core-components"
-            ]
-          },
-          {
-            "group": "Telemetry Pipeline - Navigate",
-            "pages": [
-              "pipeline-navigate"
-            ]
-          },
-          {
-            "group": "Telemetry Pipeline - Install",
-            "pages": [
-              "pipeline-install/prereqs",
               {
-                "group": "Install a Core Operator",
+                "group": "Overview",
                 "pages": [
-                  "pipeline-install/install-operator/kubernetes-cluster",
-                  "pipeline-install/install-operator/linux"
+                  "pipelines",
+                  "pipelines/concepts",
+                  "pipelines/architecture",
+                  "pipelines/security",
+                  "pipelines/release-notes",
+                  "pipelines/core-components"
                 ]
               },
-              "pipeline-install/create-instance",
-              "pipeline-install/environment-variables",
-              "pipeline-install/troubleshooting",
-              "pipeline-install/upgrade",
-              "pipeline-install/uninstall"
-            ]
-          },
-          {
-            "group": "Telemetry Pipeline - Build",
-            "pages": [
-              "pipeline-data/automated-logging",
-              "pipeline-data/create-modify",
-              "pipeline-data/parsers",
+              "pipeline-navigate",
               {
-                "group": "Plugins",
+                "group": "Install",
                 "pages": [
+                  "pipeline-install",
+                  "pipeline-install/prereqs",
                   {
-                    "group": "Source",
+                    "group": "Install a Core Operator",
                     "pages": [
-                      "pipeline-data/plugins/source-plugins/absolute",
-                      "pipeline-data/plugins/source-plugins/amazon-kinesis-firehose",
-                      "pipeline-data/plugins/source-plugins/amazon-kinesis-stream",
-                      "pipeline-data/plugins/source-plugins/azure-event-grid",
-                      "pipeline-data/plugins/source-plugins/azure-event-hub",
-                      "pipeline-data/plugins/source-plugins/bash",
-                      "pipeline-data/plugins/source-plugins/cloudflare",
-                      "pipeline-data/plugins/source-plugins/confluent-cloud",
-                      "pipeline-data/plugins/source-plugins/datadog-agent",
-                      "pipeline-data/plugins/source-plugins/datagen",
-                      "pipeline-data/plugins/source-plugins/dummy",
-                      "pipeline-data/plugins/source-plugins/dummy-http",
-                      "pipeline-data/plugins/source-plugins/elasticsearch-http",
-                      "pipeline-data/plugins/source-plugins/fluent-bit",
-                      "pipeline-data/plugins/source-plugins/fluentd",
-                      "pipeline-data/plugins/source-plugins/forward",
-                      "pipeline-data/plugins/source-plugins/google-cloud-pubsub",
-                      "pipeline-data/plugins/source-plugins/google-workspace-audit",
-                      "pipeline-data/plugins/source-plugins/http",
-                      "pipeline-data/plugins/source-plugins/http-api-collector",
-                      "pipeline-data/plugins/source-plugins/kafka",
-                      "pipeline-data/plugins/source-plugins/kubernetes",
-                      "pipeline-data/plugins/source-plugins/mandiant-asm",
-                      "pipeline-data/plugins/source-plugins/intune",
-                      "pipeline-data/plugins/source-plugins/mock-data",
-                      "pipeline-data/plugins/source-plugins/okta",
-                      "pipeline-data/plugins/source-plugins/opentelemetry",
-                      "pipeline-data/plugins/source-plugins/prometheus-remote",
-                      "pipeline-data/plugins/source-plugins/prometheus-scrape",
-                      "pipeline-data/plugins/source-plugins/amazon-s3",
-                      "pipeline-data/plugins/source-plugins/s3-sqs",
-                      "pipeline-data/plugins/source-plugins/signal-sciences",
-                      "pipeline-data/plugins/source-plugins/slack",
-                      "pipeline-data/plugins/source-plugins/splunk-hec",
-                      "pipeline-data/plugins/source-plugins/splunk-uf",
-                      "pipeline-data/plugins/source-plugins/sqldb",
-                      "pipeline-data/plugins/source-plugins/syslog",
-                      "pipeline-data/plugins/source-plugins/tcp",
-                      "pipeline-data/plugins/source-plugins/telegraf",
-                      "pipeline-data/plugins/source-plugins/vectram365",
-                      "pipeline-data/plugins/source-plugins/vercel"
+                      "pipeline-install/install-operator",
+                      "pipeline-install/install-operator/kubernetes-cluster",
+                      "pipeline-install/install-operator/linux"
+                    ]
+                  },
+                  "pipeline-install/create-instance",
+                  "pipeline-install/environment-variables",
+                  "pipeline-install/troubleshooting",
+                  "pipeline-install/upgrade",
+                  "pipeline-install/uninstall"
+                ]
+              },
+              {
+                "group": "Build",
+                "pages": [
+                  "pipeline-data",
+                  "pipeline-data/automated-logging",
+                  "pipeline-data/create-modify",
+                  "pipeline-data/parsers",
+                  {
+                    "group": "Plugins",
+                    "pages": [
+                      "pipeline-data/plugins",
+                      {
+                        "group": "Source",
+                        "pages": [
+                          "pipeline-data/plugins/source-plugins",
+                          "pipeline-data/plugins/source-plugins/absolute",
+                          "pipeline-data/plugins/source-plugins/amazon-kinesis-firehose",
+                          "pipeline-data/plugins/source-plugins/amazon-kinesis-stream",
+                          "pipeline-data/plugins/source-plugins/azure-event-grid",
+                          "pipeline-data/plugins/source-plugins/azure-event-hub",
+                          "pipeline-data/plugins/source-plugins/bash",
+                          "pipeline-data/plugins/source-plugins/cloudflare",
+                          "pipeline-data/plugins/source-plugins/confluent-cloud",
+                          "pipeline-data/plugins/source-plugins/datadog-agent",
+                          "pipeline-data/plugins/source-plugins/datagen",
+                          "pipeline-data/plugins/source-plugins/dummy",
+                          "pipeline-data/plugins/source-plugins/dummy-http",
+                          "pipeline-data/plugins/source-plugins/elasticsearch-http",
+                          "pipeline-data/plugins/source-plugins/fluent-bit",
+                          "pipeline-data/plugins/source-plugins/fluentd",
+                          "pipeline-data/plugins/source-plugins/forward",
+                          "pipeline-data/plugins/source-plugins/google-cloud-pubsub",
+                          "pipeline-data/plugins/source-plugins/google-workspace-audit",
+                          "pipeline-data/plugins/source-plugins/http",
+                          "pipeline-data/plugins/source-plugins/http-api-collector",
+                          "pipeline-data/plugins/source-plugins/kafka",
+                          "pipeline-data/plugins/source-plugins/kubernetes",
+                          "pipeline-data/plugins/source-plugins/mandiant-asm",
+                          "pipeline-data/plugins/source-plugins/intune",
+                          "pipeline-data/plugins/source-plugins/mock-data",
+                          "pipeline-data/plugins/source-plugins/okta",
+                          "pipeline-data/plugins/source-plugins/opentelemetry",
+                          "pipeline-data/plugins/source-plugins/prometheus-remote",
+                          "pipeline-data/plugins/source-plugins/prometheus-scrape",
+                          "pipeline-data/plugins/source-plugins/amazon-s3",
+                          "pipeline-data/plugins/source-plugins/s3-sqs",
+                          "pipeline-data/plugins/source-plugins/signal-sciences",
+                          "pipeline-data/plugins/source-plugins/slack",
+                          "pipeline-data/plugins/source-plugins/splunk-hec",
+                          "pipeline-data/plugins/source-plugins/splunk-uf",
+                          "pipeline-data/plugins/source-plugins/sqldb",
+                          "pipeline-data/plugins/source-plugins/syslog",
+                          "pipeline-data/plugins/source-plugins/tcp",
+                          "pipeline-data/plugins/source-plugins/telegraf",
+                          "pipeline-data/plugins/source-plugins/vectram365",
+                          "pipeline-data/plugins/source-plugins/vercel"
+                        ]
+                      },
+                      {
+                        "group": "Destination",
+                        "pages": [
+                          "pipeline-data/plugins/destination-plugins",
+                          "pipeline-data/plugins/destination-plugins/amazon-cloudwatch",
+                          "pipeline-data/plugins/destination-plugins/amazon-kinesis-firehose",
+                          "pipeline-data/plugins/destination-plugins/amazon-kinesis-streams",
+                          "pipeline-data/plugins/destination-plugins/amazon-s3",
+                          "pipeline-data/plugins/destination-plugins/axiom",
+                          "pipeline-data/plugins/destination-plugins/azure-blob-storage",
+                          "pipeline-data/plugins/destination-plugins/azure-data-explorer",
+                          "pipeline-data/plugins/destination-plugins/azure-eventhub",
+                          "pipeline-data/plugins/destination-plugins/azure-ingestion-api",
+                          "pipeline-data/plugins/destination-plugins/azure-monitor",
+                          "pipeline-data/plugins/destination-plugins/azure-sentinel",
+                          "pipeline-data/plugins/destination-plugins/chronosphere",
+                          "pipeline-data/plugins/destination-plugins/clickhouse",
+                          "pipeline-data/plugins/destination-plugins/confluent-cloud",
+                          "pipeline-data/plugins/destination-plugins/coralogix",
+                          "pipeline-data/plugins/destination-plugins/crowdstrike",
+                          "pipeline-data/plugins/destination-plugins/datadog",
+                          "pipeline-data/plugins/destination-plugins/devo",
+                          "pipeline-data/plugins/destination-plugins/dynatrace",
+                          "pipeline-data/plugins/destination-plugins/elasticsearch",
+                          "pipeline-data/plugins/destination-plugins/exabeam",
+                          "pipeline-data/plugins/destination-plugins/forward",
+                          "pipeline-data/plugins/destination-plugins/google-chronicle",
+                          "pipeline-data/plugins/destination-plugins/google-bigquery",
+                          "pipeline-data/plugins/destination-plugins/google-operations-suite",
+                          "pipeline-data/plugins/destination-plugins/grafana-loki",
+                          "pipeline-data/plugins/destination-plugins/graylog",
+                          "pipeline-data/plugins/destination-plugins/http",
+                          "pipeline-data/plugins/destination-plugins/influxdb",
+                          "pipeline-data/plugins/destination-plugins/kafka",
+                          "pipeline-data/plugins/destination-plugins/new-relic",
+                          "pipeline-data/plugins/destination-plugins/null",
+                          "pipeline-data/plugins/destination-plugins/observe",
+                          "pipeline-data/plugins/destination-plugins/oracle",
+                          "pipeline-data/plugins/destination-plugins/opensearch",
+                          "pipeline-data/plugins/destination-plugins/opentelemetry",
+                          "pipeline-data/plugins/destination-plugins/prometheus-exporter",
+                          "pipeline-data/plugins/destination-plugins/prometheus-remote-write",
+                          "pipeline-data/plugins/destination-plugins/redpanda",
+                          "pipeline-data/plugins/destination-plugins/scalyr",
+                          "pipeline-data/plugins/destination-plugins/slack",
+                          "pipeline-data/plugins/destination-plugins/splunk",
+                          "pipeline-data/plugins/destination-plugins/standard-output",
+                          "pipeline-data/plugins/destination-plugins/sumologic",
+                          "pipeline-data/plugins/destination-plugins/syslog",
+                          "pipeline-data/plugins/destination-plugins/tcp",
+                          "pipeline-data/plugins/destination-plugins/udp",
+                          "pipeline-data/plugins/destination-plugins/victoriametrics",
+                          "pipeline-data/plugins/destination-plugins/vivo"
+                        ]
+                      },
+                      "pipeline-data/plugins/test-settings"
                     ]
                   },
                   {
-                    "group": "Destination",
+                    "group": "Processing rules",
                     "pages": [
-                      "pipeline-data/plugins/destination-plugins/amazon-cloudwatch",
-                      "pipeline-data/plugins/destination-plugins/amazon-kinesis-firehose",
-                      "pipeline-data/plugins/destination-plugins/amazon-kinesis-streams",
-                      "pipeline-data/plugins/destination-plugins/amazon-s3",
-                      "pipeline-data/plugins/destination-plugins/axiom",
-                      "pipeline-data/plugins/destination-plugins/azure-blob-storage",
-                      "pipeline-data/plugins/destination-plugins/azure-data-explorer",
-                      "pipeline-data/plugins/destination-plugins/azure-eventhub",
-                      "pipeline-data/plugins/destination-plugins/azure-ingestion-api",
-                      "pipeline-data/plugins/destination-plugins/azure-monitor",
-                      "pipeline-data/plugins/destination-plugins/azure-sentinel",
-                      "pipeline-data/plugins/destination-plugins/chronosphere",
-                      "pipeline-data/plugins/destination-plugins/clickhouse",
-                      "pipeline-data/plugins/destination-plugins/confluent-cloud",
-                      "pipeline-data/plugins/destination-plugins/coralogix",
-                      "pipeline-data/plugins/destination-plugins/crowdstrike",
-                      "pipeline-data/plugins/destination-plugins/datadog",
-                      "pipeline-data/plugins/destination-plugins/devo",
-                      "pipeline-data/plugins/destination-plugins/dynatrace",
-                      "pipeline-data/plugins/destination-plugins/elasticsearch",
-                      "pipeline-data/plugins/destination-plugins/exabeam",
-                      "pipeline-data/plugins/destination-plugins/forward",
-                      "pipeline-data/plugins/destination-plugins/google-chronicle",
-                      "pipeline-data/plugins/destination-plugins/google-bigquery",
-                      "pipeline-data/plugins/destination-plugins/google-operations-suite",
-                      "pipeline-data/plugins/destination-plugins/grafana-loki",
-                      "pipeline-data/plugins/destination-plugins/graylog",
-                      "pipeline-data/plugins/destination-plugins/http",
-                      "pipeline-data/plugins/destination-plugins/influxdb",
-                      "pipeline-data/plugins/destination-plugins/kafka",
-                      "pipeline-data/plugins/destination-plugins/new-relic",
-                      "pipeline-data/plugins/destination-plugins/null",
-                      "pipeline-data/plugins/destination-plugins/observe",
-                      "pipeline-data/plugins/destination-plugins/oracle",
-                      "pipeline-data/plugins/destination-plugins/opensearch",
-                      "pipeline-data/plugins/destination-plugins/opentelemetry",
-                      "pipeline-data/plugins/destination-plugins/prometheus-exporter",
-                      "pipeline-data/plugins/destination-plugins/prometheus-remote-write",
-                      "pipeline-data/plugins/destination-plugins/redpanda",
-                      "pipeline-data/plugins/destination-plugins/scalyr",
-                      "pipeline-data/plugins/destination-plugins/slack",
-                      "pipeline-data/plugins/destination-plugins/splunk",
-                      "pipeline-data/plugins/destination-plugins/standard-output",
-                      "pipeline-data/plugins/destination-plugins/sumologic",
-                      "pipeline-data/plugins/destination-plugins/syslog",
-                      "pipeline-data/plugins/destination-plugins/tcp",
-                      "pipeline-data/plugins/destination-plugins/udp",
-                      "pipeline-data/plugins/destination-plugins/victoriametrics",
-                      "pipeline-data/plugins/destination-plugins/vivo"
+                      "pipeline-data/processing-rules",
+                      "pipeline-data/processing-rules/add-set-key-value",
+                      "pipeline-data/processing-rules/aggregate-records",
+                      "pipeline-data/processing-rules/allow-keys",
+                      "pipeline-data/processing-rules/allow-records",
+                      "pipeline-data/processing-rules/block-keys",
+                      "pipeline-data/processing-rules/block-records",
+                      "pipeline-data/processing-rules/copy-keys",
+                      "pipeline-data/processing-rules/custom-lua",
+                      "pipeline-data/processing-rules/decode-csv",
+                      "pipeline-data/processing-rules/decode-json",
+                      "pipeline-data/processing-rules/deduplicate-records",
+                      "pipeline-data/processing-rules/delete-key",
+                      "pipeline-data/processing-rules/encode-csv",
+                      "pipeline-data/processing-rules/encode-json",
+                      "pipeline-data/processing-rules/extract-keys-values",
+                      "pipeline-data/processing-rules/flatten-subrecord",
+                      "pipeline-data/processing-rules/hash-key",
+                      "pipeline-data/processing-rules/join-records",
+                      "pipeline-data/processing-rules/lift-submap",
+                      "pipeline-data/processing-rules/multiline-join",
+                      "pipeline-data/processing-rules/nest-keys",
+                      "pipeline-data/processing-rules/parse",
+                      "pipeline-data/processing-rules/parse-number",
+                      "pipeline-data/processing-rules/random-sampling",
+                      "pipeline-data/processing-rules/redact-mask-value",
+                      "pipeline-data/processing-rules/rename-keys",
+                      "pipeline-data/processing-rules/search-replace-value",
+                      "pipeline-data/processing-rules/split-record"
                     ]
                   },
-                  "pipeline-data/plugins/test-settings"
+                  "pipeline-data/troubleshoot"
                 ]
               },
               {
-                "group": "Processing rules",
+                "group": "Configure",
                 "pages": [
-                  "pipeline-data/processing-rules/add-set-key-value",
-                  "pipeline-data/processing-rules/aggregate-records",
-                  "pipeline-data/processing-rules/allow-keys",
-                  "pipeline-data/processing-rules/allow-records",
-                  "pipeline-data/processing-rules/block-keys",
-                  "pipeline-data/processing-rules/block-records",
-                  "pipeline-data/processing-rules/copy-keys",
-                  "pipeline-data/processing-rules/custom-lua",
-                  "pipeline-data/processing-rules/decode-csv",
-                  "pipeline-data/processing-rules/decode-json",
-                  "pipeline-data/processing-rules/deduplicate-records",
-                  "pipeline-data/processing-rules/delete-key",
-                  "pipeline-data/processing-rules/encode-csv",
-                  "pipeline-data/processing-rules/encode-json",
-                  "pipeline-data/processing-rules/extract-keys-values",
-                  "pipeline-data/processing-rules/flatten-subrecord",
-                  "pipeline-data/processing-rules/hash-key",
-                  "pipeline-data/processing-rules/join-records",
-                  "pipeline-data/processing-rules/lift-submap",
-                  "pipeline-data/processing-rules/multiline-join",
-                  "pipeline-data/processing-rules/nest-keys",
-                  "pipeline-data/processing-rules/parse",
-                  "pipeline-data/processing-rules/parse-number",
-                  "pipeline-data/processing-rules/random-sampling",
-                  "pipeline-data/processing-rules/redact-mask-value",
-                  "pipeline-data/processing-rules/rename-keys",
-                  "pipeline-data/processing-rules/search-replace-value",
-                  "pipeline-data/processing-rules/split-record"
+                  "pipeline-configure",
+                  "pipeline-configure/agent-image",
+                  "pipeline-configure/backpressure",
+                  "pipeline-configure/deployment-strategies",
+                  "pipeline-configure/files",
+                  "pipeline-configure/helm",
+                  "pipeline-configure/history-rollback",
+                  {
+                    "group": "Kubernetes settings",
+                    "pages": [
+                      "pipeline-configure/kubernetes",
+                      "pipeline-configure/kubernetes/annotations",
+                      "pipeline-configure/kubernetes/namespaces",
+                      "pipeline-configure/kubernetes/pods-containers",
+                      "pipeline-configure/kubernetes/resource-labels",
+                      "pipeline-configure/kubernetes/sidecars",
+                      "pipeline-configure/kubernetes/tolerations",
+                      "pipeline-configure/kubernetes/workloads"
+                    ]
+                  },
+                  "pipeline-configure/metadata",
+                  "pipeline-configure/networking",
+                  "pipeline-configure/config-files",
+                  "pipeline-configure/resource-profiles",
+                  "pipeline-configure/scaling",
+                  "pipeline-configure/secrets"
                 ]
               },
-              "pipeline-data/troubleshoot"
-            ]
-          },
-          {
-            "group": "Telemetry Pipeline - Configure",
-            "pages": [
-              "pipeline-configure/agent-image",
-              "pipeline-configure/backpressure",
-              "pipeline-configure/deployment-strategies",
-              "pipeline-configure/files",
-              "pipeline-configure/helm",
-              "pipeline-configure/history-rollback",
               {
-                "group": "Kubernetes settings",
+                "group": "Administer",
                 "pages": [
-                  "pipeline-configure/kubernetes/annotations",
-                  "pipeline-configure/kubernetes/namespaces",
-                  "pipeline-configure/kubernetes/pods-containers",
-                  "pipeline-configure/kubernetes/resource-labels",
-                  "pipeline-configure/kubernetes/sidecars",
-                  "pipeline-configure/kubernetes/tolerations",
-                  "pipeline-configure/kubernetes/workloads"
+                  "pipeline-administer",
+                  "pipeline-administer/monitoring",
+                  {
+                    "group": "Team",
+                    "pages": [
+                      "pipeline-administer/team",
+                      "pipeline-administer/team/invite-members",
+                      "pipeline-administer/team/sso"
+                    ]
+                  }
                 ]
               },
-              "pipeline-configure/metadata",
-              "pipeline-configure/networking",
-              "pipeline-configure/config-files",
-              "pipeline-configure/resource-profiles",
-              "pipeline-configure/scaling",
-              "pipeline-configure/secrets"
-            ]
-          },
-          {
-            "group": "Telemetry Pipeline - Administer",
-            "pages": [
-              "pipeline-administer/monitoring",
               {
-                "group": "Team",
+                "group": "Fleets",
                 "pages": [
-                  "pipeline-administer/team/invite-members",
-                  "pipeline-administer/team/sso"
+                  "fleets",
+                  "fleets/add-agent-to-fleet",
+                  "fleets/add-files-to-fleet",
+                  {
+                    "group": "Agent types",
+                    "pages": [
+                      "fleets/agent",
+                      "fleets/agent/version-equivalents",
+                      "fleets/agent/docker-install",
+                      "fleets/agent/linux-debian-install",
+                      "fleets/agent/linux-rhel-install",
+                      "fleets/agent/macos-install",
+                      "fleets/agent/windows-install"
+                    ]
+                  }
                 ]
               }
             ]
           },
           {
-            "group": "Fleets",
+            "group": "TOOLS",
             "pages": [
-              "fleets/add-agent-to-fleet",
-              "fleets/add-files-to-fleet",
+              "tooling-overview",
               {
-                "group": "Agent types",
+                "group": "Observability Platform",
                 "pages": [
-                  "fleets/agent/version-equivalents",
-                  "fleets/agent/docker-install",
-                  "fleets/agent/linux-debian-install",
-                  "fleets/agent/linux-rhel-install",
-                  "fleets/agent/macos-install",
-                  "fleets/agent/windows-install"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Tools - Overview",
-            "pages": [
-              "tooling-overview"
-            ]
-          },
-          {
-            "group": "Observability Platform Tools",
-            "pages": [
-              {
-                "group": "Chronoctl",
-                "pages": [
-                  "tooling/chronoctl/install"
-                ]
-              },
-              {
-                "group": "API",
-                "pages": [
-                  "tooling/api-info/pagination"
-                ]
-              },
-              {
-                "group": "Infrastructure as code",
-                "pages": [
+                  "tooling",
                   {
-                    "group": "Terraform provider",
+                    "group": "Chronoctl",
                     "pages": [
-                      "tooling/infrastructure/terraform/install",
-                      "tooling/infrastructure/terraform/release-notes"
+                      "tooling/chronoctl",
+                      "tooling/chronoctl/install"
                     ]
                   },
-                  "tooling/infrastructure/pulumi"
+                  {
+                    "group": "API",
+                    "pages": [
+                      "tooling/api-info",
+                      "tooling/api-info/pagination",
+                      "tooling/api-info/config-endpoint-reference",
+                      "tooling/api-info/state-endpoint-reference",
+                      "tooling/api-info/data-endpoint-reference"
+                    ]
+                  },
+                  {
+                    "group": "Infrastructure as code",
+                    "pages": [
+                      "tooling/infrastructure",
+                      {
+                        "group": "Terraform provider",
+                        "pages": [
+                          "tooling/infrastructure/terraform",
+                          "tooling/infrastructure/terraform/install",
+                          "tooling/infrastructure/terraform/release-notes"
+                        ]
+                      },
+                      "tooling/infrastructure/pulumi"
+                    ]
+                  },
+                  "tooling/prometheus-api",
+                  "tooling/gitops"
                 ]
               },
-              "tooling/prometheus-api",
-              "tooling/gitops"
-            ]
-          },
-          {
-            "group": "Pipeline CLI",
-            "pages": [
-              "pipeline-cli/install",
-              "pipeline-cli/authenticate"
+              {
+                "group": "Pipeline CLI",
+                "pages": [
+                  "pipeline-cli",
+                  "pipeline-cli/install",
+                  "pipeline-cli/authenticate"
+                ]
+              }
             ]
           },
           {
