@@ -17,12 +17,13 @@ export const DynamicCode = ({ children, find, replace }) => {
 
   useEffect(() => {
     if (ref.current) {
-      // Find the first code span that matches.
-      const token = [...ref.current.querySelectorAll("code span")].find((el) => el.innerText === find);
+      // Find the code element
+      const codeElement = ref.current.querySelector("code");
 
-      if (token) {
-        // If found, replace the text.
-        token.innerText = replace;
+      if (codeElement) {
+        // Replace in the innerHTML to handle syntax-highlighted code
+        // where the text might be split across multiple spans
+        codeElement.innerHTML = codeElement.innerHTML.replace(find, replace);
       }
     }
   }, [find, replace]);
