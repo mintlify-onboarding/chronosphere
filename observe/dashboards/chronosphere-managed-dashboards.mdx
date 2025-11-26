@@ -1,0 +1,434 @@
+---
+title: Chronosphere-managed dashboards
+description: Learn about dashboards included with and managed by Chronosphere.
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+Chronosphere Observability Platform includes several dashboards to visualize
+information about itself and its usage within your organization.
+
+For example, Observability Platform dashboards let you pin tooltips and view nearby
+series when holding the pointer over a tooltip.
+
+To pin a tooltip, click while a tooltip is visible in a dashboard's panel. This
+causes the tooltip to persist in place, rather than following the cursor as you
+move it across the visualization or disappearing after you move the cursor out of
+the panel.
+
+To unpin a tooltip, click the tooltip again.
+
+<Info>
+Chronosphere-managed dashboards are read-only. You can't edit or delete these
+dashboards. You can export a managed dashboard's code representation and import
+it as a new dashboard that you can modify, but the imported copy won't receive any
+updates that Chronosphere makes to the original managed dashboard.
+</Info>
+
+## Ingest dashboards
+
+Use the following dashboards to monitor metric ingestion and health in your
+Observability Platform tenant.
+
+### Chronosphere Health Check
+
+The **Chronosphere Health Check** dashboard monitors the stability and efficiency of
+telemetry data ingestion in your Observability Platform environment. This dashboard
+includes the following panels for metrics, change events, logs, and traces:
+
+- The **Uptime Percentages (30d)** panel depicts the trailing 30-day product uptime
+  of ingest, query, and console services as a percentage, which provides a snapshot
+  of the reliability of Observability Platform.
+- The **Historical Uptime** panel depicts the product uptime averages over time over
+  the past 30 days.
+
+The following panels are also included for metrics data:
+
+- The **Invalid Data Points Rejected** panel visualizes counts of data points that
+  fail validation, with separate time series presented for each reason.
+- The **Ingest Latency** panel depicts the latency from the moment a metric is
+  scraped to the moment it's persisted, with lines for those latencies at notable
+  percentiles. This data helps you understand the efficiency and speed of metric
+  ingestion, and helps your organization identify and address potential bottlenecks
+  by correlating ingestion changes latency spikes.
+
+{/* vale off */}
+{/* Vale doesn't like ampersands, but there's one in the name of the dashboard. */}
+
+### CloudWatch Metrics Ingestion & Health
+
+The **CloudWatch Metrics Ingestion & Health** dashboard displays operational
+information about the health of your CloudWatch Metrics Streams integration with
+Observability Platform. Use this dashboard to ensure that
+[CloudWatch metrics are streaming](/ingest/metrics-traces/aws-cloudwatch-metric-stream#check-the-cloudwatch-metrics-ingestion--health-dashboard)
+to Observability Platform.
+
+{/* vale on */}
+
+### Collectors
+
+The **Collectors** dashboard provides a high-level visualization of metrics and
+resources used by Chronosphere Collector instances.
+
+### OpenTelemetry Ingestion & Health
+
+The **OpenTelemetry Ingestion & Health** dashboard provides details about how much
+data [OpenTelemetry Collector](/ingest/metrics-traces/otel) instances are ingesting
+and how many system resources they're using.
+
+The **Chronosphere OTLP Ingestion** panel group visualizes data on ingested data points
+by metric type, transformed data points ingested and rejected by Observability Platform,
+and OpenTelemetry Protocol (OTLP) API response codes and latency.
+
+The **OpenTelemetry Collector Health** panel group visualizes memory and CPU core usage,
+and OpenTelemetry Collector instances by version number. When using [Traces](/control/sampling),
+data on trace spans might also be available.
+
+The **OpenTelemetry Collector Exporters** panel group visualizes the number of data points
+and trace spans sent, and the failure rates for sending or enqueuing data points
+and trace spans. Use these to identify usage and potential bottlenecks in exporters.
+
+The **OpenTelemetry Collector Batch Processor** panel group visualizes the number
+of data points or trace spans sent in batches, and the rate of batches being sent
+because of hitting batch size triggers or timing out.
+
+The **OpenTelemetry Collector Receivers** panel group visualizes the rates of data points,
+trace spans, and log records that the OpenTelemetry Collector accepted and refused.
+
+### Google Cloud Integration (GCP)
+
+The **Google Cloud Integration** dashboard provides details about how much
+[Google Cloud Platform](/ingest/metrics-traces/gcp) (GCP) data Observability Platform
+is ingesting. This includes the **Top Metric Descriptors**, Google Cloud service
+status, GCP Timeseries API usage against recommended quotas, and meta-information
+about the ingested metrics.
+
+### GCP Timeseries API Quota Usage Per Project
+
+The Google Cloud time series quota usage dashboard shows how much of the API quota is
+used by each Google Cloud project. Use the dashboard to identify projects for which
+you might need to request an increase. This panel populates after
+[configuring Google Cloud metrics](/ingest/metrics-traces/gcp).
+
+## Query dashboards
+
+Use the following dashboards to monitor queries, identify resource intensive alert or
+recording groups, and visualize metrics created for traces.
+
+### Query Accelerator
+
+The **Query Accelerator** dashboard visualizes the relative performance of queries
+that have been optimized by the Observability Platform
+[Query Accelerator](/observe/dashboards#query-accelerator) to queries that have
+not been optimized.
+
+### Trace Metrics
+
+The **Trace Metrics** dashboard visualizes
+[metrics created for traces](/control/sampling/trace-metrics).
+
+## Cardinality dashboards
+
+Use the following dashboards to visualize cardinality produced by jobs in a given
+namespace, and identify information you can use to help reduce cardinality in your
+Observability Platform tenant.
+
+### Persisted Cardinality Quotas
+
+The **Persisted Cardinality Quotas** dashboard displays cardinality consumption
+breakdown by individual metric pools and priority.
+[Persisted cardinality](/administer/limits-licensing/licensing#persisted-cardinality) is a cumulative
+measure that calculates the sum of the unique time series of the persisted writes
+that Observability Platform stores, seen over the last 2.5 hours only.
+
+Use this dashboard to understand cardinality costs across specific teams, services,
+and pools, and to help pinpoint specific sources of cardinality growth, such as a
+particular pool or priority group. This dashboard includes the following panels,
+which are backed by specific
+[persisted cardinality metrics](/overview/concepts/dictionary#persisted-cardinality):
+
+- **Total Consumption of License** displays the persisted cardinality consumed across
+  all metric pools divided by your persisted license capacity, expressed as a
+  percentage.
+- **Total Consumption** displays the same data as **Total Consumption of License**,
+  plotted on a line graph over the last week.
+- **Total Dropped** displays the total metrics dropped during a penalty period if
+  your organization exceeds 100% of its Persisted Cardinality Capacity Limit.
+- **Consumption of Thresholds** displays the persisted cardinality consumed for each
+  configured [pool threshold](/control/shaping/quotas/define-pools#pool-thresholds),
+  and the pool the thresholds are assigned to. This information helps determine
+  whether data is being dropped for crossing a defined threshold, rather than
+  crossing a hard limit such as a
+  [capacity limit](/administer/limits-licensing/licensing#capacity-limits).
+
+In addition to these metrics, you can configure
+[metric pools](/control/shaping/quotas/manage-pools) and priorities to display
+**Consumption by Pool** and **Consumption by Priority** panels in this dashboard.
+This view use the same pools and priorities configured in your
+[Matched Writes Quotas](#matched-writes-quotas) dashboard. If you didn't configure
+that dashboard, the **Persisted Cardinality Quotas** dashboard displays persisted
+cardinality consumption only.
+
+To further identify sources of cardinality cost increases, the
+**Persisted Cardinality Quotas** dashboard includes panel groups that display top
+metrics and values for your most critical usage tags defined in the
+[Usage Dashboard](#usage-dashboard). For each of your usage tags, the
+**Persisted Cardinality Quotas** dashboard includes two panels:
+
+- A time series chart that displays the top label values
+- A bar chart with a percentage breakdown of those values in descending order.
+
+Use this information to identify the top metrics and label values for your usage
+statistics that are contributing to your persisted cardinality license, in addition
+to the metrics for your predefined metrics pools.
+
+To modify the usage tags that Observability Platform uses to generate the top metrics
+and labels that display in the **Persisted Cardinality Quotas** dashboard, contact
+[Chronosphere Support](/support).
+
+### Cardinality Overview
+
+The **Cardinality Overview** dashboard visualizes the cardinality produced by jobs
+in a given namespace. Use this dashboard to understand what jobs are causing high
+cardinality, and how the metrics in a job contribute to cardinality.
+
+### Metric Growth
+
+The **Metric Growth** dashboard helps you identify potential sources of metric growth
+in your system by highlighting the following panels:
+
+- The **Overview** panel group visualizes the top 10 metrics and labels by volume
+  in data points per second (DPPS).
+- The **Change Over Comparison Period Using Averages** panel group visualizes the
+  metrics and labels with the highest rates of growth over a selected comparison
+  period by DPPS, and the labels with the highest rates of growth in unique values.
+- The **Drilldown** panel group visualizes additional data about metrics or labels
+  selected in the dashboard's **drilldownMetric** and **drilldownLabel** template variables.
+  Visualized data includes cardinality and DPPS growth over time.
+
+Use this dashboard to understand when:
+
+- A newly added high-cardinality metric or label appears with high DPPS. You can
+  understand its impact by comparing it to an older time range.
+- An existing metric or label with more unique values appears to have grown in DPPS,
+  such as a histogram metric whose buckets greatly increased.
+
+You can then use this information to [reduce cardinality](/control/shaping/reduce-cardinality).
+
+## Licensing dashboards
+
+Chronosphere provides dashboards to monitor data usage against your licensing quotas.
+Use these dashboards to help identify usage trends across data types. You can then
+proactively manage data usage to avoid exceeding your organization's licensing
+limits.
+
+For more information about the licensing terms used on these dashboards, and details
+about how Chronosphere calculates these values, see
+[Licensing concepts](/administer/limits-licensing/licensing).
+
+In addition to these dashboards, Chronosphere provides a consolidated
+[License Overview](/administer/limits-licensing/licensing#license-overview) dashboard which
+contains information about your current license usage and data retention periods.
+Unlike other Chronosphere-managed dashboards, you can access this dashboard in the
+navigation menu by clicking **<Icon icon="shield" /> Go to Admin**, and
+then clicking **<Icon icon="scroll" /> License Overview**.
+
+### Metrics Query Capacity Overview
+
+The **Metrics Query Capacity Overview** dashboard visualizes query capacity
+consumption for automated metric queries against the system capacity. Use this
+dashboard to understand how much query capacity you have as part of your budget. The
+dashboard includes queries from monitors, recording rules, and service accounts in
+the reporting metrics.
+
+See
+[automated source query limits](/administer/limits-licensing/limits/query-limits#automated-source-query-limits)
+for more information about the limits that this dashboard visualizes.
+
+- The **Overview** panel group displays the total number of query selectors currently
+  consumed and dropped versus the system limit, and the number of selectors by source
+  type. Other panels in this group display the total data reads per second and
+  the number of data reads by source type.
+- The **Monitors** panel group displays monitors' query selector usage and data reads
+  per second by time interval, and the top collections and slugs by selector usage
+  and data reads per second.
+- The **Recording Rules** panel group displays recording rules' query selector usage
+  and data reads per second by time interval, and the top execution groups, slugs,
+  and output metrics by selector usage and data reads per second.
+- The **Service Accounts** panel group displays the top Universally Unique Identifiers
+  (UUID) by selector usage and data reads per second.
+- The **SLOs** panel group displays the slugs of top SLOs by selector usage and data reads per second.
+
+### Logging License Consumption
+
+The **Logging License Consumption** dashboard monitors your log data consumption
+against your contract, and includes the consumption by volume over time, and the
+consumption of each [partition](/control/consumption/partitions) and any defined
+[budgets](/control/consumption/budgeting).
+
+This dashboard includes panels for different threshold types, which you can use to
+review cumulative consumption trends across various time windows and partitions to
+understand what's driving growth.
+
+#### Contract
+
+The **Contract** panel group displays the percentage of persisted data and the total
+volume of persisted data consumed against your contract, alongside the total volume
+of data specified in your contract.
+
+#### Consumption
+
+The **Global Consumption** panel group includes bar charts that display the total
+volume of log data consumed per day, per week, and to date from the inception of your
+contract. Each bar chart breaks down the consumption by partition.
+
+#### Volume Thresholds
+
+The **Volume Thresholds** panel group includes the following panels:
+
+- **Rolling 1 Hour Volume**: How many bytes were consumed by the
+  global partition on a rolling one-hour window.
+- **Rolling 3 Hour Volume**: How many bytes were consumed by the
+  global partition on a rolling three-hour window.
+- **Daily Cumulative Volume**: The number of cumulative bytes
+  the global partition consumed per day. Resets to zero at `00:00:00` UTC every day.
+- **Weekly Cumulative Volume**: The number of cumulative bytes
+  the global partition consumed per week. Resets to zero at `00:00:00` UTC every
+  Monday.
+- **Monthly Cumulative Volume**: The number of cumulative bytes
+  the global partition consumed per month. Resets to zero at `00:00:00` UTC
+  on the first day of each month.
+
+#### Instant Rate Thresholds
+
+The **Instant Rate Thresholds** panel group includes the following panels:
+
+{/* vale off */}
+- The **Received vs Allowed Per Second** panel displays the number of bytes per
+  second received in the selected partition versus the number of allowed bytes.
+  Received bytes doesn't include bytes that a child partition dropped.
+- The **Dropped By Budget Per Second** panel displays the number of bytes per second
+  that an instant rate threshold in the selected partition's consumption budget
+  dropped, or any of its child partition's consumption budgets.
+- The **Received By Child Partition Per Second** panel displays the number of bytes
+  per second that child partitions of the selected partition received. This value
+  doesn't include bytes that any children of the main child partitions dropped.
+- The **Received By Priority Per Second** panel displays the number of bytes per
+  second the selected partition received, broken down by priority. This value doesn't
+  include bytes that a child partition dropped.
+{/* vale on */}
+
+### Matched Writes Quotas
+
+The **Matched Writes Quotas** dashboard lets you view consumption per pool against
+allocations, matched writes versus the capacity limit, and drops by pool and
+priority. If you exceed your matched writes quota, use this dashboard to help
+understand which pools breached the set limits and are at risk of dropping data. For
+each pool in a penalty state, you can view how much data is being dropped, separated
+by low, medium, and high priority data.
+
+In addition to the default panels, you can configure panels that include custom
+allocations for your pools by using the `pool_name` attribute. These custom allocations
+let you focus on important pools so you can quickly view consumption details across
+your organization.
+
+This dashboard includes a **Summary** panel group containing panels for the following
+statistics:
+
+- **Current Total Consumption** displays the current total consumption rate as a
+  percentage, which is calculated as the total matched writes consumed divided by the
+  license capacity.
+- **Total Consumption** displays the consumption rate of matched writes versus your
+  total capacity limit for matched writes.
+- **Total Dropped** displays the total amount of dropped data, separated by low,
+  medium, and high priority data.
+- **Pool Quota Breakdown** displays the consumption rate in DPPS of matched write
+  license by pool name.
+
+This dashboard also includes panel groups for each of your defined metric pools. Each
+panel group contains panels for the following statistics:
+
+- **Current Consumption**: displays the current total consumption rate of the
+  selected pool as a percentage, which is calculated as the total matched writes
+  consumed divided by the license capacity.
+- **Consumption**: displays the consumption rate of matched writes for the selected
+  pool versus your total capacity limit for matched writes.
+- **Consumption by Priority**: displays the matched writes consumed in DPPS by
+  priority within the pool, separated by low, medium, and high priority data.
+- **Dropped by Priority**: displays the matched writes dropped in DPPS by priority
+  with in the pool, separated by low, medium, and high priority data.
+
+See [matched writes](/overview/concepts/dictionary#matched-writes) in the metrics
+dictionary for more information about the metrics that Observability Platform uses to
+create the statistics displayed in this dashboard.
+
+### Tracing licensing information
+
+<Info>
+This dashboard is deprecated. To view current consumption data for traces against
+your license capacity, view the
+[License Overview](/administer/limits-licensing/licensing#license-overview).
+</Info>
+
+The **Tracing License Consumption** panels monitor your processed data and persisted
+data against your account limits for a given time span, defaulting to the last seven
+days.
+
+The dashboard provides these consumption percentages for each limit:
+
+- The **Processed License Limit** displays the percentage of processed tracing bytes
+  against your license limit. This percentage includes all bytes of trace data sent
+  to and processed by Chronosphere. To limit the amount of tracing data your
+  organization sends to Chronosphere, use [head sampling](/control/sampling/head-sampling).
+- The **Persisted License Limit** displays the percentage of your persisted trace
+  bytes against your license limit. To limit the amount of tracing data your
+  organization persists, use [tail sampling](/control/sampling/tail-sampling) or
+  [trace behaviors](/control/sampling/behaviors) to apply a set of fine-grained rules
+  after any head sampling decisions.
+- The **Processed to Persisted Ratio** displays a decimal ratio of processed to
+  persisted data against your license limit. Use this information to understand the
+  relationship between your processed and persisted data consumption.
+
+This dashboard also includes two line graphs that display your daily data consumption
+breakdown and your cumulative data consumption breakdown. The daily data consumption
+graph clears each day to accurately represent your consumption for that period. Use
+these graphs to identify any spikes in data consumption to help identify where you
+can reduce the amount of ingested or persisted tracing data.
+
+### Events License Consumption
+
+<Info>
+This dashboard is deprecated. To view current consumption data for change events
+against your license capacity, view the
+[License Overview](/administer/limits-licensing/licensing#license-overview).
+</Info>
+
+The **Events License Consumption** dashboard monitors your event data against both
+capacity and license limits, defaulting to the last seven days.
+
+The dashboard provides these consumption percentages for each limit:
+
+- The **Persisted capacity limit** displays the number of events that can persist per
+  minute in your tenant. This limit is enforced and can incur penalties if exceeded.
+  In certain circumstances, this limit can exceed the license limit temporarily.
+- The **Persisted license limit** displays the number of events that can persist per
+  minute, as defined by your the license in your contract with Chronosphere.
+- The **Latest consumption percentage** displays a decimal ratio of persisted data
+  against your per-minute license limit for the selected time period. This value is
+  calculated by dividing the persisted events per minute by the number of events that
+  can persist per minute, defined by the license limit. Use this information to
+  understand the relationship between your persisted data consumption and the defined
+  license limit.
+
+This dashboard also includes a line graph that displays your daily data consumption
+of events per minute compared against your license and capacity limits. Use this
+graph to identify any spikes in data consumption to help identify where you can
+reduce the amount of persisted events data.
+
+## Usage Dashboard
+
+The **Usage Dashboard** provides a regular breakdown of ingested and persisted metrics
+across your organization by `cluster`,  `environment`, `app_name`, and `service_name`.
+
+Use this dashboard to identify what is contributing the most to your Observability Platform
+usage, and to manage your overall usage.

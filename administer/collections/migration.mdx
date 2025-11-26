@@ -1,0 +1,608 @@
+---
+title: Migrate from buckets to collections
+---
+import { CollectionNavIcon} from '@/components';
+import ChronoctlConvert from '/snippets/_partials/chronoctlconvert.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+<Info>
+This page contains information for customers who previously used _buckets_
+functionality in Chronosphere Observability Platform. Use the details provided here
+to update and migrate your resources to non-bucket versions.
+</Info>
+
+In the new version of the app, Observability Platform introduced _teams_ and
+_collections_ to bring more structure and organization to your data and monitoring
+assets. You can group your dashboards and monitors into collections in a way that
+aligns with your teams' projects or areas of focus. For details about teams and
+collections, see the [Teams](/administer/accounts-teams/teams) and
+[Collections](/administer/collections) overviews.
+
+Collections are similar to buckets, the previous container for organizing resources,
+but for some resource types collections can also change how you configure them.
+
+Your current buckets are automatically converted to unowned collections. To view
+them, in the navigation menu exit the **Admin** menu (if needed, click
+**<Icon icon="arrow-right-from-bracket" /> Exit Admin**) and select
+**<CollectionNavIcon /> Collections**, where they're listed under
+**Unowned Collections**.
+
+The goal of the migration is to empty this list, whether by assigning the converted
+bucket collections to teams or creating new teams and collections suited to your
+organization and infrastructure.
+
+## Create and manage teams
+
+<Info>
+You might already have and use teams. This migration is an opportunity to review
+and adjust team membership to better align them with how you want to organize your
+resources.
+</Info>
+
+Unlike buckets, which exist independently of accounts or teams, you can assign one
+team to each collection. Each team and collection also provides a related, customizable
+[home page](/administer/collections/home).
+
+To fully migrate from buckets to collections, a user with SysAdmin access must create
+teams so you can assign the converted collections to them. Notification policies
+also now require you to assign a team to them. You can no longer define owned
+policies, so you also need to have teams in place to assign them to those policies.
+
+If you're creating new teams and collections, determine which user and service accounts
+you've already associated with a service or other unit of work and build your teams
+around those groups of accounts.
+
+For details about creating teams and assigning accounts to them, see
+[Teams](/administer/accounts-teams/teams).
+
+## Migrate resources defined as code
+
+If you manage Chronosphere resources in code with Terraform, the changes to buckets
+and the migration to collections both require action.
+
+### Upgrade the Terraform provider for Observability Platform
+
+To use the migrated `chronosphere_bucket` resource, upgrade the Chronosphere
+Terraform provider to at least version 0.40.
+
+### Update resource properties
+
+Your automatically migrated buckets can now use features available to collections.
+If you use Terraform to define your resources, add the `team_id` property to assign
+a team, and the `notification_policy_id` property to set a default
+[notification policy](/investigate/alerts/notifications/policies) for any monitors
+in the collection.
+
+To fully migrate resource definitions to use collections, you can also use the `collection_id`
+property in Terraform.
+
+<Tabs>
+  <Tab title="Terraform" id="update-resource-properties-terraform">
+    For example, if you have an unowned `chronosphere_bucket` definition:
+
+    ```ruby
+    resource "chronosphere_bucket" "b" {
+      name        = "Basic Bucket"
+      description = "This is a basic existing bucket"
+    }
+    ```
+
+    You can add the `team_id` property with the team's
+    slug as the value to assign the
+    migrated bucket:
+
+    ```ruby
+    resource "chronosphere_bucket" "b" {
+      name        = "Basic Bucket"
+      description = "This is a basic existing bucket"
+      team_id     = "team-slug"
+    }
+    ```
+
+    If you've also defined the team in the same Terraform project as the bucket, you
+    can reference it instead:
+
+    ```ruby
+    resource "chronosphere_bucket" "b" {
+      name        = "Basic Bucket"
+      description = "This is a basic existing bucket"
+      team_id     = chronosphere_team.team.id # new
+    }
+    ```
+  </Tab>
+
+  <Tab title="Chronoctl" id="update-resource-properties-chronoctl">
+    If you use YAML and Chronoctl to define your bucket resources, you can assign a
+    team to the migrated bucket by adding the `team_slug` property:
+
+    For example, if you have an unowned `Bucket` definition:
+
+    ```yaml
+    api_version: v1/config
+    kind: Bucket
+    spec:
+      name: Basic Bucket
+      description: This is a basic existing bucket
+    ```
+
+    You can assign it to a team with the slug `team-slug`
+    by adding the `team_slug` property:
+
+    ```yaml
+    api_version: v1/config
+    kind: Bucket
+    spec:
+      name: Basic Bucket
+      description: This is a basic existing bucket
+      team_slug: team-slug
+    ```
+  </Tab>
+</Tabs>
+
+### Convert inline notification policies
+
+If you specify owned notification policies in your buckets, you must create dedicated
+notification policy resources, associate them to your buckets by identifier instead
+of as owned data, and assign a team and name to the notification policy. This
+re-creates those policies as independent resources, which Observability Platform
+requires before you can associate them with collections.
+
+<Tabs>
+  <Tab title="Terraform" id="convert-inline-notification-policies-terraform">
+    To convert owned notification policies to be explicitly defined:
+
+    1. Change references to each bucket resource's notification policy to use the policy's
+       `notification_policy_id` field instead of its `notification_policy_data` field.
+    1. Add the `team_id` and `name` fields to the notification policy resource.
+    1. Commit the change using `terraform apply`.
+
+    Applying these changes creates a new team-owned notification policy and sets it
+    as the default for the bucket. It also explicitly defines the new team-owned policy
+    for monitors and deletes the old inline policy.
+
+    For example, if you have a bucket with an owned notification policy, and a monitor
+    that refers to that inline policy by bucket slug:
+
+    ```ruby
+    resource "chronosphere_bucket" "b" {
+      name                     = "Basic Bucket"
+      slug                     = "basic-bucket"
+      description              = "This is a basic existing bucket"
+      team_id                  = "team-slug"
+      notification_policy_data = chronosphere_notification_policy.policy.notification_policy_data
+    }
+
+    resource "chronosphere_monitor" "explicit_policy_monitor" {
+      name                   = "Explicit policy monitor"
+      bucket_id              = chronosphere_bucket.different-bucket.id
+      notification_policy_id = "basic-bucket"
+      ...
+    }
+    ```
+
+    You can replace `notification_policy_data` in the bucket definition with `notification_policy_id`,
+    and refer to its `id` instead of its data:
+
+    ```ruby
+    resource "chronosphere_bucket" "b" {
+      name                     = "Basic Bucket"
+      slug                     = "basic-bucket"
+      description              = "This is a basic existing bucket"
+      team_id                  = "team-slug"
+      notification_policy_data = chronosphere_notification_policy.policy.id
+    }
+    ```
+
+    Also update the `notificiation_policy_id` in the monitor resource to use the policy's
+    `id` instead of the bucket's:
+
+    ```ruby
+    resource "chronosphere_monitor" "explicit_policy_monitor" {
+      name                   = "Explicit policy monitor"
+      bucket_id              = chronosphere_bucket.different-bucket.id
+      notification_policy_id = chronosphere_notification_policy.policy.id
+      ...
+    ```
+
+    <Warning>
+If you're forced to revert these policy changes, you need Terraform to apply revised
+      definitions twice to fully redefine the policies inline. To do so:
+
+      1.  Duplicate the team's notification policy.
+      2.  Remove the `name` and `team_id` fields from the policy.
+      3.  Update your bucket resource to set the `notification_policy_data` value to the
+          new notification policy's `notification_policy_data` value.
+      4.  Commit and apply the changes by running `terraform apply`.
+      5.  Remove the old notification policy resource.
+      6.  Commit and apply the changes again by running `terraform apply`.
+</Warning>
+  </Tab>
+
+  <Tab title="Chronoctl" id="convert-inline-notification-policies-chronoctl">
+    To convert owned notification policies to be explicitly defined:
+
+    1. Set the `notification_policy_slug` value for a bucket using an inline policy to
+       the policy's slug.
+    2. Apply the changes with `chronoctl bucket update`.
+    3. In the notification policy resource, remove the `bucket_slug` property.
+    4. Assign a team to the notification policy resource with the `team_slug` property.
+    5. Apply the changes with `chronoctl notification-policies update`.
+
+    For example, with these `Bucket` and `NotificationPolicy` resources defined in
+    `bucket.yaml` and `np.yaml`, respectively:
+
+    ```yaml
+    api_version: v1/config
+    kind: Bucket
+    spec:
+      slug: bucket
+      name: Bucket
+      description: This is a basic existing bucket
+    ```
+
+    ```yaml
+    api_version: v1/config
+    kind: NotificationPolicy
+    spec:
+      slug: np
+      name: np
+      bucket_slug: bucket
+      routes:
+        ...
+    ```
+
+    Add the `notification_policy_slug` property to the `Bucket` and set its value to
+    the `NotificationPolicy`'s slug:
+
+    ```yaml
+    api_version: v1/config
+    kind: Bucket
+    spec:
+      slug: bucket
+      name: Bucket
+      description: This is a basic existing bucket
+      notification_policy_slug: np
+    ```
+
+    Apply it with `chronoctl`:
+
+    ```shell copy
+    chronoctl bucket update -f bucket.yaml
+    ```
+
+    Add the `team_slug` property to the `NotificationPolcy` resources and set its value
+    to the `Team`'s slug, replacing the `bucket_slug`:
+
+    ```yaml
+    api_version: v1/config
+    kind: NotificationPolicy
+    spec:
+      slug: np
+      name: np
+      team_slug: team-slug
+      routes:
+        ...
+    ```
+
+    Apply it with `chronoctl`:
+
+    ```shell copy
+    chronoctl notification-policies update -f np.yaml
+    ```
+
+  </Tab>
+</Tabs>
+
+### Update resource types and terminology
+
+Your resource definitions using bucket resource types still work because
+Observability Platform has already converted buckets to collections for you. But to
+complete the migration in your code definitions, you can update resource types and
+field names from "bucket" to "collection". This keeps your code definitions
+consistent both internally and with the Observability Platform interface.
+
+<Warning>
+Collections don't support labels, and you can't migrate labels. If you use labels
+on buckets, you must remove them during this process.
+</Warning>
+
+<Tabs>
+  <Tab title="Terraform" id="update-resource-names-and-terminology-terraform">
+    Although you can manage migrated buckets using resources that refer to
+    `chronosphere_bucket` resources, you can modify those resources further to become
+    `chronosphere_collection` resources. This aligns the resources you use for these
+    migrated resources to the Observability Platform user interface and any new
+    collection resources you create.
+
+    You can modify these terms by either creating new collection resources with the
+    same contents as the bucket, or by modifying your Terraform state.
+
+    #### Replace buckets with newly created collections
+
+    To migrate a bucket to a newly created collection in Terraform:
+
+    1.  Create a new collection resource with a unique name and slug.
+    2.  Replace the `bucket_id` field of each resource in that bucket with a `collection_id`
+        field using the new collection as its value.
+    3.  Commit the changes with `terraform apply` to migrate the resources out of the bucket.
+    4.  Remove the bucket resource from your Terraform definitions.
+    5.  Commit the changes again with `terraform apply` to delete the bucket.
+
+    For example, if you have a bucket resource definition:
+
+    ```ruby
+    resource "chronosphere_bucket" "b" {
+      name        = "Basic Bucket"
+      description = "This is a basic existing bucket"
+      team_id     = "team-slug"
+      notification_policy_id = chronosphere_notification_policy.policy.id
+    }
+    ```
+
+    Add an equivalent collection resource definition with a unique `name` value:
+
+    ```ruby
+    resource "chronosphere_bucket" "b" {
+      name        = "Basic Bucket"
+      description = "This is a basic existing bucket"
+      team_id     = "team-slug"
+      notification_policy_id = chronosphere_notification_policy.policy.id
+    }
+
+    resource "chronosphere_collection" "c" {
+      name        = "Basic Collection"
+      description = "This is a basic collection"
+      team_id     = "team-slug"
+      notification_policy_id = chronosphere_notification_policy.policy.id
+    }
+    ```
+
+    Given this example monitor, replace any `bucket_id` fields that refer to the bucket:
+
+    ```ruby
+    resource "chronosphere_monitor" "m" {
+      name      = "Monitor"
+      bucket_id = chronosphere_bucket.b.id
+      ...
+    }
+    ```
+
+    Use the `collection_id` field to point to the new collection:
+
+    ```ruby
+    resource "chronosphere_monitor" "m" {
+      name          = "Monitor"
+      collection_id = chronosphere_collection.c.id
+      ...
+    }
+    ```
+
+    #### Edit Terraform state
+
+    <Warning>
+Directly modifying your Terraform state is an advanced operation that might require
+      additional privileges in your organization.
+</Warning>
+
+    Observability Platform has already converted buckets to collections on the backend, and
+    Observability Platform can't modify Terraform state to realign it with that migration. By
+    directly changing your Terraform state, you can manually align your Terraform state
+    to Observability Platform without resulting in Observability Platform applying any changes.
+
+    To change `chronosphere_monitor` resource definitions to `chronosphere_collection`
+    resources without making changes to Observability Platform, you can use the `chronotf import-state`
+    command to directly modify your Terraform state. You can also change `bucket_id` fields
+    to `collection_id` fields without resulting in changes because Observability Platform treats
+    them as equivalent fields.
+
+    1.  Remove all labels from any `chronosphere_bucket` resources.
+    2.  Replace `chronosphere_bucket` in your bucket definitions with `chronosphere_collection`.
+    3.  Replace all references to the bucket with collection references.
+    4.  Delete the `chronosphere_bucket` you're migrating from your Terraform project
+        state by running `terraform state rm`.
+    5.  Import the updated collection into the Terraform state with `chronotf import-state`.
+    6.  Commit your configuration changes. Terraform reports no differences.
+    7.  Replace all `bucket_id` fields on monitors and Grafana dashboards with `collection_id`.
+    8.  Commit the changes and apply them by running `terraform apply`. Terraform reports
+        a diff, but nothing changes in Observability Platform.
+
+    For example, for this `chronosphere_bucket` definition:
+
+    ```ruby
+    resource "chronosphere_bucket" "b" {
+      name        = "Basic Bucket"
+      description = "This is a basic existing bucket"
+      team_id     = "team-slug"
+      notification_policy_id = chronosphere_notification_policy.policy.id
+    }
+    ```
+
+    Replace `chronosphere_bucket` with `chronosphere_collection`:
+
+    ```ruby
+    resource "chronosphere_collection" "b" {
+      name        = "Basic Bucket"
+      description = "This is a basic existing bucket"
+      team_id     = "team-slug"
+      notification_policy_id = chronosphere_notification_policy.policy.id
+    }
+    ```
+
+    You don't need to change the resource name or `name` field values in this process.
+
+    Given resources contained in that bucket, such as this monitor:
+
+    ```ruby
+    resource "chronosphere_monitor" "m" {
+      name      = "Monitor"
+      bucket_id = chronosphere_bucket.b.id
+      ...
+    }
+    ```
+
+    Replace the `bucket_id` value with a reference to the collection.
+
+    ```ruby
+    resource "chronosphere_monitor" "m" {
+      name      = "Monitor"
+      bucket_id = chronosphere_collection.c.id
+      ...
+    }
+    ```
+
+    Delete the bucket from your Terraform project state by running:
+
+    ```shell copy
+    terraform state rm chronosphere_bucket.b
+    ```
+
+    Import the revised collection into your Terraform project state by running:
+
+    ```shell copy
+    chronotf import-state
+    ```
+
+    After committing the changes, Terraform should return a no-diff result.
+
+    Replace all `bucket_id` fields in the bucket's resources with `collection_id`. Given
+    the previous monitor example, change it to:
+
+    ```ruby
+    resource "chronosphere_monitor" "m" {
+      name          = "Monitor"
+      collection_id = chronosphere_collection.c.id
+      ...
+    }
+    ```
+
+    Commit the changes and apply them by running `terraform apply`. Terraform will report
+    a diff, but because `bucket_id` and `collection_id` are equivalent and the value
+    didn't change, nothing changes in Observability Platform.
+  </Tab>
+
+  <Tab title="Chronoctl" id="replace-buckets-with-newly-created-collections-chronoctl">
+    To migrate a bucket to a newly created collection in Chronoctl:
+
+    1. Change the `Bucket` resource's `kind` value to `Collection`.
+    2. Apply the changes with `chronoctl collections update`.
+    3. Replace the `bucket_slug` fields for any of the bucket's monitor and Grafana
+       dashboard resources with `collection_slug` fields pointing to the new collection.
+    4. Apply the changes for each resource that was in the bucket with `chronoctl`.
+
+    For example, for this `Bucket` in `collection.yaml`:
+
+    ```yaml
+    api_version: v1/config
+    kind: Bucket
+    spec:
+      slug: bucket
+      name: Bucket
+      description: This is a basic existing bucket
+      notification_policy_slug: np
+    ```
+
+    Which contains this `Monitor` in `monitor.yaml`:
+
+    ```yaml
+    api_version: v1/config
+    kind: Monitor
+    spec:
+      slug: chronoctl-mon
+      name: Monitor
+      bucket_slug: bucket
+      ...
+    ```
+
+    Change the bucket resource's `kind` to `Collection`:
+
+    ```yaml
+    api_version: v1/config
+    kind: Collection
+    spec:
+      slug: bucket
+      name: Bucket
+      description: This is a basic existing bucket
+      notification_policy_slug: np
+    ```
+
+    Notice that the `slug` and `name` values **do not** change in this process.
+
+    Apply the change by running `chronoctl collections update`:
+
+    ```shell copy
+    chronoctl collections update -f collection.yaml
+    ```
+
+    This change updates only how `chronoctl` interacts with the bucket definition going
+    forward, for instance by allowing you to run `chronoctl collections` instead of
+    `chronoctl buckets` to reconfigure it. No functional changes occur in the bucket
+    because Observability Platform has already migrated it to a collection.
+
+    Modify the child resource in `monitor.yaml` to use the `collection_slug` field
+    instead of the `bucket_slug` field:
+
+    ```yaml
+    api_version: v1/config
+    kind: Monitor
+    spec:
+      slug: chronoctl-mon
+      name: Monitor
+      collection_slug: bucket
+      ...
+    ```
+
+    Since you didn't change the `slug` value when changing the bucket's `Kind`, the
+    monitor's `collection_slug` value is the same as the `bucket_slug` value.
+
+    Apply the changes by running `chronoctl monitors update`:
+
+    ```shell copy
+    chronoctl monitors update -f monitor.yaml
+    ```
+
+  </Tab>
+</Tabs>
+
+### Migrate recording rules
+
+<ChronoctlConvert/>
+
+Prometheus definitions require you to assign recording rules to rule groups. To
+maintain portability between Observability Platform and Prometheus definitions,
+recording rules instead use a new property called the _execution group_.
+
+When you run `chronoctl convert prometheus` to convert a Prometheus definition to
+Observability Platform, Chronoctl maps Prometheus rule groups to Observability
+Platform execution groups.
+
+## Take advantage of collection features
+
+To get the most out of collections, organize your teams by responsibility, assign
+teams in ways that help them work together, and curate and maintain your collections.
+
+- **Collect your resources by specific themes.** Collect any dashboards and monitors
+  related to something you're monitoring, such as a server, storage, or service,
+  into a collection. Maintain the collection's contents regularly to keep them relevant
+  to your infrastructure. The contents of well-curated collections stay relevant
+  to the members of their assigned teams.
+- **Align your teams with its members' responsibilities.** Create teams and assign
+  accounts to them based on the infrastructure components they're responsible for.
+  Chronosphere has designed the collections feature to put the most relevant data
+  and tools within reach of your teams, so when assigning accounts to a team, keep
+  that team's common goal in mind.
+- **Share and collaborate on collections.** You can assign more than one team to
+  a collection, which helps facilitate cross-team collaboration.
+  [Collection and team home pages](/administer/collections/home)
+  also give teams shared spaces where they can include links or context about a
+  collection's focus.
+- **Use your on-call structure.** Consider creating Observability Platform teams for
+  any on-call response groups in your organization. You can efficiently connect
+  responders with the most relevant resources for an incident by assigning your
+  on-call response team to the affected infrastructure's collections.
+- **Stay flexible in team assignments.** Your team members' responsibilities change
+  over time. When you change team assignments in Observability Platform accordingly,
+  those team members gain immediate access to their new team's collections with no
+  need to manually reassign them, which reduces the overhead for adding a new member
+  to a team.

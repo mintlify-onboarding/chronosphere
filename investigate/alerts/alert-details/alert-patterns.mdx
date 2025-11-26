@@ -1,0 +1,118 @@
+---
+title: Analyze alert patterns
+sidebarTitle: Alert patterns
+description: Chronosphere Observability Platform visualizes patterns in related alerts.
+robots: noindex, nofollow
+---
+import EarlyAccess from '/snippets/_partials/early-access.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+<EarlyAccess/>
+
+The sidebar of [alert details pages](/investigate/alerts/alert-details) provides
+links to a panel where you can **analyze alert patterns** through a heatmap visualization
+and a table of associated alerts. You can analyze patterns by time range or by other
+alerts triggered by the same source, such as a [monitor](/investigate/alerts/monitors)
+or [service level objective (SLO)](/observe/slo).
+
+As you interact with the heatmap, you also filter the table view to list only the
+alerts triggered at that intersection of time and
+[filter type](#sort-and-filter-the-heatmaps-alerts) (such as label, source, notifier,
+or notification policy).
+
+Use this panel to visually identify other alerts that might be related due to their
+activity relative to the triggered alert's duration or other signals in the same source.
+
+## Search and filter alerts
+
+You can toggle between alerts from the source entity, such as **Source monitor**
+or **Source SLO**, or from **Related alerts** from any source based on the selected
+[time range](/navigate/time-ranges).
+
+### Add labels to search
+
+When you navigate to the **Analyze alert patterns** panel from an alert details page,
+the panel's **Search alerts** field is populated with labels from the triggering
+alert's time series. You can optionally **Add labels** by clicking on this field,
+and then entering a **Label**, selecting an operator, and entering a **Value**.
+To confirm the new label, click **<Icon icon="check" /> Confirm**.
+
+You can also narrow the view to specific **Notification policies**, **Notifiers**,
+and **Severities**. By default, each of these fields select **All** available values.
+You can also filter by firing alerts' **Minimum** and **Maximum durations**.
+
+If the selection and time range include muted alerts, you can toggle whether to
+**Show muted alerts**. The number of identified muted alerts is displayed with the
+toggle.
+
+## Analyze alerts in a heatmap visualization
+
+A heatmap visualization displays each group of alerts as a row, and the number of
+times each group was triggered during a fraction of the displayed time range as
+a shaded cell.
+
+Darker cells indicate a higher triggering frequency. A bar chart across the top of
+the cells indicates the relative total number of firing alerts during that fraction
+of the time range. Use the heatmap and its controls to identify clusters of alerts
+that you can use to correlate or exclude other firing alerts as being related to
+the selected alert.
+
+The heatmap depicts a fixed number of rows. If there are more rows than are visible
+in the heatmap, you can scroll the heatmap vertically to view more.
+
+### Sort and filter the heatmap's alerts
+
+When you click on a cell in the heatmap, you filter the
+[table view](#analyze-alerts-by-source-in-a-table) to list only the alerts triggered
+at that intersection. When you click on a cell in the bar chart, you filter the
+table view to all alerts triggered during that fraction of the time range. To clear
+your selection, click the selected cell again.
+
+The panel also divides the same time range that you selected in the alert details
+view into equal spans and depicts these spans as the heatmap's columns. You can
+use the [time range selector](/navigate/time-ranges) to change this total range,
+but the number of divisions and columns remains the same. The heatmap's X axis
+includes times for several columns in the chart.
+
+Additionally, you can use the **Sort by** dropdown to change whether to sort the
+heatmap's rows by alert count or alphabetically, and whether to sort by ascending
+or descending values. By default, the heatmap is sorted by **Alert count (high to low)**.
+
+You can also use the **Group by** dropdown to customize how the rows are defined.
+Rows are grouped by **Label** by default, and you can choose to group by source
+entity (**Monitor/SLO**), by **Notifier**, or by **Notification Policy**. You can
+additionally filter the rows by members of those groups by clicking the following
+dropdown, which adapts to use the same name as the value of the **Group by** dropdown.
+
+As you modify these controls, the section heading changes to count the selected
+type of entities associated with the number of total active alerts.
+
+## Analyze alerts by source in a table
+
+The panel also includes a table that by default lists all active alerts by their
+source and includes columns for the alert's:
+
+- **Severity**, as an icon:
+
+  | Icon | Text | Description |
+  | ---- | ---- |------------ |
+  | <Icon icon="hexagon-exclamation" style={{ color: 'rgb(238, 108, 108)' }}/> | **Critical** | Actively triggered alert that exceeds the defined critical conditions. |
+  | <Icon icon="circle-exclamation" style={{ color: 'rgb(255, 178, 73)' }}/>    | **Warning**  | Actively triggered alert that exceeds the defined warning conditions.  |
+  | <Icon icon="bell-slash" style={{ color: 'rgb(193, 166, 248)' }}/>   | **Muted**    | Alert that's muted by an active muting rule.                           |
+- Name (**Alert**), as a link to the alert's details page
+- **Alert state, such as **active** or **triggered**
+- **Alert ID**
+- **Source monitor/SLO**, as a link
+
+As you [sort and filter the heatmap's alerts](#sort-and-filter-the-heatmaps-alerts),
+the table's list changes to include only the alerts for that selection. The table
+also lists the start and end points in the selected fraction of the total time range.
+
+## Share the analysis view
+
+To share a direct link to this panel, click the **<Icon icon="link" /> Copy URL**
+icon. You can then choose to **Copy with absolute time range** to share the view
+with a specific beginning and end time range, or **Copy with relative time range**
+to share the view for a relative range (such as the default last 1 hour).

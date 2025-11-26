@@ -1,0 +1,71 @@
+---
+title: Split record
+description: Learn about the split record processing rule in Chronosphere Telemetry Pipeline.
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The split record [processing rule](/pipeline-data/processing-rules) splits an array
+of JSON objects into a series of standalone records.
+
+## Configuration parameters
+
+<Params />
+
+| Name                                  | Key | Description | Default |
+| ------------------------------------- | --- | ----------- | ------- |
+| **Source key**                        | `key` | Required. The key that contains the array to split. | _none_ |
+| **Preserve non-array data** checkbox  | `skipMissing` | If selected, the split record rule preserves instances of **Source key** that contain non-array data. If unselected, this rule removes instances of **Source key** that contain non-array data. | Not selected |
+| **Preserve empty arrays** checkbox    | `skipEmpty` | If selected, this rule preserves instances of **Source key** that contain an empty array. If unselected, this rule removes instances of **Source key** that contain an empty array. | Not selected |
+| **Preserve original array** checkbox  | `keepOrig` | If selected, this rule includes the full body of the original array inside each split object. If no **Destination key** is set or if **Destination key** is the same as **Source key**, the original array won't be preserved. | Not selected |
+| **Destination key**                   | `dest` | The key to store the resulting split object. If unspecified, each split object is stored in a key with the same name as **Source key**. | _none_ |
+| **Comment**                           | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Example
+
+Using the split record processing rule lets you restructure your telemetry data
+by turning a combined array of events into multiple standalone events. For example,
+given these sample logs:
+
+```json
+{"events":[
+  {"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"page_id":30,"action":"purchase"},
+  {"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"page_id":10,"action":"purchase"},
+  {"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"page_id":50,"action":"click"},
+  {"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"page_id":40,"action":"purchase"},
+  {"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"page_id":30,"action":"purchase"},
+  {"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"page_id":40,"action":"click"},
+  {"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"page_id":30,"action":"click"},
+  {"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"page_id":20,"action":"view"},
+  {"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"page_id":50,"action":"purchase"},
+  {"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"page_id":10,"action":"view"},
+  {"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"page_id":50,"action":"view"}
+]}
+```
+
+A processing rule with the **Source key** value `events` and the **Destination key**
+value `log` returns the following result:
+
+```json
+{"log":{"action":"purchase","user_id":3,"timestamp":"2023-03-28T09:08:41.64283645Z","page_id":30}}
+{"log":{"action":"purchase","user_id":4,"timestamp":"2023-03-28T09:08:42.643343109Z","page_id":10}}
+{"log":{"action":"click","user_id":1,"timestamp":"2023-03-28T09:08:48.643600498Z","page_id":50}}
+{"log":{"action":"purchase","user_id":5,"timestamp":"2023-03-28T09:08:50.643773688Z","page_id":40}}
+{"log":{"action":"purchase","user_id":1,"timestamp":"2023-03-28T09:08:51.643932272Z","page_id":30}}
+{"log":{"action":"click","user_id":2,"timestamp":"2023-03-28T09:08:56.644080944Z","page_id":40}}
+{"log":{"action":"click","user_id":3,"timestamp":"2023-03-28T09:09:03.64425954Z","page_id":30}}
+{"log":{"action":"view","user_id":1,"timestamp":"2023-03-28T09:09:03.644317046Z","page_id":20}}
+{"log":{"action":"purchase","user_id":2,"timestamp":"2023-03-28T09:09:10.64447719Z","page_id":50}}
+{"log":{"action":"view","user_id":2,"timestamp":"2023-03-28T09:09:17.644810963Z","page_id":10}}
+{"log":{"action":"view","user_id":1,"timestamp":"2023-03-28T09:09:20.644994805Z","page_id":50}}
+```
+
+This rule assigned each object in the original `events` array to a series of keys
+named `log`.
+
+## Related rules
+
+For a processing rule with the opposite effect, see
+[join records](/pipeline-data/processing-rules/join-records).

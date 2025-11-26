@@ -1,0 +1,22 @@
+---
+title: Verify Observability Platform is receiving log data
+description: Learn how to verify that Chronosphere Observability Platform is ingesting your log data.
+robots: noindex, nofollow
+---
+{/* -- dri: Adam Locke -- */}
+
+
+After [ingesting data](/ingest/logs), use Logs Explorer to verify that Chronosphere
+Observability Platform is receiving log data.
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
+1. On the **Logs Explorer** page, select a time window that includes the period when
+   Observability Platform started ingesting log data.
+
+   The timeline graph displays a spike at the time when Observability Platform
+   started ingesting log data.
+
+1. Verify the `message`, `timestamp`, `service`, and `severity` fields are being
+   assigned correctly. If these fields aren't mapped in the way you intended, contact
+   [Chronosphere Support](/support).

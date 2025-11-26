@@ -1,0 +1,42 @@
+---
+title: Pipeline metadata
+description: Access pipeline metadata in Chronosphere Telemetry Pipeline.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Use the information on this page to access pipeline metadata.
+
+## Get pipeline IDs
+
+After you [create a pipeline](/pipeline-data/create-modify), Telemetry
+Pipeline assigns that pipeline a unique numerical ID.
+
+To retrieve a list of IDs for all pipelines associated with a
+[Core Instance](/pipelines/concepts#core-instance),
+run the following [Pipeline CLI](/pipeline-cli) command:
+
+```shell copy
+calyptia get pipelines --core-instance INSTANCE --show-ids
+```
+
+Replace _`INSTANCE`_ with the name of your Core Instance.
+
+## Back up pipeline configuration files
+
+> Requires Pipeline CLI version 3.17.0 or later.
+
+You can run the following script to back up the [configuration files](/pipeline-configure/config-files)
+for each pipeline across all of your Core Instances:
+
+{/* markdownlint-disable MD013 */}
+
+```shell copy
+curl -sSfL https://raw.githubusercontent.com/chronosphereio/calyptia-cli/refs/heads/main/dump-all-pipelines.sh | bash
+```
+
+{/* markdownlint-enable MD013 */}
+
+The resulting configuration files are stored in your current working directory,
+with a subfolder for each Core Instance that contains the configuration files
+for all of its associated pipelines.

@@ -1,0 +1,51 @@
+---
+title: Kubernetes Events source plugin
+sidebarTitle: Kubernetes Events source plugin (Telemetry Pipeline)
+description: Ingest Kubernetes events in Chronosphere Telemetry Pipeline.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Kubernetes Events [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `kubernetes_events`) lets you ingest data from Kubernetes into a
+telemetry pipeline.
+
+<SourceStyle/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name                               | Key | Description | Default |
+| ---------------------------------- | --- | ----------- | ------- |
+| **Kubernetes API Server Endpoint** | `kube_url` | Required. The API server endpoint that's accessible to Telemetry Pipeline. | `https://kubernetes.default.svc` |
+
+### Advanced
+
+| Name                                     | Key | Description | Default |
+| ---------------------------------------- | --- | ----------- | ------- |
+| **Kubernetes TLS CA file**               | `kube_ca_file`        | Your Kubernetes CA certificate file. | _none_ |
+| **Kubernetes TLS CA path**               | `kube_ca_path`        | Your Kubernetes CA certificate path. | _none_ |
+| **Kubernetes authorization Token File*** | `kube_token_file`     | Your Kubernetes authorization token file. | _none_ |
+| **Kubernetes Token Time To Live (TTL)**  | `kube_token_ttl`      | The amount of time before a token is reread from its file. | `10M` |
+| **Kubernetes Request Limit**             | `kube_request_limit`  | The request limit for how many events to collect. | `0` |
+| **Kubernetes Event Retention Time**      | `kube_retention_time` | How long Kubernetes should retain events. | `1h` |
+| **Kubernetes Namespace**                 | `kube_namespace`      | The Kubernetes namespace to query events from. By default, fetches events from all namespaces. | _none_ |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |

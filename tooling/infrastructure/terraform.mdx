@@ -1,0 +1,98 @@
+---
+title: Chronosphere Terraform provider
+---
+import TerraformPlan from '/snippets/_partials/terraformplan.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+[Terraform](https://developer.hashicorp.com/terraform/docs) is an open source,
+infrastructure-as-code software tool that provides a consistent workflow for managing
+hundreds of cloud services as a series of configuration files. Terraform relies on
+plugins called _providers_ to interact with cloud providers, SaaS providers, and
+other APIs, including Chronosphere Observability Platform.
+
+## Getting started
+
+To use the Chronosphere Terraform provider, you must install Terraform, and then you
+can install the provider and ensure you're authenticated for its use. For
+information, see
+[Install the Chronosphere Terraform provider](/tooling/infrastructure/terraform/install).
+
+See [Supported resources](/tooling/infrastructure#supported-resources) for a list
+of supported resources.
+
+## Prevent changes to managed resources
+
+When you use Terraform to manage service account, notifier, dashboard, monitor, or
+drop rules resources, Terraform overrides any changes to these resources that users
+try to make elsewhere. To avoid confusion and configuration conflicts, Observability
+Platform prevents users from modifying such resources outside of Terraform.
+
+When you attempt to modify a Terraform-managed resource in Observability Platform,
+the app displays a banner that explains the required use of Terraform. It also
+prevents you from saving any attempted changes from the user interface.
+
+Observability Platform also prevents any attempts to modify these resources with
+[Chronoctl](/tooling/chronoctl) or the Chronosphere API.
+
+## Validate plans with dry runs
+
+<TerraformPlan />
+
+| Terraform provider version | Supported types for dry-run validations                          |
+| -------------------------- | ---------------------------------------------------------------- |
+| 0.34 or later              | All resources                                                    |
+| 0.33                       | All resources except notifiers                                   |
+| 0.29 through 0.32          | Monitors, mapping rules, rollup rules, and notification policies |
+| 0.28 and earlier           | Monitors                                                         |
+
+<Info>
+Dry runs can't validate resources or configurations that rely on uniqueness or the
+existence of other objects, because those traits can change during the dry run or
+before Terraform applies the configuration. For example, a dry run can't validate
+whether referencing another entity's ID is valid because that ID's existence isn't
+guaranteed.
+
+Dry runs can therefore provide only a best-effort attempt to confirm a resource's
+validity.
+</Info>
+
+### Disable dry run validation
+
+To prevent the dry-run validation step, set the `CHRONOSPHERE_DRY_RUN_VALIDATION_DISABLED`
+environment variable to `1` when running `terraform plan`:
+
+```shell copy
+CHRONOSPHERE_DRY_RUN_VALIDATION_DISABLED=1 terraform plan
+```
+
+## Troubleshooting
+
+Use the following information to help troubleshoot common issues with the Chronosphere Terraform provider.
+
+### Unable to remove resources referenced elsewhere in a manifest
+
+When you remove a resource from a Terraform manifest, or modify it in a manner that
+requires the resource to be destroyed and recreated, Terraform attempts to remove
+the resource before updating references to it elsewhere in the manifest. This can
+lead to various Terraform errors, including timeouts that do not report an error
+message, when the resources being deleted are referenced elsewhere in the Terraform
+manifest.
+
+By design, Terraform prevents providers from defining the order of resources managed
+by the provider, or the order of actions it takes on them. This is a
+[known limitation of Terraform](https://github.com/hashicorp/terraform/issues/31309#issuecomment-1164908203)
+on all Terraform providers, including the Chronosphere provider.
+
+In some affected resources, you can set the
+[`create_before_destroy` lifecycle meta-argument](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle)
+to mitigate the issue by forcing Terraform to create a new resource before destroying
+the old resource. However, resources that require a unique field (such as the
+Chronosphere provider's `name` field) that also enforce `ForceNew` on the resource
+are incompatible with this meta-argument. This includes many Chronosphere provider
+resources.
+
+Because of this, you might first need to remove references to a resource you intend
+to destroy. After that point, Terraform should let you remove the referenced
+resources.

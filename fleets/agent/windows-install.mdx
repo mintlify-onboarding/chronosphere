@@ -1,0 +1,124 @@
+---
+title: Install Core Agent on Windows
+description: Learn how to install Core Agent on Windows.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+In Chronosphere Telemetry Pipeline, you can use [fleets](/fleets) to manage instances
+of Core Agent. Use this guide to install Core Agent on Windows.
+
+<Info>
+Not all input and output plugins are supported on Windows. For a list of supported
+plugins, see the
+[Fluent Bit CMake configuration file](https://github.com/fluent/fluent-bit/blob/master/cmake/windows-setup.cmake).
+</Info>
+
+## Supported environments
+
+Core Agent supports the following Windows versions and architectures:
+
+| Version | Architectures |
+|---------|---------------|
+| Windows Server 2019|  x86, x86-64 |
+| Windows 10 1903 |  x86, x86-64 |
+| Windows Server 2016 |  x86-64 |
+| Windows Server 2012 R2 |  x86-64 |
+
+## Dependencies
+
+For Windows installations, Core Agent has the following general dependencies:
+
+- libc
+- libsasl
+- libsystemd
+- libyaml
+- OpenSSL
+- zlib
+
+## Install from a ZIP archive
+
+Use these steps to install Core Agent from a ZIP archive.
+
+1. [Download](https://calyptia-lts-release-standard.s3.amazonaws.com/index.html)
+   a ZIP archive of the latest version of Core Agent. Choose either the 32-bit
+   or 64-bit archive, depending on your environment.
+
+1. Extract the contents of the ZIP archive.
+
+1. In PowerShell, navigate to the root folder of the extracted files, and then run
+   the following command:
+
+   ```shell copy
+   .\bin\calyptia-fluent-bit.exe -i dummy -o stdout
+   ```
+
+## Install from an EXE or MSI installer
+
+Use these steps to install Core Agent from an EXE or MSI installer.
+
+1. [Download](https://calyptia-lts-release-standard.s3.amazonaws.com/index.html)
+   an EXE or MSI installer for the latest version of Core Agent.
+
+1. Open the installer that you downloaded. This launches the installation wizard.
+
+1. Click **Next** to proceed. By default, Core Agent is installed to the
+   `C:\Program Files\calyptia-fluent-bit\` directory.
+
+1. In PowerShell, run the following command:
+
+    ```shell copy
+   & "C:\Program Files\fluent-bit\bin\fluent-bit.exe" -i dummy -o stdout
+   ```
+
+## Windows service support
+
+Windows services are long-running background processes, similar to Unix daemons.
+You can run Core Agent as a Windows service.
+
+### Register Core Agent as a service
+
+For example, given the following installation layout:
+
+```shell
+C:\calyptia-fluent-bit\
+├── conf
+│   ├── calyptia-fluent-bit.conf
+│   └── parsers.conf
+│   └── plugins.conf
+└── bin
+    ├── calyptia-fluent-bit.dll
+    └── calyptia-fluent-bit.exe
+    └── calyptia-fluent-bit.pdb
+```
+
+You can register Core Agent as a Windows service by running the following command:
+
+```shell copy
+% sc.exe create fluent-bit binpath= "C:\Program Files\calyptia-fluent-bit\bin\calyptia-fluent-bit.exe -c C:\Program Files\calyptia-fluent-bit\conf\calyptia-fluent-bit.conf"
+```
+
+### Start the Core Agent service
+
+To start the Core Agent service, run the following command:
+
+```shell copy
+% sc.exe start calyptia-fluent-bit
+```
+
+### Auto-start the Core Agent service
+
+To configure the Core Agent service to automatically start on boot, run the
+following command:
+
+```shell copy
+% sc.exe config calyptia-fluent-bit start= auto
+```
+
+### Stop the Core Agent service
+
+To stop the Core Agent service, run the following command:
+
+```shell copy
+% sc.exe stop calyptia-fluent-bit
+```

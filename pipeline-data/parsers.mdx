@@ -1,0 +1,139 @@
+---
+title: Parsers
+sidebarTitle: Parsers (Telemetry Pipeline)
+description: Use Chronosphere Telemetry Pipeline to parse data.
+---
+import PipelineFlow from '/snippets/_partials/pipeline-flow-parser.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+<PipelineFlow/>
+
+The telemetry data emitted by different sources often has inconsistent
+information and formats, which can cause problems if data from
+multiple sources passes through a single pipeline. It can also be difficult to
+analyze and process raw, unstructured data.
+
+Parsers address these issues by transforming your telemetry data into a
+predictable, structured format.
+
+<Info>
+The [parse](/pipeline-data/processing-rules/parse) processing rule
+transforms data in a similar way.
+</Info>
+
+## Overview
+
+All pipelines include a `parsers.conf` file with a list of default parsers for
+transforming common telemetry formats, including Docker, Apache,
+and NGINX logs. You can also create [your own parsers](#custom-parsers)
+and add them to a pipeline's parsers file.
+
+Parsers are applied at the [source plugin](/pipeline-data/plugins/source-plugins) level.
+Even though a `parsers.conf` file can include multiple parsers, you can only
+[apply](#apply-a-parser-to-a-source-plugin) a single parser to each source
+within a pipeline.
+
+<Warning>
+When a parser is applied to a source plugin, parsing operations are performed on
+all data ingested by that plugin. Trying to ingest data that isn't compatible
+with the plugin's parser will cause errors.
+</Warning>
+
+You can also use parsers and [processing rules](/pipeline-data/processing-rules)
+in tandem. File-based parsers are applied to data first, and then any
+processing rules are applied to the resulting parsed data.
+
+## Parser syntax
+
+The default `parsers.conf` file included with each pipeline is identical to
+the [default Fluent Bit `parsers.conf` file](https://github.com/fluent/fluent-bit/blob/master/conf/parsers.conf).
+Each parser begins with the `[PARSER]` header and then lists its associated
+key/value pairs. For example, this is the default NGINX parser:
+
+{/* markdownlint-disable MD013 */}
+
+```shell
+[PARSER]
+    Name   nginx
+    Format regex
+    Regex ^(?<remote>[^ ]*) (?<host>[^ ]*) (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^\"]*?)(?: +\S*)?)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")
+    Time_Key time
+    Time_Format %d/%b/%Y:%H:%M:%S %z
+```
+
+{/* markdownlint-enable MD013 */}
+
+## Custom parsers
+
+You can add new parsers or modify existing parsers in a pipeline's `parsers.conf` file.
+
+<Info>
+Due to Kubernetes [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/)
+storage limitations, the total size of a pipeline and its associated resources
+can't exceed 1&nbsp;MiB. This limit includes the combined size of
+[configuration files](/pipeline-configure/config-files), [secrets](/pipeline-configure/secrets),
+parsers, and [any other files](/pipeline-configure/files).
+</Info>
+
+### Parser settings
+
+Parsers in Chronosphere Telemetry Pipeline use the same settings as parsers in Fluent Bit.
+To learn more, consult the Fluent Bit
+[parser configuration parameters](https://docs.fluentbit.io/manual/pipeline/parsers/configuring-parser#configuration-parameters)
+documentation.
+
+### Update parsers file
+
+To add a custom parser to a pipeline, you'll need to update the parsers file
+for that pipeline.
+
+1. In [Pipeline CLI](/pipeline-cli), run the following command to return the contents of your pipeline's
+   current parsers file:
+
+   ```shell copy
+   calyptia get pipeline_file --pipeline PIPELINE --name parsers --only-contents > parsers.conf
+   ```
+
+   Replace _`PIPELINE`_ with the name or
+   [unique ID](/pipeline-configure/metadata#get-pipeline-ids) of your pipeline.
+
+1. Modify the contents of `parsers.conf` to include any custom parsers.
+
+1. Run the following command to replace the original parsers file with your newly
+   modified version:
+
+   ```shell copy
+   calyptia update pipeline_file --pipeline PIPELINE --file ./parsers.conf
+   ```
+
+   Replace _`PIPELINE`_ with the name or
+   [unique ID](/pipeline-configure/metadata#get-pipeline-ids) of your pipeline.
+
+## Apply a parser to a source plugin
+
+To apply a parser to a source plugin, add a `parser` key to the YAML entry for
+that plugin in your pipeline's [configuration file](/pipeline-configure/config-files).
+For example, the following snippet shows a source plugin that uses a parser named
+`custom_parser`:
+
+```yaml filename="my-pipeline.yaml"
+pipeline:
+  inputs:
+    - Name: forward
+      parser: custom_parser
+      port: "5170"
+      tls.verify: on
+      tls.debug: "1"
+<...>
+```
+
+The value of `parser` must match the `Name` value of one of the entries in that
+pipeline's `parser.conf` file. For example, to use the NGINX parser shown in
+this guide's [Syntax example](#parser-syntax), set `parser` to `nginx`.
+
+A source plugin can only use a single parser, but you can apply a parser to
+each source plugin within a pipeline. Parsers operate independently between plugins;
+any two source plugins within the same pipeline can use different parsers or can
+use the same parser.

@@ -1,0 +1,88 @@
+---
+title: Installation prerequisites
+sidebarTitle: Installation prerequisites for Telemetry Pipeline
+description: Learn about the prerequisites to install Chronosphere Telemetry Pipeline.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Review and complete the following prerequisites before installing Chronosphere
+Telemetry Pipeline.
+
+## Networking and firewall requirements
+
+Telemetry Pipeline is deployed by container images hosted on the Chronosphere
+GitHub container registry.
+
+If your organization uses outbound firewall rules, you might need to allow the
+following ports and URLs.
+
+<Info>
+All of the listed URLs use the TCP protocol and port `443`.
+</Info>
+
+### API endpoint
+
+The main API endpoint for Telemetry Pipeline, which is used for configuration.
+
+```text copy
+cloud-api.calyptia.com
+```
+
+### Web interface URL
+
+URL for the Telemetry Pipeline web interface.
+
+```text copy
+core.calyptia.com
+```
+
+### Helm charts
+
+Used for the Helm charts for installing and managing Telemetry Pipeline.
+
+```text copy
+helm.calyptia.com
+```
+
+### Installation script
+
+Used for the `install-core.sh` scripts for VMs or bare metal packages.
+
+```text copy
+core-packages.calyptia.com
+```
+
+### Download links
+
+Ensures Telemetry Pipeline download links are accessible to the enterprise.
+
+```text copy
+ghcr.io/calyptia
+```
+
+### Registry tokens
+
+Contains the tokens required from the GitHub container registry.
+
+```text copy
+ghcr.io/token?scope=repository:calyptia/core:pull&service=ghcr.io ghcr.io/token?scope=repository:calyptia/core/calyptia-fluent-bit:pull&service=ghcr.io
+```
+
+### Manifest and container images
+
+Contains the manifest and container images required from the GitHub container
+registry.
+
+
+```text copy
+http://ghcr.io/v2/calyptia/core/manifests/latest
+```
+
+### Image layers
+
+Contains the image layers when applying latest updates.
+
+```text copy
+pkg-containers.githubusercontent.com/objects.githubusercontent.com
+```

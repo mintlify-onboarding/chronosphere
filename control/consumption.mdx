@@ -1,0 +1,44 @@
+---
+title: Control log data
+description: Learn how to create partitions and budgets for your log data in Chronosphere Observability Platform and control the data you keep.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Log data provides your teams with more detailed context to help identify and fix the
+root causes of issues. However, not all logs provide the same utility, and you don't
+want to consume a portion of your license with unnecessary logs.
+
+Chronosphere Observability Platform provides grouping and budgeting mechanisms that
+let you structure log usage by ownership and purpose that matter to your
+organization. You can then [shape log data](/control/consumption/shape-logs/parse-logs)
+to apply finer-grained control.
+
+To help control log data usage, first create
+[_partitions_](/control/consumption/partitions), which are slices of your log data
+with distinct owners. For example, you can create partitions for individual services,
+teams, and environments to provide a consistent structure for attributing usage and
+costs to the proper owners.
+
+Partitions let you apply [_budgets_](/control/consumption/budgeting), which are
+optional shaping policies you can assign to a partition to safeguard against runaway
+usage and overspending.
+
+After defining partitions, use the
+[Logging License Consumption dashboard](/observe/dashboards/chronosphere-managed-dashboards#licensing-overview)
+to view persisted log data consumption against license capacity.
+
+## How to control log data
+
+To manage your log data consumption, complete the following steps:
+
+1. [Create partitions](/control/consumption/partitions).
+1. [Analyze consumption](/control/consumption/analyze).
+1. Optional: [Create budgets](/control/consumption/budgeting).
+1. [Monitor budgets](/control/consumption/budgeting#next-steps).
+1. [Shape log data](/control/consumption/shape-logs).
+
+<Info>
+To delete data from your Observability Platform tenant, contact
+[Chronosphere Support](/support).
+</Info>

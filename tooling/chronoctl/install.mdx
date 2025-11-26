@@ -1,0 +1,269 @@
+---
+title: Install Chronoctl
+description: How to install the Chronoctl command line app to manage your Chronosphere Observability Platform instances.
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+To use Chronoctl, you must first [install](#download-and-install-chronoctl) the app
+locally, and then [authenticate](#authentication) Chronoctl to your Chronosphere
+Observability Platform instance.
+
+## Download and install Chronoctl
+
+Select from the following methods to download and install the latest version of
+Chronoctl, based on your operating system.
+
+<Tabs>
+<Tab title="macOS" id="installation-macos">
+
+To download and install Chronoctl:
+
+1. Use the [`curl`](https://curl.se) command to download Chronoctl for your system's
+   architecture:
+
+   - For Intel (64-bit x86) systems, run:
+
+     ```shell copy
+     curl -LO https://storage.googleapis.com/chronosphere-release/latest/chronoctl-darwin-amd64
+     ```
+   - For Apple Silicon (M-series) systems, run:
+
+     ```shell copy
+     curl -LO https://storage.googleapis.com/chronosphere-release/latest/chronoctl-darwin-arm64
+     ```
+
+   The remaining steps are based on the use of the `arm64` version. Replace `arm64`
+   with `amd64` if you downloaded the Intel version of Chronoctl.
+1. Make the Chronoctl binary executable:
+
+   ```shell copy
+   chmod +x chronoctl-darwin-arm64
+   ```
+
+1. Move the binary into your `PATH`:
+
+   ```shell copy
+   mv chronoctl-darwin-arm64 /usr/local/bin/chronoctl
+   ```
+
+   If `chronoctl` is already installed, this overwrites it with the new version.
+1. Ensure Chronoctl is successfully installed:
+
+   ```shell copy
+   chronoctl version
+   ```
+
+</Tab>
+<Tab title="Linux" id="installation-linux">
+
+To download and install Chronoctl:
+
+1. Use the [`curl`](https://curl.se) command to download Chronoctl for your system's
+   architecture:
+
+   - For `amd64` (64-bit x86), run:
+
+     ```shell copy
+     curl -LO https://storage.googleapis.com/chronosphere-release/latest/chronoctl-linux-amd64
+     ```
+   - For `arm64` (64-bit ARM), run:
+
+     ```shell copy
+     curl -LO https://storage.googleapis.com/chronosphere-release/latest/chronoctl-linux-arm64
+     ```
+
+   The remaining steps are based on the use of the `amd64` version. Replace `amd64`
+   with `arm64` if you downloaded the ARM version of Chronoctl.
+1. Make the Chronoctl binary executable:
+
+   ```shell copy
+   chmod +x chronoctl-linux-amd64
+   ```
+
+1. Move the binary into your `PATH`:
+
+   ```shell copy
+   mv chronoctl-linux-amd64 /usr/local/bin/chronoctl
+   ```
+
+   If `chronoctl` is already installed, this overwrites it with the new
+   version.
+1. Ensure Chronoctl is successfully installed:
+
+   ```shell copy
+   chronoctl version
+   ```
+
+</Tab>
+</Tabs>
+
+Chronosphere supports Chronoctl versions for one year from their release dates.
+Use only a supported version unless explicitly instructed otherwise by Chronosphere
+Support. If you experience issues, upgrade to the latest supported version by following
+the installation steps again.
+
+### Download and install a v0.x.x version
+
+Chronoctl versions prior to v1.0.0 implement some deprecated features removed in
+Chronoctl v1.0.0, such as:
+
+- The [`sync prometheus` command](/tooling/chronoctl#sync-commands)
+- The `convert` commands
+- YAML definitions that use `kind: v2`
+
+Chronosphere doesn't support the use of Chronoctl v0.x.x. The command syntax, features,
+and data formats this older version of Chronoctl uses differ significantly from v1.0.0.
+Use the v0.x.x version only if you must use these removed features, and only for
+as long as required.
+
+Select from the following methods to download and install Chronoctl v0.x.x, based
+on your operating system.
+
+<Tabs>
+<Tab title="macOS" id="0xx-installation-macos">
+
+To download and install Chronoctl:
+
+1. Use the [`curl`](https://curl.se) command to download Chronoctl for your system's
+   architecture:
+
+   - For Intel (64-bit x86) systems, run:
+
+     ```shell copy
+     curl -LO https://storage.googleapis.com/chronosphere-release/latest-v0/chronoctl-darwin-amd64
+     ```
+   - For Apple Silicon (M-series) systems, run:
+
+     ```shell copy
+     curl -LO https://storage.googleapis.com/chronosphere-release/latest-v0/chronoctl-darwin-arm64
+     ```
+
+   The remaining steps are based on the use of the `arm64` version. Replace `arm64`
+   with `amd64` if you downloaded the Intel version of Chronoctl.
+1. Make the Chronoctl binary executable:
+
+   ```shell copy
+   chmod +x chronoctl-darwin-amd64
+   ```
+
+1. Move the binary into your `PATH`:
+
+   ```shell copy
+   mv chronoctl-darwin-amd64 /usr/local/bin/chronoctl
+   ```
+
+1. Ensure Chronoctl is successfully installed:
+
+   ```shell copy
+   chronoctl version
+   ```
+
+</Tab>
+<Tab title="Linux" id="0xx-installation-linux">
+
+To download and install Chronoctl:
+
+1. Use the [`curl`](https://curl.se) command to download Chronoctl for your system's
+   architecture:
+
+   - For `amd64` (64-bit x86), run:
+
+     ```shell copy
+     curl -LO https://storage.googleapis.com/chronosphere-release/latest-v0/chronoctl-linux-amd64
+     ```
+   - For `arm64` (64-bit ARM), run:
+
+     ```shell copy
+     curl -LO https://storage.googleapis.com/chronosphere-release/latest-v0/chronoctl-linux-arm64
+     ```
+
+   The remaining steps are based on the use of the `amd64` version. Replace `amd64`
+   with `arm64` if you downloaded the ARM version of Chronoctl.
+1. Make the Chronoctl binary executable:
+
+   ```shell copy
+   chmod +x chronoctl-linux-amd64
+   ```
+
+1. Move the binary into your `PATH`:
+
+   ```shell copy
+   mv chronoctl-linux-amd64 /usr/local/bin/chronoctl
+   ```
+
+1. Ensure Chronoctl is successfully installed:
+
+   ```shell copy
+   chronoctl version
+   ```
+
+</Tab>
+</Tabs>
+
+## Authentication
+
+Before you can use Chronoctl, you need both an API token and your organization's
+name.
+
+### API token
+
+Chronoctl performs tasks that require administrative privileges, and requires an
+API token with administrative privileges to authenticate. How you use Chronoctl
+impacts the authentication mechanism for interacting with Observability Platform.
+You can use Chronoctl for [local development](#local-development),
+[local administration](#local-administration), and
+[production environments](#production-environments).
+
+Chronoctl accepts an API token as the `--api-token` argument, or as the contents
+of a file specified as the argument of the `--api-token-filename` flag.
+
+If you don't provide a token as an argument, Chronoctl then looks for it in the
+environment variable `CHRONOSPHERE_API_TOKEN`, which you can set by running the
+following command or adding it to your shell profile:
+
+```shell copy
+export CHRONOSPHERE_API_TOKEN=TOKEN
+```
+
+Replace _`TOKEN`_ with the API token you generated to authenticate with Observability
+Platform.
+
+#### Local development
+
+When using Chronoctl for local development, use [`chronoctl auth`](/tooling/chronoctl#auth) to
+authenticate as your Observability Platform user.
+
+You can use `chronoctl auth print-session-id` as the `API-Token` with any of the
+[Chronosphere API endpoints](/tooling/api-info) when developing or testing locally.
+
+#### Local administration
+
+To authenticate as an administrative user account for local administration, use a
+[personal access token](/administer/accounts-teams/personal-access-tokens).
+
+#### Production environments
+
+If you use Chronoctl in production environments as part of your continuous
+integration, or in scripts, use
+[service accounts](/administer/accounts-teams/service-accounts) to authenticate with
+Observability Platform. Chronosphere recommends using either an unrestricted service
+account, or a user or service account that belongs to a team with the SysAdmin role.
+
+### Organization name
+
+Chronoctl needs the name of your team's organization as the `--org-name` argument.
+If you don't provide your organization's name as an argument, Chronoctl looks for
+it in the environment variable `CHRONOSPHERE_ORG_NAME`.
+
+To set this variable, run the following command or adding it to your shell profile:
+
+```shell copy
+export CHRONOSPHERE_ORG_NAME=NAME
+```
+
+Replace _`NAME`_ with the subdomain name you use to access Observability Platform.
+For example, if your team uses `example.chronosphere.io`, your team's organization
+name is `example`.
+
+To use Chronoctl after installing it, see the [Overview](/tooling/chronoctl).

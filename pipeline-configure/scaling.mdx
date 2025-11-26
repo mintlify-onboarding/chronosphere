@@ -1,0 +1,179 @@
+---
+title: Scaling and replicas
+sidebarTitle: Scaling and replicas (Telemetry Pipeline)
+description: Learn how Chronosphere Telemetry Pipeline uses scaling and replicas.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+<Info>
+The information on this page applies to pipelines with the Deployment or
+StatefulSet [workload type](/pipeline-configure/kubernetes/workloads), but not
+pipelines with the DaemonSet workload type.
+</Info>
+
+Chronosphere Telemetry Pipeline uses replica pods to scale pipelines. Each pipeline
+needs at least one replica to function. If a pipeline has more than one replica,
+any ingested data is balanced between those replicas accordingly.
+
+You can assign a [fixed number of replicas](#fixed-number-of-replicas) to
+a pipeline, or [enable horizontal pod autoscaling](#horizontal-pod-autoscaling)
+to automatically add and remove replicas in response to utilization changes.
+
+## Fixed number of replicas
+
+Use one of the following methods to set a fixed number of replicas for your pipelines:
+
+<Info>
+For replica counts with a volume over 100&nbsp;TB a day, contact
+[Chronosphere Support](/support) prior to scaling up to ensure stability.
+</Info>
+
+<Tabs>
+<Tab title="Web interface" id="autoscaling-ui">
+
+1. Sign in to the [Telemetry Pipeline web interface](https://core.calyptia.com/).
+1. Open the project that contains the pipeline that you want to modify.
+1. Go to **Core Instances**, then click the name of the Core Instance associated
+   with the pipeline that you want to modify.
+1. Under **Data Pipelines**, click the name of the pipeline that you want to
+   modify.
+1. Go to **<Icon icon="square-pen" />&nbsp;Advanced Settings**.
+1. Increase the **Replicas** field to the amount you want, and then click
+   **Apply**.
+
+</Tab>
+<Tab title="Pipeline CLI" id="autoscaling-cli">
+
+Use the `update` command to scale an existing pipeline:
+
+```shell copy
+calyptia update pipeline PIPELINE_NAME_OR_ID --replicas NUM_OF_REPLICAS
+```
+
+To examine the number of replicas for a given pipeline, run:
+
+```shell copy
+calyptia get pipelines --core-instance CORE_INSTANCE
+```
+
+The output is similar to the following:
+
+```text
+ NAME                 REPLICAS  STATUS   AGE
+ pipeline-name               3  STARTED  15 hours
+```
+
+</Tab>
+</Tabs>
+
+## Horizontal pod autoscaling
+
+> Requires Core Instance version 2.12.3 or later.
+
+Pipelines support [horizontal pod autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+(HPA), which enables Telemetry Pipeline to add and remove replicas as needed.
+
+### Enable horizontal pod autoscaling
+
+To enable HPA, [create or modify a pipeline](/pipeline-data/create-modify)
+through [Pipeline CLI](/pipeline-cli) and include both the `--scale-up-value` and
+`--scale-down-value` flags. You must assign a value greater than `0` to both flags,
+but these values don't need to be identical to each other.
+
+### Configure horizontal pod autoscaling
+
+To configure HPA, use the following flags when you create or update a pipeline through [Pipeline CLI](/pipeline-cli):
+
+| Flag | Description | Value |
+| ---- | ----------- | ----- |
+| `--max-replicas` | The maximum number of replicas to which the autoscaler can scale up. | Example: `6` |
+| `--min-replicas` | The minimum number of replicas to which the autoscaler can scale down. | Example: `3` |
+| `--scale-up-type` | The type of scale-up policy to implement. | `Pods` or`Percent`z |
+| `--scale-up-value` | Required. The amount of change to implement through scale-up policies. | Must be greater than `0`. |
+| `--scale-up-period-seconds` | The window of time for which the scale-up policy should hold true, in seconds. | Example: `30` |
+| `--scale-down-type` | The type of scale-down policy to implement. | `Pods` or `Percent` |
+| `--scale-down-value` | Required. The amount of change to implement through scale-down policies. | Example: `15` |
+| `--scale-down-period-seconds` | The window of time for which the scale-down policy should hold true, in seconds. | Example: `30` |
+| `--utilization-cpu-average` | The target percentage value for average CPU utilization. The autoscaler attempts to maintain equilibrium around this value by scaling pipelines up or down accordingly. | Example: `25` |
+| `--utilization-memory-average` | The target percentage value for average memory utilization. The autoscaler attempts to maintain equilibrium around this value by scaling pipelines up or down accordingly. | Example: `30` |
+
+### Disable horizontal pod autoscaling
+
+To disable HPA, update a pipeline through [Pipeline CLI](/pipeline-cli)
+and set both the `--scale-up-value` and `--scale-down-value` flags to `0`. This
+prevents the autoscaler from scaling pipelines up or down, which means other HPA
+settings won't affect your pipelines.
+
+## Pause a pipeline
+
+You can pause a pipeline by setting its replicas to zero, which temporarily
+prevents that pipeline from routing or processing data. Use one of these methods
+to pause a pipeline:
+
+<Tabs>
+<Tab title="Web interface" id="pause-ui">
+
+{/* markdownlint-disable MD013 */}
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Open the project that contains the pipeline that you want to pause.
+1. Go to **Core Instances**, then click the name of the Core Instance associated
+   with the pipeline you want to pause.
+1. Under **Data Pipelines**, find the pipeline that you want to pause, and
+   then click **<Icon icon="gear" />&nbsp;Settings&nbsp;<span aria-label="and then">></span> <Icon icon="pause" />&nbsp;Pause**.
+1. In the dialog that appears, click **Yes** to confirm your choice.
+
+{/* markdownlint-enable MD013 */}
+
+</Tab>
+<Tab title="Pipeline CLI" id="pause-cli">
+
+In [Pipeline CLI](/pipeline-cli), run the following command:
+
+```shell copy /PIPELINE/
+calyptia update pipeline PIPELINE --replicas 0
+```
+
+Replace _`PIPELINE`_ with the name or [unique ID](/pipeline-configure/metadata#get-pipeline-ids)
+of the pipeline you want to pause.
+
+</Tab>
+</Tabs>
+
+### Unpause a pipeline
+
+If a pipeline is paused, use one of these methods to unpause it:
+
+<Tabs>
+<Tab title="Web interface" id="unpause-ui">
+
+{/* markdownlint-disable MD013 */}
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Open the project that contains the pipeline that you want to unpause.
+1. Go to **Core Instances**, then click the name of the Core Instance associated
+   with the pipeline you want to unpause.
+1. Under **Data Pipelines**, find the pipeline that you want to unpause, and
+   then click **<Icon icon="gear" />&nbsp;Settings&nbsp;<span aria-label="and then">></span> <Icon icon="forward-fast" />&nbsp;Resume**.
+1. In the dialog that appears, click **Yes** to confirm your choice.
+
+{/* markdownlint-enable MD013 */}
+
+</Tab>
+<Tab title="Pipeline CLI" id="unpause-cli">
+
+In [Pipeline CLI](/pipeline-cli), run the following command:
+
+```shell copy /PIPELINE/ /REPLICAS/
+calyptia update pipeline PIPELINE --replicas REPLICAS
+```
+
+Replace the following values:
+
+- _`PIPELINE`_: The name or [unique ID](/pipeline-configure/metadata#get-pipeline-ids)
+of the pipeline you want to unpause.
+- _`REPLICAS`_: An integer value greater than zero.
+
+</Tab>
+</Tabs>

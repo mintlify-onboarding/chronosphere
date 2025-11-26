@@ -1,0 +1,232 @@
+---
+title: Troubleshoot ingestion
+sidebarTitle: Troubleshooting ingestion
+description: Troubleshoot issues with Observability Platform receiving data from Chronosphere and OTel Collectors.
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+If you determine some or all of your data isn't displaying in Chronosphere Observability Platform,
+use the following information to ensure your Collector is ingesting metrics or traces.
+
+## Verify incoming data
+
+Metrics and traces have different verification processes.
+
+### Verify traces
+
+The [Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer) provides a real-time view
+of incoming traces grouped by tag and their relative frequency. Use the Live Telemetry
+Analyzer to display the stream of incoming spans from your trace data.
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
+1. Click the **Traces** tab.
+1. Click **<Icon icon="play" /> Capture live data** to display the stream of incoming
+   spans. The default grouping shows spans by service (`__service__`), but you can
+   include additional tags to group by, such as `__trace_id__` and `__span_id__`.
+
+### Verify metrics
+
+You can also use the [Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer) to
+inspect the incoming stream of metrics ingested by Observability Platform.
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
+1. Click the **Metrics** tab.
+1. Click **Capture live data** to display streaming metrics.
+1. In the **Keys** list, select the `__name__` and `instance` label keys.
+1. In the **Values** filter, enter a `key:value` pair for a metric the OpenTelemetry
+   exporter is sending, or any specific value the Collector is sending.
+
+The **OpenTelemetry Ingestion & Health** [dashboard](/observe/dashboards)
+provides two charts which show the rate of metric data points per received and
+rejected by the Chronosphere OTLP API.
+
+- **Metric Data Points Received**
+- **Metric Data Points Rejected**
+
+## No data displays in Observability Platform
+
+Common reasons and corresponding log messages for data not appearing in Observability Platform:
+
+### Missing API token
+
+If your API key is missing, the following message displays in the OpenTelemetry
+Collector logs:
+
+```text
+Exporting failed. Try enabling retry_on_failure config option to retry on retryable errors	{"kind": "exporter", "data_type": "traces", "name": "otlp/chronosphere", "error": "Permanent error: rpc error: code = Unauthenticated desc = missing auth header: API-Token"}
+```
+
+Ensure you've added the `API-Token` header to the `otlp/chronosphere` exporter
+[configuration](/ingest/metrics-traces/otel/otel-ingest) and that you're correctly setting and
+passing API token value.
+
+### Invalid API token
+
+If your API key is invalid, the OpenTelemetry Collector logs report the following error:
+
+```text
+Exporting failed. Try enabling retry_on_failure config option to retry on retryable errors	{"kind": "exporter", "data_type": "traces", "name": "otlp/chronosphere", "error": "Permanent error: rpc error: code = Unauthenticated desc = invalid auth token"}
+```
+
+The Exporter is sending an `API-Token`, but it's invalid. Ensure you've correctly
+copied the API Token value and that you're correctly setting and passing the value in
+for the API token.
+
+### Incorrect permission
+
+If your [service account](/administer/accounts-teams/service-accounts)
+doesn't have write permission, the OpenTelemetry Collector logs report the following error:
+
+```text
+Exporting failed. Try enabling retry_on_failure config option to retry on retryable errors	{"kind": "exporter", "data_type": "metrics", "name": "otlp/chronosphere", "error": "Permanent error: rpc error: code = PermissionDenied desc = Permission denied"}
+```
+
+The exporter requests an API token with write access. The exporter doesn't require
+read access, so you can resolve this issue by creating a new service account with a
+`write-only` scope.
+
+## Some metrics are missing in Observability Platform
+
+The following sections can help you when you're ingesting some metrics, but some of
+the expected metrics are missing.
+
+Validations are applied to metrics as they're ingested.
+
+| Reason code            | Description | Remediation |
+| ---------------------- | ----------- | ----------- |
+| `label_name_invalid`   | The label name isn't compatible with Prometheus. The Collector and Chronosphere OTLP endpoint normalize this for you. | See the Prometheus documentation on [metric names and labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels). |
+| `label_value_invalid`  | The label value is invalid. This is enforced only for metric names, which must follow a specific format for PromQL compatibility. The Collector and Chronosphere OTLP endpoint normalize this on your behalf.| See the Prometheus documentation on [metric names and labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels). |
+| `label_name_too_long`  | The maximum supported length for a label name is 512 bytes. | Update your instrumentation or consider adding [Prometheus relabel rules](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) or OTel Collector processor changes. |
+| `label_value_too_long` | The maximum supported length for a label value is 1,024 bytes. | Update your instrumentation or consider adding [Prometheus relabel rules](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) or OTel Collector processor changes. |
+| `label_value_empty`    | Label values can't be empty. | Use a sentinel value of "unknown" for empty strings. |
+| `label_count_too_high` | The maximum supported number of labels for a single time series is 64. | Update your instrumentation or consider adding [Prometheus relabel rules](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) or OTel Collector processor changes. |
+| `total_bytes_too_high` | The maximum supported amount of bytes used across all labels for a single time series is 4,096. | Update your instrumentation or consider adding [Prometheus relabel rules](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) or OTel Collector processor changes. |
+| `otel_service_instance_id_required` | See [`OTEL_SERVICE_INSTANCE_ID_REQUIRED` validation error](#otel_service_instance_id_required-validation-error). | See [`OTEL_SERVICE_INSTANCE_ID_REQUIRED` validation error](#otel_service_instance_id_required-validation-error). |
+| `histogram_sample_invalid` | An exponential histogram sample contains internal inconsistencies, such as a mismatch between the overall count field and the sum of all bucket counts. | Check for bugs in instrumentation libraries that emit exponential histograms or OTel Collector receivers or processors that might be corrupting histograms. |
+
+## Metrics were dropped in a partial success
+
+When
+[ingesting metrics using the OpenTelemetry protocol](/ingest/metrics-traces/otel/otel-ingest),
+Observability Platform returns a
+[partial success](https://opentelemetry.io/docs/specs/otlp/#partial-success) response
+when [metrics are dropped](#metrics-were-dropped-in-a-partial-success). The
+OpenTelemetry Collector logs warnings for partial successes, and you can configure it
+to provide additional details about what failed.
+
+In the
+[OpenTelemetry Collector OTLP Exporter configuration](/ingest/metrics-traces/otel/otel-ingest#configure-the-opentelemetry-collector),
+add the `Chronosphere-Metrics-Validation-Response` header with the value set to
+`SUMMARY` or `DETAILED` to include the reasons why the metrics were dropped, and
+to see which metrics were dropped.
+
+The following is an example of a `DETAILED` response logged by the OpenTelemetry Collector:
+
+```text
+2025-05-09T17:42:29.363Z	warn	otlpexporter@v0.123.0/otlp.go:120	Partial success response	{"message": "{\"message\":\"1 of 3 time series failed ingest validation and were dropped. This error includes a sample of up to 25 dropped series.\",\"details\":[{\"reason\":\"OTEL_SERVICE_INSTANCE_ID_REQUIRED\",\"metric\":\"testservice_metrics_sum\",\"subreason\":\"\",\"labels\":{\"deployment_environment\":\"local\",\"foo\":\"baz\",\"job\":\"testservice\",\"service_name\":\"testservice\"}}]}", "dropped_data_points": 1}
+```
+
+## OTEL_SERVICE_INSTANCE_ID_REQUIRED validation error
+
+When using the OpenTelemetry Collector, Observability Platform requires
+`service.name` and `service.instance.id` as labels for all metrics to construct the
+Prometheus resource attributes. Metrics without these labels will be rejected and the
+following error message displays in your logs:
+
+```text
+2025-05-16T22:08:55.619Z	warn	otlpexporter@v0.126.0/otlp.go:120	Partial success response	{"message": "78 of 78 time series failed ingest validation and were dropped. Add a header to the OTLP exporter to get additional details: 'Chronosphere-Metrics-Validation-Response: SUMMARY' or 'Chronosphere-Metrics-Validation-Response: DETAILED'", "dropped_data_points": 78}
+```
+
+Add the `Chronosphere-Metrics-Validation-Response: SUMMARY` header to the
+[OTLP Exporter](/ingest/metrics-traces/otel/otel-ingest#configure-the-opentelemetry-collector)
+to include the validation error code in the response.
+
+To resolve this, add an attributes processor
+to your metrics pipeline to map an existing label that can be used as the unique
+instance label for your environment. See
+[Mapping resource attributes](/ingest/metrics-traces/otel/otel-ingest#map-resource-attributes-to-prometheus-job-and-instance)
+for additional information.
+
+To troubleshoot this issue, investigate metric data points and their attributes
+to determine what attributes the metric includes.
+
+Add the `debug` exporter with `detailed` verbosity in the OpenTelemetry Collector
+configuration exporters ConfigMap. Then, add the `debug` exporter to your metrics
+pipeline. For example:
+
+```yaml copy
+exporters:
+  # adds the debug exporter to print data points to log output
+  debug:
+    verbosity: detailed
+# ... snippet
+service:
+  # ... snippet
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [transform, batch, resourcedetection, resourceattributes/instance]
+      exporters: [debug, otlp/chronosphere]
+```
+
+The following is sample output for a metric datapoint logged using the `debug`
+exporter. When you review the resource attributes list, you can see the required
+`service.name` is available, but `service.instance.id` is missing. The `host.name`
+attribute is a unique attribute which can be used as the `service.instance.id`.
+See
+[Mapping resource attributes](/ingest/metrics-traces/otel/otel-ingest#map-resource-attributes-to-prometheus-job-and-instance)
+to learn how to add attribute mapping to copy the `host.name` attribute to
+`service.instance.id`.
+
+```text
+2023-10-18T16:38:46.172Z	info	ResourceMetrics #0
+Resource SchemaURL: https://opentelemetry.io/schemas/1.6.1
+Resource attributes:
+     -> service.namespace: Str(opentelemetry-demo)
+     -> service.name: Str(currencyservice)
+     -> telemetry.sdk.version: Str(1.10.0)
+     -> telemetry.sdk.name: Str(opentelemetry)
+     -> telemetry.sdk.language: Str(cpp)
+     -> host.name: Str(3d181cdaa016)
+     -> os.type: Str(linux)
+ScopeMetrics #0
+ScopeMetrics SchemaURL:
+InstrumentationScope app_currency 1.3.0
+Metric #0
+Descriptor:
+     -> Name: app_currency_counter
+     -> Description:
+     -> Unit:
+     -> DataType: Sum
+     -> IsMonotonic: true
+     -> AggregationTemporality: Delta
+NumberDataPoints #0
+Data point attributes:
+     -> currency_code: Str(USD)
+StartTimestamp: 2023-10-18 16:38:45.103115256 +0000 UTC
+Timestamp: 2023-10-18 16:38:46.106640465 +0000 UTC
+Value: 2
+```
+
+### Errors claim that metrics don't support exemplars
+
+Versions of the Chronosphere Collector prior to v0.107.0 fail time-series validation
+with the error message `metric name <YOUR_HISTOGRAM_NAME_COUNT> does not support exemplars`
+in the Collector logs when using Prometheus clients that support OpenMetrics 1.1.
+
+The OpenMetrics 1.0 specification allowed exemplars only on `histogram_bucket` and
+`counter` time series. The OpenMetrics 1.1 specification allows exemplars for all
+time series.
+
+New Prometheus client versions implementing this updated specification, such as
+[Prometheus Java Client v1.2.0](https://github.com/prometheus/client_java/releases/tag/v1.2.0),
+support exemplars for all time series. This causes time-series validation errors
+in earlier versions of the Chronosphere Collector.
+
+Upgrade to Chronosphere Collector v0.107.0 or later before upgrading Prometheus
+clients to versions that support exemplars for all time series.

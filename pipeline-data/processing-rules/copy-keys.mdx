@@ -1,0 +1,65 @@
+---
+title: Copy keys
+description: Learn about the copy keys processing rule in Chronosphere Telemetry Pipeline.
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The copy keys [processing rule](/pipeline-data/processing-rules) copies the value of
+a specified source key to the value of a specified destination key. This destination
+can either be a new or existing key.
+
+## Configuration parameters
+
+<Params />
+
+| Name                    | Key | Description | Default |
+| ----------------------- | --- | ----------- | ------- |
+| **Source key**          | `src` | Required. The key whose value to copy. | _none_ |
+| **Destination key**     | `dst` | Required. The key whose value is set to match the source key. If no matching key exists, this rule creates a new key and then set its value accordingly. | _none_ |
+| **Regex engine**        | `regexEngine` | Required. The [engine](/pipeline-data/processing-rules#regex-engines) to parse your regular expression. Accepted values: `GNU`, `Oniguruma`, `PCRE2`, `POSIX`, `TRE`. | `PCRE2` |
+| **Regex mode** checkbox | `regexMode` | Indicates whether the values of the source key and destination key are regular expressions. If selected, **Source key** is treated as a regular expression and **Destination key** is treated as a substitution pattern. | Not selected |
+| **Comment**             | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Example
+
+Using the block keys rule lets you copy the same value across multiple keys or
+create a new key with the same value as an existing key.
+
+For example, given the following sample website log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Source key** value `page_id` and the
+**Destination key** value `product_id` returns the following result:
+
+```json
+{"user_id":3,"product_id":30,"page_id":30,"action":"purchase","timestamp":"2023-03-28T09:08:41.64283645Z"}
+{"user_id":4,"product_id":10,"page_id":10,"action":"purchase","timestamp":"2023-03-28T09:08:42.643343109Z"}
+{"user_id":1,"product_id":50,"page_id":50,"action":"click","timestamp":"2023-03-28T09:08:48.643600498Z"}
+{"user_id":5,"product_id":40,"page_id":40,"action":"purchase","timestamp":"2023-03-28T09:08:50.643773688Z"}
+{"user_id":1,"product_id":30,"page_id":30,"action":"purchase","timestamp":"2023-03-28T09:08:51.643932272Z"}
+{"user_id":2,"product_id":40,"page_id":40,"action":"click","timestamp":"2023-03-28T09:08:56.644080944Z"}
+{"user_id":3,"product_id":30,"page_id":30,"action":"click","timestamp":"2023-03-28T09:09:03.64425954Z"}
+{"user_id":1,"product_id":20,"page_id":20,"action":"view","timestamp":"2023-03-28T09:09:03.644317046Z"}
+{"user_id":2,"product_id":50,"page_id":50,"action":"purchase","timestamp":"2023-03-28T09:09:10.64447719Z"}
+{"user_id":2,"product_id":10,"page_id":10,"action":"view","timestamp":"2023-03-28T09:09:17.644810963Z"}
+{"user_id":1,"product_id":50,"page_id":50,"action":"view","timestamp":"2023-03-28T09:09:20.644994805Z"}
+```
+
+This rule copied the value of each log's `page_id` key to the value of a new key
+called `product_id`.

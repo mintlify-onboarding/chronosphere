@@ -1,0 +1,156 @@
+---
+title: Networking
+description: Configure networking settings in Chronosphere Telemetry Pipeline.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Use the information on this page to configure different networking settings in
+Chronosphere Telemetry Pipeline.
+
+## Ports
+
+Pipelines use various ports (also referred to as _endpoints_) to send and
+receive data. These ports correspond to different components of each pipeline.
+
+### View pipeline ports
+
+To view a list of open ports for a pipeline, use the following command:
+
+```shell copy
+calyptia get endpoints --pipeline PIPELINE
+```
+
+Replace _`PIPELINE`_ with the name or
+[unique ID](/pipeline-configure/metadata#get-pipeline-ids) of your pipeline.
+
+Each item in the resulting list includes a protocol type,
+[a frontend port, and a backend port](#frontend-and-backend-ports).
+
+### Plugins
+
+Most [source plugins](/pipeline-data/plugins/source-plugins) and some
+[destination plugins](/pipeline-data/plugins/destination-plugins) expose
+an associated port. Plugins that expose a port will set a default value for that
+port, but you can override this value when you configure plugins through the
+Telemetry Pipeline web interface or through
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Health check pipelines
+
+By default, the [health check pipeline](/pipelines/concepts#health-check-pipeline)
+within each Core Instance exposes an HTTP server on TCP port `2020`.
+
+### Frontend and backend ports
+
+Each pipeline component uses a triplet that consists of a frontend port, a backend
+port, and a protocol type. Frontend ports are exposed externally and let pipelines
+communicate with different services to send and receive telemetry data. Backend
+ports are only used within a pipeline's internal Kubernetes infrastructure to forward
+traffic to pods.
+
+When you set a port number for a pipeline component, the same port number is
+applied to both the frontend and backend ports for that component. These frontend
+and backend port numbers stay in sync unless a conflict triggers
+[automatic reassignment](#automatic-reassignment) for the frontend port.
+
+#### Uniqueness
+
+Within a single pipeline, each backend port must use a unique port number and protocol.
+Within a [Core Instance](/pipelines/concepts#core-instance), backend ports can
+overlap across the pipelines associated with that Core Instance, but each frontend port
+in the Core Instance must use a unique port number and protocol. However, different
+components or pipelines can share a port number if one port uses TCP and the other uses UDP.
+
+For example, two pipelines associated with the same Core Instance can't both have plugins
+that expose TCP port `1600`, but Pipeline A can expose TCP port `1600` and Pipeline
+B can expose UDP port `1600`. Similarly, Pipeline C can't have two different plugins
+that expose TCP port `1850`, but it can have one plugin that exposes TCP port `1850`
+and another plugin that exposes TCP port `1851`.
+
+#### Automatic reassignment
+
+If two pipeline components associated with the same Core Instance try to claim the same port,
+Telemetry Pipeline resolves this conflict by reassigning the
+[frontend port](#frontend-and-backend-ports) of the newer component to a different
+port number.
+
+This reassignment process increments the frontend port number of the newer
+component by one until it finds a non-conflicting port. For example, if Pipeline
+B has a plugin whose frontend and backend port are set to TCP port `2200`, but
+that port number is already in use by Pipeline A, Telemetry Pipeline will attempt
+to reassign the frontend port of Pipeline B's plugin to TCP port `2201`. If TCP
+port `2201` is also already in use, Telemetry Pipeline will attempt to reassign
+the frontend port to TCP port `2202` instead.
+
+As a result of this reassignment process, a component can have a different frontend
+port number and backend port number. In the previous example, if Telemetry Pipeline
+successfully reassigned Pipeline B's plugin on the first attempt, then that plugin's
+frontend port number would be `2201` and its backend port number would still be `2200`.
+
+## Proxies
+
+You can use an HTTP proxy to route traffic between a Core Instance and any connected
+services. To do so, use the following command:
+
+```shell copy /INSTANCE/ /PROXY/
+calyptia update core_instance operator INSTANCE --http-proxy=PROXY
+```
+
+Replace the following values:
+
+- _`INSTANCE`_: The name of your Core Instance.
+- _`PROXY`_: The proxy to use (for example, `http://localhost:3128`).
+
+You can also specify an HTTPS proxy with the `https-proxy` flag.
+
+## Service types
+
+Each pipeline uses one of the available
+[Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/)
+types. The Service types supported by Telemetry Pipeline are:
+
+- [`ClusterIP`](https://kubernetes.io/docs/concepts/services-networking/service/#type-clusterip)
+- [`LoadBalancer`](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer)
+- [`NodePort`](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport)
+
+### Create a pipeline with a specific Service type
+
+When [creating a pipeline](/pipeline-data/create-modify#create-a-pipeline),
+use the `--service-type` flag to specify its Service type:
+
+```shell copy
+calyptia create pipeline --name PIPELINE --core-instance INSTANCE --service-type TYPE
+```
+
+Replace the following values:
+
+- _`PIPELINE`_: A short name you'd like to give your pipeline.
+- _`INSTANCE`_: The name of your Core Instance.
+- _`TYPE`_: The Service type for your pipeline (`ClusterIP`, `LoadBalancer`, or
+  `NodePort`).
+
+<Info>
+If you don't specify a Service type, new pipelines use the `LoadBalancer` Service
+by default.
+</Info>
+
+### Modify the Service type of an existing pipeline
+
+To modify the Service type of an existing pipeline, use the following command:
+
+```shell copy
+calyptia update pipeline PIPELINE --service-type TYPE
+```
+
+Replace the following values:
+
+- _`PIPELINE`_: The name or [unique ID](/pipeline-configure/metadata#get-pipeline-ids)
+  of your existing pipeline.
+- _`TYPE`_: The Service type for your pipeline (`ClusterIP`, `LoadBalancer`, or
+  `NodePort`).
+
+<Info>
+Modifying a pipeline's Service type affects all [ports](/pipeline-configure/networking#ports)
+within that pipeline.
+</Info>

@@ -1,0 +1,116 @@
+---
+title: Flatten subrecord
+description: Learn about the flatten subrecord processing rule in Chronosphere Telemetry Pipeline.
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The flatten subrecord [processing rule](/pipeline-data/processing-rules) uses regular
+expressions to search for key/value pairs inside a JSON object, then either moves or
+copies any applicable key/value pairs to the top level of the record.
+
+## Configuration parameters
+
+<Params />
+
+| Name                       | Key         | Description | Default |
+| -------------------------- | ----------- | ----------- | ------- |
+| **Key**                    | `key` | Required. The key of the object that contains key/value pairs to move or copy. You can also use [record accessor syntax](/pipeline-data/processing-rules#record-accessor-syntax) to reference keys nested in another nested object. | _none_ |
+| **Regex**                  | `regex` | Required. The regular expression that determines which key/value pairs to move or copy. A value of `^.+$` matches all key/value pairs contained by the specified object. | `^.+$` |
+| **Replacement key**        | `keyReplacement` | Required. The regular expression that sets the naming pattern for keys that are moved or copied. A value of `%1` preserves all keys' original names. | `%1` |
+| **Keep original** checkbox | `keepOrig` | If selected, preserves the object specified in **Key**. If unselected, the flatten subrecord rule moves any applicable key/value pairs to the top level of the record, and then removes the object specified in **Key**. | Not selected |
+| **Comment** | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Examples
+
+Using the flatten subrecord rule lets you restructure your telemetry data by
+pulling key/value pairs out of a nested object and storing them as flat data
+at the record's root.
+
+### Move key/value pairs
+
+For example, given this sample log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user":{"account":{"vip":"no","id":3},"device":"mobile"},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user":{"account":{"vip":"yes","id":4},"device":"desktop"},"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user":{"account":{"vip":"no","id":1},"device":"desktop"},"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user":{"account":{"vip":"yes","id":5},"device":"mobile"},"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user":{"account":{"vip":"no","id":1},"device":"other"},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user":{"account":{"vip":"yes","id":2},"device":"mobile"},"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user":{"account":{"vip":"no","id":3},"device":"desktop"},"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user":{"account":{"vip":"no","id":1},"device":"desktop"},"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user":{"account":{"vip":"yes","id":2},"device":"desktop"},"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user":{"account":{"vip":"yes","id":2},"device":"other"},"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user":{"account":{"vip":"no","id":1},"device":"mobile"},"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Key** value `$user.account`, the **Regex** value `id`,
+and the **Replacement key** value `user.%1` returns the following result:
+
+```json
+{"user.id":3,"timestamp":"2023-03-28T09:08:41.64283645Z","user":{"device":"mobile"},"action":"purchase","page_id":30}
+{"user.id":4,"timestamp":"2023-03-28T09:08:42.643343109Z","user":{"device":"desktop"},"action":"purchase","page_id":10}
+{"user.id":1,"timestamp":"2023-03-28T09:08:48.643600498Z","user":{"device":"desktop"},"action":"click","page_id":50}
+{"user.id":5,"timestamp":"2023-03-28T09:08:50.643773688Z","user":{"device":"mobile"},"action":"purchase","page_id":40}
+{"user.id":1,"timestamp":"2023-03-28T09:08:51.643932272Z","user":{"device":"other"},"action":"purchase","page_id":30}
+{"user.id":2,"timestamp":"2023-03-28T09:08:56.644080944Z","user":{"device":"mobile"},"action":"click","page_id":40}
+{"user.id":3,"timestamp":"2023-03-28T09:09:03.64425954Z","user":{"device":"desktop"},"action":"click","page_id":30}
+{"user.id":1,"timestamp":"2023-03-28T09:09:03.644317046Z","user":{"device":"desktop"},"action":"view","page_id":20}
+{"user.id":2,"timestamp":"2023-03-28T09:09:10.64447719Z","user":{"device":"desktop"},"action":"purchase","page_id":50}
+{"user.id":2,"timestamp":"2023-03-28T09:09:17.644810963Z","user":{"device":"other"},"action":"view","page_id":10}
+{"user.id":1,"timestamp":"2023-03-28T09:09:20.644994805Z","user":{"device":"mobile"},"action":"view","page_id":50}
+```
+
+This rule searched for applicable key/value pairs inside the `account` object,
+moved `id` up into a new key named `user.id` at the record's top level,
+and then removed `account` and the key/value pairs it originally contained.
+
+### Copy key/value pairs
+
+You can also use the **Keep original** setting to copy key/value pairs out of an
+object instead of moving them. For example, given this sample log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user":{"account":{"vip":"no","id":3},"device":"mobile"},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user":{"account":{"vip":"yes","id":4},"device":"desktop"},"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user":{"account":{"vip":"no","id":1},"device":"desktop"},"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user":{"account":{"vip":"yes","id":5},"device":"mobile"},"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user":{"account":{"vip":"no","id":1},"device":"other"},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user":{"account":{"vip":"yes","id":2},"device":"mobile"},"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user":{"account":{"vip":"no","id":3},"device":"desktop"},"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user":{"account":{"vip":"no","id":1},"device":"desktop"},"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user":{"account":{"vip":"yes","id":2},"device":"desktop"},"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user":{"account":{"vip":"yes","id":2},"device":"other"},"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user":{"account":{"vip":"no","id":1},"device":"mobile"},"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Key** value `$user.account`, the **Regex** value `id`, the
+**Replacement key** value `user.%1`, and the **Keep original** setting enabled
+returns the following result:
+
+```json
+{"user.id":3,"timestamp":"2023-03-28T09:08:41.64283645Z","user":{"device":"mobile","account":{"vip":"no","id":3}},"action":"purchase","page_id":30}
+{"user.id":4,"timestamp":"2023-03-28T09:08:42.643343109Z","user":{"device":"desktop","account":{"vip":"yes","id":4}},"action":"purchase","page_id":10}
+{"user.id":1,"timestamp":"2023-03-28T09:08:48.643600498Z","user":{"device":"desktop","account":{"vip":"no","id":1}},"action":"click","page_id":50}
+{"user.id":5,"timestamp":"2023-03-28T09:08:50.643773688Z","user":{"device":"mobile","account":{"vip":"yes","id":5}},"action":"purchase","page_id":40}
+{"user.id":1,"timestamp":"2023-03-28T09:08:51.643932272Z","user":{"device":"other","account":{"vip":"no","id":1}},"action":"purchase","page_id":30}
+{"user.id":2,"timestamp":"2023-03-28T09:08:56.644080944Z","user":{"device":"mobile","account":{"vip":"yes","id":2}},"action":"click","page_id":40}
+{"user.id":3,"timestamp":"2023-03-28T09:09:03.64425954Z","user":{"device":"desktop","account":{"vip":"no","id":3}},"action":"click","page_id":30}
+{"user.id":1,"timestamp":"2023-03-28T09:09:03.644317046Z","user":{"device":"desktop","account":{"vip":"no","id":1}},"action":"view","page_id":20}
+{"user.id":2,"timestamp":"2023-03-28T09:09:10.64447719Z","user":{"device":"desktop","account":{"vip":"yes","id":2}},"action":"purchase","page_id":50}
+{"user.id":2,"timestamp":"2023-03-28T09:09:17.644810963Z","user":{"device":"other","account":{"vip":"yes","id":2}},"action":"view","page_id":10}
+{"user.id":1,"timestamp":"2023-03-28T09:09:20.644994805Z","user":{"device":"mobile","account":{"vip":"no","id":1}},"action":"view","page_id":50}
+```
+
+This rule searched for applicable key/value pairs inside the `account` object,
+copied `id` into a new key named `user.id` at the record's top level, but
+did not remove `account` and the key/value pairs it originally contained.
+
+## Related rules
+
+For a processing rule with a similar effect, see
+[lift submap](/pipeline-data/processing-rules/lift-submap). For a processing
+rule with the opposite effect, see [nest keys](/pipeline-data/processing-rules/nest-keys).

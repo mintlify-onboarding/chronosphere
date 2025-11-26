@@ -1,0 +1,424 @@
+---
+title: Analyze metrics usage
+description: Learn about viewing metrics in your system to understand which are used most and least.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Observability Platform provides usage data about the utility of your persisted metrics
+and labels. Usage analysis gives you insight into the usage of the data in your
+system by dashboard, monitor, shaping rule, or
+[Metrics Explorer](/investigate/querying/metrics/explorer) query execution. You can more
+confidently identify obsolete or unnecessary data, make decisions about the shape of
+that data, and understand the impact of a proposed shaping rule to users of that
+data.
+
+The Telemetry Usage Analyzer lets you view all metrics in your system ranked from
+least-used to most-used, alongside information about the persisted Data Points Per
+Second (DPPS) and cardinality of each metric. You can sort the list to find unused
+metrics to drop or roll up, and also find highly requested but not yet ingested
+metrics you can add to the system to help boost valuable signal.
+
+The Telemetry Usage Analyzer supports Prometheus metrics, and translates
+OpenTelemetry metrics to align with the Prometheus format.
+
+<Info>
+The Telemetry Usage Analyzer doesn't support StatsD or Graphite data sources.
+</Info>
+
+To retrieve utility score data programmatically and from the command line, use
+Chronoctl or the Chronosphere API. You can return utility score data by metric and
+label name with support for pagination, glob name filtering, and sorting.
+
+## View metrics usage data
+
+Select one of the following methods to view metrics usage data.
+
+<Tabs>
+<Tab title="Web" id="view-metrics-data-web">
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Usage**.
+1. Click either **Group by metric** or **Group by label** to display usage data
+   [grouped by metrics or labels](#metrics-and-labels-data).
+1. Use multiple filters to search for subsets of metrics. For example, to find
+   metrics that have high data points but aren't important to any of your users, filter
+   by **Highest persisted** and then sort the table by **Utility score**.
+1. Optional: Annotate a metric with additional context.
+
+   - To [add a comment](/navigate/comments) to a metric, select a metric and then
+     click **Add comment**.
+
+     If a metric has existing comments, click **View comments** to view the comments
+     and take additional actions.
+
+   - To add a description to a metric, in the **Description** field, click **Edit description**.
+     In the **Edit description** drawer, enter a description for the metric and then
+     click **Update**.
+
+1. To analyze incoming data for a specific metric, select a single metric from the
+   **Metrics** list, and then click **View incoming metrics**.
+   The [Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer) opens and
+   starts actively profiling the selected metric.
+
+For more ways to use the Usage Analyzer to improve your Observability Platform
+experience, see [Workflows](#workflows).
+
+</Tab>
+
+<Tab title="Chronoctl" id="view-metrics-data-chronoctl">
+
+To use [Chronoctl](/tooling/chronoctl) to return metric usage by label name, use the
+`chronoctl metric-usages-by-label-name list` command:
+
+```shell copy
+chronoctl metric-usages-by-label-name list
+```
+
+To return metric usage by metric name, use the `chronoctl metric-usages-by-metric-name list`
+command:
+
+```shell copy
+chronoctl metric-usages-by-metric-name list
+```
+
+</Tab>
+
+<Tab title="API" id="view-metrics-data-api">
+
+To complete this action with the Chronosphere API, use the
+[`ListMetricUsagesByLabelName`](/tooling/api-info/state_definition/operations/ListMetricUsagesByLabelName)
+or [`ListMetricUsagesByMetricName`](/tooling/api-info/state_definition/operations/ListMetricUsagesByMetricName)
+endpoints.
+
+For example, the following command returns metrics by name that match the glob
+pattern `workqueue_work*` over the past 60 days (`5184000` seconds).
+
+```shell copy
+curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/api/v1/state/metric-usages-by-metric-name?order.ascending=true&&lookback_secs=5184000&metric_name_glob=workqueue_work*&include_counts_by_type=true" \
+--header 'Accept: application/json' | jq
+```
+
+- `lookback_secs`: Controls the time range over which query executions are included
+  in usages. Defaults to `2592000` (30 days).
+- `metric_name_glob`: Glob match string for filtering results by metric name.
+- `include_counts_by_type`: If true, responses include the fields
+  `reference_counts_by_type` and `query_execution_counts_by_type`.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Analyze metrics and labels
+
+In Telemetry Usage Analyzer, you can analyze individual metrics and labels to
+identify where they're used, how often they're used, and in what contexts, to help
+make better decisions about how to shape your data.
+
+After analyzing a metric or label, you can view the summary information and then
+investigate [usage details](#view-usage-details) for more details.
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Usage**.
+
+1. Click either **Group by metric** or **Group by label** to display usage data
+   [grouped by metrics or labels](#metrics-and-labels-data).
+
+1. In the list of associated metrics or labels, locate the metric or label you want
+   to analyze, click the <Icon icon="ellipsis-vertical" /> three vertical dots icon
+   corresponding to that data, and select either **Analyze Label** or **Analyze Metric**,
+   depending on the selected grouping.
+
+   Clicking an analyze option selects that label or metric in the associated
+   [metrics and labels](#metrics-and-labels-data) section, starting a search for the
+   corresponding data.
+
+   The **Summary** table updates to display a list of all associated metrics or
+   labels by adding the metric or label as a search term to the list in the left
+   sidebar. See [Summary](#summary) for the cards and associated data that displays
+   for selected data.
+1. To add additional context to a metric, click **Add comment** to
+   [add a comment](/navigate/comments) to the metric.
+
+Click **Usage details** to view [more detailed information](#view-usage-details)
+about the selected metric or label.
+
+## View usage details
+
+Each metric and each label associated with a metric has **Usage Details** you can
+view in Telemetry Analyzer.
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Usage**.
+
+1. Click either **Group by metric** or **Group by label** to display usage data
+   [grouped by metrics or labels](#metrics-and-labels-data).
+
+1. Use one of the following methods to view usage details for metrics and labels:
+
+   - For overall details about a metric, in the body of the page, next to the metric
+     name, click **Usage details**. Observability Platform displays a dialog for
+     specific details for this metric and where it's used.
+
+     From the **Usage details** pane, select a label from the **Label** dropdown to
+     scope the usage results that specific label.
+
+   - For details about a specific label, select a metric in the **Metrics** list,
+     select a value from the **Associated labels** menu, click the
+     <Icon icon="ellipsis-vertical" /> three vertical dots icon, and select
+     **View usage details**.
+
+For each metric or label, the following details display with a numerical count of
+occurrences:
+
+- **Configuration references**: Configurations with the metric and label explicitly
+  referenced. These include **Dashboards**, **Monitors**, **Recording Rules**, **Drop
+  Rules**, and **Aggregator Rules**.
+- **Direct query executions**: Query executions with the metric and label explicitly
+  referenced. These include **Metrics Explorer**, **External Sources**,
+  **Dashboards**,and **Unique Users**.
+- **Utility score**: An aggregate number indicating the relative usefulness of this
+  metric, determined by the number of **References**, **Executions**, and unique
+  users. A higher score means users include this metric in their workflows.
+- **Metric DPPS**: Cached data points per second for the last five minutes.
+- **Unique label values**: Selecting a label displays the number of unique values
+  that label has.
+
+These details are also broken down by where and how many times they're used:
+
+- **Dashboard** and **Monitor** configurations show the number of references,
+  when they were **Added**, and their name. Click the name to open that dashboard
+  or monitor. Queries from Grafana dashboards include the UUID of the Grafana dashboard.
+- **Recording**, **Drop**, and **Aggregator** rule configurations show when they
+  were **Added** or **Created**, and the **Metric Name**.
+- **Metrics Explorer** and **Dashboard** direct queries show how many
+  **Executions**, the **Query**, **Date**, and **User**. **Dashboards** also display
+  the **Dashboard** and **Panel** a query executed from.
+- **Unique Users** show the **User**, the **Total Executions**,
+  **Dashboard Executions**, and **Explorer Executions**.
+
+### Histogram chart
+
+When you select **Direct Query Executions** from **Metrics Explorer** or **Dashboards**,
+a chart displays showing the distribution of queries made across the selected time
+range. Hold the pointer over a bar in the graph to display a tool tip with the number
+of queries for that day.
+
+In the **User** search box, enter a user's email address to filter query executions
+to a particular user.
+
+Click a date bar in the chart to filter the table to queries made on that date. A
+date filter displays next to the user search box, followed by the number of executions
+for that date out of the total executions. To remove the filter, click the `x`.
+
+## Metrics and labels data reference
+
+Telemetry Usage Analyzer displays [metrics and labels data](#metrics-and-labels-data)
+and a comprehensive [summary](#summary) for selected data. Use this information to
+learn more about how and where your metrics and labels are used in Observability
+Platform.
+
+### Metrics and labels data
+
+In Telemetry Usage Analyzer, click **Group by metric** or **Group by label** to group
+your data by metrics or labels.
+
+The following sort options are available depending on your grouping selection:
+
+| Sort order              | Metrics | Labels | Description |
+| ----------------------- | :-----: | :----: | ----------- |
+| **Least valuable**      | <YesIcon /> | <YesIcon /> | Metrics with high DPPS but low utilization. |
+| **Most valuable**       | <YesIcon /> | <YesIcon /> | Metrics with a high utilization to DPPS ratio. |
+| **Most utilized**       | <YesIcon /> | <YesIcon /> | Metrics and labels with the highest utility score. |
+| **Least utilized**      | <YesIcon /> | <YesIcon /> | Metrics and labels with the lowest utility score. |
+| **Highest persisted**   | <YesIcon /> | <NoIcon /> | Metrics with the most DPPS. |
+| **Lowest persisted**    | <YesIcon /> | <NoIcon /> | Metrics with the fewest DPPS. |
+| **Missing metrics**     | <YesIcon /> | <NoIcon /> | Metrics with both zero DPPS and highest utility scores. |
+| **Highest cardinality** | <NoIcon /> | <YesIcon /> | Metrics with the highest number of unique labels. |
+| **Lowest cardinality**  | <NoIcon /> | <YesIcon /> | Metrics with the fewest unique labels. |
+
+Each card in the list contains the metric name or label, and other values defined in
+the **Summary**.
+
+Usage data is based on activity from the previous 30 days to capture both current and
+cyclical usage patterns.
+Click a metric or label name to view a **Summary** of details about that item.
+
+### Summary
+
+The **Summary** section contains a set of cards with sum totals for usage details.
+The cards and table vary slightly depending on what **Group by** you've selected.
+
+The total of associated metrics or labels won't always match the total for the
+**Summary** cards. Summary cards are based on the selected metric or label, each of
+which can have multiple references in its group.
+
+- **Associated Label Keys**: All labels associated with the metric name.
+- **Associated Metric**: Each metric that uses this label.
+- **Configuration References**: Number of times this metric appears in a dashboard,
+  monitor configuration, or shaping rule in the previous 30 days.
+- **Direct Query Executions**: The number of times in the past 30 days the label was
+  used as part of a backend query, such as an Explorer query, a query executed from
+  a dashboard panel, or a query from an external source.
+- **Unique** or **Unique Users**: The number of individual users querying this
+  metric.
+- **Utility Score**: An aggregate number indicating relative usefulness of this
+  metric, determined by the number of **References**, **Query Executions**, and
+  unique users across internal and external queries:
+
+  - _Internal queries_ are queries made within Chronosphere Observability Platform.
+  - _External queries_ are queries originating from other systems against
+    Observability Platform data. For example, querying Observability Platform data
+    for use in a non-Chronosphere application.
+
+  A higher utility score means users include this metric and its associated labels in
+  their workflows. For example, two metrics with the same number of executions but
+  different numbers of unique users have different utility scores. Metrics with more
+  unique users have a higher utility score.
+
+  <Info>
+Utility scores match specific metric names or labels when calculating, and not by
+  regular expression. This means that metrics with wildcards in the name aren't
+  included in the calculation of the utility score. For example, if you include a
+  metric with a wildcard in the name like in the following example, and include that
+  metric name in a dashboard, that metric won't be calculated in the utility score:
+
+  ```text copy
+  __name__=~"cache_atm_server_redis_grpc_.*request_time_count"
+  ```
+
+  Including a metric with a wildcard in the name in queries, dashboards, aggregation
+  rules, monitors, and other areas that support regular expressions can result in a
+  utility score of zero in Telemetry Usage Analyzer.
+</Info>
+
+  The formula used to calculate the utility score is
+  `Utility score = (number of references)+(number of executions * %(unique users/total users))`.
+- **Metric DPPS** or **DPPS**: Total data points per second (DPPS) for this metric.
+  DPPS is the average DPPS over the previous five minutes to capture the current volume.
+- **Unique Label Values** or **Unique Values**: The number of unique entries for this
+  label.
+- **Appears in**: The percentage of incoming metrics using the selected label.
+
+### Search
+
+Use the **Search** box to find one or more associated labels for a selected metric,
+or to find metrics associated with a selected label. Metric and label pairs that have
+low utility scores and no references are good candidates to consider using a
+[rollup rule](/control/shaping/rules/rollup) to reduce cardinality.
+
+## Workflows
+
+The following examples are ways you can use the Usage Analyzer to improve your
+Observability Platform experience.
+
+### Create drop rules
+
+When you find a metric you don't want to track, create a
+[drop rule](/control/shaping/rules/drop-rules) to stop collecting data
+for that metric.
+
+Use one of the following methods to create a drop rule from Telemetry Usage Analyzer:
+
+- Select a metric from the **Metrics** list, and then click **Add Drop Rule**.
+- Select the checkboxes for multiple metrics in the **Metrics** list, and then click
+  **+ Drop rule**.
+
+Follow the process to
+[create a drop rule](/control/shaping/rules/drop-rules#create-a-drop-rule).
+When selecting metrics from the Usage Analyzer, the **Add Drop Rule** dialog
+pre-populates the **Name**, **Key**, and **Value** fields in the **Visual Editor**
+tab. Click **Code Config** for code to copy or download for Chronoctl, Terraform, or
+the Chronosphere API.
+
+### Create a rollup rule
+
+When you locate a metric you want to downsample, create a rollup rule directly from
+the Telemetry Usage Analyzer. Rollup rules are a type of aggregation rule that help
+reduce the cardinality footprint of your metrics by dropping raw data to eliminate
+unneeded labels.
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Usage**.
+
+1. Click either **Group by metric** or **Group by label** to display usage data
+   [grouped by metrics or labels](#metrics-and-labels-data).
+
+1. In the list of associated metrics or labels, locate the metric or label you want
+   to analyze, click the <Icon icon="ellipsis-vertical" /> three vertical dots icon
+   corresponding to that data, and select **Create aggregation rule** to display the
+   **Create Aggregation Rules** page.
+
+1. Follow the process to
+   [create a rollup rule](/control/shaping/rules/rollup#create-a-rollup-rule).
+
+   If you define a rollup rule using the Observability Platform app, you must
+   download the rule configuration and apply it with one of the supported methods.
+
+### High-volume, low-utility metrics
+
+When reviewing your metrics, look for items with a high DPPS and a low
+**Utility Score**. Use [drop rules](/control/shaping/rules/drop-rules) to discard
+these metrics and to decrease the amount of metrics noise. Review the usage table to
+determine if the DPPS are for a particular label, and consider writing rollup rules
+to drop labels with high DPPS but low usage.
+
+For example, the metric `container_memory_swap` has a DPPS of `266`, with a utility
+score of `0`. Looking at the associated labels for this metric, the
+`k8s_container_image_id` label has `16800` unique values. This metric isn't used in
+any queries or references and therefore might not be very valuable. Consider using a
+[rollup rule](/control/shaping/rules/rollup) to reduce the number of data points kept.
+
+Use the [Aggregation Rules UI](/control/shaping/reduce-cardinality/review-aggregation-rules)
+to review the impact of rollup rules.
+
+![A high volume](/doc-assets/usage-profiler-high-unique-values.png)
+
+### Metrics to add
+
+Increase your dashboards' value to your operators by identifying and adding metrics
+that people are looking for but which don't exist as displayed results.
+
+Metrics with high **Direct Query Executions** indicate users want the data from that
+metric and are looking for the data in ways that aren't presented to them. If these
+metrics also have low DPPS, they're highly valuable to display.
+
+### Usage patterns
+
+Reviewing usage data can help you understand patterns in your system to help guide
+other system decisions, such as which high-value metrics to include in template
+dashboards that every team can use.
+
+For example, you review the usage details of a particular metric and determine that
+several teams are using that metric in their individual dashboards. Consider creating
+a single dashboard for multiple teams.
+
+As another example, identify expensive (high DPPS) metrics with few users. You can
+work with those users directly to reduce the cost of metrics in use, or to raise a
+metric's value to other teams. You can see what teams are using expensive metrics and
+encourage them to create shared [dashboards](/observe/dashboards).
+
+### Missing metrics
+
+Use the **Missing metrics** sorting option to identify highly utilized metrics that
+haven't reported any data. This list typically includes:
+
+- Metrics that likely aren't useful anymore and can be dropped.
+- Metrics that might be reporting under a different `key:value` pair and need their
+  references updated.
+
+### Use derived labels
+
+If your teams are using similar labels that should be the same, consider using
+[derived labels](/investigate/querying/metrics/derived-telemetry/derived-labels)
+to search for similar labels and consolidate them.
+
+For example, you might have metrics whose names start with `grpc_` and use the
+`label_0` label. Use the Live Telemetry Analyzer to search for `label_0` and decide
+whether a derived label can help consolidate data from multiple metrics in a single
+label.

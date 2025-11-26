@@ -1,0 +1,142 @@
+---
+title: Differences between Datadog and PromQL functions and operators
+robots: noindex, nofollow
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Datadog is a metrics platform that uses a proprietary query language to aggregate
+and visualize data.
+
+Learn more about:
+
+- [Datadog queries](/ingest/metrics-traces/collector/mappings/datadog/dogstatsd)
+- [Querying Prometheus](https://prometheus.io/docs/prometheus/latest/querying/basics/)
+- [Prometheus operators and the Chronosphere Collector](/ingest/metrics-traces/collector/mappings/prometheus/operator-collector)
+- Chronosphere and Datadog [field equivalents for monitors](/ingest/metrics-traces/collector/mappings/datadog/convert-monitors#field-mapping)
+
+The following sections are an approximate mapping between Datadog functions and
+operators, and those used in PromQL. In some cases, more than one PromQL function is
+mapped to a single Datadog function. When PromQL has more than one related function
+in the table, one of the options might be a better match for what the user needs a
+query to accomplish.
+
+For example, the Datadog function `abs()`, when translated to a PromQL query,
+might match `abs()`, `absent()`, or `absent_over_time()` depending on the query.
+
+## Rollups
+
+Datadog uses rollups to aggregate data points in a single time series, and are applied
+using the `.rollup()` function. With Chronosphere, rollups can be
+[defined only on ingest](/control/shaping/rules), and not at query time.
+However, PromQL offers a
+[set of functions](https://prometheus.io/docs/prometheus/latest/querying/functions/#aggregation_over_time)
+that lets you aggregate individual time series over time.
+
+## Functions
+
+| Datadog                           | PromQL | Notes |
+| --------------------------------- | ------ | ----- |
+| `abs()`                           | `abs()` | _none_ |
+|                                   | `absent()` | _none_ |
+|                                   | `absent_over_time()` | _none_ |
+| `round()`                         | `ceil()` | Datadog rounds to the nearest integer. |
+|                                   | `changes()` | _none_ |
+| `ceil()`                          | `clamp_max()` | _none_ |
+| `floor()`                         | `clamp_min()` | _none_ |
+|                                   | `day_of_month()` | _none_ |
+|                                   | `day_of_week()` | _none_ |
+|                                   | `days_in_month()` | _none_ |
+| `diff()`                          | `delta()` | `diff()` returns value difference between points. `delta()` requires specified first and last point in query. |
+| `derivative()`                    | `deriv()` | Use `deriv()` only with gauges. |
+|                                   | `exp()` | _none_ |
+| `round()`                         | `round()` | Datadog rounds to the nearest integer. |
+| `p50`, `p75`, `p90`, `p95`, `p99` | `histogram_quantile()` | PromQL needs specified percentile. Datadog is hard coded. |
+| `autosmooth()`                    | `holt_winters()` | `autosmooth()` is dynamic. `holt_winters()` has you specify smooth and trend factors. |
+|                                   | `hour()` | _none_ |
+|                                   | `idelta()` | _none_ |
+|                                   | `increase()` | _none_ |
+|                                   | `irate()` | _none_ |
+|                                   | `label_join()` | _none_ |
+|                                   | `label_replace()` | _none_ |
+| `exp()`                           | `ln()` | _none_ |
+| `log2()`                          | `log2()` | _none_ |
+| `log10()`                         | `log10()` | _none_ |
+|                                   | `minute()` | _none_ |
+|                                   | `month()` | _none_ |
+|                                   | `predict_linear()` | _none_ |
+| `per_second()`                    | `rate()` | _none_ |
+|                                   | `resets()` | _none_ |
+|                                   | `floor()` | _none_ |
+|                                   | `scalar()` | _none_ |
+|                                   | `sort()` | _none_ |
+|                                   | `sort_desc()` | _none_ |
+|                                   | `sqrt()` | _none_ |
+|                                   | `time()` | _none_ |
+|                                   | `timestamp()` | _none_ |
+|                                   | `vector()` | _none_ |
+|                                   | `year()` | _none_ |
+
+## Time functions
+
+| Datadog                                                                 | PromQL | Notes |
+| ----------------------------------------------------------------------- | ------ | ----- |
+| `avg_5min()`, `avg_10min`, `avg_30min()`, `avg_hourly()`, `avg_daily()` | `avg_over_time()` | PromQL needs specified interval. Datadog is coded. |
+| `avg_daily()`                                                           | _N/A_ | _none_ |
+| _N/A_                                                                   | `min_over_time()` | _none_ |
+| _N/A_                                                                   | `max_over_time()` | _none_ |
+| `sumsum()`                                                              | `sum_over_time()` | _none_ |
+| _N/A_                                                                   | `count_over_time()` | _none_ |
+| _N/A_                                                                   | `quantile_over_time()` | _none_ |
+| _N/A_                                                                   | `stddev_over_time()` | _none_ |
+| _N/A_                                                                   | `stdvar_over_time()` | _none_ |
+
+## Aggregations
+
+| Datadog   | PromQL           | Notes  |
+| --------- | ---------------- | ------ |
+| `sum()`   | `sum()`          | _none_ |
+| `min()`   | `min()`          | _none_ |
+| `max()`   | `max()`          | _none_ |
+| `avg()`   | `avg()`          | _none_ |
+| _N/A_     | `group()`        | _none_ |
+| _N/A_     | `stddev()`       | _none_ |
+| _N/A_     | `stdvar()`       | _none_ |
+| `count()` | `count()`        | _none_ |
+| _N/A_     | `count_values()` | _none_ |
+| _N/A_     | `bottomk()`      | _none_ |
+| _N/A_     | `topk()`         | _none_ |
+| _N/A_     | `quantile()`     | _none_ |
+
+## Binary operators
+
+| Datadog | PromQL | Notes  |
+| ------- | :----: | ------ |
+| none    |  `==`  | _none_ |
+| none    |  `!=`  | _none_ |
+| none    |   `>`  | _none_ |
+| none    |   `<`  | _none_ |
+| none    |  `>=`  | _none_ |
+| none    |  `<=`  | _none_ |
+
+## Boolean operations
+
+| Datadog  | PromQL   | Notes        |
+| -------- | -------- | ------------ |
+| `and`    | `and`    | Intersection |
+| `or`     | `or`     | Union |
+| `not`    | `unless` | Complement |
+| `in`     | _N/A_    | _none_ |
+| `not in` | _N/A_    | _none_ |
+| `!`      | _N/A_    | _none_ |
+
+## Operations
+
+| Datadog | PromQL | Notes  |
+| :-----: | :----: | ------ |
+|   `+`   |   `+`  | _none_ |
+|   `-`   |   `-`  | _none_ |
+|   `*`   |   `*`  | _none_ |
+|   `/`   |   `/`  | _none_ |
+|   `%`   |   `%`  | _none_ |
+|   `^`   |   `^`  | _none_ |

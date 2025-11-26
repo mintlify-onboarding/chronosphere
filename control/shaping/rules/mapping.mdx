@@ -1,0 +1,309 @@
+---
+title: Mapping rules
+description: Learn about how and when to use mapping rules before storing any results in the database.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import TerraformCreate from '/snippets/_partials/terraformcreate.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import TerraformPlan from '/snippets/_partials/terraformplan.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Mapping [aggregation rules](/control/shaping/rules) downsample in-memory metric data
+on the streaming ingest path before storing any results in the database, which is
+before metric aggregation.
+
+Downsampling requires the creation of two mapping rules:
+
+- A rule which performs the downsampling
+- A rule that deletes the raw metric
+
+If you don't create a mapping rule to drop the raw metric, two metrics
+persist; one with the original resolution and one with the new resolution.
+
+Mapping rules drop a given set of metrics by using the `drop: true` key:value pair.
+This can be useful when paired with rollup rules, since often the goal of a rollup
+rule is to remove the original raw metrics after aggregation. This is unlike
+[drop rules](/control/shaping/rules/drop-rules), which drop the metric
+before any aggregation takes place. This achieves the same result as setting the
+`drop_raw: true` flag on the rollup rule; if this flag is set, it's not necessary to
+add a matching mapping rule with `drop: true`.
+
+Mapping rules support both Prometheus and Graphite metrics.
+
+## When to use mapping rules
+
+Chronosphere recommends using mapping rules instead of rollup rules in scenarios
+where you're ingesting data points for a time series at a sporadic rate,
+and that exceeds the standard `15s`, `30s`, and `60s`
+[resolutions](#define-a-metrics-resolution). These denser time series consume
+more query resources, which means they use more data points per second (DPPS) compared to
+the amount of cardinality you're storing.
+
+Both mapping rules and rollup rules get applied in the same aggregation phase, which
+means that mapping rules consume matched writes.
+
+## View existing mapping rules
+
+Select from the following methods to view your mapping rules.
+
+<Tabs>
+<Tab title="Chronoctl" id="view-mapping-rules-chronoctl">
+
+To list your existing mapping rules using [Chronoctl](/tooling/chronoctl), use the
+`chronoctl mapping-rules list` command:
+
+```shell copy
+chronoctl mapping-rules list
+```
+
+</Tab>
+
+<Tab title="API" id="view-mapping-rules-api">
+
+To complete this action with the Chronosphere API, use the
+[`ListMappingRules`](/tooling/api-info/definition/operations/ListMappingRules) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Create mapping rules
+
+Select from the following methods to create a mapping rule.
+
+<Tabs>
+<Tab title="Chronoctl" id="create-mapping-rule-chronoctl">
+
+To create a mapping rule with [Chronoctl](/tooling/chronoctl), define the rule in a
+YAML file and apply it.
+
+<Info>
+If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
+parameter to generate a template for a specific resource type:
+
+```shell copy
+chronoctl mapping-rules scaffold
+```
+
+You can redirect the results (using the redirection operator `>`) to a file for
+editing.
+</Info>
+
+1. Create or edit a YAML configuration file to configure the mapping rule.
+
+1. Apply the mapping rule:
+
+   ```shell copy
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+Replace _`FILE_NAME`_ with the name of the YAML configuration file.
+
+</Tab>
+
+<Tab title="Terraform" id="create-mapping-rule-terraform">
+
+<TerraformPlan />
+
+Create a mapping rule with Terraform by using the `chronosphere_mapping_rule` type,
+followed by a name in a resource declaration.
+
+The following mapping rule defines a metric retention interval for a Kubernetes pod:
+
+```ruby copy
+resource "chronosphere_mapping_rule" "http_request_duration" {
+  name      = "http request duration"
+  filter    = "__name__:http_request_duration k8s_pod:*"
+
+  aggregations = [
+    "LAST",
+  ]
+
+  storage_policy {
+    resolution = "30s"
+    retention  = "120h"
+  }
+
+  mode = "ENABLED"
+}
+```
+
+<TerraformCreate />
+
+</Tab>
+
+<Tab title="API" id="create-mapping-rule-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateMappingRule`](/tooling/api-info/definition/operations/CreateMappingRule) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+Mapping rules take effect immediately but might require a full recording interval
+to show a change.
+
+Here are some example mapping rules.
+
+### Define a metric's resolution
+
+Although you can adjust the resolution for a mapping rule and configure the interval
+between aggregated data points, Chronosphere doesn't recommend this approach for the
+sole purpose of reducing resolution. Instead, adjust the scrape or push interval in
+the [Chronosphere Collector](/ingest/metrics-traces/collector/discover/scrape-configuration)
+or the [OpenTelemetry Collector](/ingest/metrics-traces/otel/otel-ingest#send-operational-metrics-about-the-opentelemetry-collector),
+depending on how you send metrics to Observability Platform.
+
+The following example uses these keys:
+
+- `aggregation_policy`: Specifies the policy applied to aggregate the metric for
+  a given resolution window.
+
+    - `aggregation`: For example, setting this property to `LAST` takes the last
+      element as the aggregated metric. See
+      [Supported aggregation operations](/control/shaping/rules/rollup#aggregation-operations)
+      for a complete list.
+    - `interval`: Specifies the time between aggregated data points. Intervals are
+      based on your
+      [retention policy](/administer/limits-licensing/licensing#ingestion-limits-and-retention-policies).
+
+- `filters`: Specifies that the rule catches metrics of name
+  `http_request_duration` with the label `k8s_pod`.
+
+  Label filters can include multiple labels. Metrics must match each label for
+  the filter to apply. Label values support
+  [glob syntax](/investigate/querying/glob-syntax), including matching
+  multiple patterns with an OR, such as `pattern1,pattern2`.
+
+<Tabs>
+<Tab title="Chronoctl" id="mapping-rule-metric-retention-chronoctl">
+
+```yaml copy
+api_version: v1/config
+kind: MappingRule
+spec:
+  name: http request duration
+  slug: http_request_duration
+  aggregation_policy:
+    aggregation: LAST
+    interval: 30s
+  filters:
+  - name: "__name__"
+    value_glob: "http_request_duration"
+  - name: "k8s_pod"
+    value_glob: "*"
+```
+
+</Tab>
+
+<Tab title="Terraform" id="mapping-rule-metric-retention-chronoctl">
+
+```ruby copy
+resource "chronosphere_mapping_rule" "http_request_duration" {
+  name      = "http request duration"
+  filter    = "__name__:http_request_duration k8s_pod:*"
+
+  aggregations = [
+    "LAST",
+  ]
+
+  storage_policy {
+    resolution = "30s"
+    retention  = "120h"
+  }
+
+  mode = "ENABLED"
+}
+```
+
+</Tab>
+</Tabs>
+
+### Drop a metric
+
+You don't need to specify an aggregation operation or interval to drop a metric.
+
+<Tabs>
+<Tab title="Chronoctl" id="mapping-rule-drop-metric-chronoctl">
+
+```yaml copy
+api_version: v1/config
+kind: MappingRule
+spec:
+  filters:
+  - name: "__name__"
+    value_glob: http_request_bucket
+  - name: k8s_pod
+    value_glob: "*"
+  - name: le
+    value_glob: "*"
+  - name: git_sha
+    value_glob: "*"
+  - name: route
+    value_glob: "*"
+  name: drop raw http_request_bucket
+  slug: http_request_bucket
+  drop: true
+```
+
+</Tab>
+
+<Tab title="Terraform" id="mapping-rule-drop-metric-terraform">
+
+```ruby copy
+resource "chronosphere_mapping_rule" "http_request_bucket" {
+  name      = "drop raw http_request_bucket"
+  filter    = "__name__:http_request_bucket k8s_pod:* le:* git_sha:* route:*"
+
+  aggregations = [
+    "LAST",
+  ]
+
+  drop: "true"
+
+  mode = "ENABLED"
+}
+```
+
+</Tab>
+</Tabs>
+
+## Delete mapping rules
+
+Select from the following methods to delete a mapping rule.
+
+<Tabs>
+<Tab title="Chronoctl" id="delete-mapping-rule-chronoctl">
+
+To delete a mapping rule using [Chronoctl](/tooling/chronoctl), use the
+`chronoctl mapping-rules delete` command:
+
+```shell copy
+chronoctl mapping-rules delete SLUG
+```
+
+Replace _`SLUG`_ with the slug of the rule you want to
+delete.
+
+</Tab>
+
+<Tab title="Terraform" id="mapping-rule-drop-metric-terraform">
+
+<TerraformDel />
+
+</Tab>
+
+<Tab title="API" id="delete-mapping-rule-api">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteMappingRule`](/tooling/api-info/definition/operations/DeleteMappingRule) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

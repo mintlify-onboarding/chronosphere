@@ -1,0 +1,257 @@
+---
+title: Identify issues behind suspicious metrics trends
+sidebarTitle: Investigate suspicious metrics
+description: Learn how to use differential diagnosis to identify metrics most closely correlated with suspicious behavior.
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Differential diagnosis (DDx) for metrics is a part of the
+[metric exploration](/investigate/querying/metrics/explorer) and hypothesis testing workflow
+in Chronosphere Observability Platform. Differential diagnosis supports Prometheus
+metrics.
+
+When you encounter time series anomalies in your metrics, such as unusual spikes,
+dips, or other shapes, use differential diagnosis to understand what dimensions are
+contributing to an issue or incident without needing to create and maintain new
+dashboards and alerts. Knowing what dimensions contribute to an issue can help
+correlate patterns to the issue and identify its root cause.
+
+When you investigate a query in differential diagnosis for metrics, Observability Platform
+automatically identifies labels and values that strongly correlate to the query
+and provides you with tools to further filter and focus automatically generated
+visualizations. Differential diagnosis uses _correlated data_, or data that contributes
+the most to a query or chart, to help you identify the metrics contributing to an issue.
+
+For example, if differential diagnosis identifies that the `Production` environment
+is strongly correlated to the query, you might use a filter to isolate metrics
+from that environment and compare it to further identify correlations. After identifying
+the next strongly correlated item, use additional filters to focus on the problem.
+
+Differential diagnosis provides the following benefits:
+
+- **Dimension exploration**: Given an arbitrary query with an anomaly, you can quickly
+  visualize all the dimensions available for the metrics present. You can then use
+  this information to understand the surface area of the available for exploration.
+  You can include and exclude dimensions from the results to enable hypothesis testing.
+- **Automatic correlation analysis**: Observability Platform automatically explores
+  metrics using variations of your query, and leverages all available dimensions.
+  It also adapts to your data by incorporating new labels and values as they appear.
+  Observability Platform compares the results to the original query and surfaces the
+  time series that are most closely correlated with the anomaly.
+
+<Warning>
+**Metrics DDx** is available only on standard Chronosphere **Metrics Explorer**
+and panels. Classic dashboards and panels, and the classic Metrics Explorer, don't
+and won't support **Metrics DDx**.
+</Warning>
+
+## Access differential diagnosis
+
+**Metrics DDx** isn't part of the main navigation menus in Observability Platform.
+Because DDx operates on metrics you've already visualized elsewhere in Observability
+Platform, you access it through **Metrics Explorer**, from metrics visualization panels
+such as services and dashboards, or from individual monitors.
+
+To investigate a query or chart with differential diagnosis, look for a DDx link.
+Some panels in Observability Platform with a <Icon path={ mdiDotsVertical } /> three vertical dots menu
+ might also contain a Metrics DDx link, but not all menus have this link.
+
+To access differential diagnosis from Metrics Explorer:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span>
+   Metrics Explorer**.
+1. In the section of the query that you want to investigate, click **DDx** to
+   display the **Metrics DDx** page, prepopulated with that query.
+1. Create or modify the query if necessary.
+1. Click **<Icon path={ mdiRefresh } /> Run**.
+
+To access differential diagnosis from a monitor:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span>
+   Monitors**.
+1. Select a monitor from the list.
+1. In the monitor navigation bar, click **DDx** to display the **Metrics DDx** page,
+   prepopulated with the monitor's query.
+
+To access differential diagnosis from other metrics panels in Observability Platform:
+
+1. Generate a query in **Metrics Explorer**.
+1. In any chart, click the <Icon path={ mdiDotsVertical } /> three vertical dots
+   and then select **Metrics DDx**. The **Metrics DDx** page opens with the query box
+   pre-populated by the query used in the panel.
+
+   If **Metrics DDx** doesn't appear, differential diagnosis might not support that
+   panel's query. For example, **Metrics DDx** operates on one query at a time.
+   If a panel uses multiple queries, it can't use **Metrics DDx**.
+
+## Query data in differential diagnosis
+
+When accessing differential diagnosis, Observability Platform run any query related
+to the origin page or panel and displays the results on the **Metrics DDx** page.
+
+## Filter data by pinned scope
+
+You can use [pinned scopes](/navigate/pinned-scopes) to filter your data. When using
+a pinned scope, the scope displays in the **Pinned scopes** box, and again after the
+query.
+
+Use pins in label graphs to add a filter:
+
+1. Hold the pointer over a series in the chart and click it to pin the series.
+1. In the dialog box, click <Icon icon="magnifying-glass-plus" /> to add that label
+   value to the filters.
+
+To remove the filter, click the `x` on the filter's chip or click
+<Icon icon="magnifying-glass-minus" /> in the pinned box. Click **Reset filters**
+to remove all filters except pinned scopes. Pinned scopes can only be removed by
+deleting them from the **Pinned scopes** box.
+
+## Use X-Ray to expand queries
+
+Observability Platform uses
+[derived metrics](/investigate/querying/metrics/derived-telemetry/derived-metrics) to reduce
+query time and complexity. The **X-Ray** feature lets you explore queries that use
+derived metrics so you can see which specific metric correlates with the problem
+you're seeing.
+
+If any metrics used in the query are generated by either a recording rule or derived
+metric, you can replace your query with one more similar to the raw data by clicking
+**X-Ray**. This revised query might contain additional dimensions useful for
+correlation.
+
+<Check>
+To learn more about X-Ray, see
+[X-Ray: Making derived telemetry transparent](https://chronosphere.io/learn/making-derived-telemetry-transparent/#The%20Problem:%20Derived%20telemetry%20is%20a%20black%20box)
+on the Chronosphere Blog.
+</Check>
+
+## Understand Metrics DDx insights
+
+The **Metrics DDx** page displays information about correlations within your query's
+results. To change the time range of displayed query results, use the
+<Icon path={ mdiClockOutline } /> [**time range selector**](/navigate/time-ranges)
+or click and drag a time range within a chart. Changing the time range also updates
+the **Metrics DDx** analysis.
+
+You can pin a time range by clicking the <Icon path={ mdiPinOutline } /> range selector pin,
+which makes the range persistent as you view other pages in Observability Platform.
+As your investigation continues beyond **Metrics DDx**, pinning your time range
+ensures that your focus on other pages remains on the same period.
+
+### Correlation summary
+
+The **Correlation summary** is the result of **Metrics DDx** automatically analyzing
+the query results and attempting to summarize its findings by listing labels and
+values with the strongest correlation to the query.
+
+The summary also indicates **Single cardinality labels** by appending a blue dot
+to them. Single cardinality labels are less valuable for correlation than
+**Multiple cardinality labels** because their shapes are the same as the comparison
+graph.
+
+If the summary suggests that a label "is only `<no value>`", this indicates that
+some time series don't have this label.
+
+For conciseness, the summary hides other labels and values that have weaker correlations
+by default. In such results you can click the **Show more** link to view those labels
+and values.
+
+### Query result
+
+The query generates a **Query result** panel group with a **Query results** chart,
+which is the same as the chart that **Metrics Explorer** would generate from the
+query.
+
+The **Query result** panel group also includes a **Correlation comparison graph**,
+which visualizes the time series used for all correlation comparisons. It aggregates
+the query to a single metric for comparisons in the **[Label breakdown](#label-breakdown)**,
+where it helps you determine whether a correlation is present, and if so its nature.
+
+By default, Observability Platform uses `sum` to aggregate the query. If you use
+another aggregation in your query, Observability Platform uses that aggregation
+over the entire original query. For example, if you use `max`, then Observability Platform
+uses that aggregation over the entire query instead of `sum`.
+
+### Label breakdown
+
+Use the **Label breakdown** section to view, filter, and visualize query results
+by label and value to help you identify the most correlated data.
+
+- The section's sidebar includes each label as an expandable list containing its
+  values, sorted by default to list the values most strongly correlated to the query.
+  Each label also includes a count of its unique values.
+- The section's panel groups displays charts to visualize labels by their values'
+  correlation.
+
+#### Sort labels by correlation
+
+The list of labels is sorted from highest to lowest correlation score by default.
+Labels with high correlation scores contribute more data to a given chart. Use this
+sidebar's indicators of correlation strength to prioritize your investigation and
+remove values from visualization.
+
+To change how the list is sorted, click the <Icon path={ mdiSortVariant } /> sort dropdown,
+which defaults to listing the **Most correlated** values first. You can choose to
+instead sort by **Least correlated**, or alphabetically by **Name**.
+
+Observability Platform indicates the relative correlation scores of each of a label's
+values with an icon next to the value that indicates strong (three bars), moderate (two bars),
+weak (one bar), or no correlation (zero bars). Hold the pointer over the icon to
+display the value's precise correlation score, which ranges from 0 to 100.
+
+#### Filter data by labels
+
+When you hold the pointer over a label, additional icons also appear:
+
+- **<Icon path={ mdiMagnifyPlusOutline } /> Include label** includes that label's
+  data across **Metrics DDx**. Include labels that indicate a correlation in the
+  query to exclude other labels from visualizations.
+- **<Icon path={ mdiMagnifyMinusOutline } /> Exclude label** excludes that label's
+  data across **Metrics DDx**. Exclude labels that do not indicate a correlation
+  to remove them from visualizations for improved clarity.
+
+If you include exclude labels, they are applied as filters across the page. These
+filters are combined with [pinned scopes](#filter-data-by-pinned-scope), and their
+application on the page can be removed or reset in the same way.
+
+#### Filter the list of labels and values by keyword
+
+You can filter the list of both labels and values by keyword search. Begin typing
+in the sidebar's search bar to display only the labels and values that match. Filtering
+by search doesn't apply filters that affect the **Label breakdown** section's correlation
+visualizations.
+
+You can optionally hide the sidebar by clicking the
+<Icon path={ mdiChevronDoubleLeft } /> collapse control, or resize it by clicking
+and dragging the gap between the sidebar and the visualizations.
+
+#### Visualize correlations
+
+By default, Observability Platform renders one graph per label name by grouping
+the values of each label in the query and rendering them as a correlation graph.
+For example, the `container` label might have two values, `recommendationservice`
+and `<empty>`, which Observability Platform displays as `<no value>`, meaning some
+metric series don't have this label.
+
+To render a graph per value for a selected label, click the **One graph per** dropdown
+and select the label you want to investigate. **Single cardinality labels** are
+not included in the dropdown because they're the same shape as the comparison graph.
+Click the arrow to expand this section.
+
+Toggle **Show comparison** to overlay the **Correlation comparison graph** results on
+the cardinality label graphs. Single cardinality labels are hidden because they're
+the same shape as the comparison graph.
+
+Toggle **Show Y axis** to include it in charts. The Y axis is disabled by default
+to more strongly focus on making visual comparisons between and within charts.
+
+To change the graph size to suit your display or presentation, select a **S**mall,
+**M**edium, or **L**arge size from the **Graph Size** selector.
+
+In any **Metrics DDx** panel, click the <Icon path={ mdiDotsVertical } /> three
+vertical dots to access additional options. See [common panel
+elements](/observe/dashboards/panels#edit-a-panel) for an explanation of the other
+available tools.

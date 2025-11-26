@@ -1,0 +1,161 @@
+---
+title: Create a VictorOps notifier
+description: Create a VictorOps notifier with Chronosphere Observability Platform, Chronoctl, or Terraform.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import ChronoctlCreate from '/snippets/_partials/chronoctlnotifiers.mdx';
+import TerraformCreate from '/snippets/_partials/terraformcreate.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+To create a VictorOps notifier, create an API key in VictorOps and then create a
+VictorOps notifier in Chronosphere Observability Platform.
+
+## Create a service API key in VictorOps
+
+Before creating a VictorOps notifier in Observability Platform, enable the Prometheus
+integration in VictorOps and create a service API key. See the
+[REST endpoint integration guide](https://help.victorops.com/knowledge-base/rest-endpoint-integration-guide/)
+in the VictorOps documentation for more information.
+
+To configure a VictorOps notifier:
+
+1. In VictorOps, click the **Integrations** tab.
+1. Search for **Prometheus**, and then click **Enable Integration**.
+1. Copy the **Service API Key** value.
+1. Open the pre-configured REST integration, and copy the **URL to notify** value.
+1. In the navigation menu select **Settings <span aria-label="and then">></span>
+   Routing Keys**
+   and review your routing keys. If you have any routing keys defined, copy the
+   appropriate value for the team you want to route this notifier to.
+
+## Create a VictorOps notifier in Observability Platform
+
+After [creating a service API key in VictorOps](#create-a-service-api-key-in-victorops), you can create a VictorOps
+notifier in Observability Platform. You can use
+[variables](/investigate/alerts/notifications/notifiers#use-variables-in-notifiers) in your
+notifiers.
+
+<Tabs>
+<Tab title="Web" id="create-victorops-notifier">
+
+To create a VictorOps notifier:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Notifiers**.
+1. Click **Create notifier**.
+1. Enter a descriptive name for the notifier.
+1. Select **VictorOps** as the type of notifier you want to create.
+1. In the **API Key** field, enter the value of your VictorOps API key.
+1. In the **API URL** field, enter the **URL to notify** value you copied from
+   VictorOps, which is called as a `POST` request. For example:
+
+   ```text copy
+   https://alert.victorops.com/integrations/generic/20131114/alert/
+   ```
+
+1. In the **Routing Key** field, enter the routing key you copied from VictorOps.
+1. Optional: Select **Notify when resolved** to send a resolved alert notification.
+1. Click **Save**.
+
+</Tab>
+<Tab title="Chronoctl" id="victorops-chronoctl">
+
+<ChronoctlCreate />
+
+1. Define the resource definition for your VictorOps notifier:
+
+   ```yaml copy /NAME/ /SLUG/ /API_KEY/
+   api_version: v1/config
+   kind: Notifier
+   spec:
+     name: NAME
+     slug: SLUG
+     skip_resolved: true
+     victor_ops:
+       - api_key: 'API_KEY'
+         api_url: https://alert.victorops.com/integrations/generic/20131114/alert/
+         routing_key: 'test'
+   ```
+
+   Replace the following:
+
+   - _`NAME`_: A descriptive name, such as `test-victorops`.
+   - _`SLUG`_: A unique identifier, such as `team-victorops`.
+   - _`API_KEY`_: Your VictorOps API key.
+
+1. Enter the **URL to notify** value you copied from VictorOps as the value in the
+   `api_url` field.
+1. Enter the routing key you copied from VictorOps as the value in the `routing_key`
+   field.
+
+1. Apply the changes:
+
+   ```shell copy /FILE_NAME/
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of your notifier YAML file.
+
+</Tab>
+<Tab title="Terraform" id="victorops-terraform">
+
+To create a VictorOps notifier:
+
+1. Create a VictorOps notifier with Terraform by using the
+   `chronosphere_victorops_alert_notifier` type followed by a name in a resource
+   declaration:
+
+   ```ruby
+   resource "chronosphere_victorops_alert_notifier" "test_victorops" {
+     name          = "test-victorops"
+
+     # Optional slug of the victorops notifier.
+     slug = "vo-test-notifier"
+
+     ## Notifier-specific required configuration
+     # Detailed definitions can be found at: https://prometheus.io/docs/alerting/latest/configuration/#victorops_config
+     api_key       = "0b590c67-20d6-40ba-afb4-84f0808dd969"
+     api_url       = "https://alert.victorops.com/integrations/generic/20131114/alert/"
+     routing_key   = "test"
+
+     ## Notifier-specific optional configurations
+     message_type = "CRITICAL" # (Default) OR: WARNING, INFO
+     entity_display_name = "summary of the problem"
+     state_message = "long explanation of the problem"
+     monitoring_tool = "Chronosphere"
+
+     ## (Optional) Base configuration common to all notifiers
+     send_resolved = true # The default value
+
+     ## (Optional) HTTP configuration common to HTTP notifiers
+     basic_auth_username = "username"
+     basic_auth_password = "strong+p@ssword"
+     # Can use bearer_token instead of basic auth
+     proxy_url                = "https://my-proxy-url"
+     tls_insecure_skip_verify = false
+   }
+   ```
+
+1. Enter your VictorOps API key as the value in the `api_key` field.
+1. Enter the **URL to notify** value you copied from VictorOps as the value in the
+   `api_url` field.
+1. Enter the routing key you copied from VictorOps as the value in the `routing_key`
+   field.
+1. Run `terraform apply` to create the notifier resource.
+
+   ```ruby copy
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="API" id="victorops-API">
+
+To complete this action with the Chronosphere API, use the `victor_ops` object in the
+[`CreateNotifier`](/tooling/api-info/definition/operations/CreateNotifier) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

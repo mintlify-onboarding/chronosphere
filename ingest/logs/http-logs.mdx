@@ -1,0 +1,35 @@
+---
+title: Route logs over HTTP
+description: Use the Chronosphere logging HTTP endpoint to send logs to your Observability Platform tenant over HTTP.
+---
+
+Use the Chronosphere logging HTTP endpoint to send your logs to Observability
+Platform over HTTP:
+
+```text copy
+https://TENANT.chronosphere.io/api/v1/data/logs/ingest
+```
+
+- Replace _`TENANT`_ with your organization name, prefixed to your Observability
+  Platform instance. For example, _`MY_ORGANIZATION`_`.chronosphere.io`.
+
+In addition to formatted log data, such as JSON, the logging HTTP endpoint accepts
+logs in plain text format.
+
+## Limits
+
+The logging HTTP endpoint has the following limits:
+
+- Requests (compressed) exceeding 50&nbsp;MB are rejected.
+- Individual logs exceeding 1&nbsp;MB are dropped.
+- Logs with timestamps exceeding 24 hours into the future or past are rejected.
+- Label keys and values exceeding 1024 characters are truncated to adhere to the 1024
+  character limit.
+
+## Status codes
+
+The logging HTTP endpoint returns the following status codes:
+
+- `200`: Accepted. The request was accepted for processing.
+- `413`: Large request. The maximum content size per payload (compressed) is
+  50&nbsp;MB.

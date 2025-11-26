@@ -1,0 +1,81 @@
+---
+title: Personal home page
+shortDesc: Learn how to acess important resources from your personal home page in Chronosphere Observability Platform.
+---
+import { CollectionNavIcon} from '@/components';
+{/* -- dri: Lynette Miles -- */}
+
+
+After you sign in, Chronosphere Observability Platform displays your personal
+_home page_. This home page contains [panels](#panels) that display recently
+viewed, recently modified, or favorite resources. New users will often have
+empty panels.
+
+## Customize your home page
+
+You can customize your home page by adding, removing, or rearranging panels. To do
+so, follow these steps:
+
+1. On the Observability Platform home page, click
+   **<Icon icon="gear" /> Customize your home page**.
+1. Select the panels you want to add to your home page, or deselect the panels
+   you want to remove. You can also drag and drop the panels to change the order
+   in which they appear.
+1. Click **Save** to apply your changes.
+
+## Panels
+
+The following panels are available in the Observability Platform home page.
+
+### Activity feed
+
+The **Activity feed** panel displays information about recently created,
+updated, and deleted Chronosphere entities. This information is listed in
+reverse chronological order.
+
+Use the **Exclude service accounts** toggle to view or hide updates performed by
+[service accounts](/administer/accounts-teams/service-accounts).
+
+### Favorite resources
+
+Your [favorite](/navigate/favorites) resources are those you've selected either from
+the recent resources panels or from their areas of Observability Platform. Adding
+favorite resources helps you access the resources you need the most, faster.
+
+Panels for favorite resources include:
+
+- **Favorite dashboards**
+- **Favorite monitors**
+
+### Recent comments
+
+The **Recent comments** panel displays a list of the most recent
+[comments](/navigate/comments) added by your team members. These comments are
+listed in reverse chronological order, and by default include comments added to
+any entities by any team members.
+
+Click the <Icon icon="filter" />filter icon to show or hide filters.
+You can use the following filters:
+
+- **Search by comment keyword <Icon icon="magnifying-glass" />**: Filter comments by
+  content. This filter searches the body text of comments, but not the name of
+  the entity to which the comment was added or the team member who added it.
+  This filter is case-sensitive.
+- **@mentions**: If this toggle is enabled, only comments that mention your
+  username are displayed.
+- **Filter by author**: Filter comments by the team members who added them. You
+  can select one or more authors.
+- **Filter by type**: Filter comments by the type of entity they were added to.
+  You can select one or more entity types.
+
+### Recent resources
+
+Viewing resources in Observability Platform adds those resources to the relevant
+panel on your home page, up to the most recent ten. For example, viewing any
+dashboard adds a link to that dashboard to the **Recent dashboards** panel.
+
+Panels for recent resources include:
+
+- [**Recent dashboards**](/observe/dashboards)
+- [**Recent monitors**](/investigate/alerts/monitors)
+- [**Recent SLOs**](/observe/slo)

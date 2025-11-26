@@ -1,0 +1,70 @@
+---
+title: Install a Core Operator on Linux
+description: Install a Core Operator to run Telemetry Pipeline on Linux.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+To get started with Chronosphere Telemetry Pipeline on Linux, you'll need to install a
+[Core Operator](/pipelines/concepts#core-operator) in each
+Linux environment where you want to deploy pipelines.
+
+## Supported Linux distributions
+
+Telemetry Pipeline is compatible with the following Linux distributions:
+
+- Amazon Linux 2023
+- Red Hat Enterprise Linux 7.9, 8.0 or later, and 9.0 or later
+- CentOS Linux 8 and 9
+- Rocky Linux 9
+- Ubuntu Server 20.04 LTS and 24.04 LTS
+
+## Installation steps
+
+{/* vale Chronosphere.Units = NO */}
+
+To install a Core Operator on Linux:
+
+1. [Review the Telemetry Pipeline installation prerequisites](/pipeline-install/prereqs).
+
+1. Review the [K3s requirements](https://docs.k3s.io/installation/requirements).
+  As part of the Core Operator installation process, Telemetry Pipeline deploys
+  a local K3s cluster in your Linux environment.
+
+1. Run the following command:
+
+   ```shell copy
+   curl -sSfL https://core-packages.calyptia.com/install-core.sh | bash
+   ```
+
+   This command installs [Pipeline CLI](/pipeline-cli), deploys a K3s cluster,
+   and installs a Core Operator inside that cluster.
+
+1. Repeat these steps for each Linux environment where you want to use Telemetry
+   Pipeline. For example, if you have multiple Linux virtual machines, you must
+   install a dedicated Core Operator inside every virtual machine.
+
+{/* vale Chronosphere.Units = YES */}
+
+## Health checks
+
+As part of the Core Operator installation process, Telemetry Pipeline performs
+the following health checks:
+
+- Checks for `curl`
+- Checks for `systemctl`
+- Ensures the system meets the basic requirements
+- Checks that Federal Information Processing Standards (FIPS) mode isn't enabled
+- Checks that a firewall isn't enabled
+- Tests connectivity to [https://cloud-api.calyptia.com](https://cloud-api.calyptia.com)
+- Tests connectivity to [https://ghcr.io/calyptia/core](https://ghcr.io/calyptia/core)
+- Checks SELinux status
+
+If the checks find an issue, an error message outputs to the console. See
+[Troubleshoot Telemetry Pipeline installations on Linux](/pipeline-install/troubleshooting)
+for additional help.
+
+## Next steps
+
+After you've installed a Core Operator in your Linux environment, you can
+[create a Core Instance](/pipeline-install/create-instance) in that environment.

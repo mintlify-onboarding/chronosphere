@@ -1,0 +1,190 @@
+---
+title: Create a Slack notifier
+description: Create a Slack notifier with Chronosphere Observability Platform, Chronoctl, or Terraform.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import ChronoctlCreate from '/snippets/_partials/chronoctlnotifiers.mdx';
+import TerraformCreate from '/snippets/_partials/terraformcreate.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+To create a Slack notifier, generate an incoming webhook in Slack and then create a
+Slack notifier in Chronosphere Observability Platform.
+
+## Create an incoming webhook in Slack
+
+Before creating a Slack notifier in Observability Platform, create an incoming webhook in Slack. See
+[Sending messages using incoming webhooks](https://api.slack.com/messaging/webhooks)
+in the Slack documentation for more information.
+
+## Create a Slack notifier in Observability Platform
+
+After [creating an incoming webhook in Slack](#create-an-incoming-webhook-in-slack),
+you can create a Slack notifier in Observability Platform. You can use
+[variables](/investigate/alerts/notifications/notifiers#use-variables-in-notifiers) in your
+notifiers.
+
+
+<Tabs>
+<Tab title="Web" id="create-slack-notifier">
+
+To create a Slack notifier:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Notifiers**.
+1. Click **Create notifier**.
+1. Enter a descriptive name for the notifier.
+1. Select **Slack** as the type of notifier you want to create.
+1. In the **API URL** field, enter the URL you created for your webhook in Slack,
+   which is called as a `POST` request. For example:
+
+   ```text copy
+   https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXX
+   ```
+
+   The [API URL](https://api.slack.com/messaging/webhooks#create_a_webhook) from
+   Slack contains the channel name.
+1. The **Channel** field is deprecated and doesn't affect the notifier.
+   A channel name is still required in this field until the field is fully removed.
+1. Optional: In the **Username** field, enter the Slack username to post the notifier
+   as.
+1. Optional: Select **Notify when resolved** to send a resolved alert notification.
+1. Click **Save**.
+
+</Tab>
+<Tab title="Chronoctl" id="slack-chronoctl">
+
+<ChronoctlCreate />
+
+1. Define the resource definition for your webhook notifier:
+
+   ```yaml copy /NAME/ /SLUG/ /CHANNEL/ /USERNAME/
+   api_version: v1/config
+   kind: Notifier
+   spec:
+     name: NAME
+     slug: SLUG
+     skip_resolved: true
+     slack:
+       - actions: null
+         api_url: https://hooks.slack.com/services/
+         channel: CHANNEL
+         fields: null
+         mrkdwn_in: null
+         username: USERNAME
+   ```
+
+   Replace the following:
+
+   - _`NAME`_: A descriptive name, such as `test-slack`.
+   - _`SLUG`_: A unique identifier, such as `team-slack`.
+   - _`CHANNEL`_: Deprecated. The Slack channel to send notifications to.
+   - _`USERNAME`_: Send the notification message from a specified Slack username.
+
+1. Enter the URL you created for your webhook in Slack as the value for the `api_url`
+   field. The API URL contains the channel to send the message to.
+1. Optional: Enter the Slack username to post the notifier as in the `username`
+   field.
+
+1. Apply the changes:
+
+   ```shell copy /FILE_NAME/
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of your notifier YAML file.
+
+</Tab>
+<Tab title="Terraform" id="slack-terraform">
+
+To create a Slack notifier:
+
+1. Create a Slack notifier with Terraform by using the
+   `chronosphere_slack_alert_notifier` type followed by a name in a resource
+   declaration:
+
+   ```ruby copy
+   resource "chronosphere_slack_alert_notifier" "slack_notifier" {
+     name = "Slack Notifier"
+
+     # Optional slug of the slack notifier.
+     slug = "slack-notifier"
+
+     ## Notifier-specific required configuration.
+     # For detailed definitions, see
+     # https://prometheus.io/docs/alerting/latest/configuration/#slack_config
+     # `api_url` is a sensitive value. Treat it like a secret.
+     api_url       = "https://hooks.slack.com/services/XXXXX/XXXXX/XXXXX"
+     channel       = "alerts"
+
+     ## Notifier-specific optional configurations
+     username      = "alertbot"
+     callback_id   = "my_callback_id"
+     color         = "red"
+     fallback      = "my_fallback"
+     footer        = "my_footer"
+     icon_emoji    = ""
+     image_url     = "https://example.com/images/img.png"
+     link_names    = false
+     mrkdwn_in     = []
+     pretext       = "my_pretext"
+     short_fields  = false
+     text          = "my_text"
+     title         = "my_title"
+     title_link    = "my_title_link"
+
+     # Can have multiple fields.
+     fields {
+       title = "my_title"
+       value = "my_value"
+       short = true
+     }
+
+     # Optional list of actions
+     action {
+       name                        = "my_action"
+       style                       = "my_style"
+       text                        = "my_text"
+       type                        = "my_type"
+       url                         = "my_url"
+       value                       = "my_value"
+       action_confirm_text         = "confirmation text"
+       action_confirm_tile         = "confirmation title"
+       action_confirm_ok_text      = "confirmation ok text"
+       action_confirm_dismiss_text = "dismissal text"
+     }
+
+     ## (Optional) Base configuration common to all notifiers
+     send_resolved = true # The default value
+
+     ## (Optional) HTTP configuration common to HTTP notifiers
+     basic_auth_username = "username"
+     basic_auth_password = "strong+p@ssword"
+     # Can use bearer_token instead of basic auth
+     proxy_url                = "https://my-proxy-url"
+     tls_insecure_skip_verify = false
+   }
+   ```
+
+1. Enter the URL you created for your webhook in Slack as the
+   value for the `api_url` field. The API URL contains the channel to send the message to.
+   The `channel` field is deprecated.
+1. Optional: Enter the Slack username to post the notifier as in the `username`
+   field.
+1. Run `terraform apply` to create the notifier resource.
+
+   ```ruby copy
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="API" id="slack-API">
+
+To complete this action with the Chronosphere API, use the `slack` object in the
+[`CreateNotifier`](/tooling/api-info/definition/operations/CreateNotifier) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

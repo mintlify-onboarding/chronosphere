@@ -1,0 +1,59 @@
+---
+title: Document dashboards with Markdown panels
+description: Document dashboards with Markdown panels for Chronosphere dashboards.
+---
+import ChronoctlDashboard from '/snippets/_partials/chronoctl-dashboard.mdx';
+import ClassicPanel from '/snippets/_partials/classic-panels.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<ClassicPanel />
+
+A _Markdown panel_ renders [CommonMark](https://commonmark.org/help/) content. Use
+Markdown panels to document important information or context into a
+[dashboard](/observe/dashboards).
+
+To create a Markdown panel or learn more about the configuration options common
+to all panels, see [Panels](/observe/dashboards/panels).
+
+## Add content to a Markdown panel
+
+To add content to a Markdown panel:
+
+1. [Edit the Markdown panel](/observe/dashboards/panels#edit-a-panel).
+1. In the **Edit panel** interface, click the **Markdown** tab.
+
+The **Markdown** tab contains a text field where you can enter Markdown content. Only
+the [functions listed](https://commonmark.org/help/) are supported. Chronosphere
+doesn't support all Markdown features, such as color changes for text.
+
+The **Preview** panel updates in real time to display the rendered result.
+
+You can use [dashboard variables](/observe/dashboards/customization/dashboard-variables)
+in the Markdown contents.
+
+To link to another Chronosphere dashboard:
+
+1. Click the **<Icon icon="link" alt="Link icon"/> Link** tool.
+1. Click **Link type** and select **Dashboard**.
+1. Click **Select dashboard** and select a dashboard for the link's destination.
+1. Optional: Click **Include current time range** to toggle whether the link
+   opens the destination dashboard with the same time range as this panel's
+   dashboard.
+1. Optional: Click **Include current variable values** to toggle whether to
+   pass the same [dashboard variable](/observe/dashboards/customization/dashboard-variables)
+   values to the destination dashboard.
+1. Click **Insert link** to add the link to the Markdown content.
+1. Optional: To cancel without adding a link, click **Cancel**.
+
+To link to an arbitrary URL:
+
+1. Click the **<Icon icon="link" alt="Link icon"/> Link** tool.
+1. Enter a **Name** for the link, which the panel uses for the link's text.
+1. Enter a **URL** for the link's destination.
+
+   You can include dashboard variables in the URL. Chronosphere includes available
+   variables in the link insertion dialog.
+1. Click **Insert link** to add the link to the Markdown content.
+1. Optional: To cancel without adding a link, click **Cancel**.

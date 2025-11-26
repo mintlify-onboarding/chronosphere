@@ -1,0 +1,18 @@
+---
+title: Install Core Agent in Docker
+description: Learn how to install Core Agent in Docker.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+In Chronosphere Telemetry Pipeline, you can use [fleets](/fleets) to manage instances
+of Core Agent.
+
+Use the following command to install Core Agent in Docker:
+
+```shell copy /VERSION/
+docker run --rm -it ghcr.io/chronosphereio/calyptia-core-agent:VERSION
+```
+
+Replace _`VERSION`_ with the [latest version](/fleets/agent/version-equivalents)
+of Core Agent.

@@ -1,0 +1,804 @@
+---
+title: Trace datasets
+description: Use datasets in Chronosphere Observability Platform to map sets of traces to named groups relevant to your organization.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import BehaviorsManage from '/snippets/_partials/behaviors-manage.mdx';
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import TerraformPlan from '/snippets/_partials/terraformplan.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Understanding your tracing license consumption helps identify where you're spending
+the most money on your tracing data.
+
+Trace _datasets_ are a control mechanism that let you map sets of traces to
+named groups relevant to your organization, and then track processed and persisted
+bytes for those groups over time.
+
+For example, you might create a Shopper dataset based on data like services,
+operations, customer IDs, and tags that relate to your shopping app. Viewing that
+dataset provides a snapshot of trace data volume associated with the entire business
+unit related to your shopping app.
+
+<Info>
+Chronosphere recommends creating one dataset per team or per environment.
+Understanding data consumption for individual business units can highlight which
+[sampling rules](/control/sampling) to adjust so you can better control your trace
+data license consumption and remain within defined data limits.
+</Info>
+
+Datasets are part of the Trace Control Plane, which also includes trace behaviors and
+head and tail sampling rules. You need administrative access to use the Trace Control
+Plane.
+
+To access trace datasets, in the navigation menu, click
+**<Icon icon="shield" /> Go to Admin** and then select
+**<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control
+Plane**.
+
+When [searching traces](/investigate/querying/traces#search-optimizations) in Trace
+Explorer, use the **Custom tags** field in the **Query builder** in Trace Explorer to
+search for the `behavior_dataset_slug` tag. This tag identifies traces that were
+sampled by a particular dataset's behavior during processing. A trace cam match many
+datasets, but will only be sampled by the behaviors on the first dataset it matched.
+used to determine the active behavior for sampling purposes.
+
+## View datasets
+
+Select from the following methods to view and filter available trace datasets.
+
+<Tabs>
+<Tab title="Web" id="view-datasets-cloud">
+
+To view trace datasets:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace
+   Control Plane**.
+
+   The **Overview** tab displays your total license consumption for the selected
+   period, which defaults to the current month to date. This view includes graphs
+   that display the daily volume breakdown and the cumulative breakdown over the
+   current week.
+
+1. Take any of the following actions to change the displayed data:
+
+   - On either of the **Processed** or **Persisted** graphs, click the <Icon icon="ellipsis-vertical" /> more icon and select **Open in Metrics Explorer** to
+     visualize the underlying query.
+
+   - Toggle **Show unique volume** to display only the volume of data that doesn't
+     overlap with another dataset.
+
+   - Toggle **Show dropped volume** to display only the volume of data that's being
+     dropped.
+1. Use the search box to search for a specific dataset. The row for each dataset
+   displays, the total data volume, the percent of data overlap, and any active
+   behaviors.
+1. In the datasets table, select one or more datasets to update the graphs. You can
+   click and drag a section of either graph to zoom in on the selected time period.
+1. To view an individual dataset, click the name of the dataset you want to view from
+   the list.
+
+   The individual dataset page includes a definition of the underlying Trace Explorer
+   query and the services at the root of all traces in the dataset. To view the
+   underlying queries, in either the **Definition** or **Root services**, click
+   **Search in Trace Explorer**.
+
+</Tab>
+
+<Tab title="Chronoctl" id="view-datasets-chronoctl">
+
+To use [Chronoctl](/tooling/chronoctl) to return all trace datasets, use the
+`chronoctl datasets list` command:
+
+```shell copy
+chronoctl datasets list
+```
+
+To filter for a specific trace dataset, add the `slugs` argument to the command:
+
+```shell copy
+chronoctl datasets list --slugs SLUG
+```
+
+Replace _`SLUG`_ with the slug of the dataset you want to
+display.
+
+[Use the Code Config tool](/tooling/gitops) tool to view the dataset's Chronoctl YAML
+representation.
+
+</Tab>
+
+<Tab title="Terraform" id="view-datasets-terraform">
+
+[Use the Code Config tool](/tooling/gitops) in Observability Platform to view a
+dataset's Terraform representation.
+
+</Tab>
+
+<Tab title="API" id="view-datasets-api">
+
+To complete this action with the Chronosphere API, use the
+[`ListDatasets`](/tooling/api-info/definition/operations/ListDatasets)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Create datasets
+
+To create a dataset, define and test your trace query, and then map that query to the
+resource you want to create.
+
+After creating datasets, you can [assign trace behaviors](#assign-behaviors) for your
+datasets. Behaviors let you set sampling rates and the shaping order, which
+determines the order of priority behaviors to apply when there are overlapping traces
+with other datasets.
+
+Use one of the following methods to create a dataset.
+
+<Tabs>
+
+<Tab title="Web" id="view-datasets-cloud">
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. Click **Create dataset**.
+1. Enter a display name for your dataset, which is used to generate a default slug.
+   If you want the slug to be a different value, edit the **Slug** field directly.
+1. Enter comments about the dataset, such as the business unit this dataset tracks
+   trace data for.
+1. Define dataset match criteria to outline the query that matches traces you want
+   included in the dataset. You can add one or more span filters to additionally
+   refine the trace results.
+
+   See [Search and filter trace data](/investigate/querying/traces) for
+   information about how to define an effective search for trace data.
+1. Click **View statistics** to open Trace Explorer in a new tab with your defined
+   query. Review the results to ensure your query returns the trace data you expect.
+1. In the **Create dataset** pane, click **Save** to create your dataset.
+
+Observability Platform creates your dataset and displays its definition. Next,
+[assign trace behaviors](#assign-behaviors) for your dataset to set sampling rates.
+
+</Tab>
+
+<Tab title="Chronoctl" id="create-a-dataset-chronoctl">
+
+<Info>
+If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
+parameter to generate a template for a specific resource type:
+
+```shell copy
+chronoctl datasets scaffold
+```
+
+You can redirect the results (using the redirection operator `>`) to a file for
+editing.
+</Info>
+
+To create a dataset with [Chronoctl](/tooling/chronoctl):
+
+1. Define a query in
+   [Trace Explorer](/investigate/querying/traces#search-and-filter-trace-data) that
+   represents the data you want included in the dataset. For example, the following
+   query returns all traces where at least one span includes a service called
+   `payment-svc`, an operation that starts with `checkout`, and a tag named `env=prod`:
+
+   ```text copy
+   service="payment-svc" operation=~"^payment*." tag:env=prod*"
+   ```
+
+1. Create a YAML definition to map the query to a dataset that represents the
+   business unit you want to track trace data for.
+
+   Use the following command to generate a sample dataset configuration you can use
+   as a template:
+
+   ```shell copy
+   chronoctl datasets scaffold
+   ```
+
+   In the template, `kind: Dataset` defines an individual dataset.
+
+1. With a completed definition, submit it with:
+
+   ```shell copy
+   chronoctl datasets create -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+See the [Chronoctl dataset example](#chronoctl-dataset-example) for a completed
+dataset definition.
+
+After creating your dataset, [assign trace behaviors](#assign-behaviors) for your
+dataset to set sampling rates and the shaping order, which determines the order of
+priority behaviors to apply when there are overlapping traces with other datasets.
+
+</Tab>
+
+<Tab title="Terraform" id="create-a-dataset-terraform">
+
+<TerraformPlan />
+
+To create a dataset with [Terraform](/tooling/infrastructure/terraform):
+
+1. Define a query in
+   [Trace Explorer](/investigate/querying/traces#search-and-filter-trace-data) that
+   represents the data you want included in the dataset. For example, the following
+   query returns all traces where at least one span includes a service called
+   `payment-svc`, an operation that starts with `checkout`, and a tag named `env=prod`:
+
+   ```text copy
+   service="payment-svc" operation=~"^payment*." tag:env=prod*"
+   ```
+
+1. Create a Terraform resource to map the query to a dataset that represents the
+   business unit you want to track trace data for.
+
+1. Add the definition by using the `chronosphere_dataset` type, followed by a name in
+   a resource declaration.
+
+1. Run this command to apply the changes:
+
+   ```shell copy
+   terraform apply
+   ```
+
+See the [Terraform dataset example](#terraform-dataset-example) for a completed
+dataset resource.
+
+</Tab>
+
+<Tab title="API" id="create-a-dataset-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateDataset`](/tooling/api-info/definition/operations/CreateDataset)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Identify incomplete traces
+
+You can create a dataset specifically for identifying incomplete traces, which are
+traces with spans that reference other spans outside of the selected trace.
+Incomplete traces can occur if a service is misconfigured and isn't exporting spans
+correctly.
+
+Chronosphere recommends creating at least one dataset with the Chronosphere-supplied
+`parent_missing=true` key/value pair to help identify and track changes in incomplete
+trace volume or trace instrumentation over time. As you add more trace
+instrumentation, fewer traces meet this criteria, which drives down the volume of
+traces in this dataset. You can also apply behaviors to this dataset to decrease the
+persisted volume of incomplete traces.
+
+Use one of the following examples to create a dataset for identifying incomplete
+traces.
+
+<Tabs>
+
+<Tab title="Chronoctl" id="incomplete-dataset-chronoctl">
+
+```yaml copy
+name: Partial Traces
+  slug: partial-traces
+  description: Track data volume for incomplete traces.
+  configuration:
+    type: TRACES
+    trace_dataset:
+      match_criteria:
+        span:
+          - match_type: INCLUDE
+            tags:
+              - key: parent_missing
+                value:
+                  match: EXACT
+                  value: true
+```
+
+</Tab>
+
+<Tab title="Terraform" id="incomplete-dataset-terraform">
+
+```ruby copy
+resource "chronosphere_dataset" "incomplete_traces" {
+  name = "Incomplete traces"
+  description = "Track data volume for incomplete traces."
+  configuration {
+    type = "TRACES"
+
+    trace_dataset {
+      match_criteria {
+        span {
+          match_type = "INCLUDE"
+          tag {
+            key = "parent_missing"
+
+            value {
+              value = "true"
+              match = "EXACT"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+### Chronoctl dataset example
+
+The following YAML definition consists of one dataset named
+`Traces payment service US prod`. This dataset includes any spans that include the
+`payment` service, the `payment_store` operation, and have a tag where
+`deployment.environment=production`.
+
+<Info>
+If you want to specify criteria at the trace level rather than the span level,
+define `trace` instead of `span` in your YAML definition.
+</Info>
+
+```yaml copy
+api_version: v1/config
+kind: Dataset
+spec:
+  # Required name of the dataset. Can be modified after the dataset is created.
+  name: Traces payment service US prod
+  # Unique identifier of the dataset. If not provided, a slug is generated based
+  # on the name field. Can't be modified after the dataset is created.
+  slug: traces-payment-service-us-prod
+  # Optional description for the dataset.
+  description: Traces for payment service in US production environment
+  # Defining characteristics of the dataset.
+  configuration:
+    # Dataset type, which must be TRACES.
+    type: TRACES
+    trace_dataset:
+      # Trace criteria to match for the dataset.
+      match_criteria:
+      # Object that represents the span conditions to match on. All conditions must
+      # be true in a single span for the span to be considered a match.
+        span:
+        # Determines whether in INCLUDE or EXCLUDE all traces that contain at least
+        # one span matching the filter.
+          - match_type: INCLUDE
+            # The service to match on in candidate spans.
+            service:
+              # Operator to compare in_values with. Can be one of EXACT, REGEX,
+              # EXACT_NEGATION, REGEX_NEGATION, IN, NOT_IN.
+              match: IN
+              # Values the filter tests against when using IN or NOT_IN match type.
+              in_values:
+                - payment
+            # The operation to match on in candidate spans.
+            operation:
+              match: REGEX
+              # The value the filter compares to the target trace or span field.
+              value: /payment_store/.*
+            # The tag to match on in candidate spans.
+            tags:
+            # The key of the span tag to match on in the filter.
+              - key: deployment.environment
+                value:
+                   match: EXACT
+                   value: production
+```
+
+### Terraform dataset example
+
+The following Terraform resource creates a dataset that Terraform refers to by
+`prod_payment_us`, and with a human-readable name of `Traces payment service US prod`.
+
+This dataset includes any spans that include the `payment` service, where the parent
+service matches either `us-east` or `us-west`, the parent operation begins with
+`/payment`, and a tag where `environment` includes `prod`.
+
+<Info>
+If you want to specify criteria at the trace level rather than the span level,
+define `trace` instead of `span` in your YAML definition.
+</Info>
+
+```ruby copy
+resource "chronosphere_dataset" "prod_payment_us" {
+  # Required name of the dataset. Can be modified after the dataset is created.
+  name        = "Traces payment service US prod"
+  # Optional description for the dataset.
+  description = "Traces passing through the payment service in US production"
+  # Defining characteristics of the dataset.
+  configuration {
+    # Dataset type, which must be TRACES.
+    type = "TRACES"
+
+    trace_dataset {
+      # Trace criteria to match for the dataset.
+      match_criteria {
+        # Object that represents the span conditions to match on. All conditions must
+        # be true in a single span for the span to be considered a match.
+        span {
+          # Matches traces based on the entire duration of the trace.
+          duration {
+            max_secs = 99
+            min_secs = 1
+          }
+
+          # Matches traces based on the top-level error status.
+          error {
+            value = true
+          }
+
+          # Determines whether in INCLUDE or EXCLUDE all traces that contain at least
+          # one span matching the filter.
+          match_type = "INCLUDE"
+
+          # Matches the operation of the candidate span's parent span if it's not a
+          # root span.
+          parent_operation {
+            value = "payments/.*"
+            match = "REGEX"
+          }
+
+          # Matches the service of the candidate span's parent span if it's not a
+          # root span.
+          parent_service {
+            value = "us-[east|west]"
+            match = "REGEX"
+          }
+
+          # The service to match on in candidate spans.
+          service {
+            match = "IN"
+            in_values = ["payment"]
+          }
+
+          # Defines the number of spans that must match the criteria defined by
+          # filter. Defaults to least one span.
+          span_count {
+            max = 2
+            min = 1
+          }
+
+          # The tag to match on in candidate spans.
+          tag {
+            key = "environment"
+
+            value {
+              value = "prod.*"
+              match = "REGEX"
+            }
+          }
+
+          tag {
+            key = "client_build"
+            value {
+              match = "NOT_IN"
+              in_values = ["debug", "beta"]
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+## Assign behaviors
+
+When viewing an individual dataset, you can assign a
+[behavior](/control/sampling/behaviors) to the dataset to set sampling rates on two
+levels:
+
+<BehaviorsManage />
+
+<Info>
+Assigning a behavior to a dataset is different than
+[editing the baseline behavior](/control/sampling/behaviors#customize-your-sampling-strategy),
+where you can modify the facets of a baseline behavior based on the sampling strategy
+you want to use.
+</Info>
+
+Select from the following methods to assign behaviors to a dataset.
+
+<Tabs>
+<Tab title="Web" id="assign-a-behavior-cloud">
+
+To assign behaviors to a dataset:
+
+<Info>
+You can also [manage assigned behaviors](/control/sampling/behaviors#manage-assigned-behaviors)
+from the **Behaviors** tab of Trace Control Plane.
+</Info>
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. From the list of datasets, click the dataset you want to manage behaviors for.
+1. In the selected dataset page, in the **Behavior** pane, click **Manage**.
+
+   If you already have a behavior assigned to a dataset, you can
+   [run a preview](/control/sampling/behaviors#preview-behaviors) of another
+   dataset to preview its affects based on a dataset's volume. This capability
+   lets you temporarily preview a behavior to understand its impact before assigning
+   it.
+
+1. In the **Main layer** pane, select a main behavior from the dropdown.
+1. Optional: In the **Override layer** pane, select an override behavior and choose
+   when the override should start and end, and select a duration for how long the
+   override remains active.
+1. Select a shaping order for your main behavior. Shaping order is in decreasing
+   priority, so a behavior in position one takes precedence over a behavior in
+   position three.
+1. Click **Save** to save the behavior definition for your dataset.
+
+</Tab>
+<Tab title="Chronoctl" id="assign-a-behavior-chronoctl">
+
+<Info>
+If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
+parameter to generate a template for a specific resource type:
+
+```shell copy
+chronoctl trace-behavior-config scaffold
+```
+
+You can redirect the results (using the redirection operator `>`) to a file for
+editing.
+</Info>
+
+To assign a behavior with [Chronoctl](/tooling/chronoctl):
+
+1. Run the following command to generate a sample behavior configuration you can use
+   as a template:
+
+   ```shell copy
+   chronoctl trace-behavior-config scaffold
+   ```
+
+   In the template, `kind: TraceBehaviorConfig` defines an individual dataset.
+
+1. With a completed definition, submit it with:
+
+   ```shell copy
+   chronoctl trace-behavior-config create -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+See the [Chronoctl behavior example](#chronoctl-behavior-example) for a completed
+behavior definition.
+
+</Tab>
+
+<Tab title="API" id="assign-a-behavior-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateTraceBehaviorConfig`](/tooling/api-info/definition/operations/UpdateTraceBehaviorConfig)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Chronoctl behavior example
+
+The following YAML definition consists of one behavior named
+`Traces payment service US prod`. This dataset includes any spans that include the
+`payment` service, the `payment_store` operation, and have a tag where
+`deployment.environment=production`.
+
+```yaml copy
+api_version: v1/config
+kind: TraceBehaviorConfig
+spec:
+    # List of assignments for the main behavior. The referenced datasets are datasets
+    # to enroll in behaviors. The referenced behaviors are the active behaviors
+    # for the dataset when there is no override in place.
+    # * Only one main behavior can be assigned to a dataset.
+    # * Only one referenced 'TraceBehavior' with 'type' field set to 'TYPE_BASELINE' can
+    #   be set, which must match the slug referenced by 'baseline_behavior_slug'.
+    main_behavior_assignments:
+        - created_at: "2024-08-24T14:15:22Z"
+          updated_at: "2024-08-24T13:22:21Z"
+          # The slug reference of a TraceDataset
+          dataset_slug: "shopper-dataset"
+          # The slug reference of a TraceBehavior
+          behavior_slug: "baseline"
+          # The author or creator of the entry.
+          created_by: "someone@example.com"
+          # A description of the entry.
+          description: "Description of the behavior"
+    # List of assignments for the override behavior. OverrideBehaviorAssignments are used to
+    # specify the active behavior for a dataset over a specific time range.
+    # * Only one override behavior can be assigned to a dataset.
+    # * Only one referenced 'TraceBehavior' with 'type' field set to 'TYPE_BASELINE' can
+    # be set, which must match the slug referenced by 'baseline_behavior_slug', and any
+    # baseline behavior referenced in 'main_behavior_assignments'.
+    override_behavior_assignments:
+        - created_at: "2024-08-24T14:15:22Z"
+          updated_at: "2024-08-24T13:22:21Z"
+          # The slug reference of a TraceDataset
+          dataset_slug: "shopper-dataset"
+          # The slug reference of a TraceBehavior
+          behavior_slug: "keep-all"
+          # The starting time of the override.
+          start_time: "2024-08-26T14:15:22Z"
+          # The ending time of the override.
+          end_time: "2024-08-26T15:15:22Z"
+          # The author or creator of the entry.
+          created_by: "someone@example.com"
+          # A description of the entry.
+          description: "Allow all traces for one hour"
+    # List of dataset priorities. This list specifies the order in which datasets
+    # are considered when determining the behavior to follow for a trace. Dataset
+    # priorities are used to break ties when a trace matches more than one dataset
+    # with an active behavior.
+    # * Each entry in this list must refer to the slug of an existing dataset.
+    # * The order of the list is the order in which the datasets are considered.
+    # * The list must contain all datasets referenced in either main_behavior_assignments
+    #   and override_behavior_assignments.
+    # * The list may contain datasets that are not referenced in either of the
+    #   previous references.
+    dataset_priorities:
+        - "baseline"
+        - "keep-all"
+    # The baseline behavior to use for behavior assignments and base head sampling rates.
+    # Must reference a TraceBehavior entity with type: TYPE_BASELINE.
+    baseline_behavior_slug: "baseline"
+```
+
+## Edit datasets
+
+When creating or editing a dataset, you can [use the Code Config tool](/tooling/gitops)
+to view code representations of a dataset for
+[Terraform](/tooling/infrastructure/terraform), [Chronoctl](/tooling/chronoctl), and
+the [Chronosphere API](/tooling/api-info). The displayed code also responds to
+changes you make in the **Visual Editor** tab.
+
+Entities modified by Terraform and Chronoctl are viewable in Observability Platform,
+but can't be modified.
+
+Select from the following methods to edit trace datasets.
+
+<Tabs>
+
+<Tab title="Web" id="edit-a-dataset-web">
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. From the list of datasets, click the dataset you want to edit.
+1. On the selected dataset page, click **Edit dataset**.
+1. Make changes to your dataset, and then click **Save**.
+
+Observability Platform saves changes to your dataset.
+
+</Tab>
+
+<Tab title="Chronoctl" id="edit-a-dataset-chronoctl">
+
+To edit datasets using [Chronoctl](/tooling/chronoctl):
+
+1. [View the datasets Chronoctl YAML](#view-datasets).
+1. Modify its properties and apply the changes with the same process as
+   [Creating datasets](#create-datasets).
+
+   Chronoctl updates the dataset if it has the same slug.
+
+You can also use the following process if you already have a definition file:
+
+1. Update the datasets definition file.
+1. Run the following command to submit the changes:
+
+   ```shell copy
+   chronoctl datasets update -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+You can also [Use the Code Config tool](/tooling/gitops) to view the dataset's
+Chronoctl YAML representation.
+
+</Tab>
+
+<Tab title="Terraform" id="edit-a-dataset-Terraform">
+
+To edit datasets using [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file that updates the resource's existing properties.
+1. Run this command to apply the changes:
+
+   ```shell copy
+   terraform apply
+   ```
+
+You can also [Use the Code Config tool](/tooling/gitops) to view the dataset's
+Terraform representation.
+
+</Tab>
+
+<Tab title="API" id="edit-a-dataset-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateDataset`](/tooling/api-info/definition/operations/UpdateDataset) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+
+</Tabs>
+
+## Delete datasets
+
+Select from the following methods to delete trace datasets.
+
+<InfoTerraformLockout />
+
+<Tabs>
+
+<Tab title="Web" id="delete-a-dataset-web">
+
+Complete the following steps before you delete a dataset:
+
+1. [Remove any assigned behaviors](#assign-behaviors).
+1. Stop any active [preview behaviors](/control/sampling/behaviors#preview-behaviors).
+
+After removing any assigned behaviors and stopping active preview behaviors, delete
+the dataset:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. From the list of datasets, click the dataset you want to delete.
+1. On the selected dataset page, click **Delete dataset**.
+1. In the confirmation dialog, click **Delete** to delete the dataset.
+
+</Tab>
+
+<Tab title="Chronoctl" id="delete-a-dataset-chronoctl">
+
+To delete a dataset with [Chronoctl](/tooling/chronoctl), use the `chronoctl datasets delete`
+command:
+
+```shell copy
+chronoctl datasets delete SLUG
+```
+
+Replace _`SLUG`_ with the slug of the dataset you want to delete.
+
+For example, to delete a dataset with the slug `infra-example-dataset`:
+
+```shell copy
+chronoctl datasets delete infra-example-dataset
+```
+
+</Tab>
+
+<Tab title="Terraform" id="delete-a-dataset-terraform">
+
+<TerraformDel />
+
+</Tab>
+
+<Tab title="API" id="delete-a-dataset-api">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteDataset`](/tooling/api-info/definition/operations/DeleteDataset) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

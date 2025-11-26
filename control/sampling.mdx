@@ -1,0 +1,112 @@
+---
+title: Sample your traces
+description: Use sampling in Chronosphere Observability Platform to help control costs and maximize the usefulness of your tracing data.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Distributed traces provide an additional layer of context for solving problems across
+complex systems that include hundreds or thousands of microservices. However, you
+want to ensure you're only ingesting tracing data that's relevant and valuable. To
+help control costs and maximize the usefulness of your tracing data, you can use the
+Trace Control Plane to narrow your focus to only a representative sample of your data
+and drop everything else.
+
+To access the Trace Control Plane, in the navigation menu select
+**<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+
+## Head and tail sampling
+
+The best-known strategies for sampling trace data are _head sampling_ and
+_tail sampling_:
+
+- [Head sampling](/control/sampling/head-sampling) is a more blunt strategy that
+  seeks to make a sampling decision as early as possible. Head sampling evaluates
+  only a defined percentage of traces to take a representative sample of whole
+  traces.
+
+- [Tail sampling](/control/sampling/tail-sampling) is more fine-grained, and
+  evaluates every trace after assembling all spans. Tail sampling rules can consider
+  request outcomes, such as whether a request succeeded or how long it took to
+  complete, which isn't possible with head sampling.
+
+Creating and managing head and tail sampling rules can be challenging to ensure
+you're discarding and keeping the most impactful data. To simplify this process and
+decrease the learning curve of sampling, Chronosphere developed two concepts to
+group, track, and apply sampling rules: [datasets](#datasets) and
+[behaviors](#behaviors).
+
+## Datasets
+
+Create [_datasets_](/control/sampling/datasets) to map sets of traces to named groups
+relevant to your organization so you can track processed and persisted bytes for
+those groups over time. Datasets don't impact your license consumption, so you can
+experiment with creating datasets to understand your license usage and make changes
+as needed without consuming a portion of your license. With datasets in place,
+you can then apply behaviors to your datasets.
+
+## Behaviors
+
+After creating datasets for individual business units, you can apply
+[_behaviors_](/control/sampling/behaviors) to your datasets to set sampling rates
+without needing to write and manage large sets of fine-grained sampling rules.
+
+You set a baseline behavior that implements data-driven best practices with default
+parameters. You can modify those parameters based on the needs of your organization.
+For example, modify the defined criteria to drop low-value traces as quickly as
+possible and keep high-value traces at a specified rate for one or more datasets from
+a single behavior.
+
+You can also set a behavior to allow (sample at 100%) or deny (sample at 0%) all
+traces for a specific period. For example, set an allow behavior when you need to
+increase the amount of high-fidelity data during a deploy, or when debugging issues.
+Alternatively, set a deny behavior when you want to decrease the amount of noisy or
+spam traces to keep your budget spend within limits.
+
+## Get started with sampling
+
+Complete the following steps to get started with trace sampling in Observability
+Platform.
+
+1. [Instrument head sampling](/control/sampling/head-sampling#configure-head-sampling),
+   which is a prerequisite for using behaviors.
+
+   Head sampling drives total trace volume for each root service and operation. Use
+   the Trace Control plane to manage head sampling as part of behaviors.
+
+1. Optional: Create head and tail sampling rules:
+     - [Create head sampling rules](/control/sampling/head-sampling#create-head-sampling-rules)
+     - [Create tail sampling rules](/control/sampling/tail-sampling#create-tail-sampling-rules)
+
+     <Info>
+Create these rules if you don't want to use behaviors for sampling management,
+     or if you already have head and tail sampling rules you want to migrate to and
+     manage within Observability Platform.
+</Info>
+1. [Use the incomplete traces dataset](/control/sampling/datasets#identify-incomplete-traces)
+    to identify incomplete traces.
+
+   Incomplete traces are those where one or more spans lacks a parent span, like from
+   a lack of instrumentation.
+
+1. Recommended: Improve local instrumentation to ensure a higher volume of complete
+   traces before creating independent datasets.
+
+1. [Create a dataset](/control/sampling/datasets#create-datasets) per team or per
+   environment to track the exact volume of trace data for that team or environment
+   over time.
+
+1. [Assign a baseline behavior](/control/sampling/behaviors#get-started-with-behaviors)
+   to your datasets to ensure that you capture all of your most meaningful traces
+   (such as slow traces and error traces) for incident response purposes.
+
+   Use the baseline behavior to optionally capture fewer of your lower-priority
+   traces (such as fast traces and successful traces) to obtain a system baseline.
+
+As you learn more about your trace data, you can
+[edit facets of the baseline behavior](/control/sampling/behaviors#customize-your-sampling-strategy)
+to modify your sampling strategy and more clearly define which traces to drop and
+which to keep. In most cases, you want to assertively drop less interesting,
+lower-value traces and keep more interesting, higher-value traces. In the
+Observability Platform app, you can modify the baseline sampling strategy and apply
+it across one or more datasets.

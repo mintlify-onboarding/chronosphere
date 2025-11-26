@@ -1,0 +1,76 @@
+---
+title: Devo Cloud DataSet destination plugin
+sidebarTitle: Devo Cloud destination plugin (Telemetry Pipeline)
+description: Use the Devo Cloud destination plugin.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Devo Cloud [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `syslog`, alias: `devo_cloud`) lets you send your telemetry pipeline data
+to Devo Cloud.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name    | Key | Description | Default |
+| ------- | --- | ----------- | ------- |
+| **Devo Collector** | `host` | Required. The URL of the Devo Collector. | `collector-us.devo.com` |
+| **Message Key** | `syslog_message_key` | Required, or the message is empty. The key name from the original record that contains the message to deliver. | _none_ |
+| **Devo Tag Key** | `syslog_appname_key` | The key within the message to be used as the Devo Tag. If **Devo Tag Preset** is specified then this field is not required. | _none_ |
+| **Devo Tag Preset** | `syslog_appname_preset` | The preset Devo Tag. This field is overwritten if **Devo Tag Key** is set and a key of a record is matched. | `my.app.calyptia.core` |
+| **CA Certificate File Path**   | `tls.ca_file` | CA certificate file found in Devo Cloud under **Administration > Relays and ELBs > Syslog Certificates > Chain CA**. After downloading, upload as a file and reference as `{{files.<FILENAME>}}`. | _none_ |
+| **Certificate File Path**      | `tls.crt_file` | Absolute path to certificate file. | _none_ |
+| **Private Key File Path**      | `tls.key_file` | Private key file path found in Devo Cloud under **Administration > Relays and ELBs > Syslog Certificates > Private Key**. Download, then upload as a file and reference as `{{files.<FILENAME>}}`. | _none_ |
+| **Private Key Path Password**  | `tls.key_passwd` | The private key password displayed in Devo Cloud under **Administration > Relays and ELBs > Syslog Certificates > Private Key**. | _none_ |
+
+### Advanced
+
+| Name                           | Key | Description | Default |
+| ------------------------------ | --- | ----------- | ------- |
+| **Port** | `port` | Required. The HTTPS port of the Devo Cloud Relay. | `443` |
+| **Mode** | `mode` | Required. Desired transport type. Available options: `tcp`, `tls`, and `udp`. | `tcp` |
+| **RFC Format** | `syslog_format` | Required. The format used to send data to Devo Cloud. `rfc3164` is the default and formatting must be changed for `rfc5424`. | `rfc3164` |
+| **Syslog Severity Key** | `syslog_severity_key` | The key name from the original record that contains the Syslog severity number. | _none_ |
+| **Syslog Severity Preset** | `syslog_severity_preset` | The preset severity number. Overwritten if `syslog_severity_key` is set and a key of a record matches. | `informational` |
+| **Syslog Facility Key** | `syslog_facility_key` | The key name from the original record that contains the Syslog facility number. | _none_ |
+| **Syslog Facility Preset** | `syslog_facility_preset` | The preset facility number. Overwritten if `syslog_facility_key` is set and a key of a record matches. | `local7` |
+| **Syslog Hostname Key** | `syslog_hostname_key` | The key name from the original record that contains the hostname that generated the message. | _none_ |
+| **Syslog Hostname Preset** | `syslog_hostname_preset` | The preset hostname. Overwritten if `syslog_hostname_key` is set and a key of a record matches. | `calyptia` |
+| **Syslog ProcID Key** | `syslog_procid_key` | The key name from the original record that contains the Process ID that generated the message. | _none_ |
+| **Syslog ProcID Preset** | `syslog_procid_preset` | The preset process ID. Overwritten if `syslog_procid_key` is set and a key of a record is matched. | _none_ |
+| *Syslog Message ID Key** | `syslog_msgid_key` | The key name from the original record that contains the Message ID associated to the message. | _none_ |
+| **Syslog Message ID Preset** | `syslog_msgid_preset` | The preset message ID.Overwritten if `syslog_msgid_key` is set and a key of a record is matched. | _none_ |
+| **Syslog Structured Data (SD) Key** | `syslog_sd_key` | The key name from the original record that contains the Structured Data (SD) content. | _none_ |
+| **Syslog Maxsize** | `syslog_maxsize` | The maximum size allowed per message. The value must be an integer representing the number of bytes allowed. If no value is provided, the default size is set depending of the protocol version specified by `syslog_format`. RFC3164 sets max size to 1024 bytes. RFC5424 sets the size to 2048 bytes. | `2048` |
+
+### Security and TLS
+
+| Name                           | Key | Description | Default |
+| ------------------------------ | --- | ----------- | ------- |
+| **TLS**                        | `tls` | Enables or disables TLS/SSL support. | _none_ |
+| **TLS Certificate Validation** | `tls.verify` | Turns TLS/SSL certificate validation on or off. TLS must be on for this setting to be enabled. | `on` |
+| **TLS Debug Level**            | `tls.debug` | Sets TLS debug verbosity level. Accepted values: `0` (No debug), `1` (Error), `2` (State change), `3` (Informational), `4` (Verbose). | `1` |
+| **TLS SNI Hostname Extension** | `tls.vhost` | Hostname to be used for TLS SNI extension. | _none_ |
+
+### Advanced Networking
+
+<AdvancedNetwork />

@@ -1,0 +1,112 @@
+---
+title: Create an email notifier
+description: Create an email notifier with Chronosphere Observability Platform, Chronoctl, or Terraform.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import ChronoctlCreate from '/snippets/_partials/chronoctlnotifiers.mdx';
+import TerraformCreate from '/snippets/_partials/terraformcreate.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Create an email notifier to send monitor alerts to a specific email address.
+
+Select from the following methods to create an email notifier. You can use
+[variables](/investigate/alerts/notifications/notifiers#use-variables-in-notifiers) in your
+notifiers.
+
+<Tabs>
+<Tab title="Web" id="create-email-notifier">
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Notifiers**.
+1. Click **Create notifier**.
+1. Enter a descriptive name for the notifier.
+1. Select **Email** as the type of notifier you want to create.
+1. In the **Email** field, add the destination email address.
+1. Optional: In the **Body** field, enter HTML or text body content.
+1. Optional: Select **Notify when resolved** to send a resolved alert notification.
+1. Click **Save**.
+
+</Tab>
+<Tab title="Chronoctl" id="email-chronoctl">
+
+<ChronoctlCreate />
+
+1. Define the resource definition for your email notifier:
+
+   ```yaml copy /NAME/ /SLUG/ /ADDRESS/
+   api_version: v1/config
+   kind: Notifier
+   spec:
+     name: NAME
+     slug: SLUG
+     skip_resolved: true
+     email:
+       - to: ADDRESS
+         html: '<b>Alert firing</b>'
+         text: 'Alert firing'
+   ```
+      Replace the following:
+
+   - _`NAME`_: A descriptive name, such as `team-email`.
+   - _`SLUG`_: A unique identifier, such as `team-email`.
+   - _`ADDRESS`_: An email address destination for the notifier.
+
+1. Optional: Update the `html` or `text` keys to include custom HTML or text body
+   content.
+1. Apply the changes:
+
+   ```shell copy /FILE_NAME/
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of your notifier YAML file.
+
+</Tab>
+<Tab title="Terraform" id="email-terraform">
+
+To create an email notifier:
+
+1. Create an email notifier with Terraform by using the
+   `chronosphere_email_alert_notifier` type followed by a name in a resource
+   declaration:
+
+   ```ruby copy
+   resource "chronosphere_email_alert_notifier" "email_notifier" {
+     name = "Email Notifier"
+
+     # Optional slug of the email notifier.
+     slug = "email-notifier"
+
+     ## Notifier-specific required configuration
+     # For detailed definitions, see
+     # https://prometheus.io/docs/alerting/latest/configuration/#email_config
+     to = "your-address@example.com"
+
+     ## Notifier-specific optional configurations
+     html = "<b>Alert firing</b>"
+     text = "Alert firing"
+   }
+   ```
+
+1. Modify the `to` key to add the destination email address.
+1. Optional: Update the `html` or `text` keys to include custom HTML or text body
+   content.
+1. Run `terraform apply` to create the notifier resource.
+
+   ```ruby copy
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="API" id="email-api">
+
+
+To complete this action with the Chronosphere API, use the `email` object in the
+[`CreateNotifier`](/tooling/api-info/definition/operations/CreateNotifier) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

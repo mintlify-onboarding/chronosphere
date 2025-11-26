@@ -1,0 +1,89 @@
+---
+title: Observe your telemetry data
+description: Chronosphere Observability Platform provides scalable, high-performance observability with metrics, tracing, and logging for complex system monitoring.
+---
+import { ServiceNavIcon } from '@/components';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+[Chronosphere Lens](https://chronosphere.io/learn/empower-developer-effectiveness-in-the-cloud-native-age-with-chronosphere-lens/)
+gives you visibility into the health and performance of your applications by
+ingesting metrics, traces, and change events that you can observe using
+[services](/observe/services) and [dashboards](/observe/dashboards).
+
+Use Chronosphere Lens to review services and visually examine trends in telemetry
+data at a high level. Dashboards help visualize data in more specific and custom
+ways. Incorporate dashboards into your services to tie your data together in ways
+that make sense for your observability teams and reduce time to mitigate.
+
+## Services
+
+Services pages provide opinionated displays of telemetry data that are the most
+important to your organization. Chronosphere Observability Platform discovers
+services automatically and provides efficient views into your app services to help
+you discover ways to explore your data.
+
+Service pages take advantage of other Observability Platform features, including
+[tagged metrics](/overview/types/metrics), [queries](/investigate/querying),
+[data visualization panels](/observe/dashboards/panels),
+[teams](/administer/accounts-teams/teams), [collections](/administer/collections),
+and [change events](/overview/types/change-events).
+
+Use [pinned scopes](/navigate/pinned-scopes) to narrow your observed data, and to
+keep filtering based on that scope as you navigate Observability Platform to triage
+problems.
+
+## Dashboards
+
+Chronosphere Observability Platform dashboards target use cases relevant to service
+and app monitoring. Analyze your telemetry data by creating visualizations of query
+results that you can customize, filter, and focus within a dashboard. Use this
+information to identify and act on trends, correlate changes in data to incidents,
+and monitor microservice statuses in real time.
+
+Observability Platform provides a group of
+[predefined dashboards](/observe/dashboards/chronosphere-managed-dashboards), and the
+ability to [create and customize dashboards](/observe/dashboards#create-a-dashboard)
+tailored to the specific needs of your organization and the teams within it.
+
+If your organization purchased change event tracking and distributed tracing, you
+can overlay additional telemetry data on your dashboards to help expedite problem
+resolution:
+
+- [Enable change events in dashboards](/observe/enable-events/dashboards#standard-dashboards)
+  to display change events as a lined annotation on your dashboard panels.
+- [Query traces directly from a dashboard](/observe/dashboards/query-traces), which
+  lets you search your trace data without having to navigate to Trace Explorer.
+
+## Change events
+
+Change events describe changes within your environment or Observability Platform
+tenant at a specific time so you can answer questions like _When did a particular service
+deploy last?_ or _Which alerts triggered in the last week?_
+[Enable change events](/observe/enable-events) to overlay them on other areas of
+Observability Platform, such as lined annotations on dashboard panels. This ability
+to identify and isolate change events can help remediate issues faster and minimize
+downstream impacts.
+
+You can then [filter change events](/investigate/querying/filter-events) during
+on-call triage to understand what changes occurred prior to the onset of an issue.
+
+## Working together
+
+When you're getting started using Observability Platform, your workflow might look
+something like:
+
+1. In the navigation menu select
+   **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> Services**.
+1. Identify an interesting trend or incident.
+1. [Explore panels](/observe/services/service-pages#explore-queries) in the service
+   to display queries behind a data visualization.
+1. [Create a dashboard](/observe/dashboards#create-a-dashboard) and add those queries
+   to new panels.
+1. [Edit the queries](/investigate/querying/metrics/explorer#enter-and-run-a-query)
+   and tailor the visualizations to your needs.
+
+As you get better at identifying trends and incidents, you can turn those queries and
+understanding of your telemetry data into monitors and alerts, reducing on-call
+escalations and incidents.

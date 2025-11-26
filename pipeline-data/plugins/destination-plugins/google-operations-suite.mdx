@@ -1,0 +1,69 @@
+---
+title: Google Cloud Operations Suite destination plugin
+sidebarTitle: Google Cloud Operations Suite destination plugin (Telemetry Pipeline)
+description: Send pipeline data to Google Cloud Operations Suite.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Google Cloud Operations Suite [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `stackdriver`) lets you configure your telemetry pipeline to stream your
+log data and metrics to Google Cloud Operations Suite.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### GCP Authentication
+
+| Name                                | Key | Description | Default |
+| ----------------------------------- | --- | ----------- | ------- |
+| **Google Service Credentials Path** | `google_service_credentials` | The Service Credentials file lets Telemetry Pipeline communicate directly with Google Cloud Services. For information about how to set up service credentials, see the [Google Cloud Observability documentation](https://cloud.google.com/logging/docs/agent/logging/authorization#create-service-account). | _none_ |
+| **GCP Service Account Email**       | `service_account_email` | Account email associated to the service. Available only if no credentials file is provided. | _none_ |
+| **GCP Service Account Secret**      | `service_account_secret` | Private key content associated with the service account. Available only if no credentials file is provided. | _none_ |
+| **Metadata Server**                 | `metadata_server` | Private key content associated with the service account. Available only if no credentials file is provided. | `http://metadata.google.internal` |
+
+### Advanced
+
+| Name                               | Key | Description | Default |
+| ---------------------------------- | --- | ----------- | ------- |
+| **Region Location**                | `location` | The Google Cloud or AWS region in which to store data about the resource. If the resource type is either `generic_node` or `generic_task`, this field is required. | _none_ |
+| **Namespace Identifier**           | `namespace` | A namespace identifier, such as a cluster name or environment. If the resource type is either `generic_node` or `generic_task`, this field is required. | _none_ |
+| **Node ID Identifier**             | `node_id` | A unique identifier for the node within the namespace, such as hostname or IP address. If the resource type is `generic_node`, this field is required. | _none_ |
+| **Job Identifier**                 | `job` | An identifier for a grouping of related task, such as the name of a microservice or distributed batch. If the resource type is `generic_task`, this field is required. | _none_ |
+| **Task ID Identifier**             | `task_id` | A unique identifier for the task within the namespace and job, such as a replica index identifying the task within the job. If the resource type is `generic_task`, this field is required. | _none_ |
+| **GCP Project ID**                 | `export_to_project_id` | The Google Cloud project to receive these logs. Defaults to the project ID of the `google_service_credentials` file, or the `project_id` from Google's `metadata.google.internal` server. | _none_ |
+| **Resource Type**                  | `resource` | Sets the resource type of data. Accepted values: `k8s_container`, `k8s_node`, `k8s_pod`, `global`, `generic_node`, `generic_task`, `gce_instance`. | _none_ |
+| **Kubernetes Cluster Name**        | `k8s_cluster_name` | The name of the cluster that the container (node or pod based on the resource type) is running in. If the resource type is `k8s_container`, `k8s_node`, or `k8s_pod`, this field is required. | _none_ |
+| **Kubernetes Cluster Location**    | `k8s_cluster_location` | The physical location of the cluster that contains (node or pod based on the resource type) the container. If the resource type is `k8s_container`, `k8s_node`, or `k8s_pod`, this field is required. | _none_ |
+| **Labels Key**                     | `labels_key` | The value of this field is used by the Stackdriver output plugin to find the related labels from `jsonPayload` and then extract the value of it to set the LogEntry labels. | _none_ |
+| **Labels**                         | `labels` | Optional list of comma-separated of strings specifying key/value pairs. The resulting labels are combined with the elements in obtained from `labels_key` to set the LogEntry labels. Elements from labels override duplicate values from `labels_key`. | _none_ |
+| **Log Name Key**                   | `log_name_key` | The value of this field is used by the plugin to extract `logName` from `jsonPayload` and set the `logName` field. | _none_ |
+| **Tag Prefix**                     | `tag_prefix` | Sets the `tag_prefix` used to validate the tag of logs with k8s resource type. Without this option, the tag of the log must be in format of `k8s_container(pod/node).*` to use the `k8s_container` resource type. Now the tag prefix is configurable by this option, being aware of the ending dot. | _none_ |
+| **Severity Key**                   | `severity_key` | Specifies the name of the key from the original record that contains the severity information. | _none_ |
+| **Enable Cloud Trace Integration** | `autoformat_stackdriver_trace` | Rewrite the trace field to include the projectID and format it for use with Cloud Trace. When enabled, the user can get the correct result by printing only the traceID (usually 32 characters). Accepted values: `true`, `false`. | `false` |
+| **Custom K8s Regex**               | `custom_k8s_regex` | Sets a custom regular expression to extract field like `pod_name`, `namespace_name`, `container_name`, and `docker_id` from the `local_resource_id` in logs. This is helpful if the value of pod or node name contains dots. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

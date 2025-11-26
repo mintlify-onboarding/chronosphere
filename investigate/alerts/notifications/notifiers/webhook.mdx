@@ -1,0 +1,417 @@
+---
+title: Create a webhook notifier
+sidebarTitle: Create a generic webhook notifier
+description: Create a generic webhook notifier with Chronosphere Observability Platform, Chronoctl, or Terraform.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import ChronoctlCreate from '/snippets/_partials/chronoctlnotifiers.mdx';
+import TerraformCreate from '/snippets/_partials/terraformcreate.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+To configure a webhook notifier, enter a URL that specifies the endpoint to send HTTP
+POST requests to. You can use
+[variables](/investigate/alerts/notifications/notifiers#use-variables-in-notifiers) in your notifiers.
+
+<Tabs>
+<Tab title="Web" id="create-webhook-notifier">
+
+To create a webhook notifier:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts<span aria-label="and then">></span> Notifiers**.
+1. Click **Create notifier**.
+1. Enter a descriptive name for the notifier.
+1. Select **Webhook** as the type of notifier you want to create.
+1. In the **URL** field, enter a URL, which is called as a `POST` request. For
+   example:
+
+   ```text copy
+   https://webhook.site/3723e8cb-b1b4-4399-86b0-e37f36a2acc5
+   ```
+
+1. Optional: Select **Notify when resolved** to send a resolved alert notification.
+1. Click **Save**.
+
+</Tab>
+<Tab title="Chronoctl" id="webhooks-chronoctl">
+
+<ChronoctlCreate />
+
+1. Define the resource definition for your webhook notifier:
+
+   ```yaml copy
+   api_version: v1/config
+   kind: Notifier
+   spec:
+     name: NAME
+     slug: SLUG
+     skip_resolved: true
+     webhook:
+       - url: http://localhost:1234
+   ```
+
+   Replace the following:
+
+   - _`NAME`_: A descriptive name, such as `test-webhook`.
+   - _`SLUG`_: A unique identifier, such as `test-webhook`.
+
+1. Add a URL, called as a `POST` request, to the `url` key.
+1. Apply the changes:
+
+   ```shell copy /FILE_NAME/
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of your notifier YAML file.
+
+</Tab>
+<Tab title="Terraform" id="webhooks-terraform">
+
+To create a webhook notifier:
+
+1. Create a webhook notifier with Terraform by using the
+   `chronosphere_webhook_alert_notifier` type followed by a name in a resource
+   declaration:
+
+   ```ruby copy
+   resource "chronosphere_webhook_alert_notifier" "webhook_notifier" {
+     name = "Webhook Notifier"
+
+     # Optional slug of the webhook notifier.
+     slug = "webhook-notifier"
+
+     # Notifier-specific required configuration
+     # Detailed definitions can be found at: https://prometheus.io/docs/alerting/latest/configuration/#webhook_config
+     url = "https://your-webhook-url"
+
+     ## (Optional) Base configuration common to all notifiers
+     send_resolved = true # The default value
+
+     ## (Optional) HTTP configuration common to HTTP notifiers
+     basic_auth_username = "username"
+     basic_auth_password = "strong+p@ssword"
+     # Can use bearer_token instead of basic auth
+     proxy_url                = "https://my-proxy-url"
+     tls_insecure_skip_verify = false
+   }
+   ```
+
+1. Add a URL, called as a `POST` request, to the `url` key.
+1. Run `terraform apply` to create the notifier resource.
+
+   ```ruby copy
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="API" id="webhook-API">
+
+To complete this action with the Chronosphere API, use the `webhook` object in the
+[`CreateNotifier`](/tooling/api-info/definition/operations/CreateNotifier) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Webhook notifier request body
+
+The following example outlines the body for a `POST` request to a webhook. The
+request consists of one triggered alert called `"test alert"` that has several
+associated labels, such as `component`, `instance`, and `job`.
+
+This example contains several notable sections:
+
+- `commonLabels`: Contains labels that are common across all alerts in a notification
+  display. Each alerting series includes the full list of labels. Any static labels
+  that you define also display under `commonLabels`.
+- `groupLabels`: Contains label values for the related signal display, in addition to
+  a `"severity"` for the label.
+- `fingerprint`: A representation of an alerting series, expressed as a deterministic
+  value based on the hash of the labels.
+
+```json
+{
+  "notifier": "test webhook",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "test alert",
+        "component": "remote_write",
+        "instance": "localhost:3030",
+        "job": "collector_binary",
+        "severity": "critical",
+        "pod_name": "prom-74cbfb46c9-2ftk9"
+      },
+      "annotations": {
+        "ruleid": "32bb3fbe-c10b-44bb-a4c0-3d053f4a08cd",
+        "monitor_slug": "test-monitor",
+        "notification_policy_slug": "test-policy"
+      },
+      "startsAt": "2020-05-19T13:57:21.68227886Z",
+      "endsAt": "0001-01-01T00:00:00Z",
+      "fingerprint": "7424223989b20025"
+    }
+  ],
+  "groupLabels": {
+    "alertname": "test alert",
+    "severity": "critical"
+  },
+  "commonLabels": {
+    "alertname": "test alert",
+    "component": "remote_write",
+    "instance": "localhost:3030",
+    "job": "collector_binary",
+    "severity": "critical",
+    "pod_name": "prom-74cbfb46c9-2ftk9"
+  },
+  "commonAnnotations": {
+    "ruleid": "32bb3fbe-c10b-44bb-a4c0-3d053f4a08cd",
+    "monitor_slug": "test-monitor",
+    "notification_policy_slug": "test-policy"
+  },
+  "version": "4"
+}
+```
+
+## Webhook signatures
+
+Chronosphere webhooks include cryptographic signatures to ensure the authenticity
+and integrity of webhook requests.
+
+### Headers
+
+Every outbound webhook includes these security headers:
+
+- `Chronosphere-Webhook-Timestamp`: The Unix timestamp of the time the webhook
+  request was constructed. For example, `1754255354`.
+
+- `Chronosphere-Webhook-Signature-V1`: At least one hex-encoded
+[signature](#signature-algorithm). Multiple comma-separated signatures can be
+included in the event of key rotation. This string always contains at
+least one comma, even if there is only one signature. This ensures that clients are
+splitting the header value by commas. Example value (note trailing comma):
+`05908e247179fd822f2508907632cb1c57721691b688d72577a22dc46d183d21,`.
+
+### Retrieve your signing key
+
+If you are a member of a [team](/administer/accounts-teams/teams) with the `SysAdmin`
+role, you can retrieve your signing key in the Observability Platform web app.
+
+1. Click your profile icon from the menu bar and select **My Account**.
+
+1. The **Webhook Signing Key** field displays your key, but its value is hidden.
+   Click the **<Icon icon="eye" /> reveal** icon to reveal its value, and then
+   click the **<Icon icon="copy" /> copy** icon to copy its value to your clipboard.
+
+### Signature algorithm
+
+Signatures are generated using the HMAC-SHA256 algorithm with the following process:
+
+1. Construct the payload.
+
+   ```text
+   payload = "v1:" + timestamp + ":" + request_body
+   ```
+
+1. Generate the HMAC-SHA256 signature.
+
+   ```text
+   for i, key in active_signing_keys:
+      signatures[i] = HMAC-SHA256(payload, key)
+   ```
+
+1. Set the hex encode.
+
+   ```text
+   header_value = join(hex_encode(signatures), ",") + ","
+   ```
+
+### Verify the signature
+
+To verify a Chronosphere webhook signature:
+
+1. Extract the headers.
+
+   - Get the `Chronosphere-Webhook-Timestamp` header value. Ensure the timestamp is
+   within some tolerance. Chronosphere recommends a tolerance of five to 15 minutes.
+   - Get the `Chronosphere-Webhook-Signature-V1` header value.
+   - Fail if either header is missing.
+
+1. Read the request body.
+
+   - Read the complete HTTP request body as bytes.
+   - Preserve the exact bytes. Disable any automatic parsing or formatting in your HTTP client.
+
+1. Construct the verification payload.
+
+   Construct a verification payload using the following syntax:
+
+   ```text
+   verification_payload = "v1:" + timestamp + ":" + request_body
+   ```
+
+1. Generate the expected signature.
+
+   - Use HMAC-SHA256 with your signing key.
+   - Hex-encode the result (lowercase).
+
+1. Compare signatures.
+
+   - Split the signature header on commas.
+   - Trim whitespace from each signature.
+   - Skip empty values.
+   - Use `constant-time` comparison for each signature.
+   - Accept if any signature matches.
+
+### Code sample
+
+<details>
+<summary>Click to view an example of signature verification in Go.</summary>
+
+```go
+// VerifyChronosphereWebhook verifies the signature of a Chronosphere webhook request.
+// It returns nil if the signature is valid, or an error if invalid or missing.
+func VerifyChronosphereWebhook(r *http.Request, signingKey string) error {
+	// Get the timestamp and signature from headers
+	timestamp := r.Header.Get("Chronosphere-Webhook-Timestamp")
+	signature := r.Header.Get("Chronosphere-Webhook-Signature-V1")
+
+	if timestamp == "" {
+		return errors.New("missing Chronosphere-Webhook-Timestamp header")
+	}
+	if signature == "" {
+		return errors.New("missing Chronosphere-Webhook-Signature-V1 header")
+	}
+
+	// Convert timestamp string to unix timestamp and validate age
+	timestampInt, err := strconv.ParseInt(timestamp, 10, 64)
+	if err != nil {
+		return fmt.Errorf("invalid timestamp format: %w", err)
+	}
+
+	webhookTime := time.Unix(timestampInt, 0)
+	now := time.Now()
+	const maxAge = 5 * time.Minute
+
+	if now.Sub(webhookTime) > maxAge {
+		return fmt.Errorf("webhook timestamp is too old: %v ago", now.Sub(webhookTime))
+	}
+
+	// Read the request body
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read request body: %w", err)
+	}
+
+	// Create the payload to sign: "v1" + ":" + timestamp + ":" + request_body
+	payload := "v1:" + timestamp + ":" + string(body)
+
+	// Create HMAC-SHA256 signature
+	h := hmac.New(sha256.New, []byte(signingKey))
+	h.Write([]byte(payload))
+	expectedSignature := hex.EncodeToString(h.Sum(nil))
+
+	// The signature header may contain multiple comma-separated values for rotation
+	signatures := strings.SplitSeq(signature, ",")
+
+	// Check if any of the provided signatures match using constant-time comparison
+	for sig := range signatures {
+		sig = strings.TrimSpace(sig)
+		if sig == "" {
+			continue // Skip empty splits
+		}
+		if hmac.Equal([]byte(sig), []byte(expectedSignature)) {
+			return nil // Valid signature found
+		}
+	}
+
+	return errors.New("no matching signature found")
+}
+```
+
+</details>
+
+{/* markdownlint-enable MD033 */}
+
+## Webhook IP addresses
+
+Chronosphere has established a list of static IP addresses which serve outbound
+webhook notification traffic. Use these addresses in your company's allowlist to
+restrict traffic and maintain security.
+
+Chronosphere also provides a [full list of IP addresses](https://chronosphere.io/ips.txt).
+
+Chronosphere doesn't offer a published CIDR range.
+
+Chronosphere Observability Platform serves outbound webhook traffic for the
+following regions:
+
+<Tabs>
+<Tab title="US">
+
+The following IP addresses serve traffic for the United States:
+
+- 104.198.2.151
+- 34.122.142.108
+- 34.122.149.117
+- 34.122.224.78
+- 34.127.109.43
+- 34.135.53.117
+- 34.145.80.163
+- 34.16.24.232
+- 34.168.147.207
+- 34.168.150.81
+- 34.171.52.135
+- 34.173.251.109
+- 34.28.62.245
+- 34.29.130.124
+- 34.29.185.167
+- 34.41.168.213
+- 34.70.121.15
+- 34.82.119.158
+- 34.82.143.37
+- 34.82.179.176
+- 34.82.243.234
+- 34.83.169.174
+- 34.83.7.178
+- 34.83.75.236
+- 35.188.223.136
+- 35.188.42.84
+- 35.197.55.241
+- 35.225.28.124
+- 35.227.141.247
+- 35.230.72.253
+- 35.233.215.68
+- 35.239.112.38
+
+</Tab>
+<Tab title="EU">
+
+The following IP addresses serve traffic in the European Union (EU):
+
+- 34.32.194.4
+- 34.91.164.113
+- 34.32.218.226
+- 34.90.243.177
+- 34.90.244.253
+- 34.90.168.72
+- 34.32.133.241
+- 34.91.141.126
+- 34.34.56.242
+- 35.204.244.39
+- 34.147.95.189
+- 34.90.1.157
+- 34.34.57.8
+- 34.147.60.217
+- 34.147.12.11
+- 34.32.232.10
+
+</Tab>
+</Tabs>
+
+Last updated: 2025.03.31

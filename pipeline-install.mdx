@@ -1,0 +1,42 @@
+---
+title: Install Telemetry Pipeline
+description: Deploy Chronosphere Telemetry Pipeline on the platform of your choice.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+You can install Chronosphere Telemetry Pipeline in a Linux environment or inside
+a Kubernetes cluster. To complete this installation process, you'll need to
+deploy several components that work together to form a functional Telemetry
+Pipeline deployment. These components include a [Core Operator](/pipelines/concepts#core-operator),
+a [Core Instance](/pipelines/concepts#core-instance), and any number of pipelines.
+
+<Info>
+Telemetry Pipeline doesn't offer native support for macOS or Windows. However,
+you can install Telemetry Pipeline on a Linux virtual machine or Kubernetes cluster
+running on a macOS or Windows device.
+
+You can also use [Pipeline CLI](/pipeline-cli) in macOS and Windows to manage
+pipelines deployed on an external Linux environment or Kubernetes cluster.
+</Info>
+
+## Install a Core Operator
+
+First, you must [install a Core Operator](/pipeline-install/install-operator) in
+each cluster or environment where you want to use Telemetry Pipeline. These Core
+Operators are [Kubernetes operators](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+that create and modify pipelines.
+
+## Create a Core Instance
+
+Next, for each Core Operator you install, you'll need to
+[create a Core Instance](/pipeline-install/create-instance) in the corresponding
+Kubernetes cluster or Linux environment. Core Instances create the underlying
+resources for your pipelines and sync those resources with the Telemetry Pipeline
+backend.
+
+## Create and manage pipelines
+
+After you install a Core Operator and create a Core Instance, you can
+[create pipelines](/pipeline-data/create-modify) in that environment and
+[configure their behavior](/pipeline-configure).

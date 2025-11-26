@@ -1,0 +1,711 @@
+---
+title: Trace Metrics
+sidebarTitle: Trace metrics
+description: Learn about how to create and use trace metrics to help address issues.
+---
+import TerraformCreate from '/snippets/_partials/terraformcreate.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import TerraformPlan from '/snippets/_partials/terraformplan.mdx';
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Use Trace Explorer to identify the root cause of an issue. As you define your query
+and determine what caused the problem you're investigating, you can create a
+_trace metric_ from your query to display that metric in a dashboard for faster
+discovery. You can then configure monitors and alerts on that metric to notify other
+on-call engineers if that metric identifies anomalies in your trace data.
+
+This ability to navigate from a trace metric to a specific query in Trace Explorer
+helps other on-call engineers address problems faster by using predefined queries to
+explore issues.
+
+Use the following metric types to help track information for collected traces:
+
+- **Counter metric**: Increments any time a trace that matches a filter gets
+  collected. This metric also includes a label describing whether or not the trace
+  contains an error.
+- **Histogram metric**: Collects information about the distribution of request
+  durations for traces that match a filter.
+
+Chronosphere Observability Platform provides a default **Trace Metrics** dashboard
+with panels that display the requests, errors, and durations of requests associated
+with a created trace metric. The dashboard also includes a service map of the
+requests.
+
+Observability Platform generates any trace metrics you've created before applying
+behaviors or [tail sampling rules](/control/sampling/tail-sampling), which determine
+whether to persist the trace.
+
+To explore tracing data in Observability Platform, you must either install and configure the
+[Chronosphere Collector](/ingest/metrics-traces/collector/install/tracing) or the
+[OpenTelemetry Collector](/ingest/metrics-traces/otel/otel-ingest) to receive trace data from your
+services.
+
+## View existing trace metrics
+
+You can view trace metrics in Observability Platform and open the related query in
+Trace Explorer.
+
+To return a list of defined trace metrics without additional information, use
+Chronoctl.
+
+<Tabs>
+<Tab title="Web" id="view-trace-metrics-cloud">
+
+Viewing a trace metric opens the related query in Trace Explorer. Observability
+Platform takes the contextual information in metrics from a dashboard and uses it to
+build links to search for traces. Clicking the link opens Trace Explorer and replaces
+the variables with matching criteria defined in the link.
+
+To view your existing trace metrics:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Metrics**.
+1. In the **Rule Name** column, click the name of a trace metric to view the dashboard
+   for that metric.
+1. From the dashboard, click anywhere in one of the graph panels to pin that
+   selection. In the pinned popup, click the and then click the
+   <Icon icon="ellipsis-vertical" /> three vertical dots icon and choose one of these
+   options:
+
+   - **Analyze anomaly (DDx)** opens
+     [Metrics Differential Diagnosis (DDx)](/investigate/analyze/differential-diagnosis/metrics)
+     and identifies labels and values that strongly correlate to the  trace metric.
+   - **View similar logs** opens Logs Explorer with results filtered to the selected
+     trace metric.
+   - **View similar traces** opens Trace Explorer with results filtered to the
+     selected trace metric.
+
+   See [common panel elements](/observe/dashboards/panels#common-panel-elements) for an
+   explanation of the other available tools.
+
+</Tab>
+<Tab title="Chronoctl" id="view-trace-metrics-chronoctl">
+
+To view a list of all available trace metrics using [Chronoctl](/tooling/chronoctl),
+use the `chronoctl trace-metrics-rules list` command:
+
+```shell copy
+chronoctl trace-metrics-rules list
+```
+
+A complete list of the available trace metrics displays in your terminal.
+
+To view a single trace metrics rule, use the `chronoctl trace-metrics-rules read`
+command, followed by the slug of the rule you want to view. For example, the
+following command returns a trace metrics rule with the slug `telemetry-sdk`:
+
+```shell copy
+chronoctl trace-metrics-rules read telemetry-sdk
+```
+
+</Tab>
+<Tab title="API" id="view-trace-metrics-api">
+
+To complete this action with the Chronosphere API, use the
+[`ListTraceMetricsRules`](/tooling/api-info/definition/operations/ListTraceMetricsRules)
+endpoint.
+
+To view a single trace metrics rule instead of a complete list of rules, use the
+[`ReadTraceMetricsRule`](/tooling/api-info/definition/operations/ReadTraceMetricsRule)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Create a trace metric
+
+Observability Platform uses trace queries as the basis for trace metrics. You define
+a search query in Trace Explorer, and create a trace metric based on the matching
+criteria.
+
+You can search for any labels you add to your trace metric in
+[Metrics Explorer](/investigate/querying/metrics/explorer) when investigating query
+requests and responses.
+
+<Warning>
+Creating a trace metric is the same as creating a new metric in your system. Any trace
+metrics you create impact your metrics license consumption, which display in the
+[License Overview](/observe/dashboards/chronosphere-managed-dashboards#licensing-overview).
+
+Because of that potential impact, avoid including high cardinality dimensions in your
+trace metric. As a protective measure, trace metrics capture data for only the first
+1,000 unique series observed.
+
+Selecting a dimension to group by with high cardinality can overflow the 1,000 value
+trace metric cardinality limit, and cause incorrect data to display in your trace
+metric dashboard.
+</Warning>
+
+<Tabs>
+<Tab title="Web" id="create-a-trace-metric-cloud">
+
+To create a trace metric, you must have administrative privileges.
+
+To create a new trace metric:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Trace Explorer**.
+
+1. Apply one or more filters to
+   [define a search](/investigate/querying/traces#define-a-search). Trace
+   Explorer applies the filters represented in the query before updating metrics for
+   the created trace metric.
+
+   You can group your trace query search results by up to
+   [three dimensions](/investigate/querying/traces#group-and-narrow-results)
+   that can include service, operation, and any other span tag. Dimensions to group
+   by are inherited from the defined search query.
+
+   <Info>
+Trace metrics don't support regular expression operators, such as the match (`=~`)
+   or doesn't match (`!~`) operators.
+</Info>
+
+1. Click the <Icon icon="ellipsis-vertical" /> three vertical dots icon, and then select
+   **Create Trace Metric**.
+
+1. In the **Create trace metric** dialog, enter a display name (the equivalent of
+   Prometheus metric `__name__`) and system name (the trace metric **Rule Name**) for
+   your trace metric.
+
+1. In the **Group by labels** section, enter a metric label to display the aggregated
+   results of your query grouped by that attribute.
+
+   For each dimension in the **Group by labels** field, you must define a metric
+   label key. Use the same key as the span tag, or a key that aligns with your
+   existing metrics data. Observability Platform adds metric label keys to your trace
+   metric, and associates the label value with the span tag.
+
+   For example, if you group your query by the span tag **Service** and enter
+   **container_service** as the label key, Observability Platform adds a label to
+   your trace metric where the label values are the same as the span tag **Service**
+   values. You can then query by that label anywhere you search for metric labels,
+   such as in Metrics Explorer or Telemetry Usage Analyzer.
+
+1. Optional: Expand the **Static metric labels** section and enter key/value pairs to
+   add static labels to your trace metric. Static labels are like metadata you add to
+   your trace metric.
+
+1. Click **Create**.
+
+   After creating the trace metric, the **Trace Metric Created** dialog displays.
+
+   It can take several minutes for the dashboard to display data about the trace
+   metric.
+
+1. Click **Go to Trace Metrics** to view the list of available trace metrics. When
+   your trace metric is available, you can select it from this list to view a
+   dashboard for the trace metric that includes requests, errors, durations, and a
+   topology map.
+
+1. When viewing your trace metric, click a data point in any of the provided graphs
+   and then click **Query Traces** to open Trace Explorer with the query you defined
+   for your trace metric.
+
+</Tab>
+<Tab title="Chronoctl" id="create-a-trace-metric-chronoctl">
+
+When creating your trace metric with Chronoctl, consider the following behaviors of
+the `slug` property:
+
+- If you don't provide a `slug`, Chronoctl generates one based on the `name` field.
+- You can modify the `name` after creating your trace metric, but can't
+  modify the `slug`.
+- The `metric_name` and `slug` must match.
+
+To use [Chronoctl](/tooling/chronoctl) to create a trace metric, use the
+`chronoctl trace-metrics-rules` command:
+
+```shell copy
+chronoctl trace-metrics-rules scaffold
+```
+
+1. Run the following command to generate a sample trace metric configuration you can
+   use as a template:
+
+   ```shell copy
+   chronoctl trace-metrics-rules scaffold
+   ```
+
+   In the template, `kind: TraceMetricsRule` defines an individual trace metric.
+
+   You can redirect the results (using the redirection operator `>`) to a file for
+   editing.
+
+1. With a completed definition, submit it with:
+
+   ```shell copy /FILE_NAME/
+   chronoctl trace-metrics-rules create -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+See the [Chronoctl example](#chronoctl-trace-metric-example) for a completed trace
+metrics resource.
+
+</Tab>
+<Tab title="Terraform" id="create-a-trace-metric-terraform">
+
+<TerraformPlan />
+
+To create a new trace metric with [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file and add the definition by using the
+   `chronosphere_trace_metrics_rule` type, followed by a name in a resource
+   declaration.
+
+   Refer to [Trace metric rule fields](#trace-metric-rule-fields) for a list of all
+   supported fields.
+
+1. Run this command to apply the changes:
+
+   ```shell copy
+   terraform apply
+   ```
+
+See the [Terraform example](#terraform-trace-metric-example) for a completed trace
+metric resource.
+
+</Tab>
+<Tab title="API" id="create-a-trace-metric-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateTraceMetricsRule`](/tooling/api-info/definition/operations/CreateTraceMetricsRule)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Chronoctl trace metric example
+
+The following resource defines a trace metric that matches spans that include the
+`ordering-svc` and the `POST/submit-order` operation, a tag of `env=production`, and
+a duration between two and three seconds. The metric also groups by a key called
+`ordering-svc`.
+
+```yaml copy
+api_version: v1/config
+kind: TraceMetricsRule
+spec:
+  name: Ordering service uswest1 error traces
+  slug: ordering-service-uswest1-error-traces
+  metric_name: order-svc-uswest1-errors
+  group_by:
+    label: svc
+    key:
+      named_key: ordering-svc
+      type: SERVICE
+  trace_filter:
+    span:
+      tags:
+        key: env
+        value:
+          value: production
+          match: EXACT
+      operation:
+        value: POST/submit-order
+        match: EXACT
+      service:
+        value: ordering-svc
+        match: EXACT
+    trace:
+      duration:
+        min_secs: 2
+        max_secs: 3
+      error:
+        value: true
+```
+
+### Terraform trace metric example
+
+The following Terraform resource definition creates a trace metrics rule that
+Terraform refers to as `my_trace_metric`, and Observability Platform refers to as All
+Error Traces. This trace metric emits metrics named `all_errors` for all traces
+flagged with errors.
+
+```ruby copy
+resource "chronosphere_trace_metrics_rule" "my_trace_metric" {
+{
+  trace_metrics_rule: {
+    name = "All Error Traces"
+    metric_name = "all_errors"
+    trace_filter {
+      trace {
+        error {
+          value = true
+        }
+      }
+    }
+  }
+}
+```
+
+## Update a trace metric
+
+Select from the following methods to update trace metrics.
+
+<Tabs>
+<Tab title="Web" id="update-a-trace-metric-cloud">
+
+To update a trace metric, you must have administrative privileges.
+
+To edit or update a trace metric:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Metrics**.
+1. To the right of the date of the trace metric, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon, and then click **Edit**.
+1. In the **Edit trace metric** dialog, edit the query that generates the trace
+   metric or make any other needed changes.
+1. Click **Save** to save your changes.
+
+</Tab>
+<Tab title="Chronoctl" id="update-a-trace-metric-chronoctl">
+
+To update a trace metric using [Chronoctl](/tooling/chronoctl):
+
+1. Return a list of all available trace metrics:
+
+   ```shell copy
+   chronoctl trace-metrics-rules list
+   ```
+
+1. Modify the YAML file for the trace metrics you want to update.
+1. Apply your changes:
+
+   ```shell copy
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of your trace metric YAML file.
+
+Chronoctl updates the trace metric's properties if it has the same slug.
+
+</Tab>
+<Tab title="Terraform" id="update-a-trace-metric-terraform">
+
+To edit a trace metric using [Terraform](/tooling/infrastructure/terraform):
+
+1. Modify the resource's existing properties.
+1. Run `terraform apply` to apply the changes.
+
+   ```shell copy
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="API" id="update-a-trace-metric-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateTraceMetricsRule`](/tooling/api-info/definition/operations/UpdateTraceMetricsRule)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Delete a trace metric
+
+Select from the following methods to delete trace metrics.
+
+<Tabs>
+<Tab title="Web" id="delete-a-trace-metric-cloud">
+
+To delete a trace metric, you must have administrative privileges.
+
+To delete a trace metric:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Metrics**.
+1. To the right of the date of the trace metric, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon, and then click **Delete**.
+
+</Tab>
+<Tab title="Chronoctl" id="delete-a-trace-metric-chronoctl">
+
+To delete a trace metric using [Chronoctl](/tooling/chronoctl):
+
+1. Return a list of all available notification policies:
+
+   ```shell copy
+   chronoctl trace-metrics-rules list
+   ```
+
+1. Run the following command to delete the trace metric:
+
+   ```shell copy
+   chronoctl trace-metrics-rules delete SLUG
+   ```
+
+   Replace _`SLUG`_ with the slug of the trace metric you want to delete.
+
+Chronoctl deletes the trace metric with the specified slug.
+
+</Tab>
+<Tab title="Terraform" id="delete-a-trace-metric-terraform">
+
+<TerraformDel />
+
+</Tab>
+<Tab title="API" id="delete-a-trace-metric-api">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteTraceMetricsRule`](/tooling/api-info/definition/operations/DeleteTraceMetricsRule)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+Observability Platform removes the metric from the **Trace Metrics** page. Deleting a
+trace metric also removes access to the metric in the Trace Metrics dashboard.
+
+## Trace metric rule fields
+
+A trace metric rule consists of the following fields, which are properties of the
+`trace_metrics_rule` object. Each field is required unless otherwise noted. See
+the [CreateTraceMetricsRule](/tooling/api-info/definition/operations/CreateTraceMetricsRule)
+API for a complete list of supported fields.
+
+- `group_by`: Labels for grouping and narrowing search results to specific
+  attributes. See [Group and narrow results](/investigate/querying/traces#group-and-narrow-results)
+  for more information about grouping related attributes.
+  - `key`: The key to group by.
+    - `named_key`: The name of the key to group by.
+    - `type`: The type of key to group by.
+  - `label`: The dimension for displaying the aggregated results of your query
+      grouped by that attribute in resulting trace metrics. Defaults to the selected
+      service.
+
+- `histogram_buckets_seconds`: Optional. An array of custom buckets measured in
+   seconds for duration histogram metrics. You can set these if the default buckets
+   aren't appropriate for your data. The default buckets are `[0.005, 0.01, 0.025,
+   0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]`.
+
+- `metric_labels`: Optional. Static labels applied to the metrics, defined as
+   an object of one or more label name/value pairs.
+
+- `metric_name`: The metric's name as stored in the metrics database. Use this name
+  to refer to the metric in PromQL queries, such as in dashboards, monitors, and the
+  Metrics Explorer. The `metric_name` must follow
+  [Prometheus metric naming rules](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels).
+
+  Although you can modify the `metric_name` after creation, any data points generated
+  _before_ the name change aren't renamed. The new metric name is instead used to
+  generate new data points starting from that point in time. The old metric name
+  doesn't add new data, but you can still query it for past data points.
+
+- `name`: The name of the trace metric rule. You can modify this name after creating
+  the trace metric rule.
+
+- `slug`: Optional: The slug for the trace metric rule. After you create the rule,
+   the slug is immutable. If omitted, Observability Platform generates a `slug` at
+   creation time that's based on the `name`.
+
+- `trace_filter`: A filter object that evaluates traces against several criteria and
+   emits metrics for only those that match. The filter's capabilities are similar to
+   the filter in the [Trace Explorer](/investigate/querying/traces#search-and-filter-trace-data),
+   except it supports only exact matches on string fields instead of regular
+   expressions. This object supports additional
+   [optional object fields](#optional-trace-filter-object-fields).
+
+### Optional trace filter object fields
+
+The required `trace_filter` object supports the following optional fields, and you
+can use any combination of them:
+
+<Info>
+Unlike most Terraform resources, several child fields of `trace` and `span` are
+objects with a single field named `value`.
+</Info>
+
+- `trace`: Applies trace-level filtering. You can specify only one trace filter.
+    - `duration`: Matches traces with a specified duration. You can specify only one
+      of `min_secs` and `max_secs`.
+        - `min_secs`: Matches traces with a duration greater than or equal to this
+          value.
+        - `max_secs`: Matches traces with a duration less than or equal to this value.
+    - `error`: Object with a single field named `value`. If specified, matches traces
+      with an error flag equal to this Boolean value. Refer to
+      [assign values with `value`](#assign-values-with-value) for more information.
+
+- `span`: Applies span-level filtering. You can specify multiple span filters, but
+  Observability Platform evaluates a trace filter match only if _all_ `span` filters match.
+    - `service`: Object with a single field named `value`. Matches spans with a service
+      field equal to this value. Refer to
+      [assign values with `value`](#assign-values-with-value) for more information.
+    - `operation`: Object with a single field named `value`. Matches spans with an
+      operation field equal to this value. Refer to
+      [assign values with `value`](#assign-values-with-value) for more information.
+    - `parent_service`: Object with a single field named `value`. Matches spans whose
+      parent span's service field is equal to this value. Refer to
+      [assign values with `value`](#assign-values-with-value) for more information.
+    - `parent_operation`: Object with a single field named `value`. Matches spans whose
+      parent span's operation field is equal to this value. Refer to
+      [assign values with `value`](#assign-values-with-value) for more information.
+    - `duration`: Matches spans with a specified duration. You can specify only one of
+    `min_secs` and `max_secs`.
+        - `min_secs`: Matches spans with a duration greater than or equal to this
+          value.
+        - `max_secs`: Matches spans with a duration less than or equal to this value.
+    - `error`: Object with a single field named `value`. If specified, matches traces
+      with an error flag equal to this Boolean value. Refer to
+      [assign values with `value`](#assign-values-with-value) for more information.
+    - `tags`: Matches based on a span's tag keys and values. You must specify the `key`, and
+      you can specify multiple tag filters, but Observability Platform evaluates a
+      span filter match only if _all_ `tag` filters match.
+    - `key`: Matches spans whose tags match the specified key.
+    - `value`: Object with a single field named `value`. Matches spans when the tag
+      with a matching key also matches the specified value. If omitted, Observability
+      Platform evaluates _all_ spans matching the key as matches. Refer to
+      [assign values with `value`](#assign-values-with-value) for more information.
+    - `span_count`: Specifies how many spans can match. You can set only one of `min`
+      and `max`. By default, Observability Platform evaluates a `span` filter as a
+      match only if at least one span matches.
+        - `min`: If set, _at least_ this number of spans must match the parent span
+          filter's conditions for Observability Platform to evaluate the entire trace
+          filter as a match.
+        - `max`: If set, Observability Platform evaluates a trace filter match only if
+          the number of spans matching the parent span filter's conditions is *equal to
+          or less than* the `max` value.
+    - `match_type`: Specifies the span filter's match type. Valid values are
+      `"include"` and `"exclude"`. The `"include"` match type is the default, and
+      evaluates a trace filter match if _all_ its fields match _any_ span, or multiple
+      spans if you specify a `span_count`. An `"exclude"` match type evaluates a trace
+      filter match if _no_ spans within that trace match _all_ of the span filter's
+      conditions.
+
+### Assign values with `value`
+
+If a child field of a `trace` or `span` are objects with a single field named
+`value`, assign the value to the required child `value` field of these
+objects, instead of directly assigning the value like a field.
+
+For example, to set the `error` field's value in a `trace` filter, use:
+
+```yaml copy
+trace {
+  error {
+    value = true
+  }
+}
+```
+
+Also, the value of a `tag` filter, unlike the key, is also an object with a `value`
+field:
+
+```yaml copy
+span {
+  tag {
+    key = "region"
+    value = {
+      value = "us-east"
+    }
+  }
+}
+```
+
+Although these objects have only the one `value` field, this structure lets
+Chronosphere plan future features for these criteria. For more examples of this
+structure, see the [filter examples](#filter-examples).
+
+### Filter examples
+
+Matches traces marked as `error` that also took more than five seconds:
+
+```yaml copy
+trace_filter {
+    trace {
+      duration {
+        min_secs = 5
+      }
+      error {
+        value = true
+      }
+    }
+  }
+```
+
+Matches traces with at least one span from the service named `"cupcake-factory"`:
+
+```yaml copy
+trace_filter {
+    span {
+      service {
+        value = "cupcake-factory"
+      }
+    }
+  }
+```
+
+Matches traces with at least one span tagged `region:us-east` _and_ at least one
+span tagged `region:us-west`:
+
+```yaml copy
+trace_filter {
+    span {
+      tag {
+        key = "region"
+        value = {
+          value = "us-east"
+        }
+      }
+    }
+    span {
+      tag {
+        key = "region"
+        value = {
+          value = "us-west"
+        }
+      }
+    }
+  }
+```
+
+Matches traces with at least one span tagged _both_ `region:us-east` _and_
+`stack:production`:
+
+```yaml copy
+trace_filter {
+    span {
+      tag {
+        key = "region"
+        value = {
+          value = "us-east"
+        }
+      }
+      tag {
+        key = "stack"
+        value = {
+          value = "production"
+        }
+      }
+    }
+```
+
+Matches traces with _at least_ 10 spans containing the `"db-query"` operation:
+
+```yaml copy
+trace_filter {
+    span {
+      operation {
+        value = "db-query"
+      }
+      span_count {
+        min = 10
+      }
+    }
+  }
+```

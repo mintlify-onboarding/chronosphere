@@ -1,0 +1,251 @@
+---
+title: Derived metrics
+description: Learn about derived metrics and how you can create aliases for queries.
+---
+import TerraformPrereq from '/snippets/_partials/terraformprereq.mdx';
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+{/* -- dri: Adam Locke -- */}
+
+
+Derived metrics let you create user-friendly names for queries. Use derived metrics
+to implement query aliasing, which reduces the need to write complex queries.
+
+## View your derived metrics
+
+<Tabs>
+<Tab title="Chronoctl" id="chronoctl-view-derived-metrics">
+
+View derived metrics with the [Chronoctl](/tooling/chronoctl)
+command `chronoctl derived-metrics list`, filtered by their
+slugs with the `--slugs` flag.
+
+For example, to list all derived metrics:
+
+```shell copy
+chronoctl derived-metrics list
+```
+
+To list derived metrics with slugs `slug_name_1` and `slug_name_2`:
+
+```shell copy
+chronoctl derived-metrics list --slugs slug_name_1,slug_name_2
+```
+
+</Tab>
+<Tab title="API" id="api-view-derived-metrics">
+
+To complete this action with the Chronosphere API, use the
+[`ListDerivedMetric`](/tooling/api-info/definition/operations/ListDerivedMetric) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Create a derived metric
+
+<Tabs>
+<Tab title="Chronoctl" id="create-a-derived-metric-chronoctl">
+
+Here's a [Chronoctl](/tooling/chronoctl) example of a derived metric
+with two underlying expressions:
+
+```yaml copy
+api_version: v1/config
+kind: DerivedMetric
+spec:
+  name: my derived metric
+  slug: my-derived-metric
+  metric_name: test_metric
+  description: This is a test derived metric
+  queries:
+  - query:
+      prometheus_expr: scrape_duration_seconds{$job}
+      variables:
+        - name: job
+          default_prometheus_selector: job=~".*"
+    selector:
+      labels:
+      - name: id
+        type: EXACT
+        value: abc
+  - query:
+      prometheus_expr: scrape_series_added{$job}
+      variables:
+        - name: job
+          default_prometheus_selector: job=~".*"
+```
+
+</Tab>
+<Tab title="Terraform" id="creating-derived-metrics-terraform">
+
+Create a derived metric with [Terraform](/tooling/infrastructure/terraform) by
+using the `chronosphere_derived_metric` type followed by a name in the resource declaration:
+
+```ruby copy
+resource "chronosphere_derived_metric" "my-derived-metric" {
+    # The name of the derived metric.
+    name        = "my derived metric"
+    # Slug is the unique identifier of the derived metric.
+    slug        = "my-derived-metric"
+    # Description about the derived metric.
+    description = "This is a test derived metric"
+    # Metric name to be used to query for the derived metric.
+    metric_name = "test_metric"
+
+    # List of queries corresponding to the derived metric. If more than one query is specified,
+    # all but one need to have selectors defined.
+    queries {
+        # Optional selector indicates which query to select for a derived metric based on the selector.
+        # For example, the selector will match a query like test_metric{id="abc"}.
+        selector {
+            # The set of labels that need to match for the selector to be considered a match.
+            # The value here can be a regex value.
+            labels = {
+                id = "abc"
+            }
+        }
+        # The query corresponding to the previously described selector.
+        query {
+            # expr has the expression meant to be run for the derived metric, and must contain the
+            # list of selector variables that will be applied / propagated from the derived metrics query.
+            # Selectors not specified in the query apply after the query has been processed in a post-processing step.
+            expr = "scrape_duration_seconds{$job}"
+
+            # variables contains information about selectors used in the expression. Each selector specified in the
+            # expression must have a variables block.
+            variables {
+                # The name of the variable.
+                name             = "job"
+                # The default selector expression to fill in the query if selector isn't provided
+                # on the derived metrics query.
+                default_selector = "job=~\".*\""
+            }
+        }
+    }
+
+
+    # An example of another query without any selectors. Note how it points to a different expression.
+    queries {
+        query {
+            expr = "scrape_series_added{$job}"
+            variables {
+                name             = "job"
+                default_selector = "job=~\".*\""
+            }
+        }
+    }
+}
+```
+
+</Tab>
+
+<Tab title="API" id="create-a-derived-metric-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateDerivedMetric`](/tooling/api-info/definition/operations/CreateDerivedMetric) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+Use a `selector` in your derived metric definition when you want a metric name that's
+used by different queries based on the selector, or when you want the same derived
+metric to map to different underlying metrics. This can cause performance issues if
+you have a large number of `id` items in use. Chronosphere doesn't support sums
+across `id` items. If you have many selectors, a recording rule is often a better
+option.
+
+If you want to map only a derived metric name to a query, you don't need a selector.
+
+## Delete a derived metric
+
+<InfoTerraformLockout />
+
+<Tabs>
+<Tab title="Chronoctl" id="delete-a-derived-metric-chronoctl">
+To delete a derived metric with [Chronoctl](/tooling/chronoctl), use
+the `chronoctl derived-metrics delete` command with the slug of the derived
+metric you want to delete:
+
+```shell copy
+chronoctl derived-metrics delete SLUG_NAME
+```
+
+You can delete more than one metric at a time by providing a comma-separated list
+of slugs. For example:
+
+```shell copy
+chronoctl derived-metrics delete SLUG_NAME_1,SLUG_NAME_2
+```
+
+</Tab>
+
+<Tab title="Terraform" id="delete-a-derived-metric-terraform">
+To delete a derived metric with [Terraform](/tooling/infrastructure/terraform):
+
+1. Remove the derived metric's definition from the Terraform file.
+1. Run `terraform apply`.
+</Tab>
+<Tab title="API" id="delete-a-derived-metric-api">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteDerivedMetric`](/tooling/api-info/definition/operations/DeleteDerivedMetric) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Replace a recording rule
+
+When you have a complex or slow recording rule, in some cases you can replace the
+rule with a derived metric.
+
+For example, this recording rule queries for a number of HTTP status codes:
+
+```yaml copy
+ - record: slo:sli_error:ratio_rate5m
+    expr: |  (sum(rate(flask_http_request_duration_seconds_count{job="default/productservice-servicemonitor/0", status=~"(5..|4..)"}[5m])))
+      /    (sum(rate(flask_http_request_duration_seconds_count{job="default/productservice-servicemonitor/0"}[5m])))
+    labels:
+      owner: customersuccess
+      repo: chronosphereio/productservice
+      sloth_id: productservice-requests-availability
+      sloth_service: productservice
+      sloth_slo: requests-availability
+      sloth_window: 5m
+      tier: "2"
+```
+
+Replacing the recording rule with this derived metric can reduce query load:
+
+```ruby copy
+resource "chronosphere_derived_metric" "slo-error-rate-5m" {
+  name     = "slo-error-rate-5m"
+  slug     = "slo-error-rate-5m"
+  description = "Service Error Rate - 5m"
+  metric_name = "slo:sli_error:ratio_rate5m"
+
+  queries {
+     query {
+        expr = """
+         sum(rate(flask_http_request_duration_seconds_count{
+             $job,
+             status=~"(5..|4..)"
+         }[1m]))
+         /
+         sum(rate(flask_http_request_duration_seconds_count{
+             $job
+         }[1m]))
+       """
+   variables {
+        name = "job"
+        default_selector = "job=~\".*\""
+   }
+    }
+  }
+}
+```

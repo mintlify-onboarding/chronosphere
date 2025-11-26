@@ -1,0 +1,374 @@
+---
+title: Monitor actions
+description: Learn about the actions you can take on Chronosphere monitors.
+robots: noindex, nofollow
+---
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import InternalOnly from '/snippets/_partials/internal-only.mdx';
+import EarlyAccess from '/snippets/_partials/early-access.mdx';
+import VersionHistory from '/snippets/_partials/version-history.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+<EarlyAccess/>
+
+When [viewing all monitors](/investigate/alerts/monitors#view-available-monitors),
+you can select an individual monitor to view its details and take actions for that
+monitor. Chronosphere Observability Platform populates these monitor pages with
+information necessary to understand, investigate, and control a monitor's alerts.
+
+Monitor pages include:
+
+- Controls to [create the monitor](/investigate/alerts/monitors/monitor-actions-new#create-a-monitor)
+  or duplicate it to create new monitors
+- A time series chart visualizing the monitor's queries and any alerts triggered
+  over the visualized time span
+- Details of the monitor's configuration and purpose
+- A summary of Observability Platform's [alert analysis](/investigate/alerts/monitors/analyze-alerts)
+- Tools to
+  [filter query results](/investigate/alerts/monitors/monitor-actions-new#filter-query-results)
+  by time series, change events, and [signals](/investigate/alerts/notifications/signals)
+- The monitor's [alert history](/investigate/alerts/monitors/monitor-actions-new#view-alert-history),
+  which describes when alerts triggered and which notifications were sent
+- [A history of changes](/investigate/alerts/monitors/monitor-actions-new#view-version-history)
+  made to the monitor
+- A shortcut to create or modify a [muting rule](/investigate/alerts/muting-rules)
+  tailored to the monitor's parameters
+
+## Design a monitor
+
+Most monitors trigger alerts when a value matches a specific condition, such as
+when an error condition defined by its query exceeds a threshold. For example, an
+error condition lasting longer than a monitor's designated one-minute threshold can
+trigger an alert.
+
+You can also trigger alerts when a value doesn't exist. For example, you can trigger
+an alert when a host stops sending metrics, which might indicate that the host is
+unavailable. This condition triggers only if the entire monitor query doesn't return
+any results.
+
+## Review a monitor's details
+
+A monitor's page prioritizes its current **Status** with indicators of how many
+alerts of any severity are actively triggered, and whether the alert's notifications
+are being muted. A **Passing** status indicates that nothing tracked by the
+monitor is actively triggering an alert.
+
+If some of a monitor's alerts are muted, Observability Platform reports this in
+a banner that you can expand to view **More details**, including links to any muting rules
+silencing any of a monitor's notifications.
+
+You can also review the monitor's **Signal labels** alongside its status to better
+understand which labels include results being tracked by the monitor.
+
+A monitor's page also includes a sidebar that lists:
+
+- **Monitor information**, including the collection assigned as its **Owner**, the
+  **Team** responsible for it, and its notification **Policy**
+- The monitor's **Datasource** and update **Interval**
+- **Additional information**, which can include relevant **Labels**, and also a
+  **Description** and custom **Links** to additional information and context for
+  responders as defined in the monitor's **Annotations**
+- A summary of the monitor's **[Alert analysis](/investigate/alerts/monitors/analyze-alerts)**,
+  which includes a breakdown of how many alerts are being triggered in each severity
+  level or are muted
+- An **Analyze** link, where you can [analyze groups of alert patterns](/investigate/alerts/monitors/analyze-alerts#analyze-alert-patterns) over time
+
+## Create a monitor
+
+Before creating a monitor, first complete the following prerequisite tasks:
+
+1. Create a [notifier](/investigate/alerts/notifications/notifiers) to define where
+   to deliver alerts and who to notify.
+1. Create a [notification policy](/investigate/alerts/notifications/policies) to
+   determine how to route notifications to notifiers based on signals that trigger
+   from your monitor. You can select the notifier you created for the notification policy's
+   critical or warning statuses.
+
+You can then create a new monitor in
+[Observability Platform](#create-a-monitor-in-observability-platform), or using
+code representations with the
+[Terraform provider or Chronoctl](/investigate/alerts/monitors#create-a-monitor).
+
+When editing a monitor, use the same interface as when you created it.
+If you used Terraform to create the monitor, Observability Platform indicates when
+you must also use Terraform to modify it.
+
+<InfoTerraformLockout/>
+
+### Create a monitor in Observability Platform
+
+To add a new monitor:
+
+1. In the navigation menu select one of these locations:
+   - **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+   - **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Collections**,
+     and then select the collection you want to create a monitor for. This can be a
+     standard collection or a [service](/observe/services).
+1. Create the monitor:
+   - From the **Monitors** page, click **Create monitor** to open the **Add Monitor**
+     panel.
+   - To create a monitor by duplicating an existing monitor, click the monitor on
+     the **Monitors** page, then click **<Icon icon="copy" /> Duplicate**
+     to open the **Duplicate monitor** panel.
+   - From the **Collections** page, in the **Monitors** panel, click **Manage**,
+     then click **New monitor**.
+
+After you've started to create a new monitor, continue by
+[editing it](#edit-a-monitor-in-observability-platform).
+
+### Edit a monitor in Observability Platform
+
+To edit a new or existing monitor:
+
+1. Select a monitor from the list of monitors, and then click **Edit** on the selected monitor page.
+1. Enter the information for the monitor based on its [data model](/investigate/alerts/monitors/data-model).
+1. Select an **Owner** to organize and filter your monitor. You can select a
+   collection or a service.
+1. Enter a **Monitor Name**, which you can change after creating the monitor. Monitor
+   names are static strings and don't accept label variables, such as `$labels.LABEL_NAME`.
+1. Choose a **Notification Policy** to determine which notification policy to use
+   at a particular alert severity.
+1. Enter **Labels** as key/value pairs to categorize and filter monitors.
+1. In the **Query** section, choose the type of query you want to enter:
+
+   - **Prometheus**: Enter a valid Prometheus query. Click **Edit in Query Builder**
+     to open your query in the [Query Builder](/investigate/querying/metrics/builder), where
+     you can construct, optimize, and debug your query before saving it. After
+     modifying your query, click **Done** to return to the **Add Monitor** page.
+   - **Graphite**: Enter a valid Graphite query.
+   - **Logs**: Enter a valid log query, which must include the
+     [`make-series`](/investigate/querying/query-logs/query-syntax#make-series)
+     operator with a specified `step` size to return data. This operator uses the
+     [`count()`](/investigate/querying/query-logs/query-syntax#count) function by
+     default, but you can specify different operators instead.
+
+     For example, the following query creates a time chart that includes the average for
+     `latencyInSeconds`. The `step` parameter defines the time step for each bucket in
+     [Prometheus time duration format](https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations):
+
+     ```sql copy
+     severity = "WARNING"
+     | make-series avg(latencyInSeconds) step 15m by severity, service
+     ```
+
+     <Info>
+If the log query includes a field that contains a period in its name and you
+     want to use signals to group notifications, use an
+     [alias for that field name](/investigate/querying/query-logs/query-syntax#alias-field-names).
+     Otherwise, periods are converted to underscores in the generated visualization.
+</Info>
+1. Use these options to validate and update your query:
+
+   - Click **Check Query** to validate your query and preview query results. In the
+     query preview, use the following options to understand your query:
+
+     - Toggle **Show thresholds** to display the monitor's defined thresholds.
+     - Select a time range up to the present in the
+       **<Icon icon="clock" /> [time range selector](/navigate/time-ranges)**.
+
+       If your selected time period has too many alerts, or the entire graph appears
+       to display in alerted status, reduce the selected time period. If multiple
+       alerts would have fired simultaneously, only one threshold marker displays.
+       The banner shows the correct number of alerts. For example, if a critical and
+       a warning would fire at the same time, only one alert displays on the graph.
+       The banner shows two alerts would have fired.
+
+   - Click **Open in Explorer** to open your query in
+     [Metrics Explorer](/investigate/querying/metrics/explorer), where you can review
+     your query for syntax errors and make necessary changes.
+
+1. For Prometheus queries, test monitor conditions by reviewing when a monitor would
+   have triggered, based on historical data. The preview reflects existing monitor
+   schedules, signal grouping, and overrides:
+
+   - Use the **Show alert durations** toggle to display the time period over which
+   the alert would have been active.
+   - Toggle **Simulate alerts** to backtest your condition against existing data. You
+     must define at least one condition for alert simulations to work.
+
+     <Info>
+Alert simulations use existing data, and can't predict future alerts.
+</Info>
+
+     If your selected query returns too much data, the graph displays an error.
+     Chronosphere recommends selecting shorter time periods for testing, when possible.
+     Alert simulation isn't available outside the
+     [raw data retention period](/administer/limits-licensing/licensing#ingestion-limits-and-retention-policies).
+
+1. Optional: Group alerts based on the results returned from the query by choosing an
+   option in the **Signals** section.
+   [Signals](/investigate/alerts/notifications/signals) use a unique set of labels to
+   create groups of notifications when a monitor alert triggers or resolves.
+
+   <Info>
+If you select **per signal (multiple alerts)** to generate multiple alerts, enter
+   a label key that differs in name and casing from the label you enter in the
+   **Key** field in the **Labels** section. For example, if you enter `environment`
+   in the **Key** field, you might use `Environments` as the **Label Key** to match
+   on. [Pinned scopes](/navigate/pinned-scopes) can be used as a **Label Key**.
+</Info>
+
+1. Define a condition and sustain period (duration of time) in the **Conditions**
+   section, and assign the resulting alert a severity (warning or critical). In
+   the **Sustain** field, enter a value followed by an abbreviated unit such as
+   `60s`. Valid units are `s` (seconds), `m` (minutes), `h` (hours), or `d`
+   (days). The dialog also displays the notifiers associated with the monitor for
+   reference.
+
+   <Info>
+To alert on missing or no data, select **not exists** in the **Alert when value**
+   dropdown.
+</Info>
+
+1. In the **Resolve** field, enter a time period for the resolve window as a
+   value followed by an abbreviated unit such as `30s`. Valid units are `s`
+   (seconds), `m` (minutes), `h` (hours), or `d` (days).
+1. Add notes for the monitor in the **Annotations** section, such as runbooks,
+   links to related dashboards, data links to related traces, and documentation
+   links.
+1. Click **Save**.
+
+## Mute a monitor
+
+If a monitor has any active [muting rules](/investigate/alerts/muting-rules),
+Observability Platform reports the number of active muting rules and when they
+expire in a banner. The banner displays even if there aren't active alerts. The
+monitor's **Status** also reports as **Muted** if all alerts are muted, and its
+**Alert analysis** summary breaks down the muting or severity for all of the monitor's
+alerts.
+
+To mute the selected monitor, a signal from a monitor, or any stored time series,
+click **<Icon icon="bell-slash" /> Mute monitor** to add a muting rule.
+If a muting rule already exists, the button is named **Add muting rule**.
+
+When you create a muting rule from a monitor, Observability Platform prepopulates
+the muting rule's **Name** field with the monitor's name.
+
+For more information about creating and editing muting rules, see
+[Muting rules](/investigate/alerts/muting-rules).
+
+## View additional actions
+
+The monitor page header includes controls for additional monitor actions. The following
+actions might be visible depending on the resolution of your display or width of
+your browser window. Some of these actions are always organized in a
+<Icon icon="ellipsis-vertical" /> three vertical docs menu.
+
+If any of the following actions aren't visible on your device, click the
+<Icon icon="ellipsis-vertical" /> three vertical docs icon in the page header to
+access them.
+
+### Add a comment
+
+To comment on a monitor:
+
+1. On the monitor's page, click **+ Add comment**.
+1. Follow the instructions to [add a comment](/navigate/comments).
+
+### Explore the query
+
+To examine and modify the query and metrics that the monitor uses, click
+**Open in Explorer** to open the query in the [Metrics Explorer](/investigate/querying/metrics/explorer).
+
+### Create a custom event
+
+You can create a custom change event and associate it with a monitor directly from
+the monitor's page:
+
+1. On the monitor's page, click the <Icon icon="ellipsis-vertical" />three vertical dots icon
+   in the page's header, then click **Create event**.
+1. Follow the instructions to
+   [create a change event](/observe/enable-events/use-events#create-change-events).
+
+### View version history
+
+**Version history** opens the history of changes for the monitor. To view the
+history of changes for a selected monitor, click the <Icon icon="ellipsis-vertical" />
+three vertical dots icon.
+
+<VersionHistory />
+
+### Connect monitors to services or collections
+
+Services and collections can
+[own monitors](/observe/services/service-pages#own-dashboards-and-monitors), but you
+can also connect a monitor to any service or collection.
+
+**Manage Connections** opens a panel where you can manage connections between the
+selected monitor and any service or collection.
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Click the name of the monitor you want to edit.
+1. To the right of the monitor's name, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and select **Manage connections**.
+1. Add or remove [a connection](/observe/services/service-pages#connected-resources).
+
+### View alert history
+
+A monitor's **Alert history** lists each of the monitor's alerts, the time and date
+when it was triggered, the type of alert, and details like its signals and notifiers.
+
+To display the monitor's alert history:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Click the name of the monitor you want to edit.
+1. To the right of the monitor's name, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and select **Alert history**.
+
+To filter the alert history by event type:
+
+1. Click the **Event types** dropdown.
+1. Select the event types in the list that you want to view. To filter the list,
+   click the **Search** field and begin typing.
+
+To sort the alert history table by the contents of a column, click the column's
+header.
+
+To view a representation of an alert in the history as JSON, click the **\>** icon
+on the alert's row. To copy the representation, click the **<Icon icon="copy" />**
+icon in the code representation.
+
+## Filter query results
+
+When viewing a monitor, you can filter the results plotted on the graph.
+
+- Define which alerts to display on the chart by clicking either **All**, **Alerting**,
+  or **Critical**.
+- Use the **<Icon icon="clock" /> [time range selector](/navigate/time-ranges)**
+  to define the time range of query results visualized in the chart.
+- Click **Show thresholds** to draw horizontal threshold lines on the chart for
+  the monitor's triggering conditions.
+- In the series legend, click the color of one or more series to filter them from
+  the time series chart.
+- In the series legend, click the **<Icon icon="magnifying-glass-plus" /> Add** or
+  **<Icon icon="magnifying-glass-minus" /> Remove label from filters** icons that
+  appear only when hovering over a label column in one of the legend's rows.
+
+  These filters match only if the time series includes _all_ filtered labels.
+- If alerting is enabled, click **Group by signal** to group the series legend
+  by signal labels.
+
+To display the query used by the monitor, click the **Show query** toggle.
+
+## Filter change events
+
+Use the **Display events** panel to select which types of change events to depict
+on the monitor's **Query results** chart. Change events use
+[category icons](/observe/enable-events/use-events#categorize-change-events-intentionally)
+for ease of visibility into different event types.
+
+To toggle change events and categories:
+
+1. Click **<Icon icon="layer-group" /> Events** to open the **Display events** panel.
+1. In the **Status** section, toggle **Chart events enabled** to show or hide all
+   change events.
+1. In the **Categories** section, select the change event categories to visualize
+   in the chart.
+1. Click **Save** to save your changes.
+
+For more information about change event details, see
+[Change event details](/observe/enable-events/use-events#change-event-details).

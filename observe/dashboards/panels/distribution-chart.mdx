@@ -1,0 +1,57 @@
+---
+title: Visualize histogram distribution
+sidebarTitle: Visualize histograms with distribution charts
+description: Create and customize histogram distribution visualization panels for Chronosphere Observability Platform dashboards.
+---
+import DashboardDownsampleTruncate from'@/_partials/dashboard-downsample-truncate.mdx';
+import DashboardUnits from '/snippets/_partials/dashboard-units.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+A _distribution_ chart takes a query result and visualizes the counts of data points
+bucketed by values.
+
+## Distribution chart queries
+
+Distribution charts use one or more PromQL
+[queries](/observe/dashboards/panels#change-a-panels-query) to retrieve data to
+visualize.
+
+Use the following **Option** to modify your query:
+
+<DashboardDownsampleTruncate />
+
+## Configure a distribution chart
+
+You can configure a distribution chart by
+[modifying its **Settings**](/observe/dashboards/panels#edit-a-panel).
+
+Any changes you make in the panel's Settings tab are immediately displayed in the
+**Preview** pane, but take effect only when you both click **Apply** in the **Edit panel**
+interface and then click **Save**.
+
+Observability Platform doesn't fully support directly editing a panel's JSON
+representation. Chronosphere recommends you configure panels by using the user
+interface. Use the JSON representation only for managing your configuration as code
+with tools such as [Chronoctl](/tooling/chronoctl) and
+[Terraform](/tooling/infrastructure/terraform).
+
+### Modify a distribution chart's units and formatting
+
+The **Unit and formatting** section in a table's **Settings** tab defines how the
+chart interprets and displays the panel's query units.
+
+<DashboardUnits />
+
+### Modify a distribution chart's percentile markers
+
+The **Percentile markers** section in a table's **Settings** tab defines how the
+chart displays percentiles. Select one or more checkboxes to display the following
+percentiles on the graph:
+
+- `P50`
+- `P75`
+- `P90`
+- `P95`
+- `P99`

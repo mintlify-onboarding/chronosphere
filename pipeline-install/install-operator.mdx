@@ -1,0 +1,35 @@
+---
+title: Install a Core Operator
+description: Install a Core Operator to run Telemetry Pipeline in Kubernetes or Linux.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+As the first step of your Chronosphere Telemetry Pipeline deployment, you must install a
+[Core Operator](/pipelines/concepts#core-operators-and-core-instances). This installation process
+differs between Kubernetes and Linux.
+
+## Kubernetes
+
+[Installing a Core Operator in a Kubernetes cluster](/pipeline-install/install-operator/kubernetes-cluster)
+creates a [Kubernetes operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+within that cluster.
+
+You'll need to install a Core Operator in each cluster where you'd like to use
+Telemetry Pipeline. For example, if you have ten clusters, you must install ten
+Core Operators.
+
+## Linux
+
+{/* vale Chronosphere.Units = NO */}
+
+[Installing a Core Operator on Linux](/pipeline-install/install-operator/linux)
+automatically deploys a K3s cluster in your Linux environment, then creates a Core
+Operator within that cluster.
+
+You'll need to install a Core Operator in each Linux environment where you'd
+like to use Telemetry Pipeline. For example, if you have ten Linux virtual
+machines, you must install ten Core Operators, and each of those Core Operators
+will run within its own dedicated k3s cluster.
+
+{/* vale Chronosphere.Units = YES */}

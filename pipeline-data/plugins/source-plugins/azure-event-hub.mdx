@@ -1,0 +1,65 @@
+---
+title: Azure Event Hub source plugin
+sidebarTitle: Azure Event Hubs source plugin (Telemetry Pipeline)
+description: Receive pipeline data from Azure Event Hubs.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+import BufferParams from '/snippets/_partials/plugin-buffer-params.mdx';
+import ExtendedLibrdkafka from '/snippets/_partials/plugin-librdkafka-info.mdx';
+import LibrdkafkaBuffer from '/snippets/_partials/plugin-librdkafka-buffer.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Azure Event Hubs [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `kafka`, alias: `Azure_Event_Hub`) lets you ingest data from your Azure
+Event Hubs instances into a telemetry pipeline.
+
+<SourceStyle/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                      | Key | Description | Default |
+| ------------------------- | --- | ----------- | ------- |
+| **Event Hub Namespace**   | `brokers` | Required. Your Event Hub namespace. | `[REPLACE WITH YOUR NAMESPACE].servicebus.windows.net:9093` |
+| **Event Hub Topic**       | `topics` | Required. The Event Hub topic to read information from. | _none_ |
+| **Connection String Key** | `rdkafka.sasl.password` | Required. The Event Hub connection string from within the connection access policy set for the source. | `Endpoint=[REPLACE WITH YOUR CONNECTION STRING VALUE]` |
+
+### Advanced
+
+| Name                        | Key | Description | Default |
+| --------------------------- | --- | ----------- | ------- |
+| **Minimum Queued Messages** | `dkafka.queued.min.messages` | Minimum number of messages per topic and partition that Telemetry Pipeline tries to maintain in the local consumer queue. | `10` |
+| **Request Timeout (ms)**    | `rdkafka.request.timeout.ms` | How long Telemetry Pipeline waits before terminating a request connection. Recommended value: `60000`. | `60000` |
+| **Session Timeout (ms)**    | `rdkafka.session.timeout.ms` | How long Telemetry Pipeline waits before prior to terminating a session connection. Recommended value: `30000`. | `30000` |
+| **SASL Username**           | `rdkafka.sasl.username` | SASL username. | `$ConnectionString` |
+| **Security Protocol**       | `rdkafka.security.protocol` | The security protocol for Azure Event Hub. If you require OAuth or OpenID, contact Chronosphere Support. | `SASL_SSL` |
+| **SASL Mechanism**          | `rdkafka.sasl.mechanism` | The transport mechanism for the SASL connection. | `PLAIN` |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |
+
+### Other
+
+<BufferParams/>
+
+### Extended librdkafka parameters
+
+<ExtendedLibrdkafka/>
+
+<LibrdkafkaBuffer/>

@@ -1,0 +1,102 @@
+---
+title: Search/replace value
+description: Learn about the search/replace value processing rule in Chronosphere Telemetry Pipeline.
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The search/replace value [processing rule](/pipeline-data/processing-rules) uses
+regular expressions to search for a value inside a string, then replaces that value
+with a different specified value.
+
+## Configuration parameters
+
+<Params />
+
+| Name                                | Key | Description | Default |
+| ----------------------------------- | --- | ----------- | ------- |
+| **Key**                             | `key` | Required. The key whose value contains the string to replace. | _none_ |
+| **Regex**                           | `regex` | Required. The regular expression that determines which values to replace. You can use capture groups to specify more than one value. | _none_ |
+| **Match case** checkbox   | `matchCase` | Indicates whether the regular expression is case-sensitive. | Not selected |
+| **Maximum number of substitutions** | `submax` | The maximum number of substitutions that this rule will perform within a given record. | _none_ |
+| **Replacement value**               | `replacement` | Required. The regular expression substitution pattern to replace the values specified by **Regex**. You can use the `%` character to use capture groups in your substitution pattern. | _none_ |
+| **Regex engine**                    | `regexEngine` | Required. The [engine](/pipeline-data/processing-rules#regex-engines) to parse your regular expression. Accepted values: `GNU`, `Oniguruma`, `PCRE2`, `POSIX`, `TRE`. | `PCRE2` |
+| **Comment**                         | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Examples
+
+Using the search/replace value rule lets you modify and overwrite your telemetry
+data.
+
+### Basic substitution
+
+For example, given these sample logs:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Key** value `action`, the **Regex** value `purchase`,
+and the **Replacement** value `checkout` returns the following result:
+
+```json
+{"user_id":3,"page_id":30,"timestamp":"2023-03-28T09:08:41.64283645Z","action":"checkout"}
+{"user_id":4,"page_id":10,"timestamp":"2023-03-28T09:08:42.643343109Z","action":"checkout"}
+{"user_id":1,"page_id":50,"timestamp":"2023-03-28T09:08:48.643600498Z","action":"click"}
+{"user_id":5,"page_id":40,"timestamp":"2023-03-28T09:08:50.643773688Z","action":"checkout"}
+{"user_id":1,"page_id":30,"timestamp":"2023-03-28T09:08:51.643932272Z","action":"checkout"}
+{"user_id":2,"page_id":40,"timestamp":"2023-03-28T09:08:56.644080944Z","action":"click"}
+{"user_id":3,"page_id":30,"timestamp":"2023-03-28T09:09:03.64425954Z","action":"click"}
+{"user_id":1,"page_id":20,"timestamp":"2023-03-28T09:09:03.644317046Z","action":"view"}
+{"user_id":2,"page_id":50,"timestamp":"2023-03-28T09:09:10.64447719Z","action":"checkout"}
+{"user_id":2,"page_id":10,"timestamp":"2023-03-28T09:09:17.644810963Z","action":"view"}
+{"user_id":1,"page_id":50,"timestamp":"2023-03-28T09:09:20.644994805Z","action":"view"}
+```
+
+This rule searched for the string `purchase` within the value of the `action` key,
+then replaced any matching strings with the value `checkout`.
+
+### Capture groups
+
+You can also use capture groups for more complex replacements. For example,
+given these sample logs:
+
+```json
+{"event":"Sign-on detected from user 'Alice' to server 83ad48."}
+{"event":"Sign-on detected from user 'Bob' to server d6f442."}
+{"event":"Sign-on detected from user 'Carol' to server fb65ee."}
+{"event":"Sign-on detected from user 'Dave' to server e6ec7d."}
+{"event":"Sign-on detected from user 'Erin' to server b0692c."}
+{"event":"Sign-on detected from user 'Frank' to server 1c7cd2."}
+{"event":"Sign-on detected from user 'Grace' to server 9626a3."}
+```
+
+A processing rule with the **Key** value `event`, the **Regex** value
+`Sign-on detected from user '(.*)' to server (.*).`, and the **Replacement** value
+`login: %1 at %2` returns the following result:
+
+```json
+{"event":"login: Alice at 83ad48"}
+{"event":"login: Bob at d6f442"}
+{"event":"login: Carol at fb65ee"}
+{"event":"login: Dave at e6ec7d"}
+{"event":"login: Erin at b0692c"}
+{"event":"login: Frank at 1c7cd2"}
+{"event":"login: Grace at 9626a3"}
+```
+
+This rule searched for username and server name strings within the value of the
+`event` key, then replaced the value of `event` with a shorter message that
+still retained the names contained in the original message.

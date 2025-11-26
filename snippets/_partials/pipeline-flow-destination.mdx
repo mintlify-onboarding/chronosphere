@@ -1,0 +1,15 @@
+
+```mermaid
+flowchart LR
+    accTitle: Pipeline flow
+    accDescr: A simplified representation of a telemetry pipeline, which includes a source plugin, parser, processing rules, and destination plugin.
+    subgraph Pipeline flow
+        direction LR
+        A(<a href="/pipeline-data/plugins/source-plugins">Source plugin</a>)
+        B(<a href="/pipeline-data/parsers">Parser</a>)
+        C(<a href="/pipeline-data/processing-rules">Processing rules</a>)
+        D(Destination plugin)
+        A --> B --> C --> D
+        style D stroke-width:4px
+    end
+```

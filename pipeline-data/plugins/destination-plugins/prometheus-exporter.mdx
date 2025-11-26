@@ -1,0 +1,37 @@
+---
+title: Prometheus Exporter destination plugin
+sidebarTitle: Prometheus Exporter destination plugin (Telemetry Pipeline)
+description: Send pipeline data using Prometheus Exporter.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Prometheus Exporter [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `prometheus_exporter`) lets you export data using the Prometheus
+Exporter.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs       | Metrics     | Traces     |
+| :--------: | :---------: | :--------: |
+| <NoIcon /> | <YesIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name         | Key | Description | Default |
+| ------------ | --- | ----------- | --------|
+| **Host**     | `host` | Required. The address Telemetry Pipeline binds to when hosting Prometheus metrics. | `0.0.0.0` |
+| **Port**     | `port` | Required. The port Telemetry Pipeline binds to when hosting Prometheus metrics. | `80` |
+| **Add Labels** | `add_label` | Adds custom labels to all metrics exposed through the Prometheus Exporter. You can have multiple fields. | `Value` |

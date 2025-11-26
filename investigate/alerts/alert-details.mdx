@@ -1,0 +1,186 @@
+---
+title: Alert details
+description: Chronosphere Observability Platform generates detailed visualizations of each triggered alert.
+robots: noindex, nofollow
+---
+import EarlyAccess from '/snippets/_partials/early-access.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+<EarlyAccess/>
+
+Chronosphere Observability Platform generates detailed visualizations of each triggered
+alert, and provides tools to help you analyze when, why, and how the alert was triggered.
+
+You can access alert detail pages wherever a triggered alert is referenced, including:
+
+- From the [list of alerts](/investigate/alerts/alerts-list), which you can access
+  by selecting **<Icon icon="bell" /> Alerting <span aria-label="and then">></span> Alerts**
+  in the navigation menu.
+- From the source entity, such as the [monitor](/investigate/alerts/monitors) or
+  [service level objective (SLO)](/observe/slo), that defined the alert's triggers
+
+## View an alert's details
+
+Each alert presents its **alert details** in a section that includes the alert's
+status, a visualization of the queries that triggered the alert and any change events,
+and a table of the series and conditions that triggered the alert and serve as a
+legend for the chart.
+
+The page designates the alert's status with an icon, text, and color:
+
+| Icon | Text | Description |
+| ---- | ---- |------------ |
+| <Icon icon="hexagon-exclamation" style={{ color: 'rgb(238, 108, 108)' }}/> | **Critical** | Actively triggered alert that exceeds the defined critical conditions. |
+| <Icon icon="circle-exclamation" style={{ color: 'rgb(255, 178, 73)' }}/>    | **Warning**  | Actively triggered alert that exceeds the defined warning conditions.  |
+| <Icon icon="bell-slash" style={{ color: 'rgb(193, 166, 248)' }}/>   | **Muted**    | Alert that's muted by an active muting rule.                           |
+| <Icon icon="circle-check" style={{ color: 'rgb(89, 204, 141)' }}/>    | **Passing**  | An alert that's no longer triggered.                                   |
+
+The page also lists any triggering **[Signal](/investigate/alerts/notifications/signals)** as chips
+that identify its keys and their values.
+
+The **query results** that triggered the alert are visualized as a
+[time series chart](/observe/dashboards/panels/time-series-chart). You can optionally:
+
+- **Show thresholds**, which draws dotted horizontal lines on the time series chart
+  depicting the alert's triggering thresholds
+- **Show query**, which displays the query that triggered the alert and populates
+  the time series chart
+- Perform [differential diagnosis](/investigate/analyze/differential-diagnosis) (**DDx**)
+  on the data
+- **Open in explorer**, which opens [Metrics Explorer](/investigate/querying/metrics)
+  and populates it with the triggering query
+
+In the time series table that follows, you can select from visualized series to
+highlight them in the visualization, and you can **search series** to filter the
+list. You can also toggle between the default **<Icon icon="grid" /> table view**,
+which lists the time series' status as an icon and its labels and their values,
+or a **<Icon icon="list" /> list view** that lists only each series'
+status and the query that produces it.
+
+You can optionally reveal the **Conditions** that triggered the alert, which
+Observability Platform lists as a table of each condition's status, operator, sustained duration,
+time to resolution, and the signals to which the alert's conditions apply.
+
+### SLO panels
+
+If the alert's source is an SLO, the alert details page also reproduces the SLO's
+**SLI breakdown** and **Burn/Error rates** sections for reference. For more information,
+see [Service level objectives](/observe/slo).
+
+## Mute an alert
+
+To mute an alert, create a [muting rule](/investigate/alerts/muting-rules). You can do this
+directly from an alert details page by clicking the **<Icon icon="clock-rotate-left" /> Mute alert**
+button. This opens a panel to [create a muting rule](/investigate/alerts/muting-rules#create-a-muting-rule)
+that's populated with the alert's relevant source and name, and without requiring
+you to leave the alert details page.
+
+If a muting rule is already muting a triggered alert, clicking this button instead
+opens a panel to edit the associated muting rule.
+
+Alternatively, you can select
+**<Icon icon="bell" /> Alerting <span aria-label="and then">></span> Muting Rules**
+in the navigation menu to create new muting rules or edit existing muting rules.
+However, doing so doesn't populate the muting rule with details from a specific
+alert's source.
+
+## Navigate to an alert's source
+
+Each alert detail page includes a link to return to the source of its trigger.
+For instance, an alert triggered by a monitor has a **Return to source monitor** link,
+and an alert triggered by an SLO has a **Return to source SLO** link.
+
+If you navigate to an alert's source, you can return to the alert either by clicking
+the triggered alert in the source entity, or by navigating to the
+[list of alerts](/investigate/alerts/alerts-list) and filtering it by the alert's
+title.
+
+## Define the alert detail view's time range
+
+You can customize the chronological scope of an alert's details by selecting a
+[time range](/navigate/time-ranges), which defaults to the **Last 1 hour**. The
+chart and time series table update to depict time series data only within the selected
+time range, but the alert's status always displays its current state.
+
+<Warning>
+Selecting a time span that lacks data related to the alert can cause the alert's
+tables or visualizations to report **No data**. Confirm that the time range selector
+is set to a range relevant to the alerting event.
+</Warning>
+
+## Perform differential diagnosis (DDx) on an alert
+
+You can also use [differential diagnosis (DDx)](/investigate/analyze/differential-diagnosis)
+from an alert's detail page. This helps you identify correlations within specific
+alerts while investigating the root causes of their triggers.
+
+## Examine an alert's related change events
+
+If you've [enabled change events](/observe/enable-events), the alert details page
+displays associated events in the time series chart and lists them in the **Change events**
+section.
+
+To toggle or filter change events in the chart, click **<Icon icon="layer-group" /> Events**
+to open the **Display events** panel. Toggle their **Status**, **Events list**,
+and **Categories** to your preferences, and then click **Save** to confirm your
+changes.
+
+The change events list includes each [Alert change event](/overview/concepts/change-events)
+related to the displayed alert. The section's table lists events that occurred during
+the selected time span in chronological order, starting with the most recent event.
+
+To view a change event's details, click the event's row in the list to open its
+**Change event** panel. This displays the event's title, category, source, type,
+time of occurrence, and label names and values. It also links to the alert's source
+and provides tabs to **Comments** and the change event entity's **JSON** depiction.
+
+To further explore all of the listed change events, click **Open explorer** in the
+alert details page's **Change events** section to open
+[Changes Explorer](/overview/concepts/change-events) and populate it with the same
+time range and query used to populate the alert details page's list of change events.
+
+## View an alert's related information
+
+The **Alert information** sidebar identifies the [collection](/administer/collections)
+identified as the alert's **Owner** and its associated **[Team](/administer/accounts-teams/teams)**.
+If the alert's source is an SLO, this section also lists the SLO's **Runbook** link
+if one is defined.
+
+When designing collections and teams, add useful links, details, and default notification policies
+to ensure that responders can quickly identify and notify responsible colleagues
+or follow established policies and processes when an alert is triggered.
+
+The **Additional information** section of the sidebar lists any **Annotations**
+defined on the alert's triggering source. For example, if you defined
+[annotations](/investigate/alerts/monitors#annotations) on a monitor, the alert's
+additional information lists each of the monitor's annotations and populates any
+variables defined in them.
+
+When designing something that can trigger an alert, such as a monitor or SLO, use
+annotations to conditionally contextualize these alert views with information pertinent
+to responders.
+
+## Analyze alert patterns
+
+The sidebar provides links to
+**[analyze alert patterns](/investigate/alerts/alert-details/alert-patterns)**
+through a heatmap visualization and a table of associated alerts. You can analyze
+patterns by time range or by other alerts triggered by the same source, such as
+a [monitor](/investigate/alerts/monitors) or [service level objective (SLO)](/observe/slo).
+
+### Analyze patterns by time range
+
+The **Related alerts** sidebar section provides a count of all other alerts triggered
+during the same time range. It also provides a link to open the **Analyze alert patterns**
+panel, which provides a heatmap visualization of those alerts.
+
+### Analyze patterns by source
+
+An additional sidebar section identifies any other alerting signals triggered by
+the same source. For example, if the source is a monitor, the section is titled
+**Alerting signals in this monitor**.
+
+This section also provides a link to open the **Analyze alert patterns** panel
+which the selected alert depicted with others triggered by the same source.

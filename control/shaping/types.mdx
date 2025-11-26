@@ -1,0 +1,255 @@
+---
+title: Metric types
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Each ingested and aggregated metric has a metric type, a critical piece of metadata
+that indicates what kind of data a metric represents. Metric types affect how the
+data [aggregates](/control/shaping/rules/rollup#aggregation-operations) for
+storage, [long-term downsampling](/control/shaping/downsampling) behaves, and how
+that data displays within the Chronosphere Observability Platform.
+
+If a metric is ingested or aggregated with the wrong type, you can get unexpected
+results when aggregating or querying the data, or data loss when persisting data in
+long term storage.
+
+## Observability Platform types
+
+Observability Platform supports ingesting many different metric types.
+
+### Cumulative counter
+
+A counter that stores a strictly increasing count of distinct events or a
+reset-to-zero on restart. Counters are a fundamental metric construct that keeps
+track of the number of times a certain event has occurred.
+
+- Each datapoint stores the running total at the given timestamp.
+- Aggregated using `metric_type=CUMULATIVE_COUNTER`
+  [rollup rules](/control/shaping/rules/rollup).
+- Queryable as a
+  [Prometheus counter](https://prometheus.io/docs/concepts/metric_types/#counter).
+- Subject to [long-term downsampling](/control/shaping/downsampling).
+- View incoming cumulative counters with a `__metric_type__:cumulative_counter`
+  filter in the [Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer).
+
+Examples of cumulative counters include:
+
+- Number of requests served
+- Number of user logins
+- Number of heap allocations
+
+### Delta counter
+
+A counter where each data point stores a strictly positive delta increment at the
+given timestamp. With this method, the client keeps track only of how many events
+since the last emission or flush of the metric value, and emits only that value.
+Unlike a cumulative counter, a delta counter doesn't keep a running sum.
+
+- Stores the same kinds of data as cumulative counters, but with a different format.
+- Aggregated with `metric_type=DELTA_COUNTER` [rollup rules](/control/shaping/rules/rollup).
+  Raw delta counter data is automatically aggregated unless explicitly dropped by
+  a rollup rule.
+- Queryable as a [Prometheus counter](https://prometheus.io/docs/concepts/metric_types/#counter).
+- View incoming delta counters with a `__metric_type__:delta_counter` filter
+  in the [Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer).
+
+An example of a delta counter is:
+
+- A client sends a 1 every time a request is served to count the number of requests
+  served.
+
+For more information about querying delta counters in Observability Platform, see
+[Querying delta temporality metrics](/investigate/querying/metrics/delta-queries).
+
+### Gauge
+
+A gauge is a basic metric type that tracks a value which changes over time.
+
+- Each datapoint stores the value at the given timestamp. It's impossible to have
+  two values at the same point in time.
+- Aggregated with `metric_type=GAUGE` [rollup rules](/control/shaping/rules/rollup).
+- Queryable as a
+  [Prometheus gauge](https://prometheus.io/docs/concepts/metric_types/#gauge).
+- Subject to [long-term downsampling](/control/shaping/downsampling).
+- View incoming gauges with a `__metric_type__:gauge` filter
+  in the [Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer).
+
+Some examples of gauges are:
+
+- Current number of in-flight requests.
+- Current number of signed-in users.
+- Current amount of memory in use.
+
+### Histogram
+
+The frequency of values in a set of measurements that fall within certain ranges
+called _buckets_. A histogram uses several buckets defined in a _bucket layout_.
+Observability Platform processes and persists each histogram as a single structured
+value and time series.
+
+Observability Platform supports OpenTelemetry exponential histograms and Prometheus
+native histograms, and also supports both cumulative and delta temporality. The
+histogram's bucket layout defines the histogram metric type in Observability Platform.
+
+You can query histograms using
+[PromQL histogram functions](https://prometheus.io/docs/prometheus/latest/querying/functions/).
+They're subject to the same long-term downsampling as other metric types.
+
+<Info>
+Observability Platform processes and persists Prometheus histograms as individual
+cumulative counter or delta counter time series. To query both histograms and classic
+Prometheus histograms, see
+[Querying histograms](/investigate/querying#querying-histograms).
+</Info>
+
+Some examples of histograms include:
+
+- Distributions of request latencies
+- Distributions of payload sizes
+
+| Metric Type | Bucket Layout | Temporality | Description |
+|-------------|---------------|-------------|-------------|
+| Cumulative exponential histogram | Exponential | Cumulative | A cumulative histogram with exponential bucket layout summarizes a set of measurements by defining non-overlapping, exponentially increasing bucket ranges and counting the frequency of observations within each bucket range. It includes the total count and sum of all observations. See [Cumulative exponential histograms](#cumulative-exponential-histograms). |
+| Delta exponential histogram | Exponential | Delta | A delta exponential histogram has the same properties of a cumulative exponential histogram. The only difference is the delta temporality, where the instrumentation client only summarizes and sends observations since the last emission or flush of the histogram metric value. See [Delta exponential histograms](#delta-exponential-histograms). |
+
+Histograms are limited in these ways:
+
+- The maximum bucket limit is 160 buckets.
+- The maximum exponential histogram scale is 8, and the minimum scale is -4.
+
+#### Cumulative exponential histograms
+
+The cumulative exponential histogram type is compatible with both OpenTelemetry
+cumulative exponential histograms and classic Prometheus native histograms with
+exponential bucket layouts.
+
+- Observability Platform automatically reduces the exponential histogram scale
+  when the histogram exceeds the 160-bucket limit. When downscaling, it doubles
+  the exponential histogram bucket width to summarize the observations with fewer
+  but wider buckets, effectively reducing the exponential histogram's resolution.
+
+  When aggregating or querying exponential histograms with different bucket scales,
+  Observability Platform downscales them to the lowest common histogram scale.
+  Zero-threshold handling similarly widens scales until values fit.
+- Observability Platform aggregates them with
+  `metric_type=cumulative_exponential_histogram` rollup rules.
+- You can view incoming measurements by using a
+  `__metric_type__:cumulative_exponential_histogram` filter in the Live Telemetry
+  Analyzer.
+
+#### Delta exponential histograms
+
+The delta exponential histogram type is compatible only with OpenTelemetry delta
+exponential histograms.
+
+- Observability Platform aggregates them with `metric_type=delta_exponential_histogram`
+  rollup rules.
+- You can view incoming measurements by using a
+  `__metric_type__:delta_exponential_histogram` filter in the Live Telemetry Analyzer.
+
+For more information about querying delta histograms in Observability Platform, see
+[Querying delta temporality metrics](/investigate/querying/metrics/delta-queries).
+
+### Measurement
+
+A raw observation with some discrete value. Measurements differ from counters as
+each measurement event has a discrete, arbitrary value. Measurements also differ from a gauge,
+as there can be multiple values at any point in time.
+
+- You must use a `metric_type=MEASUREMENT`
+  [rollup rule](/control/shaping/rules/rollup) with `drop_raw=true` to aggregate
+  measurements into a persistable metric type. Raw measurement data can't be persisted.
+- The `MEASUREMENT` metric type is best used when all values should be
+  [aggregated](/control/shaping/rules/rollup#measurement) at once across
+  many matching time series.
+- View incoming measurements with a `__metric_type__:measurement` filter
+  in the [Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer).
+
+Some examples of measurements are:
+
+- The latency of an individual request
+- The payload size of an individual request
+
+## Supported formats
+
+Observability Platform can ingest metrics from many different [external metric clients](/ingest/metrics-traces/collector/addl-metrics).
+Each external metric client has their own concept of "metric type" which is
+mapped into a Observability Platform metric type.
+
+### Prometheus
+
+| Prometheus Type | Observability Platform Type |
+| --- | --- |
+| Gauge | Gauge |
+| Counter | Cumulative counter |
+| Histogram | Cumulative counter |
+| Summary (quantile data points) | Gauge |
+| Summary (sum/count data points) | Cumulative counter |
+| Native histogram with exponential bucket layout | Cumulative exponential histogram |
+
+### OpenTelemetry
+
+| OpenTelemetry Type | Observability Platform Type |
+| --- | --- |
+| Gauge | Gauge |
+| Cumulative monotonic sum | Cumulative counter |
+| Delta monotonic sum | Delta counter |
+| Cumulative histogram | Cumulative counter |
+| Delta histogram | Delta counter |
+| Summary (quantile data points) | Gauge |
+| Summary (sum/count data points) | Cumulative counter |
+| Cumulative non-monotonic sum | Gauge |
+| Cumulative exponential histogram | Cumulative exponential histogram |
+| Delta exponential histogram | Delta exponential histogram |
+
+Observability Platform doesn't support delta non-monotonic sums (also known as delta
+up-down counters).
+
+### Datadog
+
+| Datadog Type | Observability Platform Type |
+| --- | --- |
+| Gauge | Gauge |
+| Count | Delta counter |
+| Histogram | Measurement |
+| Distribution | Measurement |
+
+### SignalFX
+
+| SignalFX Type | Observability Platform Type |
+| --- | --- |
+| Gauge | Gauge |
+| Cumulative | Cumulative counter |
+| Counter | Delta counter |
+
+### Wavefront
+
+| Wavefront Type | Observability Platform Type |
+| --- | --- |
+| Gauge | Gauge |
+| Counter | Cumulative counter |
+| Delta counter | Delta counter |
+| Histogram | Cumulative counter |
+
+### StatsD
+
+| StatsD Type | Observability Platform Type |
+| --- | --- |
+| Gauge | Gauge |
+| Counter | Delta counter |
+| Timer | Measurement |
+
+### Google Cloud
+
+| Google Cloud Type | Observability Platform Type |
+| --- | --- |
+| Gauge | Gauge |
+| Cumulative | Cumulative counter |
+| Delta | Delta counter |
+| Distribution | Delta counter |
+
+Google Cloud distributions are transformed to
+[Prometheus classic histograms](/investigate/querying/promql/apply-functions#querying-classic-prometheus-histograms).
+They're stored as separate delta counter time series per distribution bucket,
+with a separate time series for the distribution count and sum.

@@ -1,0 +1,214 @@
+---
+title: Create a PagerDuty notifier
+description: Create a PagerDuty notifier with Chronosphere Observability Platform, Chronoctl, or Terraform.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import ChronoctlCreate from '/snippets/_partials/chronoctlnotifiers.mdx';
+import TerraformCreate from '/snippets/_partials/terraformcreate.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+To create a PagerDuty notifier, create a service in PagerDuty and then create the
+notifier in Chronosphere Observability Platform.
+
+## Create a new service in PagerDuty
+
+Before creating a PagerDuty notifier in Observability Platform, you must configure
+the notifier in PagerDuty.
+
+To configure a PagerDuty notifier:
+
+1. In PagerDuty, go to **Services <span aria-label="and then">></span> Service Directory**
+   and click **New Service**.
+1. Enter a name and description for the service and follow the remaining prompts.
+1. Select **Prometheus** from the integration types list and create the service.
+1. After PagerDuty redirects you to the new service, click the **Integrations** tab,
+   which displays the integration key.
+1. Copy the integration key, which you enter when creating a PagerDuty notifier in
+   Observability Platform.
+
+<Info>
+The [PagerDuty v1 Event API](https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTc4-send-a-v1-event)
+uses a `service_key`, and the
+[PagerDuty v2 Event API](https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTgx-send-an-alert-event)
+uses a `routing_key`.
+
+If you're using the PagerDuty v2 Event API, create your notifier with either
+Terraform or Chronoctl. You can specify only a `service_key` in Observability
+Platform.
+</Info>
+
+Next, [create a PagerDuty notifier](#create-a-pagerduty-notifier-in-observability-platform) in
+Observability Platform.
+
+## Create a PagerDuty notifier in Observability Platform
+
+After [creating a service in PagerDuty](#create-a-new-service-in-pagerduty), you can
+create a PagerDuty notifier in Observability Platform.
+
+The Observability Platform PagerDuty notifier sends alert details to PagerDuty as a
+string for improved readability in the PagerDuty user interface. The alert details
+can also be sent as a JSON object for use in downstream PagerDuty AIOps features. The
+JSON format makes it easier to consume alert details programmatically, while
+retaining data visibility in the user interface. To enable JSON format,
+[contact Chronosphere Support](/support).
+
+You can use
+[variables](/investigate/alerts/notifications/notifiers#use-variables-in-notifiers) in your notifiers.
+
+
+<Tabs>
+<Tab title="Web" id="create-pagerduty-notifier">
+
+To create a PagerDuty notifier:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Notifiers**.
+1. Click **Create notifier**.
+1. Enter a descriptive name for the notifier.
+1. Select **PagerDuty** as the type of notifier you want to create.
+1. In the **Service key** field, enter the integration key you created in PagerDuty.
+1. In the **URL** field, enter a URL, which is called as a `POST` request. For
+   example:
+
+   ```text copy
+   https://events.pagerduty.com/generic/2010-04-15/create_event.json
+   ```
+
+   <Warning>
+Don't use the default value from PagerDuty in the **URL** field. You must enter
+   the **Integration URL** from PagerDuty.
+</Warning>
+
+1. In the **Severity** dropdown, select a severity for the event.
+1. Optional: Select **Notify when resolved** to send a resolved alert notification.
+1. Click **Save**.
+
+</Tab>
+<Tab title="Chronoctl" id="pagerduty-chronoctl">
+
+<ChronoctlCreate />
+
+1. Define the resource definition for your PagerDuty notifier by adding the following
+   information to a YAML file:
+
+   ```yaml copy /NAME/ /SLUG/ /ROUTING_KEY/ /SEVERITY/
+   api_version: v1/config
+   kind: Notifier
+   spec:
+     name: NAME
+     slug: SLUG
+     pagerduty:
+       - routing_key: ROUTING_KEY
+         url: https://events.pagerduty.com/v2/enqueue
+         severity: SEVERITY
+   ```
+
+   Replace the following:
+
+   - _`NAME`_: A descriptive name, such as `team-pagerduty`.
+   - _`SLUG`_: A unique identifier, such as `team-pagerduty`.
+   - _`ROUTING_KEY`_: Your PagerDuty integration key.
+   - _`SEVERITY`_: A severity, such as `critical` or `warning`.
+
+1. Apply the changes:
+
+   ```shell copy /FILE_NAME/
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the notifier YAML file you previously
+   created.
+
+</Tab>
+<Tab title="Terraform" id="pagerduty-terraform">
+
+To create a PagerDuty notifier:
+
+1. Create a PagerDuty notifier with Terraform by using the
+   `chronosphere_pagerduty_alert_notifier` type followed by a name in a resource
+   declaration:
+
+   ```ruby copy
+   resource "chronosphere_pagerduty_alert_notifier" "pagerduty_notifier" {
+     name = "PagerDuty Notifier"
+
+     # Optional slug of the pagerduty notifier.
+     slug = "pd-notifier"
+
+     ## Notifier-specific required configuration
+     severity      = "info"
+     url           = "https://events.pagerduty.com/v2/enqueue"
+
+     # Exactly one of service_key or routing_key has to be specified
+     # service_key = "XXXXX"
+     routing_key = "my-routing-key"
+
+     ## Notifier-specific optional configurations
+     class       = "my_class"
+     client      = "my_client"
+     client_url  = "https://my_client_url"
+     component   = "my_component"
+     description = "helpful description"
+     details     = {
+       "first_detail" = "interesting detail"
+     }
+     group       = "my_group"
+
+     # Can have multiple images.
+     image {
+       # src is required for every image
+       src  = "https://example.com/image/myimage.png"
+       alt  = "Chronosphere"
+       href = ""
+     }
+
+     # Can have multiple links.
+     link {
+       # href is required for every link
+       href = "https://chronosphere.io/"
+       text = "some text"
+     }
+
+     ## (Optional) Base configuration common to all notifiers
+     send_resolved = true # The default value
+
+     ## (Optional) HTTP configuration common to HTTP notifiers
+     basic_auth_username = "username"
+     basic_auth_password = "strong+p@ssword"
+     # Can use bearer_token instead of basic auth
+     proxy_url                = "https://my-proxy-url"
+     tls_insecure_skip_verify = false
+   }
+   ```
+
+1. In the `severity` field, specify a severity, such as `critical` or `warning`.
+
+1. In the `routing_key` field, enter your PagerDuty integration key as the value.
+
+1. Add the following URL, called as a `POST` request, to the `url` key:
+
+   ```text copy
+   https://events.pagerduty.com/v2/enqueue
+   ```
+
+1. Run `terraform apply` to create the notifier resource.
+
+   ```ruby copy
+   terraform apply
+   ```
+
+See [send an alert event](https://developer.pagerduty.com/docs/events-api-v2/trigger-events/)
+in the PagerDuty documentation for more information.
+
+</Tab>
+<Tab title="API" id="pagerduty-API">
+
+To complete this action with the Chronosphere API, use the `pagerduty` object in the
+[`CreateNotifier`](/tooling/api-info/definition/operations/CreateNotifier) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

@@ -1,0 +1,158 @@
+---
+title: Display data in a table
+description: Create and customize tables of data from query results for Chronosphere Observability Platform dashboards.
+---
+import ChronoctlDashboard from '/snippets/_partials/chronoctl-dashboard.mdx';
+import ClassicPanel from '/snippets/_partials/classic-panels.mdx';
+import DashboardDownsampleTruncate from '/snippets/_partials/dashboard-downsample-truncate.mdx';
+import DashboardUnits from '/snippets/_partials/dashboard-units.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<ClassicPanel />
+
+A _table_ panel organizes and displays the data returned by a
+[query](/investigate/querying) as table with sortable columns. Tables can
+interpret time series data as columns or rows, or can render each raw data
+point from a series in its own row. You can also add columns for each label
+in a series, and for common calculations of each series' data.
+
+To create a table chart or learn more about the configuration options common
+to all panels, see [Panels](/observe/dashboards/panels).
+
+## Table chart queries
+
+Table charts use one or more
+[queries](/observe/dashboards/panels#change-a-panels-query) to retrieve data to
+visualize. Table charts use the following query **Options** to refine the
+displayed information, depending on your **Datasource**:
+
+<Tabs>
+<Tab title="Metrics (Prometheus)">
+
+- **Type**: The [PromQL query](/investigate/querying/promql#basic-querying)
+  type: **Instant**, or **Range**.
+<DashboardDownsampleTruncate />
+
+</Tab>
+<Tab title="Logs">
+
+For logs, enter a valid query.
+
+</Tab>
+</Tabs>
+
+### Query example
+
+The following example creates a table with multiple label values:
+
+```text copy
+sum by (instance, environment) (METRIC_NAME)
+```
+
+Replace _`METRIC_NAME`_ with the name of any metric with labels.
+
+## Use a table's tooltip
+
+Observability Platform truncates the display of table values that exceed a column's
+width. To view the complete value, hold the pointer over the truncated value in the
+table.
+
+## Export a table as CSV
+
+You can export a table's values as a CSV file.
+
+1. In the panel, click the <Icon path= { mdiDotsVertical } /> icon.
+2. Select **Export CSV**.
+
+## Configure a table
+
+You can configure a table by
+[modifying its **Settings**](/observe/dashboards/panels#edit-a-panel).
+
+Any changes you make in the panel's **Settings** tab are immediately reflected in
+the **Preview** pane, but take effect only when you click **Apply** in the **Edit panel**
+interface and then **Save** the dashboard.
+
+Observability Platform doesn't fully support directly editing a panel's JSON representation
+and recommends configuring panels in the user interface. Use the JSON representation
+only for managing your configuration as code with tools such as [Chronoctl](/tooling/chronoctl)
+and [Terraform](/tooling/infrastructure/terraform).
+
+### Modify a table's data format
+
+The **Data Format** section in a table's **Settings** tab defines how the table
+interprets the panel's query results for tabular display.
+
+To define the table's data format, select a **Time series format**.
+
+- **Series to Rows** displays each series as a row in the table. You must also select
+  which **Calculations** to apply to the series and display in the table. If the
+  series contains labels, you can also toggle **Label-based columns**, which adds
+  a column for each series' label when enabled.
+- **Series to Columns** displays each series as a column in the table. Each row
+  in the table represents one data point in the series with the timestamp indicated
+  in the **Time** column.
+- **Raw** displays the timestamp and value for each data point of a selected series.
+
+### Modify a table's sorting
+
+The **Sorting** section in a table's **Settings** tab controls the table's sorting
+order.
+
+- **Sort by**: Determines the column used to sort the table.
+- **Sort order**: Determines whether display the table's contents by its **Default**
+  original data order, or to sort it in **Ascending** or **Descending** order.
+  Observability Platform disables this field until you select a **Sort by** column.
+
+To add multiple sorting criteria:
+
+1. Set a **Sort by** column.
+1. Click **+** (**Add sort**) to add a sorting criteria.
+
+To remove a sorting criteria, click **<Icon icon="trash" alt="Delete icon"/> Delete**
+on the row of the criteria you want to remove.
+
+### Modify a table's units
+
+The **Display** section in a table's **Settings** tab controls how Observability
+Platform interprets the units of data in the table.
+
+<DashboardUnits />
+
+### Configure a table's thresholds
+
+The **Thresholds** section in a table chart's **Settings** tab defines values where
+Observability Platform renders each threshold range. You can set a single threshold
+to differentiate, or multiple thresholds to indicate severity level. For example,
+you might want a warning value in orange, and a critical value in red.
+
+To create a new threshold:
+
+1. Edit a table panel.
+1. Click the **Settings** tab.
+1. In the **Thresholds** section, click the <Icon path = { mdiPlus} /> plus icon.
+1. Enter a value in the **When value is >=** text box.
+1. Use the color box to select a color for the threshold.
+1. Optional: Click (**>**) to expand a row and update the **Message** field.
+1. Click the <Icon path = { mdiPlus} /> plus icon to add more threshold levels.
+1. When finished, click **Apply**.
+
+After applying the changes, the table updates with the selected color highlighting
+the violated threshold.
+
+To delete a threshold value, click the caret (>) to expand the threshold definition,
+and then click
+**<Icon icon="trash" alt="Delete icon"/> Delete threshold**.
+
+### Configure a table's columns
+
+The **Table columns** tab in a table's **Edit panel** interface controls whether
+to display certain columns in the table and lets you edit their headings. The
+tab lists each table column in a separate row.
+
+- **Visibility**: Toggles whether to display the column.
+- **Name**: Displays the column's original name.
+- **Display Name**: Defines the name used in the column's header.
+- **Order**: Use the arrows to reorder the table.

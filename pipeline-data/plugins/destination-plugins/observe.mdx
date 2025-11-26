@@ -1,0 +1,73 @@
+---
+title: Observe destination plugin
+sidebarTitle: Observe destination plugin (Telemetry Pipeline)
+description: Send pipeline data to Observe.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import BasicAuthentication from '/snippets/_partials/pipeline-basic-auth.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Observe [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `http`, alias: `Observe`) lets you configure your telemetry pipeline to
+send your data to Observe through HTTPS.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                    | Key | Description | Default |
+| ----------------------- | --- | ----------- | ------- |
+| **Observe Customer Id** | `host` | Required. IP address or hostname of Observes data collection endpoint. `$(OBSERVE_CUSTOMER_ID)` is your Customer ID. | `OBSERVE_CUSTOMER_ID.collect.observeinc.com` |
+| **Headers**             | `header` | Adds an HTTP header key/value pair. Multiple headers can be set. | _See the following table._ |
+
+The following headers are to set your connection:
+
+| Key                   | Value |
+| --------------------- | ----- |
+| **Authorization**     | `Bearer (REPLACE WITH OBSERVE TOKEN)` |
+| **X-Observe-Decoder** | `fluent` |
+
+### Advanced
+
+| Name                 | Key | Description | Default |
+| -------------------- | --- | ----------- | ------- |
+| **URI**              | `uri` | Required. The default URI used for the Observe service. | `/v1/http/fluentbit` |
+| **Port**             | `port` | Required. The port used to communicate with the Observe service. | `443` |
+| **Compress**         | `compress` | Sets the payload compression mechanism. Accepted values: `gzip`, _none_. | `gzip` |
+| **HTTP Proxy**       | `proxy` | Specifies an HTTP Proxy. The expected format of this value is `http://host:port`. | _none_ |
+| **Format**           | `format` | Required. Specifies the data format to be used in the HTTP request body. Accepted values: `json`, `json_lines`, `json_stream`, `msgpack`. | `msgpack` |
+| **JSON Date Format** | `json_date_format` | Specifies the format of the date. Accepted values: `double`, `epoch`, `iso8601` (for example, `2018-05-30T09:39:52.000681Z`), `java_sql_timestamp` (for example, `2018-05-30 09:39:52.000681`, which can be used with AWS Athena). | _none_ |
+| **JSON Date Key**    | `json_date_key` | Specifies the name of the date field in output. | _none_ |
+| **Body Key**         | `body_key` | Specifies the key that contains the body. | _none_ |
+| **Header Tag**       | `header_tag` | Sets an HTTP header whose value is the tag of the record. | _none_ |
+| **Header Key**       | `headers_key` | Specifies the key that contains the headers. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />
+
+### Basic Authentication
+
+<BasicAuthentication />

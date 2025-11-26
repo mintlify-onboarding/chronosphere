@@ -1,0 +1,215 @@
+---
+title: Monitor actions
+description: Learn about the actions you can take on Chronosphere monitors.
+---
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import VersionHistory from '/snippets/_partials/version-history.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+When [viewing all monitors](/investigate/alerts/monitors#view-available-monitors),
+you can select an individual monitor to view its details and take actions for that
+monitor.
+
+After selecting an individual monitor, you can view all details for that monitor and
+[filter query results](#filter-query-results) to individual time series and related
+change events. You can also
+[view a monitor's history of changes](/investigate/alerts/monitors#version-history),
+or its [alert history](/investigate/alerts/monitors#alert-history) to understand when
+alerts triggered and which notifications were sent.
+
+## Mute a monitor
+
+If a monitor has any active [muting rules](/investigate/alerts/muting-rules),
+Chronosphere indicates the number of active muting rules and when they expire.
+Chronosphere displays a banner indicating **Alerts for this monitor are being muted**
+if a monitor is actively muted or was muted within the last hour. The banner doesn't
+display if there aren't active alerts, even if a muting rule is active.
+
+To mute the selected monitor, a signal from a monitor, or any stored time series,
+click **<Icon icon="bell-slash" /> Mute** to add a muting rule. When you create a
+muting rule from a monitor, the muting rule's **Name** field prepopulates with the
+monitor's name.
+
+## Create a change event
+
+You can create a change event directly from the details page for a specific monitor:
+
+1. On the monitor details page, click **+ Create Event**.
+1. Follow the instructions to
+   [create a change event](/observe/enable-events/use-events#create-change-events).
+
+## Investigate patterns
+
+To investigate suspicious patterns, click
+[**DDx**](/investigate/analyze/differential-diagnosis/metrics) to open metrics
+differential diagnosis.
+
+## Explore the query
+
+To examine and modify the query and the metric the monitor uses, click
+**Open in Explorer** to open the query in the [Metrics Explorer](/investigate/querying/metrics/explorer).
+
+## More actions
+
+Display additional monitor details by clicking the <Icon icon="ellipsis-vertical" />
+three vertical docs icon for the selected monitor:
+
+- [**Monitor Specifications**](/investigate/alerts/monitors/data-model) includes
+  details such as the data source, slug, and time interval for the monitor.
+- [**Conditions**](/investigate/alerts/monitors/data-model#conditions) are tests that
+  the results of a monitor query are evaluated against, with a related severity.
+- [**Notification Policies**](/investigate/alerts/notifications/policies) contain
+  rules for notifications, which send to specified endpoints (such as PagerDuty,
+  email, and Slack) when an alert triggers, and optionally when the alert resolves.
+- [**Edit Monitor**](/investigate/alerts/monitors#edit-a-monitor) opens a panel with
+  tools for editing a monitor's configuration and notification policy, labels, query,
+  signals, conditions, and annotations.
+- [**Duplicate monitor**](#duplicate-a-monitor) duplicates the selected monitor.
+- [**Version history**](/investigate/alerts/monitors#version-history) displays the
+  history of changes to the selected monitor.
+- [**Manage connections**](#connect-monitors-to-services-or-collections) adds links
+  to related services and collections.
+
+### Duplicate a monitor
+
+Sometimes, you want to reuse a monitor with minor changes. Rather than recreating a
+monitor and manually configuring each setting, duplicate the monitor, make the
+necessary changes, and save the new monitor.
+
+**Duplicate Monitor** copies the current monitor in a new panel, where you can
+duplicate the monitor, make changes, and save it as a new monitor.
+
+To duplicate a selected monitor:
+
+1. Click the <Icon icon="ellipsis-vertical" /> three vertical dots icon.
+1. Click **Duplicate monitor**.
+1. In the **Duplicate monitor** pane,
+   [edit the monitor](/investigate/alerts/monitors#edit-a-monitor).
+
+### View version history
+
+**Version history** opens the history of changes for the monitor. To view the
+history of changes for a selected monitor, click the <Icon icon="ellipsis-vertical" />
+three vertical dots icon.
+
+<VersionHistory />
+
+### Connect monitors to services or collections
+
+Services and collections can
+[own monitors](/observe/services/service-pages#own-dashboards-and-monitors), but you
+can also connect a monitor to any service or collection.
+
+**Manage Connections** opens a panel where you can manage connections between the
+selected monitor and any service or collection.
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Click the name of the monitor you want to edit.
+1. To the right of the monitor's name, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and select **Manage connections**.
+1. Add or remove [a connection](/observe/services/service-pages#connected-resources).
+
+## Filter query results
+
+When viewing an individual monitor, you can filter the results plotted on the graph.
+To display the query for the monitor, click the **Show Query** toggle.
+
+1. Change the displayed error state by clicking either **All**, **All Alerting**, or
+   **Critical Only**.
+
+1. From the **<Icon icon="clock" /> [time range selector](/navigate/time-ranges)**,
+   change the time range of the query results to modify the displayed time period.
+
+1. In the **Series Legend**, select one or more series in the list to filter the
+   resulting time series that the graph displays. See
+   [Series legend](/investigate/alerts/monitors#series-legend) for more information.
+
+1. Use the **Change Events** dropdown menu or advanced filtering syntax to
+   [display change events](#display-change-events) related to the selected monitor.
+
+    You can [create a change event](#create-a-change-event) such as a broadcast to
+    inform other users of an upcoming outage, or a third-party change event in
+    addition to the predefined change event categories.
+
+1. Click the **Alert History** tab to display a history of alerts generated by the
+   monitor.
+
+### Display change events
+
+Use the **Change Events** dropdown menu or advanced filtering options to display
+change events on the **Query Results** panel for a monitor. Use
+[basic filtering](#basic-filtering) to select a predefined query that displays change
+events, or use [advanced filtering](#advanced-filtering) to define a query if you
+know details about the change event you're searching for.
+
+Change events use
+[category icons](/observe/enable-events/use-events#categorize-change-events-intentionally)
+for ease of visibility into different event types.
+
+#### Basic filtering
+
+From the **Change Events** dropdown menu, select one of the following predefined
+queries to display change events:
+
+- Broadcasts
+- Broadcasts, deploy events in production, and feature flag updates in production
+- Broadcasts, deploy events in production, feature flag updates in production, and
+  alerts for the selected monitor
+- All events
+
+Click any change event icon in the graph on the **Query Results** panel to open a
+more detailed view of change events for the selected time period. This list includes
+the event time, category, and title for each change event. Click any change event to
+view detailed information for a specific change event. When viewing this list, you
+can also click **View in Changes Explorer** to open the selected filter in Changes
+Explorer.
+
+To learn more about change event details, refer to
+[change event details](/observe/enable-events/use-events#change-event-details).
+
+#### Advanced filtering
+
+If you know some of the criteria to search for, you can use advanced filtering to
+define a filter that displays specific change events. Use the lightweight
+[filtering syntax](/investigate/querying/filter-events#filtering-syntax)
+to define which change events you want to display for the selected monitor.
+
+The filtering syntax supports the following keys:
+
+- `category`: Event category, such as `alerts`, `broadcasts`, or `deploys`.
+- `labels`: Label metadata you've annotated your change events with, such as `build`,
+  `environment`, or `description`.
+- `source`: Event source, such as `alert_history`, `buildkite`, or `deployer`.
+- `title`: Event title, either partial or complete.
+- `type`: Event type, such as `build_started`, `deploy_start`, or `monitor_muted`.
+
+To use advanced filtering:
+
+1. Click **Filter Events** to display the filter box.
+1. Define a filter based on the change event attributes you want to filter on.
+
+For example, the following filter returns all `infrastructure` change events where
+the build completed on the `master` branch:
+
+```text copy
+category = "infrastructure" AND type = "build_finished" AND labels.build.branch = "master"
+```
+
+<Info>
+Filters can span multiple lines, and you can use `AND` plus `OR` operators to
+include or exclude parameters in your query.
+</Info>
+
+1. Click **Filter**, or press <kbd>Shift+Enter</kbd> (<kbd>Shift+Return</kbd> on
+   macOS) to run the query.
+1. In the query result histogram, click any change event icon to view more
+   information about each change event.
+1. When viewing change event details, click a change event from the list to view more
+   detailed information.
+
+    To learn more about change event details, refer to
+    [change event details](/observe/enable-events/use-events#change-event-details).

@@ -1,0 +1,58 @@
+---
+title: Google Workspace Audit Logs source plugin
+sidebarTitle: Google Workspace Audit Logs source plugin (Telemetry Pipeline)
+description: Use the Google Workspace Audit Logs source plugin.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import PluginDuplicates from '/snippets/_partials/plugin-duplicates.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Google Workspace Audit Logs [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `gsuite-reporter`) lets you retrieve data from Google Workspace and
+ingest it into a telemetry pipeline.
+
+<SourceStyle/>
+
+<Info>
+This plugin doesn't support the use of a
+[descriptive metadata name](/pipeline-data/plugins#descriptive-names) in the
+Pipeline Builder interface.
+</Info>
+
+<PluginDuplicates/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### API Key
+
+| Name        | Key | Description | Default |
+| ----------- | --- | ----------- | ------- |
+| **API Key** | `access_token` | Either an API key or a service account file for authentication. | _none_ |
+
+### Options
+
+| Name                 | Key | Description | Default |
+| -------------------- | --- | ----------- | ------- |
+| **Enable Telemetry** | `telemetry` | If `true`, enables telemetry through the Google API. Accepted values: `true`, `false`. | `false` |
+| **Pull Interval**    | `pull_interval` | The time between calls to the Google API. Minimum of `1s`. | `30s` |
+| **Data Directory**   | `data_dir` | The storage path to allow resuming data collection. | `/data/storage/gsuite-reporter` |
+| **Application Name** | `application_name` | The application name you want to get reports from. See [ApplicationName](https://developers.google.com/admin-sdk/reports/reference/rest/v1/activities/list#ApplicationName). | `admin` |
+| **User Key**         | `user_key` | The user you want to get reports from. | `all` |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |

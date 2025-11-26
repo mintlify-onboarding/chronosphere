@@ -1,0 +1,44 @@
+---
+title: Migration notes for SignalFx (Splunk) to PromQL
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+There are several key differences between SignalFx (Splunk) and PromQL of which to be
+aware when migrating queries to Chronosphere:
+
+- _Rollups_ in SignalFx are used to aggregate data points within a single time
+  series. With Chronosphere, rollups are [defined only on ingest](/control/shaping/rules),
+  and not at query time. However, PromQL offers a
+  [set of functions](https://prometheus.io/docs/prometheus/latest/querying/functions/#aggregation_over_time)
+  for aggregating individual time series over time.
+- _Analytics_ in SignalFx are the equivalent to functions in PromQL.
+
+## Equivalent function list
+
+| SignalFx             | PromQL | Notes |
+| -------------------- | ------ | ----- |
+| Absolute value       | `abs()` | _none_ |
+| Bottom               | `bottomk()` | _none_ |
+| Ceiling              | `ceil()` | _none_ |
+| Count                | `count()`, `count_over_time()` | _none_ |
+| Delta                | `delta()` | _none_ |
+| EWMA and Double EWMA | `holt_winters()` | `holt_winters()` is similar to, but not exactly like, Exponentially Weighted Moving Average |
+| Exclude              | Use comparators | _none_ |
+| Floor                | `floor()` | _none_ |
+| Integrate            | `rate()` | _none_ |
+| LN - Log (natural)   | `ln()` | _none_ |
+| Log10                | `log10()` | _none_ |
+| Maximum              | `max()`, `max_over_time()` | _none_ |
+| Mean                 | `avg()`, `avg_over_time()` | _none_ |
+| Minimum              | `min()`, `min_over_time()` | _none_ |
+| Percentile           | `quantile()`, `quantile_over_time()` | Use histogram\_quantile() with Histograms |
+| Power                | Use operators | _none_ |
+| Rate of change       | `rate()` | _none_ |
+| Scale                | Use operators | _none_ |
+| Square root          | `sqrt()` | _none_ |
+| Standard deviation   | `stddev()`, `stddev_over_time()` | _none_ |
+| Sum                  | `sum()`, `sum_over_time()` | _none_ |
+| Timeshift            | offset | _none_ |
+| Top                  | `topk()` | _none_ |
+| Variance             | `stdvar()`, `stdvar_over_time()` | _none_ |

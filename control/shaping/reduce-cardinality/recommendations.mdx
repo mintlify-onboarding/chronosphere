@@ -1,0 +1,54 @@
+---
+title: Apply rule recommendations
+description: Use the Recommendations page to identify and reduce metrics and labels with no usage or utility over the past 30 days.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere Observability Platform includes a **Recommendations** page as part of
+the Control Plane to help identify metrics and labels with no usage or utility over
+the past 30 days. The utility score is calculated based on the number of
+configuration references to the metric, such as dashboards or monitors, and direct query
+executions, such as in Metrics Explorer.
+
+Use this page to understand the impact on persisted writes and persisted cardinality
+when applying the recommended data optimizations. After applying optimizations,
+it might take up to 150 minutes to see impacts to cardinality. Impacts to persisted
+writes are immediate. The aggregation rules on this page incorporate labels that
+appear together in the total cardinality calculation.
+
+## Drop rule recommendations
+
+To apply drop rule recommendations:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and
+   then select **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Recommendations**.
+1. In the left navigation under **Data optimizations**, click the drop rule
+   recommendations.
+1. Select one or more metrics to calculate the estimated impact on reducing persisted
+   writes and persisted cardinality. All metrics are selected by default.
+1. Click **Create Drop Rule** to create a drop rule definition that contains the
+   selected metrics.
+1. In the **Add Drop Rule** drawer, choose whether the rule drops data with any
+   value, or if it meets a particular value.
+1. Click **Review** to review your changes.
+1. Select the checkbox to indicate that you've reviewed the rule, and then click
+   **Save Rule**.
+
+The drop rule is created and displays in the
+[Drop Rules](/control/shaping/rules/drop-rules) page.
+
+## Rollup rule recommendations
+
+To apply rollup rule recommendations:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and
+   then select **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Recommendations**.
+1. In the left navigation under **Data optimizations**, click the rollup rule
+   recommendations.
+1. Select a single metrics to calculate the estimated impact on reducing persisted
+   writes and persisted cardinality.
+1. Click **Create Rollup Rule** to create a rollup rule definition that contains the
+   selected metric.
+1. Complete the steps to
+   [create a rollup rule](/control/shaping/rules/rollup#create-a-rollup-rule).

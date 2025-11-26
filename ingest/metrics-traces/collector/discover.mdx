@@ -1,0 +1,467 @@
+---
+title: Configure Chronosphere Collector service discovery for Prometheus metrics
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Chronosphere Collector supports several mechanisms to discover which metrics applications
+to scrape Prometheus metrics from:
+
+- [ServiceMonitors](#servicemonitors) (each node)
+- [Kubernetes annotations](#kubernetes-annotations) (each node)
+- [Prometheus service discovery](#prometheus-service-discovery) (per cluster)
+
+Using `ServiceMonitors` or Kubernetes annotations (or a combination of both) are
+recommended for most deployments.
+
+<Info>
+Use push-based collection mechanisms for use cases where jobs can't be scraped
+automatically, such as AWS Lambda, Google Cloud Functions, or ephemeral batch jobs.
+</Info>
+
+## ServiceMonitors
+
+`ServiceMonitors` are a custom resource definition (CRD) you can use to define scrape
+configurations and options in a separate Kubernetes resource.
+
+<Info>
+Discovery is scoped to the targets on the local node by default, which requires you
+to deploy the Collector as a [DaemonSet](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector)
+for this method of service discovery.
+</Info>
+
+### Prerequisites
+
+Run the following command to install the
+[`ServiceMonitor` CRD](https://prometheus-operator.dev/docs/getting-started/design/#servicemonitor)
+from the full Prometheus Operator, using the file in the `kube-prometheus-stack`
+Helm chart:
+
+```shell copy
+kubectl apply -f https://raw.githubusercontent.com/prometheus-community/helm-charts/e46dc6360b6733299452c8fd65d304004484de79/charts/kube-prometheus-stack/crds/crd-servicemonitors.yaml
+```
+
+<Info>
+Chronosphere supports only fields in version 0.44.1 of the Prometheus Operator.
+</Info>
+
+### Enable ServiceMonitor discovery
+
+<Warning>
+Chronosphere Collector v0.104.0 and later uses the Kubernetes EndpointSlices API by
+default. Upgrading from Chronosphere Collector v0.103.0 or earlier without
+configuring EndpointSlices can result in failures if you've enabled endpoint
+discovery but haven't configured the use of EndpointSlices.
+</Warning>
+
+To enable ServiceMonitor discovery in the Collector, make the following configuration
+changes:
+
+1. Add the following options after the `ClusterRole` resource in the manifest under
+   `rules`:
+
+   ```yaml copy
+   kind: ClusterRole
+   rules:
+     - apiGroups:
+         - monitoring.coreos.com
+       resources:
+         - servicemonitors
+       verbs:
+         - get
+         - list
+         - watch
+     - apiGroups:
+         - discovery.k8s.io
+       resources:
+         - endpointslices
+       verbs:
+         - get
+         - list
+         - watch
+   ```
+
+1. Enable the `ServiceMonitors` feature of the Collector by setting the following
+   keys to `true` in the manifest `ConfigMap` under the `discovery` > `kubernetes`
+   key:
+
+   ```yaml copy
+   discovery:
+     kubernetes:
+       enabled: true
+       serviceMonitorsEnabled: true
+       endpointsDiscoveryEnabled: true
+       useEndpointSlices: true
+       podMatchingStrategy: VALUE
+       # Use additionalPodMatching only if necessary, such as when using a Virtual Kubelet.
+       # Requires Collector v0.113.0.
+       # additionalPodMatching:
+       #   - labelSelector: your-label-with-node-name=${KUBERNETES_NODE_NAME:""}
+             # Dynamically start and stop this additional Pod matcher based
+             # on whether the default Pod matcher identifies any Pods that also
+             # match the given label selector.
+             # activationRule:
+             #   podLabelSelector: service=xyz,app=abc
+   ```
+
+   - `serviceMonitorsEnabled`: Indicates whether to use ServiceMonitors to generate job
+     configurations.
+   - `endpointsDiscoveryEnabled`: Determines whether to discover Endpoints. Requires
+     `serviceMonitorsEnabled` to be set to `true`.
+   - `useEndpointSlices`: Use EndpointSlices instead of Endpoints. Requires
+     `serviceMonitorsEnabled` and `endpointsDiscoveryEnabled` to be set to `true`.
+     EndpointSlices use less resources than Endpoints.
+
+     <Info>
+EndpointSlices are available with Chronosphere Collector v0.85.0 or later and
+     Kubernetes v1.21 or later. Chronosphere Collector v0.104.0 and later exclusively
+     use EndpointSlices and ignore the `useEndpointSlices` setting.
+</Info>
+   - `podMatchingStrategy`: Determines how to use ServiceMonitors and annotations when
+     discovering targets. Accepts the following settings for _`VALUE`_:
+     - `all`: Allows any and all scrape jobs to be registered for a single pod.
+     - `annotations_first`: Matches annotations first. If no matches return, then other
+       matching can occur.
+     - `service_monitors_first`: Matches ServiceMonitors first. If no matches return,
+       then other matching can occur.
+     - `service_monitors_only`: Matches ServiceMonitors only.
+   - `additionalPodMatching`: An array that configures the discovery of additional
+     Pods in addition to those on the same Node as the Chronosphere Collector Pod,
+     such as when a set of other Pods is divided among the set of Chronosphere
+     Collector DaemonSet Pods. For example, you can configure this to discover and
+     scrape Pods that represent workloads within a [Virtual Kubelet](https://virtual-kubelet.io/)
+     whose host Pod is on the same Node as the Collector Pod.
+
+     Each item in the `additionalPodMatching` array must specify a `labelSelector`
+     or `fieldSelector` to filter which Pods to watch.
+
+     <Info>
+Additional Pod matching requires Chronosphere Collector v0.113.0 or later.
+</Info>
+
+     - `labelSelector`: Matches Pods where a label value matches the name of the
+       Node on which the Collector Pod DaemonSet instance is running. Define the
+       selector value to match additional Pods to be selected.
+     - `activationRule`: Adds an activation rule to `additionalPodMatching` to dynamically
+       start and stop Kubernetes API watches based on the presence of Pods running
+       on the same Node that match the `podLabelSelector`. If a given Collector
+       instance identifies a Pod on its respective Node that matches the activation rule's
+       label selector, that Collector will enable the additional watch stream. If
+       that Pod ceases to exist, the Collector will also stop the additional watch stream.
+
+### Pod-based ServiceMonitor discovery
+
+If you use a version of Kubernetes that doesn't support endpoint slices, you can set
+`endpointsDiscoveryEnabled` to `false` to run the Collector in a mode that doesn't
+discover Kubernetes endpoint slices or service resources.
+
+In this mode, the Collector can still discover scrape targets using `ServiceMonitors`
+under specific circumstances depending on the Kubernetes resource configuration. The
+Collector uses the Pod's labels as the Service's labels. If the Pod's labels match
+the Service's labels a `ServiceMonitor` that uses `targetPort` (container port) to
+indicate the port to scrapes.
+
+<Warning>
+Because this discovery method can be very resource intensive, don't use this method
+for most deployments. Instead, contact [Chronosphere Support](/support) for more
+information about pod-based ServiceMonitor discovery.
+</Warning>
+
+#### Run as a DaemonSet with ServiceMonitors
+
+If you want to run the Collector as a DaemonSet and scrape `kube-state-metrics`
+through a Collector running as a Deployment, you need to update the manifest for both
+Collector instances.
+
+In your DaemonSet, add the `serviceMonitor` > `serviceMonitorSelector` key to your
+manifest and define the following `matchExpressions` to ensure that your DaemonSet
+only matches on `ServiceMonitors` that *don't* contain `kube-state-metrics`:
+
+```yaml copy
+serviceMonitor:
+  serviceMonitorSelector:
+    matchAll: false
+    matchExpressions:
+      - label: app.kubernetes.io/name
+        operator: NotIn
+        values:
+          - kube-state-metrics
+```
+
+In your Deployment, add the same key and definitions to your manifest, but set the
+`operator` value of the `matchExpressions` attribute to `In`. This setting ensures
+that your Deployment only matches on `ServiceMonitors` that contain
+`kube-state-metrics`:
+
+```yaml copy
+serviceMonitor:
+  serviceMonitorSelector:
+    matchAll: false
+    matchExpressions:
+      - label: app.kubernetes.io/name
+        operator: In
+        values:
+          - kube-state-metrics
+```
+
+### Match specific ServiceMonitors
+
+By default, the Collector ingests metrics from all `ServiceMonitor` sources. To match
+specific instances, use a series of `AND` match rules under the
+`serviceMonitor` > `serviceMonitorSelector` key and set the `matchAll` under the
+`serviceMonitorSelector` key to `false`.
+
+```yaml
+serviceMonitorSelector:
+  matchAll: false
+```
+
+The available match rules are:
+
+- `matchLabelsRegexp`: Labels and a regular expression to match a value. For example:
+
+  ```yaml copy
+  matchLabelsRegexp:
+    labelone: '[a-z]+'
+  ```
+
+- `matchLabels`: Labels and a matching value. For example:
+
+  ```yaml copy
+  matchLabels:
+    labelone: foo
+  ```
+
+- `matchExpressions`: Depending on the operator set, labels that exist or don't
+  exist, or have or don't have specific values. For example:
+
+  - To match `ServiceMonitors` that have the `examplelabel` with values `a`
+    **or** `b` use the `In` operator:
+
+    ```yaml
+    matchExpressions:
+      - label: examplelabel
+        operator: In
+        values:
+          - a
+          - b
+    ```
+
+  - To match `ServiceMonitors` that have the `examplelabel` without values
+    `a` **or** `b`, use the `NotIn` operator. The `NotIn` operator also matches
+    any `ServiceMonitors` without the `examplelabel` present:
+
+    ```yaml copy
+    matchExpressions:
+      - label: examplelabel
+        operator: NotIn
+        values:
+          - a
+          - b
+    ```
+
+  - To match `ServiceMonitors` that have the `examplelabel` with **any** value,
+    use the `Exists` operator:
+
+    ```yaml copy
+    matchExpressions:
+      - label: examplelabel
+        operator: Exists
+    ```
+
+  - To match `ServiceMonitors` that don't have the `examplelabel`, use the
+    `DoesNotExist` operator:
+
+    ```yaml copy
+    matchExpressions:
+      - label: examplelabel
+        operator: DoesNotExist
+    ```
+
+### Match endpoints without pods using ServiceMonitors
+
+The default Collector configuration isn't suitable if you want to discover endpoints
+but lack access to Pod information. For example, if you want to:
+
+- Monitor the Kubernetes API server, which doesn't run on the same node as
+  Kubernetes workloads.
+- Monitor endpoints that can be running anywhere in the cluster, but without using a
+  Collector running as a DaemonSet.
+- Discover and scrape `kube-state-metrics`, which listen to the Kubernetes API server
+  and generate metrics about deployments, nodes, and pods.
+
+<Info>
+If you're monitoring endpoints but don't have access to Pod information, the
+`ServiceMonitor` can't use the `TargetPort` attribute to target the endpoint and
+must instead use the `Port` attribute.
+</Info>
+
+In these cases, run the Collector as a [Kubernetes Deployment](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-using-a-deployment)
+with a single instance, and set the `allowSkipPodInfo` attribute to `true`.
+
+```yaml copy
+serviceMonitor:
+  allowSkipPodInfo: true
+```
+
+<Warning>
+Use this attribute with caution. Setting `allowSkipPodInfo` to `true` for a DaemonSet
+can cause every Collector in the DaemonSet to attempt to scrape every endpoint in the
+cluster, or cause duplicate scrapes.
+</Warning>
+
+## Kubernetes annotations
+
+<Info>
+Discovery is scoped to the targets on the local node by default, which requires you
+to deploy the Collector as a [DaemonSet](/ingest/metrics-traces/collector/install/kubernetes)
+for this method of service discovery.
+</Info>
+
+For the Collector to start scraping the Pods in a Kubernetes cluster, set the
+following `annotations` on each Pod in the cluster:
+
+```yaml copy
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '{port_number}'
+```
+
+The following manifest is an example of using these two annotations for a basic
+[Node Exporter](https://github.com/prometheus/node_exporter) deployment. Based on
+these annotations, by default, the Collector starts scraping the `/metrics` endpoint
+on port `9100`.
+
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app.kubernetes.io/name: node-exporter
+    app.kubernetes.io/version: v1.0.1
+  name: node-exporter
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: node-exporter
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9100"
+      labels:
+        app.kubernetes.io/name: node-exporter
+        app.kubernetes.io/version: v1.0.1
+    spec:
+      containers:
+      - image: quay.io/prometheus/node-exporter:v1.0.1
+        name: node-exporter
+        ...
+```
+
+You can set additional annotations to control other scrape options. For a complete
+list of supported annotations, read the [scrape configuration documentation](/ingest/metrics-traces/collector/discover/scrape-configuration).
+
+You can change the annotation prefix, which defaults to `prometheus.io/`, from the
+`kubernetes` > `processor` section of the Collector `ConfigMap`.
+
+After any changes, send the updated manifest to the cluster with the following
+command:
+
+```shell copy
+kubectl apply -f path/to/manifest.yml
+```
+
+<Info>
+If you modify a Collector manifest, you must
+[update it in the cluster and restart the Collector](/ingest/metrics-traces/collector/configure#modify-the-collector-manifest).
+</Info>
+
+## Prometheus service discovery
+
+<Info>
+If using Prometheus service discovery within Kubernetes,
+[deploy a single Collector as a Kubernetes Deployment](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-using-a-deployment)
+per cluster. This is to avoid every Collector instance duplicating scrapes to all
+endpoints defined in the Prometheus service discovery configuration.
+</Info>
+
+To enable Prometheus service discovery, set `discovery.prometheus.enabled` to `true`
+in the Collector config. Provide the list of scrape configs in the
+`discovery.prometheus.scrape_configs` section. The following example uses the
+[kubernetes\_sd\_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config).
+
+```yaml
+discovery:
+  prometheus:
+    enabled: true
+    scrape_configs:
+      - job_name: kubernetes-pods
+        honor_timestamps: true
+        scrape_interval: 30s
+        scrape_timeout: 30s
+        metrics_path: /metrics
+        scheme: http
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels:
+              [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            separator: ;
+            regex: 'true'
+            replacement: $1
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            separator: ;
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: $1
+            action: replace
+          - source_labels:
+              [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            separator: ;
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            target_label: __address__
+            replacement: $1:$2
+            action: replace
+          - separator: ;
+            regex: __meta_kubernetes_pod_label_(.+)
+            replacement: $1
+            action: labelmap
+          - source_labels: [__meta_kubernetes_namespace]
+            separator: ;
+            regex: (.*)
+            target_label: kubernetes_namespace
+            replacement: $1
+            action: replace
+          - source_labels: [__meta_kubernetes_pod_name]
+            separator: ;
+            regex: (.*)
+            target_label: kubernetes_pod_name
+            replacement: $1
+            action: replace
+```
+
+For details, see the
+[Prometheus scrape configuration documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config).
+For a complete list of examples, see the examples section in the
+[Prometheus GitHub repository](https://github.com/prometheus/prometheus/tree/main/documentation/examples).
+
+### Set the Collector to scrape its own metrics
+
+For the Collector to scrape its own metrics, add another job to the
+`discovery.prometheus.scrape_configs` key:
+
+```yaml copy
+…
+- job_name: 'collector'
+  scrape_interval: 30s
+  scrape_timeout: 30s
+  static_configs:
+    - targets: ['0.0.0.0:3030']
+…
+```

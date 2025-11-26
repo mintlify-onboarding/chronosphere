@@ -1,0 +1,53 @@
+---
+title: HTTP source plugin
+sidebarTitle: HTTP source plugin (Telemetry Pipeline)
+description: Use the HTTP source plugin.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-push.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The HTTP [source plugin](/pipeline-data/plugins/source-plugins) (name: `http`)
+lets you collect data from various sources and ingest them into a telemetry
+pipeline.
+
+<SourceStyle/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name     | Key | Description | Default |
+| -------- | --- | ----------- | ------- |
+| **Port** | `port` | Required. The TCP port used for listening for incoming messages. | `9880` |
+
+### Advanced
+
+| Name                         | Key | Description | Default |
+| ---------------------------- | --- | ----------- | ------- |
+| **Tag Key**                  | `tag_key` | Specifies the key name to overwrite a tag. If set, the value of that key overwrites the tag. | _none_ |
+| **Buffer Max Size**          | `buffer_max_size` | Sets the maximum [chunk](https://docs.fluentbit.io/manual/administration/buffering-and-storage#chunks) size for buffered data. If a single record exceeds this size, the plugin drops that record. | `4M` |
+| **Buffer Chunk Size**        | `buffer_chunk_size` | Sets the default [chunk](https://docs.fluentbit.io/manual/administration/buffering-and-storage#chunks) size for buffered data. If a single record exceeds this size, the plugin temporarily increases the chunk size up to the value of `buffer_max_size` to accommodate it. | `512k` |
+| **Successful Response Code** | `successful_response_code` | Sets the code returned by successful responses. Accepted values: `200`, `201`, `204`. | `200` |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />

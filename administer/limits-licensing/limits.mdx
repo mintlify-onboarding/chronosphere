@@ -1,0 +1,40 @@
+---
+title: Observability Platform system limits
+description: Learn about system limits in Chronosphere Observability Platform.
+---
+{/* -- dri: Adam Locke -- */}
+
+Chronosphere sets immutable system limits to protect the system from failing in case
+of a catastrophic event. These limits are like a circuit breaker that trips to
+protect the system in the event of an abnormality in your data traffic patterns, such
+as sudden, unexpected spikes in data ingestion.
+
+Learn more about limits and protections for the following data types:
+
+- [Events](/administer/limits-licensing/limits/event-limits)
+- [Traces](/administer/limits-licensing/limits/trace-limits)
+- [Metrics](/administer/limits-licensing/limits/metric-limits)
+- [Queries](/administer/limits-licensing/limits/query-limits)
+
+## Stay below capacity limits
+
+Chronosphere enforces [license capacity limits](/administer/limits-licensing/licensing#capacity-limits)
+for all of your telemetry data. Exceeding these limits can put your organization at
+the risk of dropping data. The type of data that's dropped depends on the limit
+exceeded, such as metric quotas.
+
+Exceeding your organization's license capacity limits can cause you to hit the defined
+system limits, which shouldn't occur under normal operating circumstances. To prevent
+your system from reaching system limits, use the following tools and information to
+ensure that your Observability Platform tenant remains below your license capacity
+limit at all times:
+
+- Use the [License overview](/administer/limits-licensing/licensing) to track your
+  telemetry usage against your licensing quotas.
+- Review the
+  [cardinality dashboards](/observe/dashboards/chronosphere-managed-dashboards#cardinality-dashboards)
+  to identify information you can use to help reduce cardinality.
+- Query [key metrics](/overview/concepts/dictionary#capacity-limits) to understand
+  if Observability Platform is actively dropping data.
+- Use the provided tools and techniques to
+  [avoid hitting persisted cardinality limits](/administer/limits-licensing/licensing#avoid-persisted-cardinality-limits).

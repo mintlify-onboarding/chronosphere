@@ -1,0 +1,48 @@
+---
+title: Chronosphere MCP server tools
+description: Learn about the tools that you can interact with using the Chronosphere MCP server.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+The following table includes tools that the Chronosphere MCP server supports
+interacting with. After [authenticating](/integrate/mcp-server/authenticate), you can
+submit read-only queries to Observability Platform from within your code editor.
+
+| Tool type                                                           | Endpoint                          | Description                     |
+|-------------------------------------------------------------------------|-----------------------------------|---------------------------------|
+| [API](/tooling/api-info/definition/operations/ReadClassicDashboard)     | `get_classic_dashboard`           | Get classic dashboards tools. |
+| [API](/tooling/api-info/definition/operations/ReadDashboard)            | `get_dashboard`                   | Get dashboards tools. |
+| [API](/tooling/api-info/definition/operations/ReadDropRule)             | `get_drop_rule`                   | Get drop rules tools. |
+| [API](/tooling/api-info/definition/operations/ReadMappingRule)          | `get_mapping_rule`                | Get mapping rules tools. |
+| [API](/tooling/api-info/definition/operations/ReadMonitor)              | `get_monitor`                     | Get monitors tools. |
+| [API](/tooling/api-info/definition/operations/ReadNotificationPolicy)   | `get_notification_policy`         | Get notification policies tools. |
+| [API](/tooling/api-info/definition/operations/ReadRecordingRule)        | `get_recording_rule`              | Get recording rules tools. |
+| [API](/tooling/api-info/definition/operations/ReadRollupRule)           | `get_rollup_rule`                 | Get rollup rules tools. |
+| [API](/tooling/api-info/definition/operations/ReadSLO)                  | `get_slo`                         | Get SLO tools. |
+| [API](/tooling/api-info/definition/operations/ListClassicDashboards)    | `list_classic_dashboards`         | List classic dashboards tools. |
+| [API](/tooling/api-info/definition/operations/ListDashboards)           | `list_dashboards`                 | List dashboards tools. |
+| [API](/tooling/api-info/definition/operations/ListDropRules)            | `list_drop_rules`                 | List drop rules tools. |
+| [API](/tooling/api-info/definition/operations/ListMappingRules)         | `list_mapping_rules`              | List mapping rules tools. |
+| [API](/tooling/api-info/definition/operations/ListMonitors)             | `list_monitors`                   | List monitors tools. |
+| [API](/tooling/api-info/definition/operations/ListNotificationPolicies) | `list_notification_policies`      | List notification policies tools. |
+| [API](/tooling/api-info/definition/operations/ListRecordingRules)       | `list_recording_rules`            | List recording rules tools. |
+| [API](/tooling/api-info/definition/operations/ListRollupRules)          | `list_rollup_rules`               | List rollup rules tools. |
+| [API](/tooling/api-info/definition/operations/ListSLOs)                 | `list_slo`                        | List SLO tools. |
+| Events                                                                  | `get_events_metadata`             | List properties you can query on events. |
+| Events                                                                  | `list_events`                     | List events from a given query. |
+| Events                                                                  | `list_events_label_values`        | List values for a given label name. |
+| Logs                                                                    | `get_log`                         | Get a full log message by its ID. The ID is the unique identifier for the log. |
+| Logs                                                                    | `get_log_histogram`               | Get histogram of logs from a given query. |
+| Logs                                                                    | `list_log_field_names`            | List field names of logs. |
+| Logs                                                                    | `list_log_field_values`           | List field values of logs. |
+| Logs                                                                    | `query_logs_range`                | Execute a range query for logs. This endpoint returns logs as either `timeSeries` or `gridData`. This query might return a large amount of data, so use a shorter range such as one hour. |
+| Metrics                                                                 | `list_prometheus_label_names`     | Returns the list of label names (keys) available on metrics that match the given selectors. Use this tool when you need to discover what labels are available on specific metrics or services.           |
+| Metrics                                                                 | `list_prometheus_label_values`    | Returns the list of values for a specific label name, optionally filtered by selectors. Use this tool when you know the label name and want to discover what values it has across your metrics.          |
+| Metrics                                                                 | `list_prometheus_series`          | Returns the complete time series (full label sets with all key-value pairs) that match the given selectors. Each result shows the exact combination of labels for an active time series.                 |
+| Metrics                                                                 | `list_prometheus_series_metadata` | Returns metadata for the given metric in the form of `type`, `help`, and `unit`. |
+| Metrics                                                                 | `query_prometheus_instant`        | Evaluates a Prometheus instant query at a single point in time. |
+| Metrics                                                                 | `query_prometheus_range`          | Executes a Prometheus PromQL query over a specified time range and returns time series data points in JSON format. Supports standard PromQL syntax plus Chronosphere custom functions. |
+| Metrics                                                                 | `render_prometheus_range_query`   | Evaluates a Prometheus expression query over a range of time and renders it as a PNG image. |
+| Monitors                                                                | `list_monitor_statuses`           | Lists the current status of all monitors. Returns monitor statuses with alert states and optional signal and series details.                                                                 |
+| Traces                                                                  | `list_traces`                     | List traces from a given query. |

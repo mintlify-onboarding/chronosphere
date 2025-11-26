@@ -1,0 +1,165 @@
+---
+title: Telemetry Pipeline concepts
+description: Learn more about different components, concepts, and terms in Chronosphere Telemetry Pipeline.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Chronosphere Telemetry Pipeline includes several distinct components, utilities,
+and features that combine to form a unified product. This guide describes some
+of the most common concepts you'll encounter while using Telemetry Pipeline.
+
+## Pipeline
+
+A [pipeline](/pipeline-data), also known as a telemetry pipeline, is a data management
+tool for collecting, transforming, and routing telemetry data. Pipelines support
+all telemetry types, including logs, metrics, and traces.
+
+A pipeline consists of one or more [source plugins](#source-plugin), one or more
+[destination plugins](#destination-plugin), and any active [parsers](#parser) or
+[processing rules](#processing-rule).
+
+Each pipeline is a Kubernetes workload that contains one or more Pods.
+By default, pipelines run as
+[Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/),
+but other [workload types](/pipeline-configure/kubernetes/workloads) are also supported.
+
+### Health check pipeline
+
+Health check pipelines are automated diagnostic tools that collect information
+about the environment where you installed Telemetry Pipeline. Unlike standard
+pipelines, health check pipelines don't transport telemetry data.
+
+If health checks are enabled when you create a [Core Instance](#core-operators-and-core-instances),
+that Core Instance deploys a health check pipeline to ensure that any standard
+pipelines you deploy will function properly.
+
+## Plugin
+
+A plugin is an extension that connects your pipeline to other tools
+or platforms. These plugins are located at the beginning and end of each pipeline,
+and create the openings through which your data flows.
+
+### Source plugin
+
+A [source plugin](/pipeline-data/plugins/source-plugins), also known as an input
+plugin, is an opening that lets telemetry data enter your pipeline. These
+plugins are located at the beginning of each pipeline.
+
+Pipelines can include one or more source plugins, including plugins that correspond
+to different tools or platforms. This makes it possible to feed data from
+multiple sources into the same pipeline.
+
+### Destination plugin
+
+A [destination plugin](/pipeline-data/plugins/destination-plugins), also known
+as an output plugin, is an opening that lets telemetry data exit your pipeline.
+These plugins are located at the end of each pipeline.
+
+Pipelines can include one or more destination plugins, including plugins that
+correspond to different tools or platforms. This makes it possible to collect
+data within a single pipeline, then send that data to multiple destinations.
+
+## Parser
+
+A [parser](/pipeline-data/parsers) is a tool that turns unstructured data
+into structured data.
+
+These parsers are applied at the source plugin level, which
+means that any data that passes through an applicable source plugin is parsed
+before it enters your pipeline.
+
+## Processing rule
+
+A [processing rule](/pipeline-data/processing-rules) is a tool that transforms
+data as it passes through your telemetry pipeline. You can use multiple processing
+rules within the same pipeline to perform complex operations.
+
+Chronosphere offers a variety of predefined processing rules with configurable
+settings, each designed to perform a particular action. You can also create your
+own processing rules by writing [custom Lua](/pipeline-data/processing-rules/custom-lua)
+scripts.
+
+Any active processing rules are applied to data after it enters your pipeline
+through a source plugin, but before it leaves your pipeline through a destination
+plugin.
+
+## Core Operators and Core Instances
+
+{/* vale Chronosphere.Units = NO */}
+
+Telemetry Pipeline is built on Kubernetes and takes advantage of many built-in
+Kubernetes features. If you install Telemetry Pipeline in a Linux environment,
+Telemetry Pipeline first creates a [K3s](https://k3s.io/) cluster in that
+environment.
+
+To manage your pipelines and associated resources, Telemetry Pipeline uses two
+components that work in tandem:
+
+- A [Core Operator](#core-operator)
+- A [Core Instance](#core-instance)
+
+These components run in your Kubernetes or K3s
+cluster, and you can interact with them to [configure](/pipeline-configure/) the
+behavior of the pipelines you deploy in that cluster.
+
+For a diagram that outlines how these components interact, see
+[Telemetry Pipeline architecture](/pipelines/architecture).
+
+### Core Operator
+
+Each Core Operator is a [Kubernetes operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+for managing Telemetry Pipeline resources. After you
+[install a Core Operator](/pipeline-install/install-operator),
+that Core Operator registers itself with the Kubernetes API. That Core Operator
+can then create and modify pipelines in your Kubernetes or K3s cluster. When a
+Core Operator creates or modifies pipelines, it refers to the resources managed
+by its corresponding Core Instance.
+
+<Info>
+You must [install a Core Operator](/pipeline-install/install-operator) in each
+Kubernetes cluster or Linux environment where you want to use Telemetry
+Pipeline. If you have multiple clusters or environments, you'll need to install
+multiple Core Operators.
+</Info>
+
+### Core Instance
+
+Each Core Instance creates the underlying Kubernetes resources for your
+pipelines and syncs those resources with the Telemetry Pipeline backend. When
+you make changes to Telemetry Pipeline settings, your Core Instance updates the
+resources that the corresponding Core Operator uses when it creates or modifies
+pipelines.
+
+In [Pipeline CLI](/pipeline-cli) and the [Telemetry Pipeline web interface](/pipeline-navigate),
+Core Instances also represent a conceptual grouping of pipelines within a Kubernetes
+or K3s cluster. For example, to perform certain pipeline operations, you'll need
+to specify the associated Core Instance that runs in the same cluster where the
+pipeline was deployed.
+
+{/* vale Chronosphere.Units = YES */}
+
+<Info>
+You must [create a Core Instance](/pipeline-install/create-instance)
+for each Core Operator you install.
+</Info>
+
+## Fleet
+
+A fleet is a collection of multiple [agents](#agent) that are governed by a shared
+set of configuration settings. This grouping makes it possible to control a large
+number of distributed agents from a single, centralized location.
+
+Fleets are a feature of Chronosphere Telemetry Pipeline, but aren't pipelines
+themselves. Fleets and their constituent agents also follow a unique installation
+process that doesn't involve [Core Operators or Core Instances](#core-operators-and-core-instances).
+
+### Agent
+
+An agent is a standalone tool for collecting telemetry data. These agents are
+functionally similar to pipelines, but they're not identical, and each tool has
+its own trade-offs. It's also possible to send data from an agent to a pipeline.
+
+Agents can take advantage of [parsers](#parser), but not
+[processing rules](#processing-rule). Additionally, agents use a different set of
+[plugins](#plugin) than pipelines do.

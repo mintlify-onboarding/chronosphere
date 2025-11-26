@@ -1,0 +1,148 @@
+---
+title: Classic dashboards
+---
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+Chronosphere integrates two types of dashboards:
+
+- Standard dashboards, documented in [Dashboards](/observe/dashboards).
+- Older, "classic" dashboards based on Grafana, documented here.
+
+Classic dashboards don't receive new features or performance improvements, while
+standard dashboards are being actively improved and are better integrated with
+Chronosphere interface and data sources.
+
+## Create a classic dashboard
+
+<Tabs>
+  <Tab title="Web" id="create-a-dashboard-cloud">
+    To create a new dashboard:
+
+    1. In the navigation menu select
+       **<Icon icon="dashboard" /> Dashboards**.
+    1. Click **+ Add**.
+    1. In the menu that appears, click **New dashboard** to open the **Add dashboard**
+       dialog.
+    1. Click **Classic**.
+    1. Enter a descriptive name in the **Dashboard name** field.
+    1. Enter an **Owner** in the corresponding field to associate the dashboard
+       with a [collection](/administer/collections) or [service](/observe/services).
+    1. Optional: Enter **Tags** in the corresponding field to associate the dashboard
+       with key/value tag pairs.
+    1. Click **Save**.
+  </Tab>
+</Tabs>
+
+You can also [import a Grafana dashboard](/observe/dashboards/classic-dashboards/import-grafana-dashboards)
+or [define them in YAML](/observe/dashboards/classic-dashboards/classic-panels#add-panels-to-a-dashboard)
+with Chronoctl.
+
+## Delete a classic dashboard
+
+<InfoTerraformLockout />
+
+<Tabs>
+  <Tab title="Web" id="delete-a-classic-dashboard-cloud">
+    To delete a classic dashboard:
+
+    1. In the navigation menu select
+       **<Icon icon="dashboard" /> Dashboards**.
+    1. Open the dashboard you want to delete.
+    1. Click **Settings**.
+    1. Click **General settings**.
+    1. Click **Delete dashboard**.
+  </Tab>
+
+  <Tab title="Chronoctl" id="delete-a-classic-dashboard-chronoctl">
+    To delete a dashboard with [Chronoctl](/tooling/chronoctl), use
+    the `classic-dashboards delete` command, passing in the classic dashboard's slug.
+
+    ```shell copy
+    chronoctl classic-dashboards delete  <dashboard-slug>
+    ```
+  </Tab>
+
+  <Tab title="Terraform" id="delete-a-classic-dashboard-terraform">
+    To delete a dashboard using [Terraform](/tooling/infrastructure/terraform), remove
+    its definition from the Terraform file and rerun `terraform apply`.
+  </Tab>
+</Tabs>
+
+## General settings
+
+The **General settings** dialog presents fields to edit the dashboard's
+name, its associated collection, and any applied labels.
+
+You can also delete the dashboard by clicking the <Icon icon="trash" /> delete icon.
+
+## Classic settings
+
+To configure settings specific to classic dashboards, click **Settings**, then click
+**Advanced settings**. This view organizes classic dashboard settings into several
+tabs.
+
+### General
+
+The **General** tab (accessed from the navigation menu by selecting
+**Advanced settings <span aria-label="and then">></span> General**)
+contains:
+
+- **Time Options**: Per-dashboard time settings. For details, see the
+  [Grafana documentation](https://grafana.com/docs/grafana/v7.5/dashboards/time-range-controls/#dashboard-time-settings).
+- **Annotations**: Add and manage [annotations](#annotations) to points on dashboard
+  graphs. For details, see the
+  [Grafana documentation](https://grafana.com/docs/grafana/v7.5/dashboards/annotations/).
+- **Variables**: Add and manage dynamic values to your dashboard. For details, see
+  the [Grafana documentation](https://grafana.com/docs/grafana/v7.5/variables/syntax/).
+- **Links**: Add and manage links to other dashboards and external URLs.
+- **Versions**: View, compare, and restore previously saved versions of the dashboard.
+- **JSON Model**: Change and export the dashboard's Grafana JSON model. For details,
+  see the [Grafana documentation](https://grafana.com/docs/grafana/v7.5/dashboards/json-model/).
+
+#### Annotations
+
+Use annotations to overlay system events on top of dashboards. For details, see
+the [Grafana documentation](https://grafana.com/docs/grafana/v7.5/dashboards/annotations/).
+
+You can add annotations manually or automatically using a query expression. To use
+a query to automatically add annotations, first determine that an event you want
+to track emits a metric.
+
+For example, to overlay deployments, you can ingest a metric that tracks deployments
+into the Chronosphere platform. To use the Kubernetes metric `kube_deployment_metadata_generation`
+to automatically add deployment events from the `gateway` service as annotations
+on graphs, set these values for the annotation's fields:
+
+- **Name**: `Gateway deployments`
+- **Data source**: `Chronosphere Prometheus` (Use `Chronosphere Graphite` if using
+  Graphite metrics)
+- **Search expression**:
+
+  ```text
+  increase(kube_deployment_metadata_generation{chronosphere_k8s_cluster="$cluster",namespace="$namespace",deployment="gateway"}[5m])
+  > 0
+  ```
+
+  This is a gauge metric with only two values: `1` when the service deploys, or
+  `0` when there's no change in the deployment status. Adding `> 0` to the search
+  expression adds the annotation only to deployments.
+- **Title**: `Gateway deploys`
+- **Tags**: `chronosphere_k8s_cluster,deployment`
+
+  These can come from variables set in the **Variables** section or from labels
+  returned by the query.
+- **Text**: `gateway deployed in {{namespace}}`
+
+  To use variables, wrap the variable name in double curly brackets (`{{ }}`).
+
+Based on these settings, this is how the annotations looks:
+
+![Dashboard annotation example](/doc-assets/annotations_example.png)
+
+<Info>
+To add alerts as annotations, use the special `ALERTS` metric. For details, see
+  the [alerting documentation](/investigate/alerts/metrics).
+</Info>

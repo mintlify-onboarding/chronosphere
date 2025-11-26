@@ -1,0 +1,550 @@
+---
+title: Manage service level objectives
+description: Learn about creating, editing, and deleting service level objectives (SLOs) in Chronosphere Observability Platform.
+---
+import { ServiceNavIcon} from '@/components';
+import ChronoctlPrereq from '/snippets/_partials/chronoctlprereq.mdx';
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import TerraformPrereq from '/snippets/_partials/terraformprereq.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Chronosphere Observability Platform provides a structured interface for creating
+and editing [service level objectives](/observe/slo) (SLOs).
+
+This page provides a reference to this management interface. For conceptual information
+and best practices in designing SLOs within Observability Platform, see
+[Design service level objectives](/observe/slo/design).
+
+## Create a new SLO
+
+When you create a new SLO, Observability Platform creates new metrics that it uses
+in the SLO's reporting, alerting, and visualizations. These metrics are prefixed
+with `lens:slo`, and you can also query and chart them in your own dashboards.
+
+To create a new SLO:
+
+<Tabs>
+<Tab title="Web" id="create-an-slo-web">
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**.
+1. Select **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> SLOs**.
+1. Click **Create SLO**.
+
+   This opens the **Create SLO** drawer to the **Visual Editor** by default.
+1. Fill each required field and any optional fields that you want. For a configuration
+   reference, see [Define an SLO](#define-an-slo).
+1. To save the SLO, click **Save**.
+
+<InfoTerraformLockout />
+
+</Tab>
+<Tab title="Terraform" id="create-an-slo-terraform">
+
+<TerraformPrereq />
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**.
+1. Select **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> SLOs**.
+1. Click **Create SLO**.
+
+   This opens the **Create SLO** drawer to the **Visual Editor** by default.
+1. Fill each required field and any optional fields that you want. For a configuration
+   reference, see [Define an SLO](#define-an-slo).
+1. Click the **Code Config** tab.
+
+   Observability Platform attempts to generate a Terraform resource representation
+   of the configured SLO by default. Observability Platform also reports any errors
+   related to missing or invalid values, which you can resolve by clicking the **Visual Editor**
+   tab and filling or changing the affected values.
+1. **<Icon path={ mdiContentCopy } /> Copy** the generated resource definition
+   to your clipboard or **<Icon path={ mdiDownload } /> Download** it.
+1. Apply the Terraform file containing the resource by running `terraform apply`.
+
+</Tab>
+<Tab title="Chronoctl" id="create-an-slo-chronoctl">
+
+<ChronoctlPrereq />
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**.
+1. Select **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> SLOs**.
+1. Click **Create SLO**.
+
+   This opens the **Create SLO** drawer to the **Visual Editor** by default.
+1. Fill each required field and any optional fields that you want. For a configuration
+   reference, see [Define an SLO](#define-an-slo).
+1. Click the **Code Config** tab.
+1. Click the resource type dropdown, which defaults to **Terraform**, and select
+   **Chronoctl**.
+
+   Observability Platform attempts to generate a Chronoctl YAML resource representation
+   of the configured SLO. Observability Platform also reports any errors related
+   to missing or invalid values, which you can resolve by clicking the **Visual Editor**
+   tab and filling or changing the affected values.
+1. **<Icon path={ mdiContentCopy } /> Copy** the generated resource definition
+   to your clipboard or **<Icon path={ mdiDownload } /> Download** it.
+1. Apply the YAML resource file by using the `chronoctl apply` command:
+
+   ```shell copy
+   chronoctl apply -f <FILENAME.YML>
+   ```
+
+   Replace _`<FILENAME.YML>`_ with the YAML file's name.
+
+</Tab>
+<Tab title="API" id="create-an-slo-api">
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**.
+1. Select **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> SLOs**.
+1. Click **Create SLO**.
+
+   This opens the **Create SLO** drawer to the **Visual Editor** by default.
+1. Fill each required field and any optional fields that you want. For a configuration
+   reference, see [Define an SLO](#define-an-slo).
+1. Click the **Code Config** tab.
+1. Click the resource type dropdown, which defaults to **Terraform**, and select
+   **API**.
+
+   Observability Platform attempts to generate a JSON representation of the configured
+   SLO. Observability Platform also reports any errors related to missing or invalid
+   values, which you can resolve by clicking the **Visual Editor** tab and filling
+   or changing the affected values.
+1. **<Icon path={ mdiContentCopy } /> Copy** the generated resource definition
+   to your clipboard or **<Icon path={ mdiDownload } /> Download** it.
+1. Include the modified `slo` object JSON in the request to the
+   [`CreateSLO`](/tooling/api-info/definition/operations/CreateSLO) endpoint
+   of the Config API.
+
+</Tab>
+</Tabs>
+
+## Edit an SLO
+
+To edit an existing SLO:
+
+<Tabs>
+<Tab title="Web" id="edit-an-slo-web">
+
+To edit an existing SLO from the list of all SLOs:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**.
+1. Select **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> SLOs**.
+1. In the list, hold the pointer over the row of the SLO you want to edit.
+1. Click the <Icon path={ mdiDotsVertical }/> three vertical dots that appear
+   in the SLO's row, and then click **Edit**.
+
+To edit an SLO from its page, click the <Icon path={ mdiDotsVertical }/> three vertical dots
+in the SLO's navigation menu, and then click **Edit**.
+
+Both methods open the **Visual Editor** tab of the **SLO Definition** drawer, which
+provides a form interface for configuring the SLO. For configuration-as-code workflows,
+see [Configuring SLOs with code](#configure-slos-with-code).
+
+<InfoTerraformLockout />
+
+</Tab>
+<Tab title="Terraform" id="edit-an-slo-terraform">
+
+<TerraformPrereq />
+
+To view a representation of the SLO as a [Chronosphere Terraform provider](/tooling/infrastructure/terraform)
+resource:
+
+1. Follow the steps to edit an SLO to open the **Visual Editor** tab of the **SLO Definition**
+   drawer.
+1. Click the **Code Config** tab.
+
+The **Code Config** tab displays a Terraform resource by default. You can also
+**<Icon path={ mdiContentCopy } /> Copy** the resource definition to your clipboard
+or **<Icon path={ mdiDownload } /> Download** it.
+
+To modify the resource, use the **Visual Editor** tab, which immediately updates
+the resource in the **Code Config** tab as you make changes in the form.
+
+To apply the Terraform file containing the resource, run `terraform apply`.
+
+</Tab>
+<Tab title="Chronoctl" id="edit-an-slo-chronoctl">
+
+<ChronoctlPrereq />
+
+To view a representation of the SLO as a [Chronoctl](/tooling/chronoctl) YAML resource:
+
+1. Follow the steps to edit an SLO to open the **Visual Editor** tab of the **SLO Definition**
+   drawer.
+1. Click the **Code Config** tab.
+1. Click the resource type dropdown, which defaults to **Terraform**, and select
+   **Chronoctl**.
+
+You can also **<Icon path={ mdiContentCopy } /> Copy** the resource definition
+to your clipboard or **<Icon path={ mdiDownload } /> Download** it.
+
+To modify the resource, use the **Visual Editor** tab, which immediately updates
+the resource in the **Code Config** tab as you make changes in the form.
+
+To apply the YAML file containing the resource, use the `chronoctl apply` command:
+
+```shell copy
+chronoctl apply -f <FILENAME.YML>
+```
+
+Replace _`<FILENAME.YML>`_ with the YAML file's name.
+
+</Tab>
+<Tab title="API" id="edit-an-slo-api">
+
+To interactively modify the SLO's Chronosphere Config API code representation:
+
+1. Follow the steps to edit an SLO to open the **Visual Editor** tab of the **SLO Definition**
+   drawer.
+1. Click the **Visual Editor** tab.
+1. Make changes to the resource in the form.
+1. Click the **Code Config** tab.
+
+   The changes you made in the **Visual Editor** are now reflected in the code representation.
+
+To apply the change:
+
+1. [Authenticate to the Chronosphere API](/tooling/api-info).
+1. Include the modified `slo` object JSON in the request to the
+   [`UpdateSLO`](/tooling/api-info/definition/operations/UpdateSLO) endpoint of
+   the Config API with the SLO's `slug`.
+
+To retrieve the SLO's slug, see the API tab of [View an SLO](/observe/slo#view-an-slo).
+
+</Tab>
+</Tabs>
+
+## Define an SLO
+
+The **SLO Definition** drawer (also called the **Create SLO** drawer when creating a
+new SLO) provides the following sections, each containing options that define the
+SLO's parameters. The **[SLO preview](#slo-preview)** drawer and **Code Config** tab
+update as you fill or change the **SLO Definition**.
+
+### SLO information
+
+<Warning>
+Changes you make to your SLO's **Name** can also unexpectedly change its SLI's definition,
+which causes an [error budget reset](#avoid-unintentional-budget-resets). An unintentional
+budget reset can destructively change how your SLO represents the service's performance
+against its objective.
+
+Ensure that a budget reset is an acceptable outcome **before** you change this field
+in an existing SLO.
+</Warning>
+
+In the **SLO information** section, complete these fields:
+
+- **Name**: The SLO name.
+- **Owner**: The service or collection that owns this SLO.
+- **Description**: User-defined text to describe this SLO's purpose. This appears
+  in the SLO page's **SLO information** section. Use the description to describe
+  to other users what this SLO measures and which downstream users or systems
+  might be affected if the SLO is breached.
+- **Runbooks**: A name and URL for any runbooks used when this SLO triggers.
+  These are displayed as links in the SLO page's **SLO information** section.
+
+### Alerting
+
+In the **Alerting** section, complete these fields:
+
+- Alerting is enabled by default. Toggle **Alerting enabled** to disable alerts
+  on this SLO.
+  - Select a [**Notification policy**](/investigate/alerts/notifications/policies).
+    Observability Platform then displays the selected policy's details.
+    - When using the **Default Policy**, this section displays the policy defined
+      for the selected **Owner**.
+    - When using **Select Policy**, you can choose a different policy than the
+      default.
+  - <a id="burn-rate" ></a>Customize the **Burn rate alert configuration**, if necessary.
+    This configuration is hidden if alerting is disabled.
+
+    Burn rate alert configuration sets the criteria that determine when the SLO
+    triggers alerts, and of which severity the alerts report. The default burn rate
+    definition applies industry best practices for error budget consumption.
+
+    For example, when your error budget consumption reaches `2%` over the last
+    `1h` (one hour) **Long window** and the error rate is still high over the last
+    `5m` (five minute) **Short window**, the SLO fires a critical **Severity** alert.
+    When the problem no longer exists over the last five minutes, the alert resolves.
+
+    For a full explanation, see [Multiwindow, Multi-Burn-Rate Alerts](https://sre.google/workbook/alerting-on-slos/).
+
+    You can add an optional **Notification label** to these alerts, and can add
+    additional criteria by clicking **+ Add row**.
+
+### SLO definition
+
+<Warning>
+Changes you make to your SLO's **Queries** can also unexpectedly change your SLI's
+definition, which causes an [error budget reset](#avoid-unintentional-budget-resets).
+An unintentional budget reset can destructively change how your SLO represents the
+service's performance against its objective.
+
+Ensure that a budget reset is an acceptable outcome **before** you change these
+fields in an existing SLO.
+</Warning>
+
+Create the **SLO definition**, which defines the core criteria the SLO measures.
+
+1. Define the **Objective (%)** as a percentile value with up to four decimal places.
+   For example, `99.9995`.
+1. Define the **Time window** using standard Chronosphere [time unit syntax](/overview/concepts/time-units).
+   The default and recommended value is `4w` (4 weeks).
+1. Select the SLO's **Measurement type**.
+   - **Error ratio** SLOs measure the objective against the percentage of measurements
+     that report errors over the entire time window. The SLO measures its error budget
+     as the percentage of error responses remaining in the time window before
+     the objective is breached.
+   - **Time slice** SLOs repeatedly measure intervals, or time slices, within the
+     time window and flags them based on a defined threshold. The overall objective
+     then measures the ratio of failed time slices rather than the total number
+     of errors.
+     
+     For instance, a time slice SLO might flag one-minute time slices where availability
+     fails to reach a given threshold, and the overall objective is measured against
+     the percentage of failed time slices over the entire time window. The SLO measures
+     its error budget as the remaining amount of time during which time slice failures
+     would breach the objective.
+1. Define whether the **Query type** returns **Errors** or **Successes**.
+1. Enter a query that returns the number of errors (**Error query**), successes
+   (**Success query**), or rate of failures during a time slice (**Time slice definition**).
+1. <a id="template-variables" ></a>Conditionally use the following template variables
+   when applicable:
+
+   - `{{.Window}}`: Use this variable in place of the time interval to dynamically
+     assign the time interval value on the SLO details page. This placeholder
+     computes the optimal window size to fulfill this SLO based on the input
+     time window and burn rates. Using the default values should normally resolve
+     to `5m` (five minutes).
+
+     If your query has a `rate`, you should use `{​{​.Window}}`. However, gauges
+     can't use `{​{​.Window}}`
+   - `{{.GroupBy}}`: Use this variable in place of `group by` statements in the
+     query to create a column for each label name defined in the **Dimensions**
+     section. This placeholder substitutes all of the unique values in dimensions
+     and signal groupings as a comma-separated list. It provides a place that defines
+     the unique values and reduces mismatched queries.
+
+     Observability Platform doesn't prevent you from managing the two lists without
+     `{{.GroupBy}}`, but the lists should be identical in the error or success queries
+     and total queries. Those lists should also match the lists in dimensions and
+     signal groupings.
+
+     If your query has a `by (...)` clause, use `by ({​{​.GroupBy}})`.
+   - `{​{​.AdditionalFilters}}`: Use this variable in place of long lists of selectors
+     in your SLO queries. This placeholder substitutes all the filters added
+     in the **Additional filters** section.
+
+     This allows both sharing a single list of filters for both queries if the list
+     is long. `{​{​.AdditionalFilters}}` can also help when templating SLOs in
+     [configuration as code](/tooling/gitops) workflows, because you can provide
+     different values based on inputs without needing to directly manipulate the
+     query.
+
+     Observability Platform doesn't block you from managing the two lists of selectors
+     in your PromQL queries. However, if additional filters are added to the **Additional filters**
+     section, it's expected that you'll use the variable at least once.
+
+     If your queries have a `metric{...}` where `...` is identical, consider using
+     `metric{{.AdditionalFilters}}`.
+   - `{{.TimeSlice}}`: Use this variable to reference the selected time slice interval
+     in the query.
+
+   For example:
+
+   ```text copy
+   sum by ({{.GroupBy}})(rate(metric[{{.Window}}]))
+   ```
+
+   When `cluster` and `namespace` are used as dimensions, the effective query is:
+
+   ```text copy
+   sum by (cluster, namespace)(rate(metric[5m]))
+   ```
+
+   In a time slice SLO, use `{{.TimeSlice}}` instead of `{{.Window}}` to return
+   successful or failed slices:
+
+   ```text copy
+   sum by ({{.GroupBy}})(rate(metric[{{.TimeSlice}}]))
+   ```
+1. In time slice SLOs, complete the fields within the sentence that defines the
+   objective:
+   - Choose an interval from the first dropdown, which defaults to `1 minute`.
+   - Choose an operator from the second dropdown, which defaults to greater than or
+     equal to (`>=`).
+   - Enter a **Threshold** that, when combined with the operator, determines whether
+     the SLO considers a time slice to be a success.
+
+#### Dimensions, signals, and filters
+
+<Warning>
+When you add or remove **Dimensions** and **Additional filters** from your SLO,
+Observability Platform can also unexpectedly change its SLI's definition, which
+causes an [error budget reset](#avoid-unintentional-budget-resets). An unintentional
+budget reset can destructively change how your SLO represents the service's performance
+against its objective.
+
+Ensure that a budget reset is an acceptable outcome **before** you change these
+fields in an existing SLO.
+</Warning>
+
+Refine your query using **Dimensions, signals, and filters**.
+
+Use **Dimensions** to generate a time series per combination of labels entered.
+
+1. Toggle **Alert by series** to create alerts for each time series in the selected
+   metric.
+1. Enter a **Label name**.
+1. Select the **Use as signal** checkbox to create a signal.
+
+   The signal indicates which labels to alert on. For example, if the base query
+   is `sum by (cluster) (rate(metric_name{}))`, you can add dimensions to make the
+   effective query `sum by (cluster, namespace, instance) (rate(metric_name{}))`
+   but only have `cluster` and `namespace` added as signals to get an alert for
+   each `cluster` and `namespace` combination.
+1. Add **Additional filters** to reduce the number of metrics used by the SLO.
+
+   To add a filter:
+
+   1. Click the **Add label filter** field.
+   1. Enter a label, select an operator, and enter a value.
+   1. Click the <Icon path={ mdiCheck } /> check icon to add the filter, or
+      the <Icon path={ mdiClose } /> close icon to cancel.
+
+   To remove a filter from the **Add label filter** field, click the
+   <Icon path={ mdiCloseCircle } /> close icon on the chip that represents the
+   filter.
+
+#### Labels and annotations
+
+<Warning>
+Changes you make to your SLO's **Labels** can also unexpectedly change its SLI's
+definition, which causes an [error budget reset](#avoid-unintentional-budget-resets).
+An unintentional budget reset can destructively change how your SLO represents the
+service's performance against its objective.
+
+Ensure that a budget reset is an acceptable outcome **before** you change this field
+in an existing SLO.
+</Warning>
+
+Add **Labels and annotations** to provide context for the SLO.
+
+- **SLO labels**: Add labels to this SLO for use in searches or
+  [pinned scopes](/navigate/pinned-scopes).
+- **Annotations**: Key/value pairs that
+  [add information](/observe/services/service-pages#annotations) about the SLO.
+
+### SLO preview
+
+Use the **SLO preview** drawer to ensure the SLO definition meets your
+specifications. The charts within the preview drawer are the same as those displayed
+on the SLO's page after you create or update the SLO. Observability Platform
+regenerates these preview charts as you modify fields in the **SLO Definition**
+drawer.
+
+As you iterate on your SLO's design, consult these tabs to confirm that the results
+align with your expectations.
+
+- The **SLI** tab charts **Total requests** and **Errors** over the selected time range.
+- The **SLO** tab charts service availability over the selected time range.
+
+  Toggle **Simulate alerts** to test your conditions against existing data. The
+  chart displays any alerts that would have fired, and the preview reflects the
+  SLO's signal grouping, dimensions, and burn rate configuration.
+
+  Use the **Show alert durations** toggle to display the time range over which the
+  alert would have been active.
+
+  When you make changes to the SLO, click the **<Icon path={ mdiRefresh } /> refresh
+  button in the time range selector to run the alerts simulation again.
+
+The preview drawer also indicates the number of new time series that Observability
+Platform will generate when you save the SLO. It also links to the
+[Telemetry Usage Analyzer](/investigate/analyze/telemetry-analyzer) for further
+analysis of the SLO's expected usage impact.
+
+## Delete an SLO
+
+<Tabs>
+<Tab title="Web" id="delete-an-slo-web">
+
+To delete an existing SLO from the list of all SLOs:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**.
+1. Select **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> SLOs**.
+1. In the list, hold the pointer over the row of the SLO you want to edit.
+1. Click the <Icon path={ mdiDotsVertical }/> three vertical dots that appear
+   in the SLO's row, and then click **Delete**.
+
+To delete an SLO from its page:
+
+1. Click the <Icon path={ mdiDotsVertical }/> three vertical dots in the SLO's
+   navigation menu, and then click **Edit**.
+1. Scroll to the end of the **SLO Definition** drawer and click **Delete SLO**.
+1. In the confirmation dialog, click **Delete SLO** to confirm.
+
+<InfoTerraformLockout />
+
+</Tab>
+<Tab title="Terraform" id="delete-an-slo-terraform">
+
+<TerraformDel />
+
+</Tab>
+<Tab title="API" id="delete-an-slo-api">
+
+To delete the SLO using the [Chronosphere API](/tooling/api-info):
+
+1. [Authenticate to the Chronosphere API](/tooling/api-info).
+1. Make a request to the [`DeleteSLO`](/tooling/api-info/definition/operations/DeleteSLO)
+   endpoint of the Config API with the SLO's `slug`.
+
+</Tab>
+</Tabs>
+
+### Avoid unintentional budget resets
+
+Changes you make to your SLO's definition can also unexpectedly change its SLI's
+definition, which resets your SLO's error budget. These unintentional _budget resets_
+can destructively change how your SLO represents the service's performance against
+its goal.
+
+Changes to these fields cause budget resets:
+
+- **Name**
+- **Queries**
+- **Dimensions**
+- **Signals**
+- **Additional filters** (label filters)
+- **SLO labels**
+
+When you change the values of these fields, you also change the data emitted from
+your SLO, which in turn changes how your SLI calculates your error budgets for the
+SLO's time window. This results in two sets of budgets, one from before the change
+and one after the change, being displayed until a full time window has elapsed.
+
+Ensure that a budget reset is an acceptable outcome **before** you change these
+fields in an existing SLO.
+
+When changing **Queries** or **Additional filters**, you might also change the number
+of budgets being tracked. This could cause new budgets to appear or old budgets
+to stop being updated, depending on the change you make.
+
+## Configure SLOs with code
+
+Changes you make in the **Visual Editor** of the **Create SLO** or **SLO Definition**
+drawer are immediately reflected in the **Code Config** tab, which displays the SLO's
+representation in code as either a **Terraform** resource, a **Chronoctl** YAML
+definition, or a JSON object compatible with the Chronosphere **API**.
+
+You can use the **Visual Editor** to define changes to an SLO and then **Copy**
+or **Download** its code representation from the **Code Config** to apply it through
+these other configuration tools. If an SLO is managed by Terraform, you can modify
+it only by modifying its Terraform resource.
+
+For details about Observability Platform's configuration as code features, see
+[Use a GitOps workflow](/tooling/gitops).

@@ -1,0 +1,72 @@
+---
+title: Amazon CloudWatch Logs and Metrics destination plugin
+sidebarTitle: Amazon CloudWatch Logs and Metrics destination plugin (Telemetry Pipeline)
+description: Send pipeline data to Amazon CloudWatch.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Amazon CloudWatch Logs and Metrics
+[destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `cloudwatch_logs`) lets you configure your telemetry pipeline to stream
+your log data and metrics to CloudWatch Logs and Metrics, respectively.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics     | Traces     |
+| :---------: | :---------: | :--------: |
+| <YesIcon /> | <YesIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name                           | Key | Description | Default |
+| ------------------------------ | --- | ----------- | ------- |
+| **Region**                     | `region` | Required. The AWS region to which to send your data. | `us-east-1` |
+| **CloudWatch Log Group Name**  | `log_group_name` | Required. CloudWatch Log Group Name. | _none_ |
+| **CloudWatch Log Stream Name** | `log_stream_name` | Required. CloudWatch Log Stream Name. Not compatible with Log Stream Prefix. | _none_ |
+
+### AWS Authentication
+
+| Name                                         | Key | Description | Default |
+| -------------------------------------------- | --- | ----------- | ------- |
+| **IAM Role ARN**                             | `role_arn` | Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role to assume, for uses like cross-account access. | _none_ |
+| **CloudWatch Logs and Metrics API Endpoint** | `endpoint` | Custom endpoint for the Firehose API. | _none_ |
+| **STS API Endpoint**                         | `sts_endpoint` | Custom endpoint for the STS API. | _none_ |
+| **External ID for STS API**                  | `external_id` | Specifies an external ID for the STS API. Can be used with the `role_arn` parameter if your role requires an external ID. | _none_ |
+
+### Advanced
+
+| Name                                         | Key | Description | Default |
+| -------------------------------------------- | --- | ----------- | ------- |
+| **CloudWatch Log Stream Name Prefix**        | `log_stream_prefix` | Prefix for CloudWatch Log Stream Name. Tag is appended to the prefix to form the stream name. | _none_ |
+| **CloudWatch Log Group Template**            | `log_group_template` | Template for CloudWatch Log Group name using record accessor syntax. If needed, the plugin falls back to the `log_group_name` value. | _none_ |
+| **CloudWatch Log Stream Template**           | `log_stream_template` | Template for CloudWatch Log Stream name using record accessor syntax. If needed, the plugin falls back to the `log_stream_name` or `log_stream_prefix` value. | _none_ |
+| **Number of days to retain logs**            | `log_retention_days` | Any newly created log group's retention policy is set to this many days. Accepted values: `0`, `1`, `3`, `5`, `7`, `14`, `30`, `60`, `90`, `120`, `150`, `180`, `365`, `400`, `545`, `731`, `1827`, `3653`. | `0` |
+| **Log Format**                               | `log_format` | Used to tell CloudWatch the format of the data. A value of `json/emf` enables CloudWatch to extract custom metrics embedded in a JSON payload. | _none_ |
+| **Log Key**                                  | `log_key` | By default, the entire log record is sent to CloudWatch. If you specify a key name with this option, only the value of that key is sent to CloudWatch. For example, if you're using the Fluentd Docker log driver, you can specify `log_key log`, and only the log message is sent to CloudWatch. | _none_ |
+| **Enable Auto Retry Requests**               | `enable_retry_requests` | Whether to immediately retry failed requests to AWS services one time. This option doesn't affect the normal Telemetry Pipeline retry mechanism with backoff. Instead, it enables an immediate retry with no delay for networking errors, which can help improve throughput when there are transient or random networking issues. Accepted values: `true`, `false`. | `false` |
+| **Enable Auto Create Log Group**             | `auto_create_group` | Whether to automatically create the log group. Log streams are always automatically created. Accepted values: `true`, `false`. | `false` |
+| **Metric namespace for CloudWatch EMF logs** | `metric_namespace` | Metric namespace for CloudWatch EMF logs. | _none_ |
+| **Metric Dimension List**                    | `metric_dimensions` | Metric dimensions is a list of lists. If you have only one list of dimensions, put the values as a comma-separated string. If you want to put list of lists, use the list as semicolon-separated strings. If your value is `d1,d2;d3`, the plugin considers it as [d1, d2], [d3]. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

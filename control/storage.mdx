@@ -1,0 +1,84 @@
+---
+title: Data control concepts
+description: Learn about data control concepts in Observability Platform and how you can use them to control your data.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere uses [collectors](/ingest) to ingest data, and utilizes push and pull
+models of ingestion, depending on the data collected and the method of ingestion.
+
+Chronosphere provides the following control concepts to help manage your data you
+keep only the data that's most important to your organization.
+
+## Metric control concepts
+
+Metrics use _quotas_ to assign specific percentages of your total persisted writes
+limit to _pools_ of metrics. Each pool might represent teams or other logical
+groupings within your organization. Use metric quotas to give each pool a specific
+quota of your total persisted writes license, expressed either as a percentage or a
+value in data points per second (DPPS).
+
+To learn more about these control mechanisms, see
+[quotas and pools](/control/shaping/quotas).
+
+## Log control concepts
+
+Logs use _partitions_, which are slices of your log data with distinct owners.
+Partitions provide a consistent structure for attributing usage and costs to the
+appropriate owners in your organization so they can isolate and control independent
+their parts of the business.
+
+Partitions let you apply _budgets_, which are optional shaping policies you can
+assign to a partition to safeguard against runaway usage and overspending. Budgets
+provide guardrails to combat runaway usage and overspending, and provide the
+flexibility to enforce accountability at the right level of ownership. Budgets
+include _thresholds_ that define which actions to take when a threshold is exceeded.
+
+To learn more about these control mechanisms, see
+[control log data](/control/consumption).
+
+## Trace control concepts
+
+Traces use _datasets_ as a control mechanism to organize your data and map it to
+named groups relevant to your organization. Datasets can either overlap or stand
+alone, and can be assigned to only a single business unit or service within
+your organization.
+
+Each dataset entity lets you define a filter to assign specific chunks of data to a
+particular dataset. A default, system-defined dataset exists for budgeting. You can
+assign the default dataset to data that isn't explicitly assigned to any other
+dataset.
+
+To change the sampling rates of one or more datasets and to more effectively control
+your persisted data, use _behaviors_. This shaping mechanism lets you change sampling
+rates of one or more datasets without needing to write fine-grained sampling or
+shaping rules.
+
+To learn more about these control mechanisms, see
+[sample your traces](/control/sampling/).
+
+## Downsampling
+
+[Collectors](/ingest/) ingest metrics at specific intervals, based on system
+configuration. This granularity of metric data can be helpful in diagnostic efforts,
+but particular issues might not be served by such granularity. If you are able to
+diagnose production issues using a coarser granularity of metric data, _downsampling_
+the data reduces the amount of data persisted to the Observability Platform database.
+
+Downsample incoming data in Observability Platform using these methods:
+
+- Change the Chronosphere Collector configuration by
+  [changing the rate](/ingest/metrics-traces/collector/discover/scrape-configuration#global-scrape-configuration)
+  the Collector publishes metrics to the server.
+- Use [mapping rules](/control/shaping/rules/mapping) to downsample metrics
+  that aren't aggregated.
+- Use [rollup rules](/control/shaping/rules/rollup) to downsample aggregated
+  metrics.
+
+Over time, persisted data uses significant storage capacity. Observability Platform
+performs [long-term downsampling](/control/shaping/downsampling) to control data
+storage costs while retaining important statistics.
+
+Be aware that [late arriving data](/administer/limits-licensing/limits/metric-limits#late-arriving-metrics)
+can affect downsampling.

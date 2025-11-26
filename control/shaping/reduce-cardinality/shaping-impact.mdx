@@ -1,0 +1,75 @@
+---
+title: Preview aggregation rule impact
+description: Use the Shaping Impact Preview to preview the impact of aggregation rules on your system before applying them.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Shaping Impact Preview lets you create new aggregation rules to preview the impact of
+a rule on your overall system. This helps prevent breaking changes and ensure the
+rules you create operate as expected. A rule created for preview purposes lets you
+profile the impact of the rule, but isn't enabled in your system and doesn't affect
+your stored data.
+
+Knowing the impact of a rule, and whether it accomplishes the needed task can be
+difficult. Shaping impact preview uses the existing [rollup](/control/shaping/rules)
+or [mapping](/control/shaping/rules/mapping) aggregation rule creation system to show
+you how your rule affects your Chronosphere Observability Platform installation
+before you apply the rule and change your data or stored time series.
+
+## Preview a rule's shaping impact
+
+Rules in preview mode display in the
+[Aggregation Rules UI](/control/shaping/reduce-cardinality/review-aggregation-rules) similar
+to rules already in use. Rules in preview mode use a different background color, and
+have a **Preview** label next to the rule type in the **Name** column.
+
+When a preview rule is added, but hasn't finished impact calculations, the
+[shaping impact](/control/shaping/reduce-cardinality/review-aggregation-rules#shaping-impact)
+columns display `calculating`. Completed impact calculations display under
+**Rule Efficiency**, **Matched Impact** (if you're using a matched writes license),
+and **System Persisted Impact**.
+
+**Utility Score** isn't available for rules in preview mode because the **Output metric**
+can't be used until the rule is enabled.
+
+## Create a preview rule
+
+Creating a preview rollup or mapping rule requires adding a configuration variable
+to the rule creation file called `mode`.
+
+The `mode` variable has two states:
+
+- `preview`: This rule is in a preview state, and doesn't affect data being mapped,
+  rolled up, or added to storage.
+- `enabled`: This rule is active and affecting incoming data.
+
+If `mode` isn't present, the rule defaults to the `enabled` state.
+
+For mapping or rollup rules created with
+[Chronoctl](/tooling/chronoctl), define `mode` in the `spec` section
+of the rule definition file.
+
+```text copy
+mode: PREVIEW
+```
+
+For rollup rules created with [Terraform](/tooling/infrastructure/terraform),
+add:
+
+```text copy
+# The operational mode for this rule.
+mode = preview
+```
+
+## Change a rule from preview to enabled
+
+Preview rules use the same definition files as active rules. To change a rule from
+preview to enabled:
+
+1. In the definition file, change the value of `mode` from `preview` to `enabled`.
+1. Save the file.
+1. Apply the updated definition.
+
+The rule begins affecting data, and the **Preview** notice doesn't display in the
+Aggregation Rules UI.

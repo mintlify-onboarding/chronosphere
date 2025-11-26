@@ -1,0 +1,55 @@
+---
+title: Scalyr DataSet destination plugin
+sidebarTitle: Scalyr destination plugin (Telemetry Pipeline)
+description: Use the Scalyr destination plugin.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Scalyr [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `http`, alias: `scalyr_dataset`) lets you send your telemetry pipeline
+data to Scalyr as Scalyr datasets.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name              | Key | Description | Default |
+| ----------------- | ----------- | --- | ------- |
+| **Host**          | `host` | Required. IP address or hostname of the target Scalyr server. | _none_ |
+| **Port**          | `port` | Required. TCP host port of the target Scalyr server. | `0` |
+| **DataSet Token** | `scalyr_datasets_token` | Specifies the Authentication Bearer Token for the DataSet API. | _none_ |
+
+### Advanced
+
+| Name                              | Key | Description | Default |
+| --------------------------------- | --- | ----------- | ------- |
+| **Compress**                      | `compress` | Sets the payload compression mechanism. | _none_ |
+| **HTTP Buffer Size**              | `http_buffer_size` | Specifies the buffer size used to read the response from the `scalyr_dataset` HTTP service. | _none_ |
+| **Enable HTTP Debug Bad Request** | `http_debug_bad_request` | If `true`, and if the HTTP server response status code is `400 Bad Request`, it will print the full HTTP request and response to the `stdout` interface. This feature is available for debugging purposes. Accepted values: `true`, `false`. | `false` |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

@@ -1,0 +1,243 @@
+---
+title: Querying delta temporality metrics
+---
+import OtherQueryingFeatures from '/snippets/_partials/other-querying-features.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Chronosphere Observability Platform supports both _delta_ and _cumulative temporality_
+metric ingestion and storage.
+
+- A metrics client using delta temporality counts events that occurred since the
+  last emission or flush of the metric value and emits _only_ that value.
+- A metrics client using cumulative temporality keeps a strictly increasing sum
+  and sends the value at a regular interval. A cumulative metric value represents
+  the sum of all events observed since the process start time.
+
+The following time series examples demonstrate the difference between the delta and
+cumulative time series. The delta temporality client sends the sum of events between
+each reporting interval, and the cumulative temporality client sends the running
+total at each reporting interval.
+
+A delta counter time series emitting sparse values:
+
+```text
+                        process
+Data point values:       start       12                  7         3
+                  ---------|---------|---------|---------|---------|---------
+             Time:        1:00       1:01     1:02       1:03     1:04
+```
+
+In contrast, a cumulative counter time series emits values on regular intervals:
+
+```text
+                        process
+Data point values:       start      12        12        19        22
+                  ---------|---------|---------|---------|---------|---------
+             Time:        1:00       1:01     1:02       1:03     1:04
+```
+
+Both of these examples count the same number of events. However, the delta counter
+reported only the _interval's count_, while the cumulative counter reported the
+_sum of all events counted_ up to that point in time.
+
+A delta time series can therefore be sparse because a delta metrics client sends
+an update _only_ when it observes events during the reporting interval. If the client
+doesn't count any events during an interval, a delta counter reports no value for
+that interval.
+
+## Functions for delta temporality use cases
+
+Two query functions address the most common use cases for querying a delta time
+series:
+
+- `sum_over_time()`: Returns the sum of all observations in the specified sliding
+  time window.
+- `sum_per_second()`: Returns the per-second rate of observations in the specified
+  sliding time window.
+
+`sum_per_second()` is a convenience function that automatically divides the sum
+of observations in the specified sliding time window by the sliding time window's
+duration to calculate the per-second rate. The following queries return
+the same results:
+
+```text
+sum_per_second(http_request_count{}[5m])
+
+sum_over_time(http_request_count{}[5m]) / 5m
+```
+
+### Delta query examples
+
+#### Get the total count of errors for a given service in 1-minute steps
+
+The following query sums all observations in the specified one-minute sliding time
+window for the `http_request_count` time series where the `error_code` label equals
+`5xx`, with a resolution of one minute when visualized in a time series chart panel.
+
+```text copy
+sum_over_time(http_request_count{error_code="5xx", service="my-service"}[1m])
+```
+
+<Info>
+To ensure the chart value at each step represents the sum of observations for each
+step's start and end time, you **must** set the query's step size to be equal to
+the sliding time window value. For more guidance, see
+[Best practices for adding dashboard charts](#best-practices-for-adding-dashboard-charts).
+</Info>
+
+#### Get the per-second error rate for a given service in 1-minute steps
+
+The following query calculates the per-second average for the specified five-minute
+sliding time window for the `http_request_count` time series, where the `error_code`
+label equals `5xx`:
+
+```text copy
+sum_per_second(http_request_count{error_code="5xx", service="my-service"}[5m])
+```
+
+#### Get the P95 for a delta histogram time series
+
+To see the 95th percentile (P95) duration for HTTP requests with a one-minute resolution,
+use `sum_per_second()`. Set the sliding time window to `1m` and the step size to
+`1m`. The `histogram_quantile()` function calculates the P95 value based on its
+observations within the sliding time window.
+
+For Chronosphere delta histograms using an exponential bucket layout:
+
+```text copy
+histogram_quantile(0.95, sum(sum_per_second(http_request_duration{}[1m])))
+```
+
+For fixed-bucket delta histograms:
+
+```text copy
+histogram_quantile(0.95, sum by(le) (sum_per_second(http_request_duration_seconds_bucket{}[1m])))
+```
+
+### Other functions
+
+Users with a PromQL background might recognize that Chronosphere recommends `sum_over_time()`
+instead of `increase()`, and recommends `sum_per_second()` instead of `rate()`.
+Both `increase()` and `rate()` operate on delta temporality time series, but they
+can return different results because these functions estimate the expected value
+for a particular time by extrapolating the slope between
+[the first and last data points in the sliding time window](https://promlabs.com/blog/2021/01/29/how-exactly-does-promql-calculate-rates/#extrapolation-of-data).
+
+Extrapolation requires two or more data points in the sliding time window, which
+is not guaranteed with delta temporality, because delta metrics clients send data points
+_only_ for intervals with observations to report.
+
+## Best practices for adding dashboard charts
+
+When adding [chart panels to dashboards](/observe/dashboards/panels), use the following practices to generate consistent and accurate visualizations.
+### Align step and time window values using `$__interval`
+
+A typical use case for a chart visualization is to display the sum of observations
+in fixed time intervals as a bar chart. To ensure the chart value at each step represents
+the sum of observations within the step's start and end time, you **must** set the
+step size equal to the sliding time window's value.
+
+To ensure the chart step size and sliding time window are equal, use the global variable
+`$__interval` as the sliding time window value.
+
+Observability Platform calculates the `$__interval` value based on the query time
+range and pixel width of the chart to determine the chart step. Using `$__interval`
+therefore guarantees the two values are always equal.
+
+In the dashboard panel's [Settings tab](/observe/dashboards/panels):
+
+1. Change the display option from **Line** to **Bar** to view the time series in the
+   bar chart format.
+1. Set **Null behavior** to **Null as zero** to represent steps that report no observations
+   as zeroes on the chart.
+
+It can sometimes be appropriate to use different values for a sliding time window
+and step. For example, a query for an SLA that defines that there should be no more
+than ''X'' errors in a rolling 24-hour period would set the sliding time window
+to 24h and the step size to 1h for one-hour resolution.
+
+#### Example: Equal values for step and sliding time window
+
+The following time series and corresponding query and chart describe the results
+when the sliding time window and step size are set to the same value. For this
+example, we can assume the `$__interval` value is one minute.
+
+At each step, the query returns the sum of all data points in the one-minute range.
+Because the step is set to `1m`, the chart correctly displays the one-minute sums
+in one-minute steps. Each bar height is the sum of observations within the bar's start
+and end time. The sum of all bars in the chart (36) equals the sum of all data points
+in the time series (36).
+
+Time series:
+
+``` text
+Values:         2         3         5         7         2         5         3         6         3
+       ---------|---------|---------|---------|---------|---------|---------|---------|---------|---------
+  Time:        1:00:00   1:00:30   1:01:00   1:01:30   1:02:00   1:02:30   1:03:00   1:03:30   1:04:00
+```
+
+Query:
+
+```text copy
+sum_over_time(my_counter{}[$__interval])
+```
+
+The resulting chart:
+
+```text
+                                     ___________________                     ___________________
+                 ___________________|                   |___________________|                   |
+                |                   |                   |                   |                   |
+                |                   |                   |                   |                   |
+                |                   |                   |                   |                   |
+                |         8         |         9         |         8         |         9         |
+                |       (3+5)       |       (7+2)       |       (5+3)       |       (6+3)       |
+        ________|                   |                   |                   |                   |
+       |        |                   |                   |                   |                   |
+       |   2    |                   |                   |                   |                   |
+       ---------|-------------------|-------------------|-------------------|-------------------|---
+  Time:        1:00:00             1:01:00             1:02:00             1:03:00             1:04:00
+```
+
+#### Example: Different values for step and sliding time window
+
+The chart visualization changes drastically when the sliding time window and step
+do not align. In the following example, the step is set to `30s` and the sliding time
+window is set to `1m`. With a `30s` step, the chart displays a one-minute rolling
+sum at each 30-second step.
+
+Time series:
+
+```text
+Values:         2         3         5         7         2         5         3         6         3
+       ---------|---------|---------|---------|---------|---------|---------|---------|---------|---------
+  Time:        1:00:00   1:00:30   1:01:00   1:01:30   1:02:00   1:02:30   1:03:00   1:03:30   1:04:00
+```
+
+Query:
+
+```text copy
+sum_over_time(my_counter{}[1m])
+```
+
+Assuming the step is set to `30s`, the resulting chart is similar to the following:
+
+```
+                                     _________
+                                    |         |
+                                    |         |
+                                    |         |_________                     _________ _________
+                           _________|         |         |          _________|         |         |
+                          |         |         |         |_________|         |         |         |
+                          |         |         |         |         |         |         |         |
+                 ________ |         |         |         |         |         |         |         |
+                |    5    |    8    |   12    |    9    |    7    |    8    |    9    |    9    |
+                |  (2+3)  |  (3+5)  |  (5+7)  |  (7+2)  |  (2+5)  |  (5+3)  |  (3+6)  |  (6+3)  |
+        ________|         |         |         |         |         |         |         |         |
+       |        |         |         |         |         |         |         |         |         |
+       |   2    |         |         |         |         |         |         |         |         |
+       ---------|-------------------|-------------------|-------------------|-------------------|---
+  Time:        1:00:00             1:01:00             1:02:00             1:03:00             1:04:00
+```

@@ -1,0 +1,222 @@
+---
+title: Kubernetes Collector installation to receive traces
+---
+import CollectorVersions from '/snippets/_partials/collector-versions.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+The recommended way to install the Collector to receive trace data is with a
+Kubernetes Deployment, with a service in front to receive trace data. Your tracing
+app pushes trace data to the service, which the Collector receives the data from.
+
+Chronosphere recommends instrumenting your app to emit span data in
+[OpenTelemetry format](https://opentelemetry.io/docs/reference/specification/protocol/otlp/)
+if you haven't already invested in legacy tracing instrumentation. You can configure
+the Collector to accept OpenTelemetry traces in both gRPC and JSON over HTTP formats.
+A single Collector can accept OpenTelemetry traces in both of these formats
+simultaneously.
+
+The Collector manifest linked in this page uses OpenTelemetry by default, but you can
+modify the manifest to use other supported formats, such as Jaeger or Zipkin.
+
+To install the Collector:
+
+1. [Create an API token](#create-an-api-token).
+1. [Define the Collector manifest](#define-the-collector-manifest).
+1. [Create a Kubernetes secret](#create-a-kubernetes-secret).
+1. [Install the Collector](#install-the-collector).
+1. [Verify the Collector](#verify-the-collector).
+
+## Create an API token
+
+To interact with the Collector, you must
+[create a service account](/administer/accounts-teams/service-accounts#create-a-restricted-service-account).
+You must be a member of a team with the SysAdmin role to create a new service account.
+Chronosphere recommends creating a restricted service account with a write-only
+scope. Use the generated API token in your Kubernetes `Secret` to authenticate
+with the Collector.
+
+<Warning>
+Store your API token in a secure location. If you lose your token, you must create
+a new service account.
+</Warning>
+
+## Define the Collector manifest
+
+1. Download the
+   [example manifest](https://storage.googleapis.com/chronosphere-release/latest/kubernetes/tracing-chronocollector.yaml).
+
+1. Locate the `spec.template.spec.containers.image` YAML collection and change
+   `vVERSION_NUMBER` to the version of the Collector you want to install. For
+   example, `v0.100.1`:
+
+   ```yaml
+   spec:
+     template:
+       spec:
+         containers:
+           - image: gcr.io/chronosphereio/chronocollector:vVERSION_NUMBER
+   ```
+
+   <CollectorVersions />
+
+1. Define the format you want the Collector to receive spans in, such as
+   OpenTelemetry, Jaeger or Zipkin. The following example enables receiving spans in
+   OpenTelemetry format:
+
+   <Info>
+You can only enable one format of traces to receive. You must remove or comment
+   out any additional trace formats from the `spans` YAML collection.
+</Info>
+
+   1. In the `spans` YAML collection, define the format you want to receive spans
+      for. For example, to receive spans in OpenTelemetry format:
+
+      ```yaml
+      spans:
+        enabled: true
+        compression:
+          enabled: true
+        otel:
+          enabled: true
+          listenAddress: 0.0.0.0:4317
+      ```
+
+      If you want to accept OpenTelemetry traces in JSON format over HTTP, add the
+      following `http` definitions to your YAML collection under `spans`. This YAML
+      collection starts an HTTP receiver that accepts traces in both gRPC and JSON
+      over HTTP formats.
+
+      ```yaml
+      spans:
+      ...
+        otel:
+          enabled: true
+          listenAddress: 0.0.0.0:4317
+          httpEnabled: true
+          httpListenAddress: 0.0.0.0:4318
+      ```
+
+   1. For the tracing `Service`, modify the `spec.ports.name` YAML collection to
+      reflect the trace format you want to use. For example, to receive spans in
+      OpenTelemetry format:
+
+      ```yaml
+      kind: Service
+      ...
+      spec:
+        ports:
+        - name: otel
+          port: 4317
+          protocol: TCP
+          targetPort: otel
+      ```
+
+1. Save your Collector manifest, which you apply in a subsequent step after creating
+   a Kubernetes secret.
+
+## Create a Kubernetes secret
+
+Create a Kubernetes `Secret` that includes the API token from your service account,
+plus a custom domain address.
+
+1. Add `base64` encoding to your domain name and API token:
+
+   ```shell copy
+   echo -n "ADDRESS" | base64
+   echo -n "API_TOKEN" | base64
+   ```
+
+   Replace the following:
+
+   - _`ADDRESS`_: Your company name prefixed to your Chronosphere
+     Observability Platform instance that ends in `.chronosphere.io:443`. For
+     example, _`MY_COMPANY`_`.chronosphere.io:443`.
+   - _`API_TOKEN`_: The API token generated from your service account.
+
+1. Copy the values that output to your terminal, which you add as part of your
+   Kubernetes `Secret` in the next step.
+
+1. In your `tracing-chronocollector.yaml` file, locate the following YAML collection
+   and replace values for `address` and `api-token` with the encoded values that you
+   copied from your terminal.
+
+   ```yaml
+   apiVersion: v1
+   data:
+     address: ENCODED_ADDRESS
+     api-token: ENCODED_API_TOKEN
+   kind: Secret
+   metadata:
+     labels:
+       app: chronocollector-tracing
+     name: chronosphere-tracing-secret
+     namespace: default
+   type: Opaque
+   ```
+
+   Another option is to add the _`ADDRESS`_ and _`API_TOKEN`_ directly to the Kubernetes
+   cluster using `kubectl`:
+
+   ```shell copy
+   kubectl create secret generic chronosphere-secret \
+     --from-literal=api-token=API_TOKEN \
+     --from-literal=address=ADDRESS
+   ```
+
+1. Save and close your `tracing-chronocollector.yaml` file.
+
+Now you're ready to [install the Collector](#install-the-collector).
+
+## Install the Collector
+
+To install the Collector, apply the `tracing-chronocollector.yaml` manifest that you
+configured.
+
+<Warning>
+Installing the Collector grants permissions to read metadata about pods scheduled on
+the local node. Review your `tracing-chronocollector.yaml` manifest carefully before
+applying it.
+</Warning>
+
+1. Apply the manifest.
+
+   ```shell copy
+   kubectl apply -f path/to/tracing-chronocollector.yaml
+   ```
+
+1. Confirm the deployment is up and running, and view the logs of the pod:
+
+   ```shell copy
+   kubectl get pods
+   ```
+
+   The output is similar to the following:
+
+   ```text
+   NAME                    READY   STATUS    RESTARTS   AGE
+   chronocollector-tracing-POD_NAME   1/1     Running   0          1m
+   ```
+
+1. View the pod logs to ensure there are no errors:
+
+   ```shell copy
+   kubectl logs chronocollector-tracing-POD_NAME
+   ```
+
+   Replace _`POD_NAME`_ with the name of the Kubernetes pod where your Collector
+   instance is running.
+
+## Verify the Collector
+
+After installing the Collector, verify that it's sending traces to your Observability Platform
+tenant.
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
+1. Click the **Traces** tab.
+1. Click **Capture live data** to display the stream of incoming spans. The default grouping
+   shows spans by service (`__service__`), but you can include additional tags to group
+   by such as `__trace_id__` and `__span_id__`.

@@ -1,0 +1,94 @@
+---
+title: Pagination
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+All endpoints that list objects are *paginated*, which means the server can
+potentially return only a subset, or page, of the requested objects, along with an
+opaque page token the client can use to fetch the next page of objects. To request
+the first page, provide an empty page token. If there are no more pages to request,
+the server returns an empty page token.
+
+If you use filter arguments, the client must pass the same filters on each page request
+in a single iteration. If you use new filter arguments, restart pagination by requesting
+the first page with the new filters.
+
+## Example
+
+This example demonstrates the process to iterate over every monitor:
+
+1.  Request the first page by sending a plain request with no page token:
+
+    ```shell copy
+    curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}/api/v1/config/monitors"
+    ```
+
+    The server responds with:
+
+    ```json
+    {
+      "page": {
+        "next_token": "abc123"
+      },
+      "monitors": [
+        {
+          "slug": "my-monitor",
+          "name": "My Monitor",
+          ...
+        },
+        ...
+      ]
+    }
+    ```
+
+2.  The response has a non-empty `page.next_token` field, which means you must send
+    another request with this page token to fetch the next page of monitors:
+
+    ```shell copy
+    curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}/api/v1/config/monitors?page.token=abc123"
+    ```
+
+    The server responds with:
+
+    ```json
+    {
+      "page": {
+        "next_token": "def456"
+      },
+      "monitors": [
+        {
+          "slug": "my-other-monitor",
+          "name": "My Other Monitor",
+          ...
+        },
+        ...
+      ]
+    }
+    ```
+
+3.  Because the non-empty `page.next_token` response field indicates there are more
+    results to fetch, request the next page:
+
+    ```shell copy
+    curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}/api/v1/config/monitors?page.token=def456"
+    ```
+
+    The server responds with:
+
+    ```json
+    {
+      "page": {},
+      "monitors": [
+        {
+          "slug": "yet-another-monitor",
+          "name": "Yet Another Monitor",
+          ...
+        },
+        ...
+      ]
+    }
+    ```
+
+4.  When you get a response with an empty `page.next_token` field, you have reached
+    the final page of results.

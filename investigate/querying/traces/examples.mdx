@@ -1,0 +1,144 @@
+---
+title: Examples for tracing
+description: Learn how to use distributed tracing tools in Chronosphere Observability Platform.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Use Chronosphere Observability Platform tracing when you want to locate a service
+operation causing latency issues to other services that rely on it. The following
+examples use data from the
+[OpenTelemetry Astronomy Shop Demo](https://github.com/open-telemetry/opentelemetry-demo),
+which is an open source, microservice-based distributed system that illustrates the
+implementation of OpenTelemetry in a near real-world environment.
+
+## On-call triage
+
+The following example highlights annotations, which you can use to
+[link to tracing data from a dashboard](/investigate/querying/create-links/).
+The example assumes that you received a
+[notification](/investigate/alerts/notifications) from an alert that
+triggered for a monitor.
+
+1. You click a link in the notification, which directs you to the
+   **Order Service Latency** monitor. This monitor tracks requests and errors for the
+   `ordering-svc` service.
+
+   On the **Order Service Latency** monitor, in the **Query Results** chart, you notice
+   a continual spike in queries to the `ordering-svc` service.
+
+1. In the **Annotations** section of the monitor, you click a link to a dashboard.
+
+1. In the **Order Service Overview** dashboard, you notice a wave of spikes in
+   requests to the `/ordering.Ordering/Checkout` operation of the `ordering-svc`
+   service.
+
+1. On the **Requests** chart, click any point and then click **Query Traces**.
+
+   The link opens Trace Explorer with a predefined search query that includes the
+   service and operation you want to explore.
+
+1. On the **Trace Explorer** page, click the **Topology View** tab to view a mapping
+   of affected upstream and downstream services.
+
+1. In the **Search services** box, enter `ordering-svc` to scope the view to that
+   service.
+
+1. Click the `ordering-svc` node to display details.
+
+   In the **Node Details** panel, you see 176 errors incoming and 119 errors outgoing
+   connected to the `ordering-svc` service. As you zoom in on the topology view, you
+   notice that the [edge](/investigate/querying/traces/features#topology-view)
+   connecting to the `billing-svc` service is thicker than the others.
+
+1. Click the **`billing-svc`**.
+
+   In the **Node Details** panel for the `billing-svc`, you notice that outgoing
+   requests to the `payment-gateway-svc` are high.
+
+1. In the **Node Details** panel, click **Include** to include the `billing-svc` in
+   your search query. Your search query now includes:
+
+   - `operation:/ordering.Ordering/Checkout`
+   - `service:ordering-svc`
+   - `service:billing-svc`
+
+   You determined that the `billing-svc` service is generating the most errors,
+   which is also impacting the `payment-gateway-svc` service.
+
+1. On the **Trace Explorer** page, click the <Icon icon="ellipsis-vertical" /> three vertical dots icon,
+   and then select **Create Metric** to create a trace metric for detecting future
+   issues with the `billing-svc` service.
+
+   Other on-call engineers can use this trace metric to open a predefined query in
+   Trace Explorer and help reduce the time to identify and fix issues with this
+   service.
+
+## Start with trace data
+
+The following example begins in Trace Explorer. Maybe you navigated here from Trace
+Metrics, a dashboard, or a monitor, and now you're exploring trace data to identify
+where issues are occurring.
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Trace Explorer**.
+
+1. In the **<Icon icon="clock" /> [time range selector](/navigate/time-ranges)**,
+   select **Last 30 minutes**.
+
+1. Select the **Failed traces only** radio button and then click **Run**.
+
+   This search returns too many traces to narrow down the issue. You think the issue
+   relates to the `frontend` service, but don't know which related operation is the
+   culprit. Modify the search criteria to narrow your search.
+
+1. In the **Query builder** search bar, enter `frontend`, click that service from the
+   search results to add it to your query, and then click **Run**.
+
+   Your search narrows the results and scope to only spans that include the
+   **frontend** service. On the **Span statistics** tab, you notice that the
+   **loadgenerator** service has a high error rate.
+
+1. On the **Span statistics** tab, click **loadgenerator**, and then click
+   **Include in Span Filter** in the resulting dialog to add the `loadgenerator`
+   service to your search query.
+
+   You know that the `loadgenerator` service is contributing to your trace latency,
+   but still aren't sure what the main issue is.
+
+1. Click the **Trace list** tab to view a list of the most relevant traces for your
+   search.
+
+1. In the **Trace** column, click **loadgenerator <span aria-label="and then">></span> HTTP GET**
+   to display the trace details for that service and operation combination.
+
+   You notice errors in operations for two additional services related to the
+   `loadgenerator` service. The `GET` operation on both the `loadgenerator`
+   and `frontend` services have high latency.
+
+1. Click the **frontend** service, which updates the **Span details**
+   panel with information specific to that service and operation combination.
+
+   You now have detailed information about the specific services and operations
+   causing latency issues. Choose **Formatted** (default) to display a tabular view,
+   or **Raw** to view span details in JSON format.
+
+   <Info>
+In the **Links** section, click **+ Add Link** to add a link based on a template
+   to your external logging service, which provides other users access to the logs
+   related to this span.
+</Info>
+
+   In the **Process** section, you identify `k8s.pod.name`, which is the Kubernetes
+   pod the `GET` request originates. You can begin investigating that specific
+   operation to remediate the issue.
+
+1. To the right of the value for `k8s.pod.name`, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and then click **Add to Filter** to add the value of that
+   process to your search query.
+
+1. On the **Trace Explorer** page, you can click the <Icon icon="ellipsis-vertical" />
+   more icon and then select **Create Metric** to
+   [create a trace metric](/control/sampling/trace-metrics#create-a-trace-metric)
+   based on your updated search. You can use trace metrics to create dashboards and
+   monitors for key metrics that you want to track and get alerts for.

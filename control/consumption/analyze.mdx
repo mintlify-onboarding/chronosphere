@@ -1,0 +1,57 @@
+---
+title: Analyze consumption
+description: Use the license consumption tools to analyze consumption across partitions to understand what's driving growth and detect unwanted spikes.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+After [creating partitions](/control/consumption/partitions), use the
+[Logging License Consumption](/observe/dashboards/chronosphere-managed-dashboards#logging-license-consumption)
+dashboard to view persisted log data consumption against license capacity. This
+dashboard provides information you can use to analyze consumption across partitions
+to detect unwanted spikes and understand what's driving growth.
+
+This dashboard monitors log data consumption against your contract, including the
+consumption by volume over time and the consumption of each
+[partition](/control/consumption/partitions) and any defined
+[budgets](/control/consumption/budgeting).
+
+Use this dashboard to review budget [thresholds](/control/consumption/budgeting#threshold-types),
+which help to detect growth patterns in partitions. This information can help to
+manage both anomalous spikes in data and slow data growth over time.
+
+To analyze log data consumption:
+
+1. In the navigation menu select **<Icon icon="dashboard" alt="Dashboards"/> Dashboards**.
+1. In the search bar, enter `Logging License Consumption`.
+1. Click the name of the dashboard to open it.
+1. Use the **Instant Rate Threshold** and **Volume Threshold** panel groups to review
+   cumulative consumption trends across various time windows and partitions to
+   understand what's driving growth:
+
+   - The rolling period panels help identify recurring anomalies in volume over rolling
+     time windows, such as one- or three-hour periods.
+   - The instant rate threshold panels help detect data spikes in real time.
+   - The fixed period panels identify gradual usage growth or sustained
+     overconsumption patterns in cumulative log volumes across daily, weekly, or
+     monthly windows.
+
+1. In the dashboard, use the **Partition** menu to select the partition you want to
+   view consumption data for.
+1. To investigate the source of consumption, in the **Explore** panel group, click
+   the **Logs Explorer** link.
+
+   Logs Explorer opens with a predefined query from the dashboard.
+1. In Logs Explorer, use the provided filters to identify patterns and trends in
+   sources of consumption.
+
+## Next steps
+
+Based on your findings, you might want to refine your
+[partitions](/control/consumption/partitions) with more granular dimensions, such as
+adding more child partitions to apply greater levels of control.
+
+After analyzing your consumption and refining partitions, add
+[budgets](/control/consumption/budgeting) to apply optional shaping policies that you
+can attach to a partition to provide guardrails to avoid usage overages and
+overspending.

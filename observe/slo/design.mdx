@@ -1,0 +1,226 @@
+---
+title: Design service level objectives
+description: Learn about fundamental concepts and best practices when designing service level objectives (SLOs) in Chronosphere Observability Platform.
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Effective service level objectives (SLOs) can take time and research to create.
+Although Observability Platform's [SLOs](/observe/slo) are built around industry best
+practices, you can tailor your SLOs to make them more effective alerting and
+observation tools for your individual services.
+
+## Design user-focused indicators
+
+SLOs should measure availability of your services from your users' perspective. Design
+your SLOs to identify when services are falling short of your users' needs.
+
+Availability isn't always a binary state of up or down. Define your
+service level indicators (SLIs) with your users' experience in mind. Slow responses,
+non-blocking errors, or unexpected results can represent a lack of service availability
+from your users' perspective, even if your service is technically available and
+responsive.
+
+Observability Platform SLOs are dynamic and can provide multiple error budgets from
+a single query. Leverage these features when designing your indicators to create
+low-maintenance SLOs that are also focused on metrics relevant to your users'
+experience.
+
+Some services might require tracking multiple SLI definitions, such as tracking
+both latency and availability. In such situations, each SLI should have its own
+SLO page with its own burn rate and alerting configuration.
+
+## Set a reasonable objective
+
+Although it might seem ideal to set a perfect target of 100% availability as your
+objective, SLOs are most effective when they recognize that issues are inevitable.
+Instead of aiming for perfection, define your objectives around your users' tolerance
+for failures to meet their expectations.
+
+This tolerance is inherently subjective. Beyond minimums set in legal agreements and
+SLAs, you can iterate on your SLOs based on user feedback and research, your
+development pace, and your ability to absorb risk.
+
+Likewise, the error budgets created by your objectives help you define the amount
+of risk you're willing to accept for a given service. This in turn helps you
+[plan risky actions](#design-slos-for-risk-management), such as potentially
+disruptive deployments, around your users' tolerance for downtime.
+
+If possible, define your objective based on historical performance to ensure your
+targets are realistic, and also to minimize on-call burdens on your responders.
+
+## Determine an appropriate unit to measure
+
+- Error ratio objectives help you identify issues with services where you have
+  a low tolerance for any number of errors.
+- Time slice objectives help you identify issues with services where the length
+  of an incident is more relevant than the total number of errors, and can reduce
+  the noise of transient or low-impact errors.
+
+Many SLOs measure the ratio of errors to total measurements over a time window.
+Observability Platform refers to these as _error ratio SLO_. The resulting
+percentile provides a straightforward indicator of the measured service's health
+over time. Its error budget also refers to the ratio of errors that can be tolerated
+over the remaining time window before the objective is breached.
+
+Error ratio SLOs can be valuable when your service has a low tolerance for
+errors of any type, regardless of how long they degrade the service's performance.
+Since all errors count against the error budget in an error ratio objective, you
+can track patterns of error counts over time to identify periodic or intermittent
+errors before they degrade your service's availability. Burn rate measurements can
+also alert you to spikes in errors at the early stages of an incident.
+
+However, total error counts might not accurately reflect a service's availability.
+The amount of time during which the service's performance was degraded can matter
+more to end users than the total number of recorded errors. For such services, use
+a _time slice SLO_, which instead measures intervals within the time window
+to determine how long a service was degraded.
+
+In a time slice SLO, the indicator and error budget refer to the percentage of time
+during the time window that the service was available or degraded. Instead of a
+certain number of errors triggering an objective's breach, a time slice SLO is breached
+when the system is degraded for a percentage of time during the window that exceeds
+the objective.
+
+Time slice SLOs use intervals as small as one to five minutes. Choose the interval
+based on your service's behavior when degraded and its affects on the service's
+users. Since each slice is calculated independently, the objective only needs
+to aggregate data for each time slice, instead of across the entire time window,
+which can be weeks in length.
+
+Services that can benefit from time slice SLOs might experience relatively uniform
+load over the time window, don't have scheduled or expected downtime or outages,
+and can safely recover from intermittent errors. However, these traits can mask
+occurrences of low-impact and intermittent errors that still occur but fail
+to breach the threshold of each time slice. Time slice SLOs can also delay responses
+to incidents and burn rate measurements, especially over longer time slice intervals,
+since the success or failure of a slice can be determined only when it breaches the
+slice's threshold.
+
+## Use template variables to reduce query maintenance
+
+If you write your SLO's query, use [template variables](/observe/slo/manage#template-variables)
+to refer to your time window (`{{.Window}}`) or time slice interval (`{{.TimeSlice}}`),
+dimensions (`{{.GroupBy}}`), and label filters (`{{.AdditionalFilters}}`). These
+variables automatically align your query to SLO changes, and also help facilitate
+configuration as code by single-sourcing their definitions.
+
+## Tune time window and burn rate definitions
+
+Observability Platform uses opinionated default time windows and multi-window burn
+rates, all based on industry best practices.
+
+If you intend to change time window and burn rate definitions, ensure that they
+remain realistic and stay mindful of the alerting noise that might result from changes.
+
+When redefining time windows and burn rates, consider the following:
+
+- Prioritize alerts: Ensure that alerts are prioritized by severity so that higher
+  burn rates trigger more urgent action than long-term trends or slower burn rates.
+- Mind services' traffic volume: Services with lower traffic levels might have inconsistent
+  or spiky error rates that cause false positives. Use windows with longer time
+  frames and more conservative burn rates to reduce noise in your alerts.
+
+## Design SLOs for rapid response to issues
+
+An SLI measures your service's error rates across a defined time window to determine
+whether your service achieves its objective. The SLO also provides tools that help
+responders protect your service from breaching its objective.
+
+Burn rates measure your error rates in time windows as small as several minutes,
+rather than days or weeks. Burn rates can fire alerts on the implication that if
+a high error rate across a short time span continues unabated, then your SLO will
+breach its objective before the end of its time window.
+
+Observability Platform's defaults provide multiple burn rates. SLOs provide
+measurements across multiple windows per burn rate to reduce false positives. By
+setting burn rate alerts, your SLO can identify and alert responders when a service
+rapidly experiences more errors or downtime than expected. Your responders can
+then intervene long before the error budget is exhausted.
+
+## Design SLOs for risk management
+
+You can also use SLOs in risk management and planning. Error budgets are designed to be
+spent, and you can use them to plan upcoming deployments that you know might deplete
+them.
+
+For example, downtime from planned deployments and maintenance activities are part
+of your error budget, and burn rate alerting can help you identify and react when
+such planned actions have unexpected user-facing results.
+
+Consider your error budget separately from your SLO objective. If you set a 99%
+objective, consider your 1% error budget as its own amount of capacity that you
+can spend on risky deployment or maintenance actions. Burn rates measure consumption
+of your error budget rather than your total objective because they extrapolate how
+much capacity you can sacrifice before your service breaches its objective.
+
+Burn rate alerts help responders react to issues as they happen, and also help identify
+how much downtime your users can tolerate for the rest of your time window.
+
+An incident with a high burn rate leaves less error budget for the rest of your time
+window, which affects how you allocate the remainder. Conversely, reducing the
+downtime of risky actions gives you more budget to work with for more frequent
+or riskier actions within your time window.
+
+Use burn rate alerts to also alert stakeholders who determine deployment schedules,
+and use visualizations in an SLO's page to find historical context when planning
+deployments for future time windows.
+
+## Create effective SLO alerts
+
+For managing and responding to degraded service performance and outages, SLOs provide
+significant benefits compared to other alerting practices:
+
+- User-centric measurement: SLOs focus on visualizing and reporting on symptoms
+  rather than causes, which concentrates coverage on issues actively affecting your
+  services and reduces false positives.
+- Standardized operational practices: The standardized features and presentation
+  of SLOs facilitate normalized alerts, dashboards, and operational reviews across
+  your organization to improve consistency in team transitions and on-call rotations.
+- Data-driven decision making: By measuring error budgets against availability targets,
+  SLOs provide objective data toward balancing investments in a service's reliability
+  against new feature development. This allows for more consistent risk management
+  while you iterate on the service's implementation.
+
+When you [define your SLO](/observe/slo#define-an-slo), use the **SLO** tab in the
+**SLO preview** drawer to simulate alerts. This tab uses real data to project where
+your SLO would have fired alerts, and you can update those simulations after tuning
+your objective and burn rates.
+
+### Avoid high-impact alerts on new SLOs
+
+New SLOs often require some iteration and tuning to become effective alerting tools.
+The best-designed objectives and alerts can still result in alerts firing too quickly
+or too often.
+
+For new SLOs, create alerts with a trial period of a few weeks. Use lower-impact
+notification policies during this period to avoid recurring alerts, and use this period
+to tune your SLO's objective, burn rates, and alerting settings.
+
+After you've ensured that the SLO alerts your responders only when necessary,
+switch your SLO to a higher-impact notification policy.
+
+## Use SLOs with other Observability Platform features
+
+In addition to alerts, Observability Platform SLO integrate with other features
+that help you identify, analyze, and investigate issues.
+
+- Use
+  [Differential Diagnosis (DDx) for metrics](/investigate/analyze/differential-diagnosis/metrics)
+  from SLO visualization panels to help identify the source of spikes or other unusual
+  shapes.
+- Connect SLOs to [services](/observe/services), which includes the SLO's
+  status with other monitors when depicting the service's health. This can draw
+  responders' attention to SLOs when viewing a [service page](/observe/services/service-pages).
+
+## Further reading
+
+SLOs are a complex subject, and resources from across the observability industry
+can help you better understand them and improve your SLO designs.
+
+- [SRE Fundamentals: SLA versus SLO versus SLI](https://chronosphere.io/learn/know-the-sre-fundamentals-differences-between-sli-vs-slo-vs-sla/)
+  in Chronosphere's Resource Center provides a high-level overview of SLO components,
+  purpose, and terminology.
+- [The Art of SLOs](https://sre.google/resources/practices-and-processes/art-of-slos/)
+  workshop by Google's SRE team provides a theoretical basis and practical hands-on
+  examples of effective indicators and objectives.

@@ -1,0 +1,66 @@
+---
+title: Prometheus Remote Write destination plugin
+sidebarTitle: Prometheus Remote Write destination plugin (Telemetry Pipeline)
+description: Send pipeline data to Prometheus Remote Write.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import BasicAuthentication from '/snippets/_partials/pipeline-basic-auth.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Prometheus Remote Write [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `prometheus_remote_write`, alias: `PrometheusRemoteWrite`)
+lets you configure your telemetry pipeline to send metrics data in a standardized
+format over HTTP to a configured remote endpoint.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs       | Metrics     | Traces     |
+| :--------: | :---------: | :--------: |
+| <NoIcon /> | <YesIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name     | Key | Description | Default |
+| -------- | --- | ----------- | ------- |
+| **Host** | `host` | Required. IP address or hostname of the target HTTP Server. | `127.0.0.1` |
+| **Port** | `port` | Required. TCP port of the target HTTP Server. | `80` |
+| **URI**  | `uri` | Required. Specifies an optional HTTP URI for the target web server. | `/` |
+
+If you configured [Chronosphere Collector](/ingest/metrics-traces/collector) to
+serve as a Prometheus remote write backend, view the Chronosphere Collector configuration
+for the configured host, port, and URL.
+
+### Advanced
+
+| Name                                    | Key | Description | Default |
+| --------------------------------------- | --- | ----------- | ------- |
+| **Headers**                             | `header` | Adds an HTTP header key/value pair. You can set multiple headers. | _none_ |
+| **Additional Prometheus Metric Labels** | `add_label` | Adds custom labels to all metrics exposed through the Prometheus exporter. You can set multiple headers. | _none_ |
+| **HTTP Proxy**                          | `proxy` | Specifies an HTTP Proxy. The expected format of this value is `http://host:port`. | _none_ |
+| **Log Response Payload**                | `log_response_payload` | Logs the response payload within the Core Pipeline log. | `false` |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />
+
+### Basic Authentication
+
+<BasicAuthentication />

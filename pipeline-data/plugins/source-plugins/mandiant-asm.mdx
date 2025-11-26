@@ -1,0 +1,74 @@
+---
+title: Mandiant ASM source plugin
+sidebarTitle: Mandiant ASM source plugin (Telemetry Pipeline)
+description: Use the Mandiant ASM source plugin.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Mandiant ASM [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `http_loader`, alias: `mandiant_asm`) lets you query Mandiant ASM to
+ingest data into a telemetry pipeline.
+
+<SourceStyle/>
+
+<Info>
+This plugin doesn't support the use of a
+[descriptive metadata name](/pipeline-data/plugins#descriptive-names) in the
+Pipeline Builder interface.
+</Info>
+
+<Info>
+This plugin doesn't support duplicates of itself within the same pipeline.
+Additionally, this plugin can't be used in combination with these source plugins
+within the same telemetry pipeline:
+
+- [Absolute](/pipeline-data/plugins/source-plugins/absolute)
+- [HTTP API collector](/pipeline-data/plugins/source-plugins/http-api-collector)
+- [Okta](/pipeline-data/plugins/source-plugins/okta)
+- [Signal Sciences](/pipeline-data/plugins/source-plugins/signal-sciences)
+- [Slack](/pipeline-data/plugins/source-plugins/slack)
+- [Vectra M365](/pipeline-data/plugins/source-plugins/vectram365)
+</Info>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+The configured fields replace sections of the `url` field in the YAML file in the
+following way:
+
+```text
+url: https://asm-api.advantage.mandiant.com/api/v1/search/SEARCH_ELEMENT/SEARCH_QUERY
+```
+
+| Name               | Key | Description | Default |
+| ------------------ | --- | ----------- | ------- |
+| **Project ID**     | `PROJECT_ID` | Required. | _none_ |
+| **Search element** | _none_ | Required. Used in `url` field. Accepted values: `entities`, `issues`, `technologies`. | `entities` |
+| **Search Query**   | _none_ | Required. Used in `url` field. | _none_ |
+| **Access Key**     | `INTRIGUE_ACCESS_KEY` | Required. | _none_ |
+| **Secret Key**     | `INTRIGUE_SECRET_KEY` | Required. | _none_ |
+
+### Advanced
+
+| Name     | Key | Description | Default |
+| -------- | --- | ----------- | ------- |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |

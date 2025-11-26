@@ -1,0 +1,82 @@
+---
+title: Import Grafana dashboards
+---
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import ChronoctlConvert from '/snippets/_partials/chronoctlconvert.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+You can export dashboards from Grafana as JSON, then import them into Chronosphere
+as [classic dashboards](/observe/dashboards/classic-dashboards).
+For steps on exporting a dashboard from Grafana, see its [documentation](https://grafana.com/docs/grafana/v7.5/dashboards/export-import/).
+
+<Warning>
+Chronosphere supports dashboards exported from Grafana versions up to 7.5. Dashboards
+  exported from newer versions of Grafana might not be importable without modification.
+</Warning>
+
+<Tabs>
+  <Tab title="Web" id="import-a-grafana-dashboard-cloud">
+    To import a Grafana dashboard in the Observability Platform interface, see
+    [import a dashboard](/observe/dashboards#import-a-dashboard-with-json).
+
+  </Tab>
+
+  <Tab title="Chronoctl" id="import-a-grafana-dashboard-chronoctl">
+
+    <ChronoctlConvert/>
+
+    To convert exported Grafana dashboards in JSON format to
+    [Chronoctl](/tooling/chronoctl) YAML, use the `convert grafana`
+    command:
+
+    ```shell copy
+    chronoctl convert grafana -D <DIRECTORY> > <DASHBOARDS FILE.YML>
+    ```
+
+    Replace the following:
+
+    - _`DIRECTORY`_: A path containing Grafana dashboard JSON files.
+    - _`DASHBOARDS FILE.YML`_: A filename into which Chronoctl saves the
+      resulting YAML.
+
+    To convert Grafana dashboards that use a Graphite data source, add the
+    `--graphite-datasource` option.
+
+    To import the converted dashboard, use the `apply` command:
+
+    ```shell copy
+    chronoctl apply -f DASHBOARDS FILE.YML
+    ```
+  </Tab>
+
+  <Tab title="Terraform" id="import-a-grafana-dashboard-terraform">
+    To import a Grafana dashboard using [Terraform](/tooling/infrastructure/terraform):
+
+    1.  Declare a `chronosphere_classic_dashboard` resource in a Terraform file and provide
+        a resource name.
+
+        For example, the following code creates a dashboard that Terraform refers to as
+        `kubelet` and Chronosphere associates with a specific collection:
+
+        ```ruby
+        resource "chronosphere_classic_dashboard" "kubelet" {
+          # Reference to the collection to which the alert belongs
+          collection_id = chronosphere_bucket.service.id
+
+          # Inlined Grafana dashboard JSON. Note the inlined service_name variable in the definition
+          dashboard_json = <<EOF
+        {
+          "title": "${var.service_name} Overview",
+          // ...
+        }
+        EOF
+        }
+        ```
+    2.  Add the [Grafana dashboard JSON](https://grafana.com/docs/grafana/v7.5/dashboards/export-import/)
+        inline as the content of the `dashboard_json` field. If the Grafana dashboard sets
+        the `uid` field, the Terraform provider ignores it and assigns a unique identifier.
+    3.  Use `terraform apply` to apply the Terraform file and create the resource.
+  </Tab>
+</Tabs>

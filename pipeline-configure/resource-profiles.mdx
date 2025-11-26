@@ -1,0 +1,201 @@
+---
+title: Resource profiles
+description: Optimize pipeline performance with resource profiles.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Chronosphere Telemetry Pipeline uses templates called _resource profiles_
+to configure settings related to buffering and resource consumption. You can
+choose between several predefined resource profiles or create your own resource
+profiles that meet your requirements for performance and reliability.
+
+<Warning>
+To avoid the potential for data loss, avoid using improperly configured
+resource profiles or resource profiles incompatible with your environment,
+including profiles that exceed your available resources. Additionally, updating
+the resource profile for an existing pipeline causes that pipeline to update and
+potentially restart, which can interrupt the flow of data through that pipeline.
+</Warning>
+
+## Predefined resource profiles
+
+The following predefined resource profiles are available in Telemetry Pipeline:
+
+- `best-effort-low-resource`
+- `high-performance-guaranteed-delivery`
+- `high-performance-optimal-throughput`
+
+If you don't specify a resource profile when you create a pipeline, Telemetry Pipeline
+uses the `best-effort-low-resource` profile by default.
+
+Each resource profile uses the following values:
+
+{/* markdownlint-disable MD033 */}
+
+| Type | Description |
+| ---- | ----------- |
+| `best-effort-low-resource` | - `StorageMaxChunksUp`: `128`<br /> - `StorageSyncFull`: `false`<br /> - `StorageBacklogMemLimit`: `5M`<br /> - `StorageVolumeSize`: `250Mi`<br /> - `CPULimit`: `0`<br /> - `CPURequest`: `0`<br /> - `MemoryLimit`: `0`<br /> - `MemoryRequest`: `0`<br /> |
+| `high-performance-guaranteed-delivery` | - `StorageMaxChunksUp`: `256`<br /> - `StorageSyncFull`: `false`<br /> - `StorageBacklogMemLimit`: `256M`<br /> - `StorageVolumeSize`: `512Mi`<br /> - `CPULimit`: `0`<br /> - `CPURequest`: `0`<br /> - `MemoryLimit`: `0`<br /> - `MemoryRequest`: `0`<br /> |
+| `high-performance-optimal-throughput` | - `StorageMaxChunksUp`: `0`<br /> - `StorageSyncFull`: `false`<br /> - `StorageBacklogMemLimit`: `""`<br /> - `StorageVolumeSize`: `128Mi`<br /> - `CPULimit`: `0`<br /> - `CPURequest`: `0`<br /> - `MemoryLimit`: `0`<br /> - `MemoryRequest`: `0`<br /> |
+
+{/* markdownlint-enable MD033 */}
+
+You can't edit these predefined resource profiles, but you can
+[define new resource profiles](#define-a-new-resource-profile).
+
+## Settings
+
+Each resource profile includes the following settings:
+
+| Name in Pipeline CLI | JSON configuration key | Description | Possible values |
+|----------------------|------------------------|-------------|-----------------|
+| `STORAGE-SYNC-FULL` | `resources.storage.syncFull` | Determines how often the memory buffer and file system buffer are synchronized. If `true`, uses the `full` [Fluent Bit `storage.sync` mode](https://docs.fluentbit.io/manual/administration/buffering-and-storage#service-section-configuration), which synchronizes after every write operation. If `false`, uses the `normal` mode, which synchronizes at regular intervals. This setting affects only [StatefulSet pipelines](/pipeline-configure/kubernetes/workloads). If unspecified, defaults to `false`. | `true`, `false` |
+| `STORAGE-BACKLOG-MEM-LIMIT` | `resources.storage.backlogMemLimit` | Required. Sets the amount of memory allocated for storing buffered data. This setting only affects [StatefulSet pipelines](/pipeline-configure/kubernetes/workloads), but it's still required in all resource profile definitions. | Memory in MB |
+| `STORAGE-VOLUME-SIZE` | `resources.storage.volumeSize` | Required. Sets the size of the storage volume in each pipeline Pod. Pipelines with the Deployment or DaemonSet [workload type](/pipeline-configure/kubernetes/workloads) use an ephemeral storage volume. Pipelines with the StatefulSet workload type use a persistent storage volume. | Volume size in Mi/Gi/Ti |
+| `STORAGE-MAX-CHUNKS-UP` | `resources.storage.maxChunksUp` | Sets the maximum number of [chunks](https://docs.fluentbit.io/manual/administration/buffering-and-storage#chunks) that can be buffered in memory. This setting only affects [StatefulSet pipelines](/pipeline-configure/kubernetes/workloads). If unspecified, defaults to `0`. | Any integer greater than or equal to `0` |
+| `CPU-LIMIT` | `resources.cpu.limit` | Required. Sets the [CPU limit](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/). | Any [Kubernetes CPU value](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu) |
+| `CPU-REQUEST` | `resources.cpu.request` | Required. Sets the [CPU request](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/). | Any [Kubernetes CPU value](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu) |
+| `MEM-LIMIT` | `resources.memory.limit` | Required. Sets the [memory limit](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/). | Any [Kubernetes memory value](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory) |
+| `MEM-REQUEST` | `resources.memory.request` | Required. Sets the [memory request](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/). | [Kubernetes memory value](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory) |
+
+<Info>
+A value of `0` sets an unlimited upper bound.
+</Info>
+
+## Pipeline CLI commands
+
+Use the following [Pipeline CLI](/pipeline-cli) commands to interact with
+resource profiles.
+
+### Specify the resource profile for a new pipeline
+
+Set the resource profile for a new pipeline by using the following command:
+
+```shell copy /INSTANCE/ /PIPELINE/ /PROFILE/
+calyptia create pipeline --core-instance INSTANCE --name PIPELINE --resource-profile PROFILE
+```
+
+Replace the following:
+
+- _`INSTANCE`_: The name of your Core Instance.
+- _`PIPELINE`_: A name for your new pipeline.
+- _`PROFILE`_: The name of the resource profile to use.
+
+### View the resource profile of an existing pipeline
+
+Use the following command to view the active resource profile of an existing pipeline:
+
+```shell copy /PIPELINE/
+calyptia get pipeline PIPELINE --output-format yaml
+```
+
+Replace _`PIPELINE`_ with the name of your pipeline.
+
+In the resulting YAML output, the `resourceProfile` key contains details about the
+pipeline's active resource profile, including its name and settings.
+
+### Update the resource profile for an existing pipeline
+
+Update the resource profile for an existing pipeline by using the following command:
+
+```shell copy /PIPELINE/ /PROFILE/
+calyptia update pipeline PIPELINE --resource-profile PROFILE
+```
+
+Replace the following:
+
+- _`PIPELINE`_: The name or [unique ID](/pipeline-configure/metadata#get-pipeline-ids)
+  of your pipeline.
+- _`PROFILE`_: The name of the resource profile to use.
+
+### Define a new resource profile
+
+Use the following command to define your own resource profiles in Telemetry Pipeline:
+
+```shell copy /INSTANCE/ /PROFILE/ /FILE_NAME/
+calyptia create resource_profile --core-instance INSTANCE --name PROFILE --spec FILE_NAME
+```
+
+Replace the following:
+
+- _`INSTANCE`_: The name of your Core Instance.
+- _`PROFILE`_: A name for your new resource profile.
+- _`FILE_NAME`_: The JSON file that defines your resource profile.
+
+This is an example of a resource profile with a valid JSON structure:
+
+```json copy
+{
+ "resources": {
+  "storage": {
+   "syncFull": false,
+   "backlogMemLimit": "5M",
+   "volumeSize": "250Mi",
+   "maxChunksUp": 128,
+  },
+  "cpu": {
+   "limit": "0",
+   "request": "0",
+  },
+  "memory": {
+   "limit": "0",
+   "request": "0"
+  }
+ }
+}
+
+```
+
+### Change the settings of a resource profile
+
+> Requires Chronosphere Telemetry Pipeline v2.48.0 or later.
+
+Use the following command to change the settings of an existing resource profile:
+
+```shell copy /PROFILE/ /FILE_NAME/
+calyptia update resource_profile --name PROFILE --spec FILE_NAME
+```
+
+Replace the following:
+
+- _`PROFILE`_: The name of the resource profile to update.
+- _`FILE_NAME`_: The JSON file that defines the new settings for your resource
+  profile.
+
+If any pipelines are using the specified resource profile, changes to the resource
+profile are applied to those pipelines accordingly.
+
+### List available resource profiles
+
+Use the following command to list the resource profiles associated with a
+specified Core Instance:
+
+```shell copy /INSTANCE/
+calyptia get resource_profiles --core-instance INSTANCE
+```
+
+Replace _`INSTANCE`_ with the name of the Core Instance.
+
+You can also add the `--show-ids` flag to print the unique IDs associated with
+each resource profile.
+
+### Get details about a resource profile
+
+Use the following command to get details about a specific resource profile:
+
+```shell copy /ID/
+calyptia get resource_profile ID
+```
+
+Replace _`ID`_ with the unique ID of that resource profile.
+
+### Delete a resource profile
+
+Use the following command to delete a specific resource profile:
+
+```shell copy /ID/
+calyptia delete resource_profile ID
+```
+
+Replace _`ID`_ with the unique ID of that resource profile.

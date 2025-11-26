@@ -1,0 +1,138 @@
+---
+title: Using PromQL in Observability Platform
+---
+import PanelQueries from '/snippets/_partials/panel-queries.mdx';
+import OtherQueryingFeatures from '/snippets/_partials/other-querying-features.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Prometheus Query Language (PromQL) lets you select and aggregate time series data
+in real time.
+
+This documentation provides an introduction to PromQL and the features and syntax most
+relevant to Chronosphere Observability Platform. For full details about PromQL, read the
+[Prometheus documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/).
+
+[Observability Platform is fully compatible with PromQL](https://promlabs.com/promql-compliance-tests/).
+If you need labels to differentiate between clusters, namespaces, and other items,
+the PromQL queries in existing dashboards, alerts, and recording rules need to reflect
+this.
+
+<PanelQueries/>
+
+## Basic querying
+
+All PromQL expressions start with a _selector_, which is typically the name of the
+metric followed by a set of labels, values, and operators. A query returns one or
+more time series that match the criteria. PromQL refers to these as _instant vectors_
+because they represent a set of time series where every single data point maps to
+a timestamp at that instant.
+
+```text
+    |<----------metric name--------->|<---labels--->|
+rate(node_network_receive_bytes_total{device=~"eth1"} [5m]) * 8
+    |<-------------------selector------------------>| |<->|
+|<-----------------------function------------------------>| ^ operator
+```
+
+For example, an app updates a metric to keep a total of the bytes received by a
+particular node. The app names the metric `node_network_receive_bytes_total`.
+
+The following query returns all time series that match the metric name:
+
+```text copy
+node_network_receive_bytes_total{}
+```
+
+To return only time series with a specific label and value, include them in curly
+brackets (`{}`) after the metric name.
+
+The following query returns all time series that match the metric name, and which
+also have a `device` label whose value is equal to `eth1`:
+
+```text copy
+node_network_receive_bytes_total{device="eth1"}
+```
+
+PromQL supports dozens of arithmetic, comparison, logical, and aggregation operators.
+The
+[Prometheus documentation](https://prometheus.io/docs/prometheus/latest/querying/operators/)
+provides a full list of operators.
+
+You can combine multiple labels and values with commas.
+
+The following query returns all time series that match the metric name, and which
+also have both a `device` label whose value is equal to `eth1` and an `instance`
+label whose value is equal to `production`:
+
+```text copy
+node_network_receive_bytes_total{device="eth1", instance="production"}
+```
+
+PromQL supports regular expression matching and negation in label queries:
+
+- `=` : Select labels equal to the provided string.
+- `!=` : Select labels not equal to the provided string.
+- `=~` : Select labels that match the provided string based on a regular expression.
+- `!~` : Select labels that don't match the provided string based on a regular expression.
+
+The following query returns all time series that match the metric name, and which
+also have a `device` label whose value matches `eth` followed by any non-zero number
+of other characters:
+
+```text copy
+node_network_receive_bytes_total{device=~"eth.+"}
+```
+
+## Filter values to a range
+
+Query results often must be filtered to a narrower time span or time-range offset.
+PromQL refers to these as _range vectors_ because they represent a set of time series
+where every timestamp maps to a range of data points from some point in the past,
+as determined by the query.
+
+The following query returns all time series with an `offset` of an hour (`1h`)
+ago that match the metric name, and which also have a `device` label whose value
+matches `eth0`:
+
+```text copy
+node_network_receive_bytes_total{device="eth0"} offset 1h
+```
+
+For details about the `offset` modifier, see the
+[PromQL documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/#offset-modifier).
+
+You can use PromQL to return a range vector, then use a function to perform calculations
+on the resulting range of time series.
+
+The following query returns all time series from the last ten minutes that match
+the metric name, and which also have a `device` label whose value matches `eth0`:
+
+```text copy
+node_network_receive_bytes_total{device="eth0"}[10m]
+```
+
+## Variables
+
+Observability Platform provides built-in variables for PromQL queries. These are distinct from
+[dashboard variables](/observe/dashboards), and you can use both to write queries
+for dashboard panels.
+
+- `$__range`: Defines a range for the current query or dashboard.
+- `$__rate_interval`: Combines the tenant's
+  [global scrape interval](/ingest/metrics-traces/collector/discover/scrape-configuration#global-scrape-configuration)
+  with the calculated step, using the formula `Math.max($__interval + scrapeInterval, 4 * scrapeInterval)`.
+  This ensures reliable rate calculations. Be aware that the Grafana special variable
+  `$__rate_interval` has unique behavior that might not be compatible with the
+  Chronosphere Prometheus data source's scrape interval. Chronosphere instead recommends
+  using a
+  [separate `$interval` variable](/observe/dashboards/customization/intervals).
+- `$__interval`: Automatically picks a step size optimized for the panel's time
+  range and max data points, rounded to a value like `15s` or `30s`. If a minimum
+  step (`min_step`) is set in your query, Observability Platform respects that.
+  The `maxDataPoints` is based off the panel width.
+
+## Other querying features
+
+<OtherQueryingFeatures/>

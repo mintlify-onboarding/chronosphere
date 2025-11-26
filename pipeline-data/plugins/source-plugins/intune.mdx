@@ -1,0 +1,52 @@
+---
+title: Microsoft Intune - Audit event source plugin
+sidebarTitle: Microsoft Intune - Audit event source plugin (Telemetry Pipeline)
+description: Ingest Microsoft Intune - Audit events in Chronosphere Telemetry Pipeline.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Microsoft Intune - Audit event [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `http_loader`, alias: `microsoft-intune-audit-events`) lets you ingest
+data from Microsoft Intune logs into a telemetry pipeline.
+
+<SourceStyle/>
+
+<Info>
+This plugin doesn't support the use of a
+[descriptive metadata name](/pipeline-data/plugins#descriptive-names) in the
+Pipeline Builder interface.
+</Info>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                     | Key | Description | Default |
+| ------------------------ | --- | ----------- | ------- |
+| **Tenant ID**            | `oauth2_token_url`     | Required. Your Microsoft tenant ID. | _none_ |
+| **OAuth2 Client ID**     | `oauth2_client_id`     | Required. Your Microsoft OAuth client ID. | _none_ |
+| **OAuth2 Client Secret** | `oauth2_client_secret` | Required. Your Microsoft OAuth client secret. | _none_ |
+
+### Advanced
+
+| Name     | Key | Description | Default |
+| -------- | --- | ----------- | ------- |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |

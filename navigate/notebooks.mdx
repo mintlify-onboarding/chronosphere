@@ -1,0 +1,85 @@
+---
+title: Use notebooks to gather related information
+sidebarTitle: Notebooks
+shortDesc: Use a notebook to gather resources across pages and troubleshoot problems
+---
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<LimitedAvail />
+
+Use _notebooks_ to gather information from multiple pages in Chronosphere Observability
+Platform. When you're troubleshooting a problem, you might need graphs, charts, and
+other resources to review at the same time. Notebooks let you gather these resources
+in one place for ease of review.
+
+Your notebook isn't visible to other users.
+
+## View your notebook
+
+Your notebook is visible anywhere in Observability Platform.
+
+To open your notebook, click the **Notebook** <img src="/doc-assets/notebook.png"
+alt="Notebook icon" /> icon in the right sidebar, or use the keyboard shortcut
+<kbd>Command+I</kbd> (on macOS).
+
+## Add items to your notebook
+
+You can add items from several Observability Platform pages to your notebook.
+To do so:
+
+1. In a supported resource, select the <Icon icon="ellipsis-vertical" />three vertical
+   dots icon.
+1. Select **Add to notebook**.
+
+The selected resource displays at the bottom of your notebook.
+
+To delete an item from your notebook, click the item and then press <kbd>Delete</kbd>.
+
+Notebooks support text anywhere in your notebook that isn't an added element.
+Notebook text supports a limited set of [markdown functions](https://commonmark.org/help/).
+Some formatting options are available in the toolbar under the **Notebook** title bar.
+
+## Customize panels in a notebook
+
+You can change the [time range](/navigate/time-ranges) for the entire notebook, or
+on a per-panel basis. Use this to compare different times for multiple copies of the
+same panel. For example, if there's an anomaly in a graph in your notebook, add a
+second copy, and change the time range to the same time last week to compare
+patterns.
+
+To customize a panel's time range:
+
+1. Hold the pointer over the panel.
+1. Click the <Icon icon="clock" /> clock icon.
+1. Select an available time range, or **Custom time range** to set your own.
+
+The customized time range displays in the panel next to the panel name, or
+**Custom time range** if you selected your own.
+
+To reset the time range, click the <Icon icon="clock" /> clock icon and
+select **Use Notebook Time**.
+
+### Resources available to notebooks
+
+In general, resources that look like dashboard panels can be added to a notebook.
+These panels are available on various pages throughout Observability Platform.
+
+You can add the following resources to notebooks:
+
+- [Dashboard panels](/observe/dashboards/panels)
+- Query results in [Metrics Explorer](/investigate/querying/metrics/explorer)
+- Panels in the [License overview](/administer/limits-licensing/licensing#license-overview)
+- [SLO charts](/observe/slo)
+- [Service panels](/observe/services/service-pages#visualization-panels)
+- Query results in [Metrics DDx](/investigate/analyze/differential-diagnosis/metrics)
+- [Tracing data](/control/sampling/)
+- Query results in [Logs Explorer](/investigate/querying/query-logs)
+- Graphs in the [Metrics catalog](/investigate/querying/metrics/metrics-catalog) preview
+
+## Delete your notebook contents
+
+To clear the entire notebook, click the **<Icon icon="trash" />
+Trash** icon.

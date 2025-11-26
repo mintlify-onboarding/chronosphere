@@ -1,0 +1,153 @@
+---
+title: Visualize dashboard contents with panels
+---
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+_Chart panels_, also called _panels_, transform or filter the results of a query
+and visualize them.
+
+For details about panels, see the
+[Grafana documentation](https://grafana.com/docs/grafana/v7.5/panels/add-a-panel/).
+
+## Add panels to a dashboard
+
+<Tabs>
+  <Tab title="Web" id="add-panels-to-a-dashboard-cloud">
+    To add a panel to a dashboard:
+
+    1. Open the dashboard.
+    1. Click the **Add Panel** icon, styled as a bar chart with a plus sign (+) icon.
+    1. In the placeholder panel that appears, click **Add new panel**.
+
+    After adding your panels, click the **Save dashboard** button to save your
+    changes.
+  </Tab>
+
+  <Tab title="Chronoctl" id="add-panels-to-a-dashboard-chronoctl">
+    To define panels for a dashboard from [Chronoctl](/tooling/chronoctl)
+    YAML, such as the output of `chronoctl dashboards read <slug>`, use the `apply` command.
+
+    1. Submit a YAML-defined dashboard to Chronosphere with the Chronoctl `apply` command.
+
+       ```shell copy
+       chronoctl apply -f dashboard.yaml
+       ```
+    1. Confirm that Chronosphere accepted the dashboard by using the `dashboards read`
+       command.
+
+       ```shell copy /SLUG/
+       chronoctl dashboards read SLUG
+       ```
+
+       Replace _`SLUG`_ with the `slug` value you provided in the dashboard definition.
+
+    <InfoTerraformLockout />
+  </Tab>
+</Tabs>
+
+## Edit a panel
+
+You can customize the features of each panel in your dashboards in its _panel editor_.
+
+To access the panel editor:
+
+1. Click the panel's title to open its controls.
+1. Click **Edit** to open the panel editor.
+
+From the panel editor, you can change a panel's [query](#change-a-panels-query),
+[visualization type](#change-a-panels-type), and
+[data source](#change-a-panels-data-source).
+
+Grafana provides many options and controls in the panel editor that aren't documented
+in this guide. For details, see the
+[Grafana documentation](https://grafana.com/docs/grafana/v7.5/panels/panel-editor/).
+
+### Change a panel's type
+
+A panel's _type_ defines its visualization method. By default, a new panel is of the Graph
+type. For a list of core panel types, see the
+[Grafana documentation](https://grafana.com/docs/grafana/v7.5/panels/visualizations/).
+
+To change the panel's type:
+
+1. Open the panel's editor.
+1. Click **Show options**.
+1. Select a type under the **Visualizations** section.
+1. Optional: Click **Apply** to save any panel type changes and exit the panel
+   editor.
+
+### Change a panel's data source
+
+A panel's _data source_ defines what the panel queries for the data that it visualizes. By
+default, a new panel queries the Chronosphere Prometheus data source. If you're ingesting
+metrics from Graphite, change the data source to **Chronosphere Graphite**.
+
+To change the panel's data source:
+
+1. Open the panel's editor.
+1. In the **Query** tab, click the data source dropdown.
+1. Select a data source.
+1. Optional: Click **Apply** to save any data source changes and exit the panel editor.
+
+### Change a panel's query
+
+To populate the panel with data from the selected data source, you write queries
+in the panel editor's query editor. The query editor interface can change based
+on the panel's data source.
+
+To change the query for the default Chronosphere Prometheus data source:
+
+1. Open the panel's editor.
+1. In the **Query** tab, enter PromQL expressions in the **Query** field.
+
+   The visualization preview changes as you edit the query. If the query results
+   in an error, a **!** tab appears in the visualization preview's title bar that
+   provides the error message when you hold the pointer over it.
+1. Optional: Customize the query's presentation by editing the fields beneath the
+   query.
+1. Optional: Add additional queries by clicking the **+ Query** button.
+1. Optional: Click **Apply** to save any query changes and exit the panel editor.
+
+For details about writing queries, read the
+[querying documentation](/investigate/querying).
+
+Observability Platform also includes an interactive [Query Builder](/investigate/querying/metrics/builder)
+that you can use to construct, optimize, and debug queries before saving, using,
+and sharing them with your team.
+
+<Info>
+The dashboard edit screen might suggest using a `rate()` function when querying
+  metrics. However, Chronosphere recommends using `rate()` only with Counter panels.
+
+  Although this message is relevant only with Counter panels, it sometimes appears
+  when editing Gauge panels. Grafana suggests using `rate()` based on the metric
+  name and keywords, such as `count` and `total`, even when it's inappropriate for
+  a panel type.
+
+  Also, be aware that the Grafana special variable `$__rate_interval` has unique
+  behavior that might not be compatible with the Chronosphere Prometheus data source's
+  scrape interval. Chronosphere recommends using a separate `$interval` variable
+  instead.
+</Info>
+
+### Exit the panel editor
+
+To save changes to a panel and exit the panel editor, click **Apply**.
+
+To save changes to both the panel and dashboard, and then exit the panel editor,
+click **Save**.
+
+To exit the panel editor without saving changes, click **Discard**.
+
+## Save changes to a dashboard
+
+To save changes to a dashboard's panels and layout from the dashboard view:
+
+1. Click **Save dashboard**, represented by a disk icon.
+1. Optional: If you changed the dashboard's time range and want to save it as the
+   default range, select **Save current time range as dashboard default**.
+1. Optional: In the **Save dashboard** dialog, describe the change.
+1. Click **Save**.

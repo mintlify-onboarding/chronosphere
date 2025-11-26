@@ -1,0 +1,324 @@
+---
+title: Log datasets
+description: Use datasets in Chronosphere Observability Platform to map sets of logs to named groups relevant to your organization.
+robots: noindex, nofollow
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import TerraformPlan from '/snippets/_partials/terraformplan.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Understanding your license consumption helps identify where you're spending the most
+money on your logging data, and which services or operations are consuming the most
+of your license capacity.
+
+After creating [partitions](/control/consumption/partitions), you can create log
+_datasets_, which are an optional control mechanism that let you map sets of logs to
+named groups relevant to your organization. Use log datasets to track processed and
+persisted bytes for those groups over time.
+
+For example, you might create a `Shopper` dataset based on data like services, customer
+IDs, and tags that relate to your shopping app. Viewing that dataset provides a
+snapshot of log data volume associated with the entire business unit related to your
+shopping app.
+
+After creating datasets, you can update your partitions to reference datasets instead
+of using standalone partitions. Use log datasets when you need reusable slices of
+data that are tracked consistently over time, especially for when you anticipate
+referencing the same complex filters across multiple partitions, queries, or
+controls.
+
+## View datasets
+
+Select from the following methods to view and filter available datasets.
+
+<Tabs>
+<Tab title="Chronoctl" id="view-datasets-chronoctl">
+
+To use [Chronoctl](/tooling/chronoctl) to return all datasets including
+[trace datasets](/control/sampling/datasets) (if enabled in your tenant), use the
+`chronoctl datasets list` command:
+
+```shell copy
+chronoctl datasets list
+```
+
+To return log datasets only, add the `type` argument to the command and specify
+`LOGS`:
+
+```shell copy
+chronoctl datasets list --type LOGS
+```
+
+To filter for a specific logs dataset, add the `slugs` argument to the command:
+
+```shell copy /SLUG/
+chronoctl datasets list --slugs SLUG
+```
+
+Replace _`SLUG`_ with the slug of the dataset you want to
+display.
+
+</Tab>
+<Tab title="API" id="view-datasets-api">
+
+To complete this action with the Chronosphere API, use the
+[`ListDatasets`](/tooling/api-info/definition/operations/ListDatasets)
+endpoint.
+
+To return only log datasets, specify `type=LOGS` in the URL of your API call.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Create datasets
+
+Use one of the following methods to create log datasets. Define and test your query
+in Logs Explorer, and then map that query to the resource you want to create.
+
+After creating a dataset, you can [define a budget](/control/consumption/datasets)
+to allocate a percentage of your log license limit to each dataset.
+
+To create a dataset:
+
+1. Define a query in [Logs Explorer](/investigate/querying/query-logs) that represents
+   the data you want included in the dataset. For example, the following query
+   returns all logs for the `shopper-service` service in the `production-us`
+   environment:
+
+   ```text copy
+   service = "shopper-service"
+   AND environment = "production-us"
+   ```
+
+1. After defining the underlying query, use one of the following methods to map the
+   query to a dataset that represents the business unit you want to track log data
+   for.
+
+   See the [Chronoctl YAML definition](#chronoctl-dataset-example) and the
+   [Terraform resource definition](#terraform-dataset-example) for examples.
+
+<Tabs>
+<Tab title="Chronoctl" id="create-a-dataset-chronoctl">
+
+<Info>
+If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
+parameter to generate a template for a specific resource type:
+
+```shell copy
+chronoctl datasets scaffold
+```
+
+You can redirect the results (using the redirection operator `>`) to a file for
+editing.
+</Info>
+
+To create a dataset with [Chronoctl](/tooling/chronoctl):
+
+1. Run the following command to generate a sample dataset configuration you can use
+   as a template:
+
+   ```shell copy
+   chronoctl datasets scaffold
+   ```
+
+   In the template, `kind: Dataset` defines an individual dataset.
+
+1. With a completed definition, submit it with:
+
+   ```shell copy /FILE_NAME/
+   chronoctl datasets create -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+See the [Chronoctl dataset example](#chronoctl-dataset-example) for a completed
+dataset definition.
+
+</Tab>
+<Tab title="Terraform" id="create-a-dataset-terraform">
+
+<TerraformPlan />
+
+To create a dataset with [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file and add the definition by using the
+   `chronosphere_dataset` type, followed by a name in a resource declaration.
+
+1. Run this command to apply the changes:
+
+   ```shell copy
+   terraform apply
+   ```
+
+See the [Terraform dataset example](#terraform-dataset-example) for a completed
+dataset resource.
+
+</Tab>
+<Tab title="API" id="create-a-dataset-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateDataset`](/tooling/api-info/definition/operations/CreateDataset)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Next steps
+
+After creating a dataset, [update partitions](/control/consumption/partitions#update-partitions)
+to reference the slug of your dataset.
+
+You can then [define budgets](/control/consumption/budgeting), which are optional
+shaping policies attached to a partition. Budgets provide guardrails to avoid
+runaway usage and overspending, while providing the flexibility to enforce
+accountability at the right level of ownership.
+
+### Chronoctl dataset example
+
+The following YAML definition consists of one dataset named
+`Logs for payment service in production US`. This dataset includes a service named
+`shopper-service` in the `production-us` environment.
+
+You must escape quotation marks in the `query` field. For example, to specify
+`"shopper-service"` as a value in your query, enter `\"shopper-service\"`. The
+`query` field accepts both `AND` and `OR` operators, but only one of these operator
+types is permitted. You can use multiple instances of the same operator, such as
+multiple `AND` or multiple `OR` operators.
+
+```yaml copy /shopper-service/ /production-us/
+api_version: v1/config
+kind: Dataset
+spec:
+  # Required name of the dataset. Can be modified after the dataset is created.
+  name: Logs for payment service in production US
+  # Unique identifier of the dataset. If not provided, a slug is generated based
+  # on the name field. Can't be modified after the dataset is created.
+  slug: log-shopping-service-production
+  # Optional description for the dataset.
+  description: Logs for payment service in US production environment
+  # Defining characteristics of the dataset.
+  configuration:
+    # Dataset type, which must be LOGS.
+    type: LOGS
+    log_dataset:
+        match_criteria:
+        # Query to match logs. This query can include AND or OR operators, but
+        # only one of these operator types is allowed in the query. You can use
+        # multiple instances of the same operator, such as multiple AND or multiple
+        # OR operators.
+          query: "service = \"shopper-service\" AND environment = \"production-us\""
+```
+
+### Terraform dataset example
+
+The following Terraform resource creates a dataset that Terraform refers to as
+`shopper_production_us`, with a human-readable name of
+`Logs for payment service in production US`.
+
+This dataset includes a service named `shopper-service` in the `production-us`
+environment.
+
+```ruby copy /shopper-service/ /production-us/
+resource "chronosphere_dataset" "shopper_production_us" {
+  name        = "Logs for payment service in production US"
+  description = "Logs for payment service in US production environment"
+  configuration {
+    type = "LOGS"
+
+    log_dataset {
+      match_criteria {
+        query = "service = 'shopper-service' AND environment = 'production-us'"
+      }
+    }
+  }
+}
+```
+
+## Update datasets
+
+Select from the following methods to update log datasets.
+
+<Tabs>
+<Tab title="Chronoctl" id="update-a-dataset-chronoctl">
+
+1. Update the datasets definition file.
+1. Run the following command to submit the changes:
+
+   ```shell copy /FILE_NAME/
+   chronoctl datasets update -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+</Tab>
+
+<Tab title="Terraform" id="update-a-dataset-Terraform">
+
+To edit datasets using [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file that updates the resource's existing properties.
+1. Run this command to apply the changes:
+
+   ```shell copy
+   terraform apply
+   ```
+
+</Tab>
+
+<Tab title="API" id="update-a-dataset-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateDataset`](/tooling/api-info/definition/operations/UpdateDataset) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Delete datasets
+
+Select from the following methods to delete log datasets.
+
+<InfoTerraformLockout />
+
+<Tabs>
+<Tab title="Chronoctl" id="deleting-a-dataset-chronoctl">
+
+To delete a dataset with [Chronoctl](/tooling/chronoctl), use the `chronoctl datasets delete`
+command:
+
+```shell copy /SLUG/
+chronoctl datasets delete SLUG
+```
+
+Replace _`SLUG`_ with the slug of the dataset you want to delete.
+
+For example, to delete a dataset with the slug `log-shopping-service-production`:
+
+```shell copy
+chronoctl datasets delete log-shopping-service-production
+```
+
+</Tab>
+<Tab title="Terraform" id="delete-a-dataset-terraform">
+
+<TerraformDel />
+
+</Tab>
+<Tab title="API" id="delete-a-dataset-api">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteDataset`](/tooling/api-info/definition/operations/DeleteDataset) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

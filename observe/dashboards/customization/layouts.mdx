@@ -1,0 +1,156 @@
+---
+title: Organize dashboard content with panel groups
+sidebarTitle: Create layouts using panel groups
+description: Organize data visualization panels in Chronosphere dashboards with layouts composed of panel groups.
+---
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<LimitedAvail />
+
+Each [dashboard](/observe/dashboards) uses _panel groups_ to create a _layout_. Panel
+groups consist of one or more _[panels](/observe/dashboards/panels)_ that visualize
+the results of a query. Use Chronosphere to define your dashboard layouts and create
+efficient visualizations of query results.
+
+<Info>
+[Classic dashboards](/observe/dashboards/classic-dashboards) have their own panel
+  groups and methods of configuring them. For details, see
+  [Classic dashboards](/observe/dashboards/classic-dashboards).
+</Info>
+
+## Add a panel group to a dashboard
+
+If you [add a panel](/observe/dashboards/panels#add-panels-to-a-dashboard) to a dashboard
+that doesn't have any panel groups, Chronosphere creates a group for you. You can
+also manually create panel groups for greater control.
+
+<Tabs>
+<Tab title="Web" id="add-a-panel-group-to-a-dashboard-cloud">
+
+To add a panel group to a standard dashboard:
+
+1. Open the dashboard. You can
+   [view a list of all dashboards](/observe/dashboards#view-dashboards) or select
+   from a [list of dashboards in a collection](/administer/collections/home).
+1. Click **<Icon icon="pencil" alt="Edit icon"/> Edit** on the
+   dashboard.
+1. Click **<Icon icon="square-plus" alt="Panel Group icon"/> Panel Group**.
+1. In the **Add panel group** window, enter a **Name**.
+1. Optional: Click the **Collapse state** dropdown and select whether the new
+   panel group should be **Open** or **Closed** by default.
+1. Click **Add** to add the new panel group.
+
+</Tab>
+</Tabs>
+
+## Add a panel to a panel group
+
+To add a new panel to a panel group:
+
+1. In the panel group to which you want to add a panel, click the
+   **<Icon icon="chart-simple-plus" alt="Add panel to group icon"/> Add panel to group**
+   icon.
+1. In the **Add Panel** interface that appears, provide a name for the new panel.
+1. Click **Add** to add the panel or **Cancel** to discard it.
+
+Panels aren't permanently added to a panel group until you save all changes to the
+dashboard by clicking **Save** on the dashboard.
+
+For details about all of the settings in a panel, see
+[Edit a panel](/observe/dashboards/panels#edit-a-panel). You can save a new panel to
+a dashboard with as little as a name, then edit it later to configure it and add or
+modify queries.
+
+## Move a panel within a panel group
+
+To change a panel's position within a panel group, drag the panel by its
+**<Icon icon="grip-vertical" alt="Move handle"/> Move handle** to the new
+position.
+
+## Move a panel to another panel group
+
+To move a panel located in another panel group on the same dashboard:
+
+1. [Edit the panel](/observe/dashboards/panels#edit-a-panel) that you want to move.
+1. Click **Group**.
+1. Click the panel group that you want to contain the panel.
+1. Click **Apply**.
+
+Panels aren't permanently moved until you save all changes to the dashboard by clicking
+**Save** on the dashboard.
+
+## Modify a panel group
+
+You can expand or collapse each panel group by clicking the
+<Icon icon="chevron-right" alt="Expand icon"/> or
+<Icon icon="chevron-down" alt="Collapse icon"/> icons, respectively, to toggle
+the panel group's state. When collapsed, panel groups report the number of panels
+inside the group.
+
+To edit a panel group's properties:
+
+1. Click the **<Icon icon="pencil" alt="Edit icon"/> Edit group** icon
+   inside of the panel group that you want to edit.
+1. In the **Edit panel group** window, set the group's **Name** and **Collapse state**.
+1. Click **Apply** to apply the changes to the panel group.
+1. Optional: To permanently save all changes to the dashboard, click **Save**.
+
+To change a panel group's order within the layout:
+
+1. Click the **<Icon icon="arrow-down" alt="Move group down icon"/> Move group down icon**
+   to move the selected group down in the layout.
+1. Click the **<Icon icon="arrow-up" alt="Move group up icon"/> Move group up icon**
+   to move the selected group up in the layout.
+
+Changes to a panel group aren't made permanent until you save all changes to the
+dashboard by clicking **Save** on the dashboard.
+
+## Delete a panel group
+
+<Warning>
+Deleting a panel group deletes **all panels** within the group. You can't undo
+the panel group deletion without canceling all other changes made to the dashboard.
+After you save changes to the dashboard that delete a panel group, you can't recover
+its deleted panels.
+</Warning>
+
+To delete a panel group:
+
+1. Click the **<Icon icon="trash" alt="Delete group icon"/> Delete group icon**.
+1. Read the **Delete panel group** confirmation request.
+1. Click **Delete** to confirm that you want to delete the group and all panels
+   within it.
+
+Panel groups aren't permanently deleted until you save all changes to the dashboard
+by clicking **Save** on the dashboard.
+
+## Split a panel group with a dashboard variable
+
+You can define a panel group as a _split panel group_ that dynamically splits and
+replicates itself to display the panels it contains with each value of a
+[dashboard variable](/observe/dashboards/customization/dashboard-variables) applied
+to them. This automates the creation of panel groups that automatically apply that
+variable's value to each of the contained panels.
+
+To use a split panel group:
+
+1. [Add a panel group to a dashboard](#add-a-panel-group-to-a-dashboard) and
+   [add at least one panel to the group](#add-a-panel-to-a-panel-group).
+1. Define at least one dashboard variable and use it in the queries of panels in
+   this panel group.
+1. [Modify the panel group](#modify-a-panel-group).
+1. Click the **Split Panel Group** toggle to enable it.
+1. Enter or select the **variable name** of the dashboard variable that splits the
+   panel group.
+1. Click **Apply**.
+
+The panel group splits into multiple groups for each value of the selected dashboard
+variable. The variable and its value appear next to the panel group's name.
+
+You can edit the original panel from any instance of it in any split panel group.
+To modify the panel group, you must click the
+**<Icon icon="pencil" alt="Edit icon"/> Edit group** icon inside of
+the original panel group.

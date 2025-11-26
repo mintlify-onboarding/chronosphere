@@ -1,0 +1,58 @@
+---
+title: Azure Logs Ingestion API destination plugin
+sidebarTitle: Azure Logs Ingestion API destination plugin (Telemetry Pipeline)
+description: Send pipeline data to Azure Logs Ingestion API.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Azure Logs Ingestion API [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `azure_logs_ingestion`) lets you configure your telemetry pipeline to
+output data to Azure Monitor using Azure's Log Ingestion API.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name              | Key | Description | Default |
+| ----------------- | --- | ----------- | ------- |
+| **Tenant ID**     | `tenant_id` | Required. The tenant ID of the AAD application. | _none_ |
+| **Client ID**     | `client_id` | Required. The client ID of the AAD application. | _none_ |
+| **Client Secret** | `client_secret` | Required. The client secret of the AAD application (App Secret). | _none_ |
+| **DCE URL**       | `dce_url` | Required. Data Collection Endpoint(DCE) URL. | _none_ |
+| **DCR ID**        | `dcr_id` | Required. Data Collection Rule (DCR) immutable ID | _none_ |
+| **Table Name**    | `table_name` | Required. The name of the custom log table (include the _CL suffix as well if applicable). | _none_ |
+
+### Advanced
+
+| Name                      | Key | Description | Default |
+| ------------------------- | --- | ----------- | ------- |
+| **Time Key**              | `time_key` | Specifies the key name where the timestamp will be stored. | _none_ |
+| **Enable Time Generated** | `time_generated` | If `true`, the HTTP request header `time-generated-field` is included so Azure can override the timestamp with the key specified by `time_key` option. Accepted values: `true`, `false`. | `true` |
+| **Enable Compression**    | `compress` | If `true`, enable HTTP payload gzip compression. Accepted values: `true`, `false`. | `true` |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

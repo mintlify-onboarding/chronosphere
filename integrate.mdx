@@ -1,0 +1,112 @@
+---
+title: Integrate with Observability Platform
+description: Learn how to integrate third-party tools and services with Chronosphere Observability Platform.
+---
+import ChangeEventsList from '/snippets/_partials/change-events-list.mdx';
+import LogIngest from '/snippets/_partials/log-ingest.mdx';
+import NotifierList from '/snippets/_partials/notifier-list.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+To ensure all of your data is represented in a format you can observe and use,
+Chronosphere Observability Platform provides integrations for use with several
+applications.
+
+## Alerting
+
+Observability Platform supports these alerting integrations:
+
+<Columns cols={2}>
+  <Card
+    icon="slack"
+    title="Slack"
+    href="/investigate/alerts/notifications/slack"
+  >
+  <p>Configure Slack to unfurl monitor graphs from Observability Platform.</p>
+  </Card>
+</Columns>
+
+## Chronosphere MCP server
+
+<Columns cols={2}>
+  <Card
+    icon="plug"
+    title="MCP server"
+    href="/integrate/mcp-server"
+  >
+  <p>Configure the Chronosphere Model Context Protocol (MCP) server to connect your large language models (LLMs) to interact with Observability Platform.</p>
+  </Card>
+</Columns>
+
+## Ingest
+
+You can send telemetry data from various sources to Observability Platform using the
+following supported integrations.
+
+### Metrics
+
+Observability Platform supports these metrics integrations:
+
+<Columns cols={2} rowGroup="2">
+  <Card
+    icon="aws"
+    title="AWS Cloudwatch metrics"
+    href="/ingest/metrics-traces/aws-cloudwatch-metric-stream"
+  >
+  <p>Configure AWS to stream metrics to Observability Platform through CloudWatch Metrics Streams.</p>
+  </Card>
+  <Card
+    icon="microsoft"
+    title="Azure metrics"
+    href="/ingest/metrics-traces/azure"
+  >
+  <p>Connect Observability Platform with Azure Monitor to ingest metrics.</p>
+  </Card>
+  <Card
+    icon="google"
+    title="Google Cloud metrics"
+    href="/ingest/metrics-traces/gcp"
+  >
+  <p>Connect Observability Platform with Google Cloud to ingest metrics from Google Cloud projects.</p>
+  </Card>
+  <Card
+    icon="telescope"
+    title="OpenTelemetry"
+    href="/ingest/metrics-traces/otel"
+  >
+  <p>Use the OpenTelemetry protocol (OTLP) HTTP endpoint to route metrics from OpenTelemetry.</p>
+  </Card>
+</Columns>
+
+### Events
+
+Observability Platform supports these events integrations:
+
+<ChangeEventsList />
+
+### Logs
+
+Observability Platform supports these logs integrations:
+
+<LogIngest />
+
+### Traces
+
+Observability Platform supports these trace integrations:
+
+<Columns cols={2}>
+  <Card
+    icon="telescope"
+    title="OpenTelemetry"
+    href="/ingest/metrics-traces/otel"
+  >
+  <p>Use the OpenTelemetry protocol (OTLP) HTTP endpoint to route traces from OpenTelemetry.</p>
+  </Card>
+</Columns>
+
+## Notifiers
+
+Observability Platform supports these notifier integrations:
+
+<NotifierList />

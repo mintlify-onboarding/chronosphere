@@ -1,0 +1,48 @@
+---
+title: Bash Command source plugin
+sidebarTitle: Bash Command source plugin (Telemetry Pipeline)
+description: Run a bash command in Chronosphere Telemetry Pipeline.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-generated.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Bash Command [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `exec`) lets you run bash commands once at pipeline startup, or at
+repeated intervals.
+
+<SourceStyle/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name                           | Key | Description | Default |
+| ------------------------------ | --- | ----------- | ------- |
+| **Command**                    | `command` | Required. The bash command to run. | _none_ |
+| **Polling Interval (Seconds)** | `interval_sec` | Required. The number of seconds between polls. | _none_ |
+| **Only Run Once**              | `Oneshot` | Allows collection of data preceding pipelines startup. If `true`, this plugin runs only a single time at startup. Accepted values: `true`, `false`. | `false` |
+
+### Advanced
+
+| Name                               | Key | Description | Default |
+| ---------------------------------- | --- | ----------- | ------- |
+| **Buffer Size**                    | `Buf_Size` | The buffer sizes for your bash command. In cases of large output, set this value to a larger size. | `8mb` |
+| **Polling Interval (nanoseconds)** | `Interval_Nsec` | The number of nanoseconds to add to the polling interval set in the [**Required**](#required) settings. | `0` |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |

@@ -1,0 +1,1148 @@
+---
+title: Derived labels
+description: Learn about using derived labels to standardize data in Observability Platform.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import TerraformPlan from '/snippets/_partials/terraformplan.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Derived labels are a construct specifically designed for Chronosphere
+Observability Platform that let you standardize data in Observability Platform
+without modifying that data permanently. Use derived labels to reduce the
+complexity of label names and values for metrics, and to simplify span tags for
+traces.
+
+## View derived labels
+
+Select from the following methods to view existing derived labels.
+
+<Tabs>
+<Tab title="Web" id="web-derived-label">
+
+To view derived labels:
+
+1. In the navigation menu select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Derived Labels**
+   to view all available derived labels.
+1. To view values for a derived label, click the caret (**>**) to expand the label.
+1. Click the <Icon path={ mdiDotsVertical } /> three vertical dots icon for any label
+   to take additional actions:
+
+   - Click **View code config** to view a code representation of the derived label.
+     Use the [Code Config](/tooling/gitops#use-the-code-config-tool) tool to copy or
+     download the code.
+   - Click **View in Usage Analyzer** to open the
+     [Telemetry Usage Analyzer](/investigate/analyze/usage) with the selected derived
+     label.
+
+If a derived label is being used as a [pinned scope](/navigate/pinned-scopes), click
+**Configure** to navigate to the **Scope Configuration** page. From there, you can
+[configure a scope](/administer/pinned-scopes).
+
+</Tab>
+<Tab title="Chronoctl" id="chronoctl-derived-label">
+
+To display all derived labels with [Chronoctl](/tooling/chronoctl), use this command:
+
+```shell copy
+chronoctl derived-labels list
+```
+
+To list specific derived labels using their slugs:
+
+```shell copy
+chronoctl derived-labels list --slugs slug_name_1,slug_name_2
+```
+
+</Tab>
+<Tab title="API" id="api-derived-label">
+
+To complete this action with the Chronosphere API, use the
+[`ListDerivedLabels`](/tooling/api-info/definition/operations/ListDerivedLabels) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Manage derived labels
+
+Create, update, and delete derived labels using
+[Terraform](/tooling/infrastructure/terraform), [Chronoctl](/tooling/chronoctl), or the
+Observability Platform API.
+
+<Warning>
+Creating, modifying, or deleting a derived label can cause unexpected behavior in any
+location that label was used. Adding a derived label is adding an extra label. Rules
+that expect a specific set of labels might not match when the derived label is
+present.
+</Warning>
+
+### Create a derived label
+
+Select from the following methods to create a derived label.
+
+<Tabs>
+<Tab title="Chronoctl" id="create-derived-labels-chronoctl">
+
+To create a derived label with [Chronoctl](/tooling/chronoctl), use this command:
+
+```shell copy
+chronoctl derived-labels create
+```
+
+1. Run the following command to generate a sample derived label definition you can use
+   as a template:
+
+   ```shell copy
+   chronoctl derived-labels scaffold
+   ```
+
+   In the template, `kind: DerivedLabel` defines an individual derived label.
+
+1. With a completed definition, submit it with:
+
+   ```shell copy /FILE_NAME/
+   chronoctl derived-labels create -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+See the Chronoctl [definition example](#derived-label-definition-example) for a
+completed derived label definition.
+
+</Tab>
+<Tab title="Terraform" id="derived-labels-with-terraform">
+
+<TerraformPlan />
+
+To create a derived label with [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file and add the definition by using the
+   `chronosphere_derived_label` type, followed by a name in a resource
+   declaration.
+
+1. Run this command to apply the changes:
+
+   ```shell copy
+   terraform apply
+   ```
+
+See the Terraform [definition example](#derived-label-definition-example) for a
+completed derived label definition.
+
+</Tab>
+<Tab title="API" id="api-derived-label-create">
+
+To complete this action with the Chronosphere API, use the
+[`CreateDerivedLabel`](/tooling/api-info/definition/operations/CreateDerivedLabel) endpoint.
+
+<ApiAuthReq />
+
+See the API [definition example](#derived-label-definition-example) for a
+completed derived label definition.
+
+</Tab>
+</Tabs>
+
+#### Derived label definition examples
+
+The following definition examples show how to format equivalent derived label
+definition in Chronoctl, Terraform, and the Observability Platform API.
+
+<Info>
+These examples include derived [metric labels](#use-derived-labels-for-metrics)
+and [span tags](#use-derived-labels-for-traces) in the same definition. However,
+it's possible to create a definition that only contains derived metric labels,
+or that only contains derived span tags.
+</Info>
+
+<Tabs>
+<Tab title="Chronoctl" id="definition-example-chronoctl">
+
+```yaml copy
+api_version: v1/config
+kind: DerivedLabel
+spec:
+  name: Environment label
+  slug: environment-label
+  label_name: env
+  description: this is my derived label for environments
+  existing_label_policy: KEEP
+  metric_label:
+    constructed_label: {}
+    mapping_label:
+      name_mappings:
+        - filters:
+            - name: __name__
+              value_glob: grpc_*
+            - name: __name__
+              value_glob: http_*
+          source_label: acme_cluster
+          value_mappings:
+            - source_value_globs:
+                - staging-*
+                - infra
+                - alpha
+              target_value: internal
+            - source_value_globs:
+                - beta
+                - prod
+                - prod-eu
+              target_value: external
+        - filters:
+            - name: __name__
+              value_glob: service_uptime
+          source_label: acme_test_cluster
+          value_mappings:
+            - source_value_globs:
+                - test
+                - dogfooding
+              target_value: internal
+  span_tag:
+    name_mappings:
+      - source_tag: environment
+      - source_tag: cluster
+```
+
+</Tab>
+<Tab title="Terraform" id="definition-example-terraform">
+
+```ruby copy
+resource "chronosphere_derived_label" "environment-derived-label" {
+  name        = "Environment derived label"
+  slug        = "environment-derived-label"
+  description = "this is my derived label for environments"
+  label_name  = "env"
+
+  metric_label {
+    constructed_label {
+    }
+
+    mapping_label {
+      name_mappings {
+        filters {
+          name       = "__name__"
+          value_glob = "grpc_*"
+        }
+
+        filters {
+          name       = "__name__"
+          value_glob = "http_*"
+        }
+
+        source_label = "acme_cluster"
+
+        value_mappings {
+          source_value_globs = ["staging-*", "infra", "alpha"]
+          target_value       = "internal"
+        }
+
+        value_mappings {
+          source_value_globs = ["beta", "prod", "prod-eu"]
+          target_value       = "external"
+        }
+      }
+
+      name_mappings {
+        filters {
+          name       = "__name__"
+          value_glob = "service_uptime"
+        }
+
+        source_label = "acme_test_cluster"
+
+        value_mappings {
+          source_value_globs = ["test", "dogfooding"]
+          target_value       = "internal"
+        }
+      }
+    }
+  }
+
+  span_tag {
+    name_mappings {
+      source_tag = "environment"
+    }
+    name_mappings {
+      source_tag = "cluster"
+    }
+  }
+
+  existing_label_policy = "KEEP"
+}
+```
+
+</Tab>
+<Tab title="API" id="definition-example-api">
+
+```json copy
+{
+  "derived_label": {
+    "description": "This is my derived label for environments",
+    "existing_label_policy": "KEEP",
+    "label_name": "env",
+    "metric_label": {
+      "constructed_label": {},
+      "mapping_label": {
+        "name_mappings": [
+          {
+            "filters": [
+              {
+                "name": "__name__",
+                "value_glob": "grpc_*"
+              },
+              {
+                "name": "__name__",
+                "value_glob": "http_*"
+              }
+            ],
+            "source_label": "acme_cluster",
+            "value_mappings": [
+              {
+                "source_value_globs": [
+                  "staging-*",
+                  "infra",
+                  "alpha"
+                ],
+                "target_value": "internal"
+              },
+              {
+                "source_value_globs": [
+                  "beta",
+                  "prod",
+                  "prod-eu"
+                ],
+                "target_value": "external"
+              }
+            ]
+          },
+          {
+            "filters": [
+              {
+                "name": "__name__",
+                "value_glob": "service_uptime"
+              }
+            ],
+            "source_label": "acme_test_cluster",
+            "value_mappings": [
+              {
+                "source_value_globs": [
+                  "test",
+                  "dogfooding"
+                ],
+                "target_value": "internal"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "span_tag": {
+      "name_mappings": [
+        {
+          "source_tag": [
+            "environment",
+            "cluster"
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+These examples create a derived label named `env` with the
+following label mappings for metrics and span tag mappings for traces:
+
+- If a time series contains a label that matches the [glob](/investigate/querying/glob-syntax)
+  `__name__="grpc_*"` or `__name__="http_*"`, the label name `acme_cluster` for
+  that time series maps to the derived label `env`. This derived label name has
+  the following value mappings:
+  - The source globs and values `staging-*`, `infra`, and `alpha` map to the derived value
+    `internal`. For example, the source label/value pair `acme_cluster="staging-demo-playground"`
+    maps to the derived label/value pair `env="internal"`.
+  - The source values `beta`, `prod`, and `prod-eu` map to the derived value
+    `external`. For example, the source label/value pair `acme_cluster="prod"`
+    maps to the derived label/value pair `env="external"`.
+  - Any other source values stay the same. For example, because `dev` isn't
+    listed in the example definition, the source label/value pair `acme_cluster="dev"`
+    maps to the derived label/value pair `env="dev"`.
+- If a time series contains the label `__name__="service_uptime"`, the label
+  name `acme_test_cluster` for that time series maps to the `env` label. This
+  derived label name has the following value mappings:
+  - The source values `test` and `dogfooding` map to the derived value `internal`.
+    For example, the source label/value pair `acme_test_cluster=test` maps to
+    the derived label/value pair `env=internal`.
+  - Any other source values stay the same. For example, because `metadata` isn't
+    listed in the example definition, the source label/value pair
+    `acme_test_cluster="metadata"` maps to the derived label/value pair `env="metadata"`.
+- The span tags `environment` and `cluster` map to the derived span tag `env`.
+
+### Delete a derived label
+
+Select from the following methods to delete a derived label.
+
+<Tabs>
+<Tab title="Chronoctl" id="delete-a-derived-label-chronoctl">
+
+To delete a derived label with [Chronoctl](/tooling/chronoctl), use this command:
+
+```shell copy /SLUG/
+chronoctl derived-labels delete SLUG
+```
+
+Replace _`SLUG`_ with the slug of the derived label you want to delete.
+
+</Tab>
+<Tab title="Terraform" id="delete-a-derived-label-terraform">
+
+<TerraformDel />
+
+</Tab>
+<Tab title="API" id="api-derived-label-delete">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteDerivedLabel`](/tooling/api-info/definition/operations/ListDerivedLabel) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Use derived labels for metrics
+
+You can use derived labels to simplify label names and values for metrics. In
+[derived label definitions](#derived-label-definition-example), these
+definitions are stored in the `metric_label` object.
+
+The `label_name` parameter determines the name of the derived metric label.
+
+For each `source_label` included in a definition, the associated `filters`
+parameter determines which time series the derived label applies to. If a time
+series meets one of the filter criteria, the specified source label name from that time
+series maps to the name of the derived label.
+
+For each `target_value` included in a definition, the associated
+`source_value_globs` parameter determines which values from the original source
+label map to that target value of the derived label. Any values from the original
+source label that aren't included in a derived label definition stay the same
+and map directly to the derived label name.
+
+The `value_glob` and `source_value_globs` parameters support
+[glob syntax](/investigate/querying/glob-syntax).
+
+<Info>
+It's not possible to create a derived metric label from the names or
+values of a different derived label. Each `source_label` parameter in your
+definitions must reference a persisted, non-derived label name, and each
+`source_value_globs` parameter must reference persisted, non-derived label
+values.
+</Info>
+
+After you define a derived metric label, you can reference that new label in
+[Metrics Explorer](/investigate/querying/metrics/explorer) queries in the
+same way that you can reference persisted, non-derived metrics labels. Additionally,
+these derived metric labels will appear throughout Observability Platform in the
+same places as persisted metric labels, like
+[Metrics Catalog](/investigate/querying/metrics/metrics-catalog).
+
+### Best practices
+
+When using derived labels for metrics, Chronosphere recommends following
+these best practices:
+
+- Use [mapping labels](#mapping-labels-versus-constructed-labels) instead of
+  constructed labels.
+- Limit the scope of derived labels as much as possible. This lowers the risk of
+  conflicts and reduces the amount of possible results returned by autocomplete
+  for metric labels in Observability Platform.
+- For derived labels that include multiple source keys, the metric filter for each
+  source key should reference a different time series. In other words, don't
+  create a derived label with two different source keys that could be included
+  in the same time series.
+
+### Existing label policy
+
+If a derived label would apply to a time series that already has a persistent,
+non-derived label with the same name, the `existing_label_policy` parameter
+determines how to resolve this conflict.
+
+- `KEEP`: The label that already exists is used instead of the derived label.
+  This is the default behavior if `existing_label_policy` is unspecified.
+- `OVERRIDE`: The derived label replaces the existing label.
+
+A derived label that applies to one time series can have the same name as an
+existing label on a different time series. Unless the identical labels are
+part of the same time series, `existing_label_policy` has no effect.
+
+### Standardize metric label names
+
+Metrics from different sources might use different label names to describe the
+same or similar things. You can use derived labels to standardize these names,
+which makes it easier to run related queries without having to remember
+which source used which original label name.
+
+In the following examples, the source labels `username` and `id` both
+refer to user accounts. The derived label `account` creates a unified label name
+for consistency.
+
+<Tabs>
+<Tab title="Chronoctl" id="standardize-names-chronoctl">
+
+```yaml copy
+api_version: v1/config
+kind: DerivedLabel
+spec:
+  name: account
+  slug: account
+  label_name: account
+  description: usernames and IDs are equivalent
+  metric_label:
+    constructed_label: {}
+    mapping_label:
+      name_mappings:
+        - filters:
+            - name: __name__
+              value_glob: login_*
+            - name: __name__
+              value_glob: signup_*
+          source_label: username
+        - filters:
+            - name: __name__
+              value_glob: checkout_*
+          source_label: id
+```
+
+</Tab>
+<Tab title="Terraform" id="standardize-names-terraform">
+
+```ruby copy
+resource "chronosphere_derived_label" "account" {
+  name        = "account"
+  slug        = "account"
+  description = "usernames and IDs are equivalent"
+  label_name  = "account"
+
+  metric_label {
+    constructed_label {
+    }
+
+    mapping_label {
+      name_mappings {
+        filters {
+          name       = "__name__"
+          value_glob = "login_*"
+        }
+
+        filters {
+          name       = "__name__"
+          value_glob = "signup_*"
+        }
+
+        source_label = "username"
+
+      }
+
+      name_mappings {
+        filters {
+          name       = "__name__"
+          value_glob = "checkout_*"
+        }
+
+        source_label = "id"
+
+      }
+    }
+  }
+}
+```
+
+</Tab>
+<Tab title="API" id="standardize-names-api">
+
+```json copy
+{
+  "derived_label": {
+    "description": "usernames and IDs are equivalent",
+    "existing_label_policy": "KEEP",
+    "label_name": "account",
+    "metric_label": {
+      "constructed_label": {},
+      "mapping_label": {
+        "name_mappings": [
+          {
+            "filters": [
+              {
+                "name": "__name__",
+                "value_glob": "login_*"
+              },
+              {
+                "name": "__name__",
+                "value_glob": "signup_*"
+              }
+            ],
+            "source_label": "username"
+          },
+          {
+            "filters": [
+              {
+                "name": "__name__",
+                "value_glob": "checkout_*"
+              }
+            ],
+            "source_label": "id"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+After creating this derived label, the query `{__name__="login_count",account="alice"}`
+returns the same results as `{__name__="login_count",username="alice"}`. Similarly,
+the query `{__name__="checkout_attempts",account="12345"}` returns the same results as
+`{__name__="checkout_attempts",id="12345"}`.
+
+Because no value mappings were created, the `account` derived label always
+gets its values from the original values of either `username` or `id`.
+
+### Standardize metric label values
+
+Metrics from a single source might have a large number of values associated with
+the same label name. You can use derived labels to standardize these values across
+Observability Platform, which makes it easier to query multiple values at once.
+
+In the following examples, a source label named `code` has possible values for
+a wide variety of HTTP status codes. The derived label `status-level` combines
+similar HTTP statuses into a fewer number of values.
+
+<Tabs>
+<Tab title="Chronoctl" id="standardize-values-chronoctl">
+
+```yaml copy
+api_version: v1/config
+kind: DerivedLabel
+spec:
+  name: HTTP status level
+  slug: http-status-level
+  label_name: status-level
+  description: groups HTTP status levels
+  existing_label_policy: KEEP
+  metric_label:
+    constructed_label: {}
+    mapping_label:
+      name_mappings:
+        - filters:
+            - name: __name__
+              value_glob: requests_*
+          source_label: code
+          value_mappings:
+            - source_value_globs:
+                - 200
+                - 201
+              target_value: 200-success
+            - source_value_globs:
+                - 400
+                - 401
+                - 403
+                - 404
+              target_value: 400-client-error
+            - source_value_globs:
+                - 500
+                - 502
+                - 503
+                - 504
+              target_value: 500-server-error
+```
+
+</Tab>
+<Tab title="Terraform" id="standardize-values-terraform">
+
+```ruby copy
+resource "chronosphere_derived_label" "http-status-level" {
+  name        = "HTTP status level"
+  slug        = "http-status-level"
+  description = "groups HTTP status levels"
+  label_name  = "status-level"
+
+  metric_label {
+    constructed_label {
+    }
+
+    mapping_label {
+      name_mappings {
+        filters {
+          name       = "__name__"
+          value_glob = "requests_*"
+        }
+
+        source_label = "code"
+
+        value_mappings {
+          source_value_globs = ["200", "201"]
+          target_value       = "200-success"
+        }
+
+        value_mappings {
+          source_value_globs = ["400", "401", "403", "404"]
+          target_value       = "400-client-error"
+        }
+
+        value_mappings {
+          source_value_globs = ["500", "502", "503", "504"]
+          target_value       = "500-server-error"
+        }
+      }
+    }
+  }
+}
+```
+
+</Tab>
+<Tab title="API" id="standardize-values-api">
+
+```json copy
+{
+  "derived_label": {
+    "description": "groups HTTP status levels",
+    "existing_label_policy": "KEEP",
+    "label_name": "status-level",
+    "metric_label": {
+      "constructed_label": {},
+      "mapping_label": {
+        "name_mappings": [
+          {
+            "filters": [
+              {
+                "name": "__name__",
+                "value_glob": "requests_*"
+              }
+            ],
+            "source_label": "code",
+            "value_mappings": [
+              {
+                "source_value_globs": [
+                  "200",
+                  "201"
+                ],
+                "target_value": "200-success"
+              },
+              {
+                "source_value_globs": [
+                  "400",
+                  "401",
+                  "403",
+                  "404"
+                ],
+                "target_value": "400-client-error"
+              },
+              {
+                "source_value_globs": [
+                  "500",
+                  "502",
+                  "503",
+                  "504"
+                ],
+                "target_value": "500-server-error"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+After creating this derived label, the query `{__name__="requests_total",status-level="400"}`
+returns the same results as `{__name__="requests_total",code=~"400|401|403|404"}`.
+
+However, only source values that were explicitly mapped were affected. Because
+the source value `100` wasn't mapped, the query
+`{__name__="requests_total",status-level="100"}` returns the same results as
+`{__name__="requests_total",code="100"}`.
+
+### Standardize metric label names and values
+
+You can use derived labels to standardize metric label names and values at the same time.
+
+In the following examples, the source labels `menu_item` and `SKU` both refer to
+different foods offered at a restaurant. Additionally, both `menu_item` and `SKU`
+have a wide variety of possible values. The derived label `type` creates a unified
+label name for consistency and also combines similar foods into a fewer number of values.
+
+<Tabs>
+<Tab title="Chronoctl" id="standardize-names-values-chronoctl">
+
+```yaml copy
+api_version: v1/config
+kind: DerivedLabel
+spec:
+  name: type
+  slug: type
+  label_name: type
+  description: groups food types
+  existing_label_policy: KEEP
+  metric_label:
+    constructed_label: {}
+    mapping_label:
+      name_mappings:
+        - filters:
+            - name: __name__
+              value_glob: orders_placed
+          source_label: menu_item
+          value_mappings:
+            - source_value_globs:
+                - BLT
+                - club_sandwich
+                - grilled_cheese
+              target_value: sandwich
+            - source_value_globs:
+                - minestrone
+                - tomato_soup
+              target_value: soup
+        - filters:
+            - name: __name__
+              value_glob: profits_made
+          source_label: SKU
+          value_mappings:
+            - source_value_globs:
+                - 11111
+                - 22222
+                - 33333
+              target_value: sandwich
+            - source_value_globs:
+                - 44444
+                - 55555
+              target_value: soup
+```
+
+</Tab>
+<Tab title="Terraform" id="standardize-names-values-terraform">
+
+```ruby copy
+resource "chronosphere_derived_label" "type" {
+  name        = "type"
+  slug        = "type"
+  description = "groups food types"
+  label_name  = "type"
+
+  metric_label {
+    constructed_label {
+    }
+
+    mapping_label {
+      name_mappings {
+        filters {
+          name       = "__name__"
+          value_glob = "orders_placed"
+        }
+
+        source_label = "menu_item"
+
+        value_mappings {
+          source_value_globs = ["BLT", "club_sandwich", "grilled_cheese"]
+          target_value       = "sandwich"
+        }
+
+        value_mappings {
+          source_value_globs = ["minestrone", "tomato_soup"]
+          target_value       = "soup"
+        }
+      }
+
+      name_mappings {
+        filters {
+          name       = "__name__"
+          value_glob = "profits_made"
+        }
+
+        source_label = "SKU"
+
+        value_mappings {
+          source_value_globs = ["11111", "22222", "33333"]
+          target_value       = "sandwich"
+        }
+
+        value_mappings {
+          source_value_globs = ["44444", "55555"]
+          target_value       = "soup"
+        }
+      }
+    }
+  }
+
+  existing_label_policy = "KEEP"
+}
+```
+
+</Tab>
+<Tab title="API" id="standardize-names-values-api">
+
+```json copy
+{
+  "derived_label": {
+    "description": "groups food types",
+    "existing_label_policy": "KEEP",
+    "label_name": "type",
+    "metric_label": {
+      "constructed_label": {},
+      "mapping_label": {
+        "name_mappings": [
+          {
+            "filters": [
+              {
+                "name": "__name__",
+                "value_glob": "orders_placed"
+              }
+            ],
+            "source_label": "menu_item",
+            "value_mappings": [
+              {
+                "source_value_globs": [
+                  "BLT",
+                  "club_sandwich",
+                  "grilled_cheese"
+                ],
+                "target_value": "sandwich"
+              },
+              {
+                "source_value_globs": [
+                  "minestrone",
+                  "tomato_soup"
+                ],
+                "target_value": "soup"
+              }
+            ]
+          },
+          {
+            "filters": [
+              {
+                "name": "__name__",
+                "value_glob": "profits_made"
+              }
+            ],
+            "source_label": "SKU",
+            "value_mappings": [
+              {
+                "source_value_globs": [
+                  "11111",
+                  "22222",
+                  "33333"
+                ],
+                "target_value": "sandwich"
+              },
+              {
+                "source_value_globs": [
+                  "44444",
+                  "55555"
+                ],
+                "target_value": "soup"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+After creating this derived label, the query `{__name__="orders_placed",type="sandwich"}`
+returns the same results as
+`{__name__="orders_placed",menu_item=~"BLT|club_sandwich|grilled_cheese"}`.
+Similarly, the query `{__name__="profits_made",type="soup"}` returns the same
+results as `{__name__="profits_made",SKU=~"44444|55555"}`.
+
+However, only source values that were explicitly mapped were affected. If
+the original `menu_item` label has a possible value `panini`, then that value
+wouldn't map to `type="sandwich"`. Instead, the query `{__name__="orders_placed",type="panini"}`
+returns the same results as `{__name__="orders_placed",menu_item="panini"}`.
+
+### Mapping labels versus constructed labels
+
+In [derived label definitions](#derived-label-definition-example), the
+`metric_label` object is parent to two child objects: `constructed_label` and
+`mapping_label`. Each of these child objects offers a different way to define
+derived labels for metrics.
+
+- **Mapping labels**: Defined in `mapping_label`. These are the primary way to
+  define derived labels, and are fully supported throughout Observability Platform.
+- **Constructed labels**: Defined in `constructed_label`. These aren't fully supported
+  throughout Observability Platform.
+
+Chronosphere recommends using mapping derived labels instead of constructed derived
+labels. Although they follow different syntax in their definitions, it's possible
+to create equivalent derived labels for metrics by using either mapping labels
+or constructed labels. Additionally, constructed labels behave less precisely
+and can have unexpected conflicts with other persisted or derived labels.
+
+#### Constructed label example
+
+All of the previous examples in this guide use mapping labels. The following
+example shows how to format a constructed label definition in Chronoctl:
+
+```yaml copy
+api_version: v1/config
+kind: DerivedLabel
+spec:
+  name: abc
+  slug: abc
+  label_name: abc
+  description: derived label abc
+  existing_label_policy: KEEP
+  metric_label:
+    constructed_label:
+      value_definitions:
+        - value: baz
+          filters:
+            - name: foo
+              value_glob: bar
+            - name: name
+              value_glob: xyz_*
+        - value: cake
+          filters:
+            - name: foo
+              value_glob: dessert
+            - name: __name__
+              value_glob: xyz_*
+    mapping_label: {}
+```
+
+This constructed label definition is equivalent to the following mapping label
+definition:
+
+```yaml copy
+api_version: v1/config
+kind: DerivedLabel
+spec:
+  name: abc
+  slug: abc
+  label_name: abc
+  description: derived label abc
+  existing_label_policy: KEEP
+  metric_label:
+    constructed_label: {}
+    mapping_label:
+      name_mappings:
+        - filters:
+            - name: __name__
+              value_glob: xyz_*
+          source_label: foo
+          value_mappings:
+          - source_value_globs:
+              - bar
+            target_value:  baz
+          - source_value_globs:
+              - dessert
+            target_value:  cake
+```
+
+## Use derived labels for traces
+
+You can use derived labels to simplify span tags for traces. In
+[derived label definitions](#derived-label-definition-example), these
+definitions are stored in the `span_tag` object.
+
+The `label_name` parameter determines the name of the derived span tag,
+and the `source_tag` parameters specify which source tags to map to this
+derived span tag.
+
+<Info>
+It's not possible to create a derived span tag from a different derived span
+tag. Each `source_tag` parameter in your definitions must reference a persisted,
+non-derived span tag.
+</Info>
+
+After you define a derived span tag, you can reference that new span tag in
+[Trace Explorer](/investigate/querying/traces/features) queries in the same way
+that you can reference persisted, non-derived span tags. Additionally, those
+derived span tags will appear throughout Observability Platform in the same places
+as persisted span tags, like [DDx output](/investigate/analyze/differential-diagnosis/metrics).
+
+### Standardize span tags
+
+In the following truncated examples, the source tags `link` and `page` map to
+the derived span tag `url`.
+
+<Tabs>
+<Tab title="Chronoctl" id="use-traces-chronoctl">
+
+```yaml copy
+api_version: v1/config
+kind: DerivedLabel
+spec:
+  name: url
+  slug: url
+  label_name: url
+  description: derived label for URLs
+  existing_label_policy: KEEP
+  span_tag:
+    name_mappings:
+      - source_tag: link
+      - source_tag: page
+```
+
+</Tab>
+<Tab title="Terraform" id="use-traces-terraform">
+
+```ruby copy
+resource "chronosphere_derived_label" "url-derived-label" {
+  name        = "URL derived label"
+  slug        = "url-derived-label"
+  description = "This is my derived label for urls"
+  label_name  = "url"
+
+  span_tag {
+    name_mappings {
+      source_tag = "link"
+    }
+    name_mappings {
+      source_tag = "page"
+    }
+  }
+}
+```
+
+</Tab>
+<Tab title="API" id="use-traces-api">
+
+```json copy
+{
+  "derived_label": {
+    "description": "This is my derived label for URLs",
+    "existing_label_policy": "KEEP",
+    "label_name": "url",
+    "span_tag": {
+      "name_mappings": [
+        {
+          "source_tag": [
+            "link",
+            "page"
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+</Tab>
+</Tabs>

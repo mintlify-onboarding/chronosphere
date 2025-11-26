@@ -1,0 +1,327 @@
+---
+title: Discover and scrape Kubernetes resources with Chronosphere Collector
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+To monitor Kubernetes resources with Chronosphere Collector and ensure that your
+clusters are healthy, use one of the following configuration methods.
+
+## Monitor kubelet or cAdvisor metrics
+
+If running in Kubernetes, you can configure the Collector to scrape kubelet or
+cAdvisor metrics by setting the `kubeletMetricsEnabled` or `cadvisorMetricsEnabled`
+flag to `true` under the `kubeletMonitoring` YAML collection.
+
+For example:
+
+```yaml copy
+discovery:
+  kubernetes:
+    ...
+    kubeletMonitoring:
+      port: 10250
+      bearerTokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+      kubeletMetricsEnabled: true
+      cadvisorMetricsEnabled: true
+      probesMetricsEnabled: true
+      labelsToAugment: []
+      annotationsToAugment: []
+```
+
+- `port`: The port that the `kubelet` is running on. Default: `10250`.
+- `bearerTokenFile`: The path to the file containing Collector's service account
+  token. Default: `"/var/run/secrets/kubernetes.io/serviceaccount/token"`.
+- `kubeletMetricsEnabled`: Enables scraping kubelet metrics. Default: `false`.
+- `cadvisorMetricsEnabled`: Enables scraping cAdvisor metrics. Default: `false`.
+- `probesMetricsEnabled`: Enables collecting metrics on the status of liveness,
+  readiness, and startup kubelet probes for Kubernetes containers. Default: `false`.
+- [`labelsToAugment`](#add-metadata-labels-from-pod-labels): Lists the metadata
+  labels from pod labels that the Collector adds to metrics.
+- [`annotationsToAugment`](#add-metadata-labels-from-pod-annotations): Lists the
+  metadata labels from pod annotations the Collector adds to metrics.
+
+<Warning>
+When running the Collector in Kubernetes as a DaemonSet, you can configure the
+Collector to scrape kubelet or cAdvisor metrics from the node the Collector
+DaemonSet instance is running on. To configure this behavior, under the 
+`kubeletMonitoring` YAML collection, set the `kubeletMetricsEnabled` or
+`cadvisorMetricsEnabled` flag to `true`The settings under the `kubletMonitoring`
+collection are applied only when the Collector is deployed as a DaemonSet.
+
+Enabling `kubeletMetricsEnabled`, `cadvisorMetricsEnabled`, or `probesMetricsEnabled`
+doesn't require the creation of additional ServiceMonitor definitions. Use
+[global rewrite configurations](/ingest/metrics-traces/collector/discover/scrape-configuration)
+to manipulate labels for metrics from these sources.
+</Warning>
+
+### Add metadata labels from pod labels
+
+By default, container-level metrics don't include metadata labels like `service` or
+`app`, which searches can include when querying for these metrics. To automatically
+add these labels from pod labels, use the `labelsToAugment` flag to list the labels
+that Collector adds to the metrics.
+
+For example, to add the `app` label to the container level metrics for a `node-exporter`
+DaemonSet deployment, use the following configuration under the `kubeletMonitoring`
+key:
+
+```yaml copy
+discovery:
+  kubernetes:
+    ...
+    kubeletMonitoring:
+      ...
+      labelsToAugment: ["app", ...]
+```
+
+This adds `app="node-exporter"` to these metrics, based on the following example
+`node-exporter` manifest:
+
+```yaml copy
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: node-exporter
+  name: node-exporter
+  namespace: monitoring
+...
+```
+
+### Add metadata labels from pod annotations
+
+By default, container-level metrics don't include metadata labels, which searches can
+include when querying for these metrics. To automatically add these labels from pod
+annotations, use the `annotationsToAugment` flag to list the labels the Collector
+adds to the metrics.
+
+For example, to add the `app_kubernetes_io_component` label to the container-level
+metrics for a `node-exporter` DaemonSet deployment, use the following configuration
+under the `kubeletMonitoring` key:
+
+```yaml copy
+discovery:
+  kubernetes:
+    ...
+    kubeletMonitoring:
+      ...
+      annotationsToAugment: ["app.kubernetes.io/component", ...]
+```
+
+This adds `app_kubernetes_io_component="infrastructure"` to these metrics, assuming
+the following example `node-exporter` manifest:
+
+```yaml copy
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  annotations:
+    app.kubernetes.io/component: infrastructure
+  name: node-exporter
+  namespace: monitoring
+...
+```
+
+## Map Kubernetes labels to Prometheus labels
+
+> Requires [Chronosphere Collector](/ingest/metrics-traces/collector) version 0.93.0 or later.
+
+The Collector lets you specify pod labels and annotations you want to keep as a
+Prometheus label. This feature applies to pods only.
+
+The following configuration example converts all pod labels called `my_label` and all
+pod annotations called `my.pod.annotation` into Prometheus labels for the metrics
+scraped from discovered pods. This is equivalent to a Prometheus `labelmap` rule, but
+sanitizes the label names and values:
+
+```yaml copy
+discovery:
+  kubernetes:
+    enabled: true
+    metadataConfig:
+        - resource: "pod"
+          annotationsToKeep:
+            - my.pod.annotation
+          labelsToKeep:
+            - my_label
+```
+
+## Discover `kube-system` endpoints
+
+> Requires [Chronosphere Collector](/ingest/metrics-traces/collector) version 0.85.0 or later.
+> Requires Kubernetes version 1.19.0 or later for your Kubernetes cluster.
+
+To discover endpoints in the `kube-system` namespace, set the
+`kubeSystemEndpointsDiscoveryEnabled` flag to `true`. Because `kube-system` has many
+constantly changing endpoints that might cause unnecessary load on the Collector, the
+endpoint is disabled by default.
+
+Using EndpointSlices significantly reduces the amount of load on the Kubernetes API
+server.
+
+<Info>
+If you modify a Collector manifest, you must
+[update it in the cluster and restart the Collector](/ingest/metrics-traces/collector/configure#modify-the-collector-manifest).
+</Info>
+
+## Discover and scrape `kube-state-metrics`
+
+You can use `ServiceMonitors` to scrape `kube-state-metrics`, which generate metrics
+that track the health of deployments, nodes, and pods in a Kubernetes cluster.
+Monitoring these metrics can help to ensure the health of your cluster because the
+Collector expects to continually receive `kube-state-metrics`. If the Collector can't
+scrape these metrics, it's likely your Kubernetes cluster is experiencing issues you
+need to resolve.
+
+Monitoring `kube-state-metrics` with a DaemonSet Collector is manageable for smaller
+clusters, but can lead to out of memory (OOM) errors as the cluster scales.
+Chronosphere recommends running the Collector as a sidecar to take advantage of
+staleness markers. The following steps assume that:
+
+- You're running a separate Collector as a Deployment to monitor `kube-state-metrics`.
+- You've already defined a Kubernetes Service and ServiceMonitor for `kube-state-metrics`.
+
+If you're already running the Collector as a DaemonSet, you must update the manifest
+for both Collector instances.
+
+After installing the `ServiceMonitors` CRD, complete the following steps to discover
+`kube-state-metrics`:
+
+1. Download
+   [this manifest](https://storage.googleapis.com/chronosphere-release/latest/kubernetes/ksm-chronocollector.yaml).
+
+1. In the `data` section, replace the values for `address` and `api-token` with
+   your Base64-encoded API token:
+
+   ```yaml copy
+   ---
+   apiVersion: v1
+   data:
+     address: <add-base64-encoded-token-here>
+     api-token: <add-base64-encoded-token-here>
+   ```
+
+1. Apply the manifest:
+
+   ```shell copy
+   kubectl apply -f path/to/ksm-chronocollector.yaml
+   ```
+
+1. Confirm the `Deployment` is started and running, and view the logs of the pod.
+
+   1. Use `kubectl get pods` to list the pods:
+
+      ```shell copy
+      kubectl get pods
+      ```
+   1. In the output, identify the pod to examine by its `NAME` column value. For example,
+      the pod name in the following output is `chronocollector-jtgfw`.
+
+      ```text
+      NAME                    READY   STATUS    RESTARTS   AGE
+      chronocollector-jtgfw   1/1     Running   0          1m
+      ...
+      ```
+   1. Use `kubectl logs` to review the pod's logs:
+
+      ```shell copy
+      kubectl logs chronocollector-jtgfw
+      ```
+
+## Ingest Kubernetes API server metrics
+
+The Kubernetes API Server provides REST operations and a frontend to a cluster's
+shared state through which all other components interact. Unlike most other metrics
+emitted from a cluster, Kubernetes doesn't expose API Server metrics by using a pod,
+but instead exposes metrics directly from an endpoint in the API Server.
+
+To ingest these metrics through traditional service discovery methods, you must
+discover and scrape the endpoints directly. The Collector supports using
+`ServiceMonitors` or job service discovery.
+
+### Discover API Server metrics with ServiceMonitors
+
+#### Discover metrics for a managed Kubernetes cluster
+
+To use [ServiceMonitors](/ingest/metrics-traces/collector/discover#servicemonitors)
+to discover and scrape API server metrics from a managed Kubernetes cluster, such
+as Amazon Elastic Kubernetes Service (EKS) or Google Kubernetes Engine (GKE), enable
+both the `allowSkipPodInfo` flag under the top level `serviceMonitor` key and the
+`endpointsDiscoveryEnabled` flag under the `discovery.kubernetes` YAML collection
+in the Collector configuration.
+
+```yaml copy
+serviceMonitor:
+  allowSkipPodInfo: true
+…
+discovery:
+  kubernetes:
+    endpointsDiscoveryEnabled: true
+```
+
+<Warning>
+If using this method, deploy the Collector as an
+[individual Kubernetes Deployment](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-using-a-deployment)
+rather than a DaemonSet. This prevents multiple Collectors from scraping the same API
+Server metrics. Additionally, set the appropriate
+[ServiceMonitor matching](/ingest/metrics-traces/collector/discover#servicemonitors)
+to prevent other Collectors from discovering the API Server ServiceMonitor.
+</Warning>
+
+#### Discover metrics for a self-managed Kubernetes cluster
+
+To use [ServiceMonitors](/ingest/metrics-traces/collector/discover#servicemonitors) to discover
+and scrape API server metrics from a self-managed Kubernetes cluster, such as k0ps,
+enable the `endpointsDiscoveryEnabled` flag under the `discovery.kubernetes` YAML
+collection in the Collector configuration:
+
+```yaml copy
+discovery:
+  kubernetes:
+    endpointsDiscoveryEnabled: true
+```
+
+<Info>
+In this configuration, you can deploy the Collector as a DaemonSet, which installs
+the Collector on the master nodes that run the Kubernetes API Server so the Collector
+can scrape it.
+</Info>
+
+### Discover API Server metrics with the jobs service
+
+To discover and scrape API Server metrics without using `ServiceMonitors`, you can
+use the `jobs` section of the Collector configuration for service discovery.
+
+<Warning>
+If using this method, deploy the Collector as an
+[individual Kubernetes Deployment](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-using-a-deployment)
+instead of as a DaemonSet. This prevents multiple Collectors from scraping the same
+API Server metrics.
+</Warning>
+
+The following is an example that discovers the API Server based on the value of the
+`__meta_kubernetes_pod_label_k8s_app` label equal to `kube-apiserver` (found in the
+API Server Service object).
+
+```yaml copy
+jobs:
+  - name: kube-apiserver
+    selector:
+      kubernetes:
+        matchLabels:
+          __meta_kubernetes_pod_label_k8s_app: kube-apiserver
+    options:
+      scheme: https
+      http:
+        bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+        tls:
+          caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecureSkipVerify: true
+      relabels:
+        - sourceLabels: [__name__]
+          targetLabel: service
+          replacement: kube-apiserver
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          targetLabel: node
+```

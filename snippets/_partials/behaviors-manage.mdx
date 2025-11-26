@@ -1,0 +1,23 @@
+
+- Assign a _main behavior_ to define the primary behavior for a dataset.
+- Assign an _override behavior_ to temporarily override the main behavior.
+
+  <Info>
+You can assign only one main behavior and one override behavior to a dataset.
+</Info>
+
+Both the main and override layers can use any of the
+[trace behavior types](/control/sampling/behaviors#trace-behavior-types), which are
+baseline, allow, and deny. You can also
+[create custom behaviors](/control/sampling/behaviors#create-custom-behaviors) and
+assign them to the main or override layers on datasets. When assigning a behavior to
+the override layer, you can set the behavior to start immediately, or schedule it to
+start at a future time.
+
+When managing assigned behaviors, you can set the shaping order for overlapping trace
+datasets. The shaping order determines the priority order to apply behaviors when
+traces in one dataset overlap with traces in another dataset. For example, if a trace
+belongs to more than one dataset with an assigned behavior, Observability Platform
+uses the behavior assigned to the dataset that's first in the shaping order.
+
+The shaping order applies only when the selected behavior is active.

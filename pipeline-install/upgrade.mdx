@@ -1,0 +1,229 @@
+---
+title: Upgrade Chronosphere Telemetry Pipeline
+sidebarTitle: Upgrade Telemetry Pipeline
+description: Learn how to upgrade various components of Chronosphere Telemetry Pipeline.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Upgrading the various components of Chronosphere Telemetry Pipeline gives you access
+to the latest features, fixes, and improvements.
+
+## Upgrade Core Operators and Core Instances
+
+Use the information in this section to upgrade your
+[Core Operators and Core Instances](/pipelines/concepts#core-operators-and-core-instances).
+
+<Info>
+You must use the same method for upgrading your Core Operators and Core Instances
+that you used when you originally installed them.
+</Info>
+
+### Determine your upgrade method
+
+The method you must use for upgrading your Core Operator and Core Instance
+depends on the method you used when you installed that Core Operator and Core
+Instance, which in turn depends on your environment.
+
+<Tabs>
+<Tab title="Kubernetes cluster" id="method-kubernetes">
+
+If you installed Telemetry Pipeline in a Kubernetes cluster and aren't sure
+whether you used Pipeline CLI or Helm during that installation process, run the
+following kubectl command:
+
+```shell copy
+kubectl -n calyptia get deploy calyptia-core-controller-manager --show-labels
+```
+
+The resulting output shows any labels attached to the `controller-manager`
+resource.
+
+- If the label `app.kubernetes.io/managed-by=Helm` is present, that means you
+  used Helm to install Telemetry Pipeline and should continue to use Helm for any
+  subsequent upgrades to your Core Operator and Core Instance.
+- If the label `app.kubernetes.io/managed-by=Helm` is **not** present, that
+  means you used Pipeline CLI to install Telemetry Pipeline and should continue to
+  use Pipeline CLI for any subsequent upgrades to your Core Operator and Core Instance.
+
+</Tab>
+<Tab title="Linux" id="method-linux">
+
+Telemetry Pipeline supports only Pipeline CLI installation in Linux environments, and
+doesn't support Helm installation. If you installed Telemetry Pipeline in a Linux
+environment, continue to use Pipeline CLI for any subsequent upgrades to your Core
+Operator and Core Instance.
+
+</Tab>
+</Tabs>
+
+### Upgrade your Core Operator and Core Instance
+
+After you [determine your upgrade method](#determine-your-upgrade-method), use
+the corresponding steps to upgrade your Core Operator and Core Instance to the latest
+available version.
+
+<Tabs>
+<Tab title="Pipeline CLI" id="operator-upgrade-cli">
+
+If you deployed Telemetry Pipeline inside a Kubernetes cluster, Pipeline CLI must have
+access to that cluster. If you deployed Telemetry Pipeline on Linux, you must
+run Pipeline CLI from inside that Linux environment.
+
+1. [Update Pipeline CLI](/pipeline-cli/install#update-pipeline-cli). Because
+   Core Operator and Core Instance versions are dependent on your Pipeline CLI
+   version, you must use the latest version of Pipeline CLI to perform upgrades.
+
+<Warning>
+If you don't update Pipeline CLI, subsequent steps will fail.
+</Warning>
+
+1. Run the following command to install the latest version of Core Operator, which
+   overwrites any previously installed versions:
+
+   ```shell copy
+   calyptia install operator
+   ```
+
+   Optionally, you can use the `--kube-namespace` flag to set the Core
+   Operator's [namespace](/pipeline-configure/kubernetes/namespaces).
+
+1. Run the following command to update your associated Core Instance:
+
+   ```shell copy /INSTANCE/
+   calyptia update core_instance operator INSTANCE
+   ```
+
+   Replace _`INSTANCE`_ with the name of the Core Instance you want to update.
+
+</Tab>
+<Tab title="Helm" id="operator-upgrade-helm">
+
+1. Run the following command to upgrade the Telemetry Pipeline chart to the latest version:
+
+   ```shell copy
+   helm repo update calyptia
+   ```
+
+1. Run the following command to upgrade the custom resource definitions (CRDs) that
+   Telemetry Pipeline relies on:
+
+   ```shell copy
+   helm upgrade --install core-crd calyptia/core-crd
+   ```
+
+   To optionally set a custom registry for your Core Operator, add the flag
+   `--set global.imageRegistry='NAME'` to this command. Replace _`NAME`_ with
+   the name of your custom registry.
+
+1. Run the following command to upgrade your Core Operator:
+
+   ```shell copy
+   helm upgrade --install core-operator calyptia/core-operator -n calyptia
+   ```
+
+1. Run the following command to upgrade your Core Instance:
+
+   ```shell copy /INSTANCE/
+   helm upgrade --install INSTANCE calyptia/core-instance -n calyptia
+   ```
+
+   Replace _`INSTANCE`_ with the name of the Core Instance you want to update.
+
+</Tab>
+</Tabs>
+
+## Upgrade a pipeline
+
+Regardless of [what method you used](#determine-your-upgrade-method) to install
+and upgrade your Core Operator and Core Instance, you can use either the Telemetry
+Pipeline web interface or [Pipeline CLI](/pipeline-cli) to upgrade pipelines.
+
+<Tabs>
+<Tab title="Web interface" id="pipeline-upgrade-ui">
+
+There are two possible methods for upgrading pipelines in the Telemetry Pipeline
+web interface.
+
+**Upgrade to the latest version**
+
+To upgrade a pipeline to the latest version, follow these steps:
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Go to **Core Instances**, and then click the name of the pipeline you
+   want to upgrade.
+1. If a pipeline isn't using the latest agent version, an `Upgrade to <version> available`
+   notice is displayed on the [pipeline details](/pipeline-navigate#pipeline-details)
+   page. Next to this notice, click **Upgrade** to upgrade the pipeline to the
+   latest version.
+
+<Info>
+This upgrade method always retains a pipeline's current
+[agent image type](/pipeline-configure/agent-image).
+</Info>
+
+**Choose the agent image type and version**
+
+To choose the [agent image type](/pipeline-configure/agent-image) and version
+for your pipeline, follow these steps:
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Go to **Core Instances**, and then click the name of the pipeline you
+   want to upgrade.
+1. Go to <Icon icon="square-pen" />&nbsp;**Advanced Settings**.
+1. In the **Pipeline Image** section, select an option from the **Version**
+   drop-down menu. Version numbers with no suffix (for example, `1.2.3`) use the
+   Red Hat UBI agent image, and version numbers with the distroless suffix (for
+   example, `1.2.3-distroless`) use the distroless agent image.
+1. Click **Apply** to save your changes.
+
+</Tab>
+<Tab title="Pipeline CLI" id="pipeline-upgrade-cli">
+
+To upgrade an existing pipeline to the latest version, use the following command
+in Pipeline CLI:
+
+```shell copy /PIPELINE/ /VERSION/
+calyptia update pipeline PIPELINE --image ghcr.io/calyptia/core/calyptia-fluent-bit:VERSION
+```
+
+Replace the following:
+
+- _`PIPELINE`_: The name or [unique ID](/pipeline-configure/metadata#get-pipeline-ids)
+  of your pipeline.
+- _`VERSION`_: The latest version of the pipeline agent. You can find this value in the
+  **Pipeline agent** column of the
+  [Telemetry Pipeline component versions](/pipelines/core-components) table.
+  For example, if the latest version of the pipeline agent is 1.23.0, provide the
+  value `1.23.0` to use the Red Hat UBI [agent image](/pipeline-configure/agent-image)
+  or `1.23.0-distroless` to use the distroless agent image.
+
+</Tab>
+</Tabs>
+
+### Upgrade multiple pipelines
+
+To upgrade all of your pipelines in a given environment simultaneously, run the
+following command:
+
+```shell copy
+curl -s https://raw.githubusercontent.com/chronosphereio/calyptia-cli/main/update-all-pipeline-images.sh | bash -s -- ghcr.io/calyptia/core/calyptia-fluent-bit:VERSION
+```
+
+Replace _`VERSION`_ with the [latest version](/pipelines/core-components) of the
+pipeline agent. You can find this value in the **Pipeline agent** column of the
+[Telemetry Pipeline component versions](/pipelines/core-components) table.
+For example, if the latest version of the pipeline agent is 1.23.0, provide the
+value `1.23.0` to use the Red Hat UBI [agent image](/pipeline-configure/agent-image)
+or `1.23.0-distroless` to use the distroless agent image.
+
+<Info>
+For critical pipelines, Chronosphere recommends updating each pipeline individually
+instead of using this script.
+</Info>
+
+### Deployment strategies
+
+Deployment strategies govern how a pipeline's replicas behave during the upgrade
+process. For more information, see the
+[deployment strategies](/pipeline-configure/deployment-strategies) guide.

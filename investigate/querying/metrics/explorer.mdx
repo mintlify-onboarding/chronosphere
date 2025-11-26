@@ -1,0 +1,406 @@
+---
+title: Metrics Explorer
+---
+import { AddToDashboardIcon} from '@/components';
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<LimitedAvail/>
+
+**Metrics Explorer** in Chronosphere Observability Platform helps you craft, investigate,
+and troubleshoot queries of your collected metrics, and also visualizes the results.
+Use Metrics Explorer to help create and polish the results of queries before
+you add them to a [dashboard](/observe/dashboards) or [monitor](/investigate/alerts/monitors).
+
+To access Metrics Explorer, in the navigation menu, click
+**<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Metrics Explorer**.
+
+<Info>
+If Metrics Explorer offers the option to
+**<Icon icon="circle-check" /> Switch to new Metrics Explorer**, you're
+using the [classic Metrics Explorer](/investigate/querying/metrics/explorer-classic).
+</Info>
+
+## Enter and run a query
+
+<Info>
+Metrics Explorer defaults to querying Prometheus metrics.
+</Info>
+
+Like the rest of Observability Platform, Metrics Explorer supports the
+[Prometheus Query Language (PromQL)](/investigate/querying/promql) for writing
+queries. For full details about PromQL, read the
+[Prometheus documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/).
+
+The query field supports autocompletion for metric names and functions.
+
+To enter and run a query:
+
+1. In the **query field** begin typing to reveal a list of matching results, and
+   either click a result or use the arrow keys and <kbd>Enter</kbd>
+   (<kbd>Return</kbd> on macOS) to add it to the query.
+1. Optional: Click **Builder** to open the
+   [Query Builder](/investigate/querying/metrics/query-builder) which you can use to
+   construct, optimize, and debug queries before saving and using them, and for
+   sharing queries with your team.
+1. To add an additional query to execute, click **<Icon icon="plus" /> Add query**.
+   Each query adds a series to Metrics Explorer's **Graph** and **Table**.
+1. To execute all of the entered queries, click **<Icon icon="rotate" /> Run**,
+   or press <kbd>Alt+Enter</kbd> (<kbd>Command+Return</kbd> on macOS) on your
+   keyboard.
+
+To delete a query, click its **<Icon icon="trash" /> Delete query**
+button.
+
+### Automatically execute queries based on an interval
+
+To automatically execute the entered queries at a specific interval:
+
+1. Click the dropdown arrow of the **<Icon icon="rotate" /> Run** button.
+1. Select an interval from the list, which ranges from five seconds (`5s`) to one hour
+   (`1h`).
+
+To disable this automatic execution:
+
+1. Click the dropdown arrow of the **<Icon icon="rotate" /> Run** button.
+1. Select **Off**.
+
+## Search metrics and labels
+
+Click the **<Icon icon="database-magnifying-glass" /> Browse metrics**
+button next to the **query field** to open the **Explore metrics** panel, which displays
+a list of available metrics and a search field.
+
+From there, you can **<Icon icon="square-arrow-up" /> Insert** or
+**<Icon icon="clipboard-arrow-left" /> Copy** the names of metrics, labels, or
+values that you browse, filter, and select from this list.
+
+Begin typing in the search field to filter the metrics by keyword. The view lists
+the first 100 matching metrics.
+
+Each row of the results represents a metric and includes the following functions:
+
+- **<Icon icon="magnifying-glass" /> Explore labels**: Opens a list of that metric's
+  labels, with filters you can engage to select specific values associated with
+  that label. For details, see [Explore labels](#explore-labels).
+- **<Icon icon="square-arrow-up" /> Insert**: Inserts the metric name
+  into the **query field** at the cursor's position.
+- **<Icon icon="clipboard-arrow-left" /> Copy to clipboard**: Copies the metric
+  name into your clipboard.
+
+## Explore labels
+
+When you click **<Icon icon="magnifying-glass" /> Explore labels** for a metric in the
+**Explore metrics** panel, Metrics Explorer lists all labels associated with that
+metric, and the values associated with each label. It also lists the **selector**,
+which is the query text representing currently selected metric or label value.
+
+### Filter label values by match
+
+Each label name has a **Filter** button. To filter label values by conditionally
+matching text:
+
+1. Click **Filter** on the label you want to filter values for.
+1. Optional: To change the operator, click the operator dropdown, which defaults to
+   **`=` Equal to**.
+
+   - **`=` Equal to**: Matches only if the value exactly matches the entered text.
+   - **`!=` Not equal to**: Matches only if the value doesn't exactly match the
+   entered text.
+   - **`=~` Regular expression**: Matches only if the value matches the entered
+   regular expression.
+   - **`!~` Negative regular expression**: Matches only if the value doesn't match
+   the entered regular expression.
+1. Enter text or a regular expression, depending on the selected operator. For text
+   operators, Metrics Explorer provides autocompletion suggestions as you type from
+   the list of known values.
+1. Click **Apply** to apply the filter, or **<Icon icon="xmark" /> Close** to
+   cancel and clear the filter.
+
+The entered filter replaces the **Filter** button, and the list of label values
+is now filtered accordingly. This also updates the **selector** with the filter.
+
+To remove the applied filter, click the **<Icon icon="xmark" /> Remove filter**
+button, either where it's adjacent to the label on the list or at the **Filters**
+list in the header.
+
+### Filter label values by value
+
+In addition to text and regular expression filters, you can filter by a specific
+label value. Each value listed with each label is a link, and clicking it applies
+that label name as if it were an **`=` Equal to** filter.
+
+### Use the selector in your query
+
+As with the metrics list, you can click **<Icon icon="square-arrow-up" /> Insert**
+and **<Icon icon="clipboard-arrow-left" /> Copy** to respectively insert the
+selector into the query or copy it to your clipboard.
+
+## Modify query visualizations
+
+Metrics Explorer's main navigation bar includes controls similar to
+[dashboards](/observe/dashboards) for comparing past values, and for defining and
+changing time ranges used in Metrics Explorer's visualizations.
+
+To use Metrics Explorer's **Compare** tool to compare current values to past values,
+and to define and change time ranges for visualizations using the
+**<Icon icon="clock" /> [time range selector](/navigate/time-ranges)**.
+See
+[View and compare specific time ranges](/observe/dashboards#view-and-compare-specific-time-ranges)
+for more information.
+
+Use the **Resolution** field change the query resolution. If you have opened this
+Metrics Explorer page from a [dashboard panel](/observe/dashboards/panels), the
+resolution value carries over from the panel.
+
+Metrics Explorer also provides its own tools and options to modify its
+visualizations.
+
+### Visualization settings
+
+Metrics Explorer includes visualizations settings for its charts. Use these settings
+to customize the **Display** and the **Null behavior**.
+
+**Display** options change the type of chart.
+
+- **Line** (Default)
+- **Area**
+- **Bar**
+
+Select an item from the **Null behavior** menu to change how the chart handles null
+values:
+
+- **Default**
+- **Connected**
+- **Null as zero**
+
+### Hide a query
+
+To hide a query from the Explorer's visualizations, click its
+**<Icon icon="eye" /> Hide query** button.
+
+### Split queries into separate graphs
+
+To display each query in a separate graph, enable the **One graph per query** toggle.
+Disabling this toggle merges the queries back into a single graph.
+
+### Assign an alias to a query
+
+To assign an alias to a query that appears in the visualization's legend in place
+of its query string, click that query's **Alias** button and enter the alias into
+the field.
+
+## Modify queries with options
+
+Each query has **<Icon icon="chevron-right" /> Options** that you can modify
+to change the query's naming pattern or step parameter, or to change the query itself.
+
+### Name a query result's series
+
+You can name the visualized result of the query by selecting a method from the
+**Series naming** dropdown in a query's options.
+
+1. Click **<Icon icon="chevron-right" /> Options** for the query you want to
+   modify.
+1. Click the **Series naming** dropdown, which defaults to **Labels**.
+1. Select from either **Labels**, to name the series by selecting labels to include,
+   or **Regex**, to name the series by choosing capture groups to include from a
+   regular expression.
+1. Enter an appropriate pattern.
+   - For **Labels**, enter a label as `{{ label_name }}` in the **Naming pattern** field
+   to use the label's value as the series' name.
+
+   For example, given a label `env` with values `staging-1`,
+   `prod-1`, and so on, enter `{{ env }}` as the **Naming pattern** to replace
+   the series' name in visualizations with the `env` label's corresponding values.
+   - For **Regex**, enter a regular expression that includes a capture group (`()`)
+   in the **Regex** field that appears. In the **Naming pattern** field, use `$1`
+   syntax to substitute the capture group's match into the series name.
+
+   For example, given the series `production-123` and `production-456`, enter
+   `production-(.*)` in the **Regex** field to match both series, then enter
+   `Prod: $1` as the **Naming pattern** to name those series as `Prod: 123` and
+   `Prod: 456`.
+
+### Define a query's minimum step period
+
+The PromQL `step` parameter controls how many data points are returned in a range
+query.
+
+To define the step parameter in a Metrics Explorer query:
+
+1. Click **<Icon icon="chevron-right" /> Options** for the query you want to
+   modify.
+1. Enter a time value using in the **Min step** field, using Observability Platform's
+   [time value syntax](/navigate/time-ranges).
+
+   For example, entering a **Min step** of `5s` sets the step value to 5 seconds.
+
+### Define a query's downsampling strategy
+
+You can reduce the resolution of a query's results by selecting a downsampling strategy.
+This automatically adds an
+[aggregation over time](https://prometheus.io/docs/prometheus/latest/querying/functions/#aggregation_over_time)
+function and interval period to the query. Use downsampling to reduce the impact
+of high-cardinality queries, such as on visualization performance.
+
+When you apply a downsampling strategy to a query, Observability Platform modifies
+the original query to add the corresponding function and interval, and also displays
+the _resolved query_ without modifying the original query. If you modify the original
+query, Observability Platform automatically updates the resolved query.
+
+To define a downsampling strategy:
+
+1. Click **<Icon icon="chevron-right" /> Options** for the query you want to
+   modify.
+1. Click the **Downsampling strategy** dropdown and select a strategy, which adds
+   the corresponding function and a time interval to the query:
+   - **Off**: Reverts to using the original query.
+   - **Avg**: `avg_over_time`
+   - **Sum**: `sum_over_time`
+   - **Min**: `min_over_time`
+   - **Max**: `max_over_time`
+
+## Add queries to a dashboard
+
+Metrics Explorer supports
+[adding queries to a dashboard](/investigate/querying/dashboard-query)
+so you can visualize query results.
+
+## Investigate suspicious metrics
+
+Click the <Icon icon="ellipsis-vertical" /> three vertical dots icon and then click
+[**Metrics DDx**](/investigate/analyze/differential-diagnosis/metrics) to open a query
+in the differential diagnosis page.
+
+See [common panel elements](/observe/dashboards/panels#common-panel-elements) for an
+explanation of the other available tools.
+
+## View past queries
+
+To view a list of queries that you've recently used in Metrics Explorer, click
+**<Icon icon="font" /> View queries** in the main navigation bar. This opens
+the **Queries** panel to the **Recent** tab, which lists recent queries in order
+from most to least recent.
+
+When you move the cursor over each query, you can click the
+**<Icon icon="ellipsis-vertical" /> Dots icon** that appears to **Copy** or **Delete**
+the query.
+
+To view [saved queries](#save-queries), click the **Saved** tab in the **Queries**
+panel.
+
+To exit the panel, click the panel's **<Icon icon="xmark" /> Close** button.
+
+## Save queries
+
+To save your entered queries, click
+**<Icon icon="bookmark-plus" /> Save queries** in the main navigation bar.
+This opens the **Queries** panel to the **Saved** tab and proposes saving the queries
+by prompting you to enter a name for the queries.
+
+After entering a name, click **Save** to save the queries. Click **Cancel** to remove
+the proposed queries from the panel.
+
+To exit the panel, click the panel's **<Icon icon="xmark" /> Close** button.
+This discards and proposed but unsaved queries.
+
+## Troubleshooting queries
+
+You can change the following settings for query history from the **Settings** tab:
+
+- The period of time to save query history (default: 1 week)
+- The default active tab (default: Query history tab)
+- Only show queries for active data source (default: true)
+- Clear query history
+
+## Inspector
+
+The **Inspector** helps you understand and troubleshoot queries. Available options
+are:
+
+- An overview of **Stats** for the query, including:
+  - **Total request time**
+  - **Data processing time**
+  - **Number of queries**
+  - **Total number rows**
+- The **Query inspector**, which lets you to inspect the raw data.
+- The **JSON** tab, to export the query as JSON.
+- The **Data** tab, which shows raw data. Click **Download CSV** to export the data
+  to as a comma-separated values (CSV) file.
+
+## Available metrics for troubleshooting
+
+Additional metrics in your environment track the overall health of alerting and
+recording rules that you've configured. The following examples are based on
+Prometheus queries and troubleshooting.
+
+Each metric has multiple labels you can use for slicing and monitoring, in the
+following format:
+
+- `metric_name`: metric\_description
+- `label_name`: label\_description + use
+
+Visit [Prometheus metric naming recommendations](/ingest/metrics-traces/collector/mappings/prometheus/prometheus-recommendations)
+for more details about naming metrics.
+
+Observability Platform provides the following metrics for troubleshooting:
+
+- `prometheus_rule_group_last_duration_seconds`: A gauge metric that holds the total
+  time the group took to complete its last iteration, in seconds.
+  - `rule_group`: The group that this rule belongs to.
+- `prometheus_rule_evaluation_duration_seconds`: A summary metric to track the
+  average time an individual rule takes to evaluate.
+- `prometheus_rule_evaluations_total`: The total number of individual rule
+  evaluations that occur.
+  - `rule_group`: The group that this rule belongs to.
+- `prometheus_rule_group_iterations_missed_total`: The total number of rule group
+  evaluations missed due to slow rule group evaluation.
+  - `rule_group`: The group that this rule belongs to.
+- `prometheus_rule_group_iterations_total`: The total number of scheduled rule group
+  evaluations, whether executed or missed.
+  - `rule_group`: The group that this rule belongs to.
+- `prometheus_rule_eval_failures_total`: The total number of individual rule
+  evaluation failures.
+  - `rule_group`: The group that this rule belongs to.
+  - `type`: Alerting or recording depending on the type of rule.
+  - `identifier`: The slug for the given rule.
+  - `status_code`: The status code associated with the given evaluation failure.
+
+### Examples
+
+The following examples explain how to create alerts for particular situations:
+
+- Consistent rule failures
+
+  To receive an alert whenever an individual rule consistently fails for five
+  minutes, [create a monitor](/investigate/alerts/monitors#creating-a-monitor)
+  with the following query:
+
+  ```text copy
+  sum by (identifier) (rate(prometheus_rule_eval_failures_total[1m]))
+  ```
+
+  with a **Sustain** of 5m.
+
+  You can also create an alert for monitoring individual rule failures:
+
+  ```text copy
+  sum by (identifier) (rate(prometheus_rule_eval_failures_total{type="<alerting|recording>"}[1m])
+  ```
+
+- Create alerts by rule type
+  If you want to alert on certain types of rules, you can do something like:
+
+  ```text copy
+  sum by (identifier) (rate(prometheus_rule_eval_failures_total{identifier=~"<your-regex-here>"}[1m]))
+  ```
+
+  For example, to create an alert for only a specific category of rules, you can do
+  something like:
+
+  ```text copy
+  sum by (identifier) (rate(prometheus_rule_eval_failures_total{type="<alerting|recording>"}[1m])
+  ```

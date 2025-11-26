@@ -1,0 +1,113 @@
+---
+title: Install a Core Operator in a Kubernetes cluster
+description: Install a Core Operator to run Telemetry Pipeline in a Kubernetes cluster.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+To get started with Chronosphere Telemetry Pipeline on Kubernetes, you'll need to
+install a [Core Operator](/pipelines/concepts#core-operator)
+in each Kubernetes cluster where you want to deploy pipelines.
+
+## Supported Kubernetes distributions
+
+Telemetry Pipeline is compatible with the following distributions of Kubernetes:
+
+- Open Source Kubernetes 1.25 or later
+- Amazon Kubernetes Service (EKS)
+- Azure Kubernetes Service (AKS)
+- Google Kubernetes Engine (GKE)
+- Red Hat Open Shift 4.0 or later
+
+## Installation steps
+
+You can use [Pipeline CLI](/pipeline-cli) or Helm to install a Core Operator in
+a Kubernetes cluster.
+
+<Info>
+When you install a Core Operator, only deploy a single replica.
+If a Core Operator has multiple replicas, those replicas will conflict with one another.
+</Info>
+
+<Tabs>
+<Tab title="Pipeline CLI" id="install-cli">
+
+1. [Review the Telemetry Pipeline installation prerequisites](/pipeline-install/prereqs).
+
+1. [Install](/pipeline-cli/install) or [update](/pipeline-cli/install#update-pipeline-cli)
+   Pipeline CLI. Because Core Operator versions are dependent on your Pipeline CLI
+   version, keeping Pipeline CLI current ensures that you're installing
+   the latest version of Core Operator.
+
+1. If you haven't already, [set an API token in Pipeline CLI](/pipeline-cli/authenticate).
+
+1. Ensure that the
+   [`KUBECONFIG`](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
+   environment variable in your cluster is set to a valid configuration file.
+
+1. Run the following command to install a Core Operator:
+
+   ```shell copy
+   calyptia install operator
+   ```
+
+   Optionally, you can add the `--kube-namespace` command to set that Core
+   Operator's [namespace](/pipeline-configure/kubernetes/namespaces).
+
+1. Repeat these steps for each Kubernetes cluster where you want to use Telemetry
+   Pipeline.
+
+</Tab>
+<Tab title="Helm" id="install-helm">
+
+1. [Review the Telemetry Pipeline installation prerequisites](/pipeline-install/prereqs).
+
+1. Ensure that [Helm](https://helm.sh/) is installed and has a valid connection
+   to your target cluster.
+
+1. Ensure that the
+   [`KUBECONFIG`](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
+   environment variable in your cluster is set to a valid configuration file.
+
+1. Run the following command to add the Telemetry Pipeline chart repository:
+
+   ```shell copy
+   helm repo add calyptia https://helm.calyptia.com/
+   ```
+
+1. Run the following command to install the custom resource definitions (CRDs)
+   that Telemetry Pipeline relies on:
+
+   ```shell copy
+   helm install core-crd calyptia/core-crd
+   ```
+
+    To optionally set a custom registry for your Core Operator, add the flag
+   `--set global.imageRegistry='NAME'` to this command. Replace _`NAME`_ with
+   the name of your custom registry.
+
+1. Run the following command to install Core Operator:
+
+   ```shell copy
+   helm install core-operator calyptia/core-operator
+   ```
+
+1. Repeat these steps for each Kubernetes cluster where you want to use Telemetry
+   Pipeline.
+
+</Tab>
+</Tabs>
+
+## View installation logs
+
+After you install a Core Operator in a Kubernetes cluster, use the
+following kubectl command to view logs from the installation process:
+
+```shell copy
+kubectl logs deploy/calyptia-core-controller-manager
+```
+
+## Next steps
+
+After you've installed a Core Operator in your Linux environment, you can
+[create a Core Instance](/pipeline-install/create-instance) in that environment.

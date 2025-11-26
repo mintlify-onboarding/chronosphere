@@ -1,0 +1,59 @@
+---
+title: Ingest additional metrics
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Scraping metric endpoints is the preferred method of ingesting metrics to the
+Chronosphere Collector, but you can also ingest the following metric formats:
+
+- [Carbon](/ingest/metrics-traces/collector/addl-metrics/carbon)
+- [DogStatsD](/ingest/metrics-traces/collector/addl-metrics/dogstatsd)
+- [Prometheus and OpenMetrics](/ingest/metrics-traces/collector/addl-metrics/prom-openmetrics)
+- [Pushgateway](/ingest/metrics-traces/collector/addl-metrics/prom-pushgateway)
+- [SignalFx](/ingest/metrics-traces/collector/addl-metrics/signalfx)
+- [StatsD](/ingest/metrics-traces/collector/addl-metrics/statsd)
+- [Tagged StatsD](/ingest/metrics-traces/collector/addl-metrics/tagged-statsd)
+- [Wavefront](/ingest/metrics-traces/collector/addl-metrics/wavefront)
+
+## Enable aggregations
+
+The v0.101.0 release adds an option to enable client-side aggregations for
+[Carbon](/ingest/metrics-traces/collector/addl-metrics/carbon),
+[StatsD](/ingest/metrics-traces/collector/addl-metrics/statsd), and
+[Datadog DogStatsD](/ingest/metrics-traces/collector/addl-metrics/dogstatsd) metrics.
+These aggregations reduce network egress and processed writes to Chronosphere Observability
+Platform.
+
+When the Collector ingests a data sample, it aggregates the data based on the metric type
+and sends a single data point to Observability Platform that represents the sample for
+the defined period. The Collector aggregates on the following metric types:
+
+- Counters, which are rolled up through addition.
+- Gauges, which are selected by the last value written.
+- Timers, which use sketches of the underlying sample to build quantiles.
+
+Aggregations are disabled by default. To enable aggregations, define the
+`push.PROTOCOL.aggregation` YAML collection in your Collector manifest, where
+_`PROTOCOL`_ can be `carbon`, `dogstatsd`, or `statsd`. For example, the following
+YAML collection enables aggregations for StatsD with defined values for each of the
+supported metric types:
+
+```yaml copy
+    push:
+       statsd:
+         aggregation:
+           counters:
+             interval: "10s"
+           gauges:
+             interval: "10s"
+           timers:
+             interval: "10s"
+           inactiveExpireAt: "2m"
+```
+
+- `interval`: Defines the length of time before writing to Observability Platform.
+  A longer `interval` duration provides more effective caching, but also increases
+  the length of delays before writing.
+- `inactiveExpireAt`: Determines the length of time before Chronosphere evicts unused
+  keys from the local cache. Default: `2m`.

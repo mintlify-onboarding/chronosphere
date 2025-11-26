@@ -1,0 +1,43 @@
+---
+title: Route logs from Logstash
+description: Learn how to route logs from Logstash to Chronosphere Observability Platform.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+You can route log data from Logstash to Chronosphere Observability Platform. To route
+logs, configure an
+[HTTP output plugin](https://www.elastic.co/guide/en/logstash/current/plugins-outputs-http.html)
+in your
+[Logstash pipeline configuration file](https://www.elastic.co/guide/en/logstash/current/config-setting-files.html)
+that specifies your Observability Platform tenant as a destination.
+
+1. In your Logstash pipeline configuration file, add an `output` section that defines
+   the `http` plugin:
+
+   ```text copy
+   output {
+     http {
+        http_method=>"post"
+        headers => {
+            "Content-Type" => "application/json"
+            "API-token" => "API_TOKEN"
+        }
+        url=>"https://TENANT.chronosphere.io/api/v1/data/logs/ingest"
+        format=>"json_batch"
+     }
+   }
+   ```
+
+   - Replace _`API_TOKEN`_ with the API token generated from your
+     [service account](/administer/accounts-teams/service-accounts). Chronosphere
+     recommends storing your API token in a separate file or Kubernetes Secret and
+     calling it using an environment variable, such as `$API_TOKEN`.
+   - Replace _`TENANT`_ with your organization name, prefixed to your Observability
+     Platform instance. For example, _`MY_ORGANIZATION`_`.chronosphere.io`.
+   - Optional: The `format=>"json_batch"` option collects each batch of events
+     received by the output and places them into a single JSON array that's sent in
+     one request.
+
+1. After defining the output, [contact Chronosphere Support](/support) and indicate
+   which field in your data contains log timestamps.

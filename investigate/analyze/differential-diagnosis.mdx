@@ -1,0 +1,31 @@
+---
+title: Identify issues behind suspicious trends
+description: Learn how to use differential diagnosis to identify issues in your telemetry data most closely correlated with suspicious behavior.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+When troubleshooting issues, finding the root cause of a problem as quickly as
+possible is critical. Chronosphere Observability Platform includes
+_differential diagnosis_ (DDx) to help developers find the source of slowdowns or
+failures by identifying suspicious trends in your telemetry data and what's causing
+them.
+
+Differential diagnosis lets developers resolve service performance issues without
+writing queries or needing knowledge of the entire system. Differential diagnosis
+ranks and highlights the most probable sources of issues so developers can test
+hypotheses and compare trends to identify root causes.
+
+## Identify issues in traces
+
+In Trace Explorer or from service pages, use
+[differential diagnosis for trace](/investigate/analyze/differential-diagnosis/traces) to
+identify trends and immediately scan through all related tags and values to pinpoint
+the exact `tag:value` pairs most closely correlated with suspicious behavior.
+
+## Identify trends in metrics
+
+In Metrics Explorer or from service pages, use
+[differential diagnosis for metrics](/investigate/analyze/differential-diagnosis/metrics)
+to examine time series anomalies, such as unusual shapes in their metrics like
+spikes and dips, and quickly understand what dimensions are contributing to an issue.

@@ -1,0 +1,112 @@
+---
+title: Nest keys
+description: Learn about the nest keys processing rule in Chronosphere Telemetry Pipeline.
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The nest keys [processing rule](/pipeline-data/processing-rules) moves the value of a
+specified source key into an object nested under a specified destination key.
+
+## Configuration parameters
+
+<Params />
+
+| Name                    | Key         | Description | Default |
+| ----------------------- | ----------- | ----------- | ------- |
+| **Source key**          | `src` | Required. The key to nest under **Destination key**. This can be either a flat key/value pair or the key to an object. | _none_ |
+| **Destination key**     | `dst` | Required. The key of the object to store your nested data. If no matching key exists, create a new key and set its value accordingly. | _none_  |
+| **Match case** checkbox   | `matchCase` | Indicates whether the regular expression is case-sensitive. | Not selected |
+| **Regex engine**        | `regexEngine` | Required. The [engine](/pipeline-data/processing-rules#regex-engines) to parse your regular expression. Accepted values: `GNU`, `Oniguruma`, `PCRE2`, `POSIX`, `TRE`. | `PCRE2` |
+| **Regex mode** checkbox | `regexMode` | Indicates whether to treat the value of **Source key** as a regular expression. | Not selected / `false` |
+| **Merge** checkbox      | `merge` | If selected, and if **Destination key** is the key to an existing object that already contains data, the nest keys rule moves the new nested data into **Destination key** without overwriting its original data. However, if **Destination key** is a flat key/value pair, its value is overwritten and replaced with a new object. | Not selected |
+| **Comment**             | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Examples
+
+Using the nest keys processing rule lets you restructure your telemetry data
+by storing key/value pairs inside a parent object.
+
+### New object
+
+For example, given this sample log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Source key** value `user_id` and the **Destination key**
+value `account` returns the following result:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"account":{"user_id":3},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"account":{"user_id":4},"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"account":{"user_id":1},"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"account":{"user_id":5},"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"account":{"user_id":1},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"account":{"user_id":2},"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"account":{"user_id":3},"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"account":{"user_id":1},"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"account":{"user_id":2},"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"account":{"user_id":2},"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"account":{"user_id":1},"page_id":50,"action":"view"}
+```
+
+This rule moved the `user_id` key/value pair into a new object named `account`.
+
+### Merge into existing object
+
+You can also use the **Merge** setting to nest data within an existing object.
+For example, given this sample log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user":{"account":{"vip":"no","id":3},"device":"mobile"},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user":{"account":{"vip":"yes","id":4},"device":"desktop"},"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user":{"account":{"vip":"no","id":1},"device":"desktop"},"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user":{"account":{"vip":"yes","id":5},"device":"mobile"},"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user":{"account":{"vip":"no","id":1},"device":"other"},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user":{"account":{"vip":"yes","id":2},"device":"mobile"},"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user":{"account":{"vip":"no","id":3},"device":"desktop"},"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user":{"account":{"vip":"no","id":1},"device":"desktop"},"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user":{"account":{"vip":"yes","id":2},"device":"desktop"},"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user":{"account":{"vip":"yes","id":2},"device":"other"},"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user":{"account":{"vip":"no","id":1},"device":"mobile"},"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Source key** value `action`, the **Destination key**
+value `user`, and the **Merge** setting enabled returns the following result:
+
+```json
+{"user":{"account":{"id":3,"vip":"no"},"action":"purchase","device":"mobile"},"timestamp":"2023-03-28T09:08:41.64283645Z","page_id":30,"action":"purchase"}
+{"user":{"account":{"id":4,"vip":"yes"},"action":"purchase","device":"desktop"},"timestamp":"2023-03-28T09:08:42.643343109Z","page_id":10,"action":"purchase"}
+{"user":{"account":{"id":1,"vip":"no"},"action":"click","device":"desktop"},"timestamp":"2023-03-28T09:08:48.643600498Z","page_id":50,"action":"click"}
+{"user":{"account":{"id":5,"vip":"yes"},"action":"purchase","device":"mobile"},"timestamp":"2023-03-28T09:08:50.643773688Z","page_id":40,"action":"purchase"}
+{"user":{"account":{"id":1,"vip":"no"},"action":"purchase","device":"other"},"timestamp":"2023-03-28T09:08:51.643932272Z","page_id":30,"action":"purchase"}
+{"user":{"account":{"id":2,"vip":"yes"},"action":"click","device":"mobile"},"timestamp":"2023-03-28T09:08:56.644080944Z","page_id":40,"action":"click"}
+{"user":{"account":{"id":3,"vip":"no"},"action":"click","device":"desktop"},"timestamp":"2023-03-28T09:09:03.64425954Z","page_id":30,"action":"click"}
+{"user":{"account":{"id":1,"vip":"no"},"action":"view","device":"desktop"},"timestamp":"2023-03-28T09:09:03.644317046Z","page_id":20,"action":"view"}
+{"user":{"account":{"id":2,"vip":"yes"},"action":"purchase","device":"desktop"},"timestamp":"2023-03-28T09:09:10.64447719Z","page_id":50,"action":"purchase"}
+{"user":{"account":{"id":2,"vip":"yes"},"action":"view","device":"other"},"timestamp":"2023-03-28T09:09:17.644810963Z","page_id":10,"action":"view"}
+{"user":{"account":{"id":1,"vip":"no"},"action":"view","device":"mobile"},"timestamp":"2023-03-28T09:09:20.644994805Z","page_id":50,"action":"view"}
+```
+
+This rule moved the `action` key/value pair into the `user` object, but kept the
+existing key/value pairs that were already stored in `user`.
+
+## Related rules
+
+For a processing rule with the opposite effect, see
+[flatten subrecord](/pipeline-data/processing-rules/flatten-subrecord)
+or [lift submap](/pipeline-data/processing-rules/lift-submap).

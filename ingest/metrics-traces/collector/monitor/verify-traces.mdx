@@ -1,0 +1,36 @@
+---
+title: Verify the Collector is receiving traces
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Use the following methods to ensure the Chronosphere Collector is receiving trace
+data.
+
+## Trace Analyzer
+
+[Trace Analyzer](/investigate/analyze/trace-analyzer) provides a real-time view of
+incoming traces grouped by tag and their relative frequency. Use Trace Analyzer to
+display the stream of incoming spans from your trace data.
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
+1. Click the **Traces** tab.
+1. Click **Capture live data** to display the stream of incoming spans. The default grouping
+   shows spans by service (`__service__`), but you can include additional tags to group
+   by such as `__trace_id__` and `__span_id__`.
+
+## Trace Explorer
+
+[Trace Explorer](/investigate/querying/traces) helps you search for traces
+and spans so that you can identify, triage, and understand the root cause of
+problems.
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Trace Explorer**.
+1. Modify the **Time Window** to the period when the Collector started ingesting
+   trace data.
+
+The timeline graph displays a spike at the time when trace data started flowing
+into Chronosphere Observability Platform.

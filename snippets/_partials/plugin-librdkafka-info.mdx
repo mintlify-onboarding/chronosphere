@@ -1,0 +1,14 @@
+
+This plugin uses the [librdkafka](https://github.com/confluentinc/librdkafka)
+library. Certain configuration parameters available through the Telemetry
+Pipeline UI are based on librdkafka settings. These parameters generally use the
+`rdkafka.` prefix.
+
+In addition to the parameters available through the Telemetry Pipeline UI, you can
+customize any of the
+[librdkafka configuration properties](https://github.com/confluentinc/librdkafka/blob/master/CONFIGURATION.md)
+by adding them to a pipeline configuration file. To do so, append the `rdkafka.`
+prefix to the name of that property.
+
+For example, to customize the `socket.keepalive.enable` property, add the
+`rdkafka.socket.keepalive.enable` key to your configuration file.

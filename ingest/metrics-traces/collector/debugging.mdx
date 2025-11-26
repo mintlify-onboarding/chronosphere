@@ -1,0 +1,136 @@
+---
+title: Debug endpoints
+description: How to debug Chronosphere Collector issues by using available HTTP endpoints.
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+The Chronosphere Collector exposes HTTP endpoints at the
+[`listenAddress`](/ingest/metrics-traces/collector/configure/optimizations#define-the-listenaddress)
+to return information about the Collector that can help with debugging issues. The
+Collector enables these endpoints by default. To disable these endpoints, set
+`debug.disabled` to `false` in the Collector manifest.
+
+## Access the debug endpoints
+
+You can access the debug endpoints through your browser. All endpoints except
+`/set_log_level` are clickable links on the `/debug` HTML page, and are also directly
+accessible with a `GET` request.
+
+1. In the Collector manifest, enable Prometheus discovery and configure at least one
+   scrape configuration:
+
+   <Info>
+You must complete this step to access the debug endpoints, regardless of whether
+   you're using the Collector to scrape Prometheus endpoints for metrics.
+</Info>
+
+   ```yaml
+   prometheus:
+        enabled: true
+        scrape_configs:
+          - job_name: 'access_debug'
+            scrape_interval: 30s
+            scrape_timeout: 15s
+            static_configs:
+              - targets: ['192.168.192:9100']
+   ```
+
+1. If you're running the Collector with Kubernetes, enable port forwarding:
+
+   ```shell copy
+   kubectl port-forward chronocollector-POD_NAME LISTEN_PORT
+   ```
+
+   Replace the following:
+
+   - _`POD_NAME`_: The name of the Kubernetes pod where your Collector instance is
+     running.
+   - _`LISTEN_PORT`_: The port where you can access the Collector. The`listenAddress`
+     defines this port. Default: `3030`.
+
+1. Open your browser and navigate to the URL where your Collector is running. The
+   URL is syntax is _`HOST`_:_`LISTEN_PORT`_`/debug`. For example, if you're running the Collector
+   locally, navigate to `localhost:3030/debug`.
+
+1. Click one of the [available endpoints](#available-debug-endpoints) from the list.
+
+## Available debug endpoints
+
+- `/debug`
+
+  Displays an HTML page of all debug endpoints, each of which is accessible by
+  clicking an endpoint from the list. This page also displays a list of active scrape
+  targets, including the instance name, job name, and scrape statistics. The table
+  includes three preview links:
+
+    - **Raw exposition:** Includes the actual output of the target's scrape endpoint.
+    - **Dropped series labels:** Lists any dropped labels based on relabel rules.
+    - **Ingest series labels:** Displays the final set of time series after processing
+    relabel rules.
+
+- `/debug/bundle`
+
+  Downloads a `tar.gz` file that contains JSON files for all debug endpoints. The
+  file format is `node-name--date--time.tar.gz`, where `node-name` is the name of the
+  node the Collector runs in.
+
+- `/debug/collector_runtime_memory_stats`
+
+  Returns runtime memory metrics for the Collector.
+
+- `/debug/config_dump`
+
+  Returns a JSON representation of the Collector configuration settings defined in
+  the `raw_config`, combined with the values for those settings calculated at runtime.
+
+- `/debug/endpoint_slices`
+
+  Returns a JSON list of all Kubernetes EndpointSlices the Collector detects.
+
+- `/debug/job_configs`
+
+  Returns a JSON list of all computed Kubernetes jobs created from the Collector
+  configuration.
+
+- `/debug/pods`
+
+  Returns a JSON list of all Kubernetes pods the Collector detects.
+
+- `/debug/pprof`
+
+  Serves a protocol buffer of the Collector in
+  [pprof](https://github.com/google/pprof) format.
+
+- `/debug/raw_config`
+
+  Returns a YAML representation of the settings in the Collector manifest.
+
+- `/debug/service_monitors`
+
+  Returns a JSON list of all dynamic service monitor configurations the Collector
+  tracks.
+
+- `/debug/set_log_level`
+
+  Accepts a `PUT` request to temporarily change the logging level of the Collector
+  for a specified duration.
+
+  Refer to [temporarily change the Collector log level](/ingest/metrics-traces/collector/configure/optimizations#temporarily-change-the-collector-logging-level)
+  for more information.
+
+- `/debug/services`
+
+  Returns a JSON list of all Kubernetes Services the Collector detects.
+
+- `/debug/targets`
+
+  Returns a JSON list of key/value pairs that represent all Kubernetes targets the
+  Collector monitors. The first element is the Collector configuration, followed by a
+  list of all scrape configurations created from the configuration. The endpoint
+  doesn't display Graphite targets.
+
+- `/debug/version`
+
+  Returns a JSON representation of the Collector version information. This is the
+  same information the Collector displays at startup.

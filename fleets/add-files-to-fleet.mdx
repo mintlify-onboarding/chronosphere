@@ -1,0 +1,51 @@
+---
+title: Add files to a fleet
+description: Learn how to add files to a fleet.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+You can add a variety of files to a fleet, including [parsers](/pipeline-data/parsers),
+Lua scripts, and authentication tokens. After you add a file to a fleet, every agent
+in that fleet updates its configuration settings and downloads the new file,
+which lets those agents access the contents of that file.
+
+To add files to a fleet, use one of the following methods:
+
+<Tabs>
+<Tab title="Web interface" id="UI">
+
+{/* vale Chronosphere.OptionalPlurals = NO */}
+
+1. Sign in to the [Telemetry Pipeline web interface](https://core.calyptia.com/).
+1. Open the project that contains the fleet that you want to add files to.
+1. Go to **<Icon icon="grid" />&nbsp;Fleets**, then click the name of the fleet
+   that you want to add a file to.
+1. Under **Attached File(s)**, click **<Icon icon="square-plus" />&nbsp;Attach New File**.
+1. Use one of these methods to upload a file:
+   - Click **Select File** to choose a file from your device.
+   - Enter a value in **File name** field and add content to the large text field to create
+     a new file with that name and content.
+1. Click **Upload File**.
+1. To add multiple files, repeat steps three through five for each file.
+
+{/* vale Chronosphere.OptionalPlurals = YES */}
+
+</Tab>
+<Tab title="Pipeline CLI" id="cli">
+
+In [Pipeline CLI](/pipeline-cli), run the following command:
+
+```shell copy /NAME/ /FILE/
+calyptia create fleet_file --fleet NAME --file FILE
+```
+
+Replace the following:
+
+- _`NAME`_: The name of the fleet to add the file to.
+- _`FILE`_: The name of the file to add to your fleet.
+
+To add multiple files, repeat this command for each file.
+
+</Tab>
+</Tabs>

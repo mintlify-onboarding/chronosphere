@@ -1,0 +1,390 @@
+---
+title: Convert Datadog monitors
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+[Datadog monitors](https://docs.datadoghq.com/api/latest/monitors/) actively check
+metrics of the infrastructure and manage alerts on alert platforms. Chronosphere
+uses [monitors and alerts](/investigate/alerts) for the same purposes.
+
+Datadog creates monitoring and notification in one longer file, while Chronosphere
+separates monitors and notifications into smaller logical configuration files. These
+smaller files enable users to target and update specific changes without risking the
+entire configuration.
+
+## Compare configurations
+
+These are examples of matching configurations for Datadog and Chronosphere.
+
+<Tabs>
+  <Tab title="Datadog" id="datadog-monitor">
+    This is an example of a Datadog monitor definition.
+
+    ```text
+    "id": 1234567,
+        "org_id": 12345,
+        "type": "metric alert",
+        "name": "IOWAIT is high ({{value}})",
+        "message": "{{#is_alert}}\Load is too high, check and lower load immediately (use AWS console for {{pod.name}} to scale tasks to 1 and investigate)\n@slack-ops-bots \n{{/is_alert}} \n\n{{#is_alert_recovery}}\n@slack-ops-bots \n@pagerduty-resolve \n{{/is_alert_recovery}}{{#is_warning}}\nLoad is reaching the limit.\n@slack-ops-warning-bots\n@pagerduty{{/is_warning}}",
+        "tags": [
+            "high-load",
+            "team:platform"
+        ],
+        "query": "min(last_30m):max:system.cpu.iowait{function:cassandraevents} by {pod,name} > 20",
+        "options": {
+            "notify_audit": false,
+            "locked": false,
+            "timeout_h": 0,
+            "include_tags": true,
+            "no_data_timeframe": 30,
+            "require_full_window": true,
+            "notify_by": ["pod"],
+            "notify_no_data": true,
+            "new_group_delay": 60,
+            "renotify_interval": 30,
+            "renotify_occurrences": 1,
+            "renotify_statuses": [
+                "alert",
+                "no data",
+            ],
+            "scheduling_options": {
+                "evaluation_window": {
+                    "hour_starts": 30
+                }
+            },
+            "thresholds": {
+                "critical": 20,
+                "critical_recovery": 10,
+                "warning": 15
+            },
+            "timeout_h": 12,
+            "escalation_message": "{{#is_alert}}\nEscalated to pagerduty - \nLoad is too high, check and lower load immediately (use AWS console for {{pod.name}} to scale tasks to 1 and investigate)\n@slack-ops-bots \n@pagerduty \       n{{/is_alert}}",
+            "evaluation_delay": 300,
+            "min_failure_duration": 120,
+            "silenced": {}
+        },
+        "multi": true,
+        "created_at": 1479858941000,
+        "created": "2016-11-22T15:55:41.80188-08:00",
+        "modified": "2021-10-14T09:23:36.750186-07:00",
+        "deleted": null,
+        "restricted_roles": null,
+        "priority": 1,
+        "overall_state_modified": "2022-07-05T06:13:14-07:00",
+        "overall_state": "OK",
+        "creator": {
+            "name": "Jane Smith",
+            "handle": "janesmith@example.com",
+            "email": "janesmith@example.com",
+            "id": 18219
+        },
+        "matching_downtimes": []
+    ```
+  </Tab>
+
+  <Tab title="Chronosphere" id="chronosphere-monitors">
+
+  Chronosphere configuration breaks down into smaller, more strictly defined
+  files covering the same functions. These file definitions are for use with
+  [Terraform](/tooling/infrastructure/terraform).
+
+    Configure the monitor:
+
+    ```yaml copy
+    api_version: v1/config
+    kind: Monitor
+    spec:
+      slug: cluster-iowait-high
+      name: IOWAIT is high
+      labels:
+        datadog_id: 1234567
+        tag_iowait: true
+        tag_team:platform: true
+      annotations:
+        query: <promql query>
+        message_critical: Load is too high, check and lower load immediately (use AWS console for {{pod.name}} to scale tasks to 1 and investigate)
+        message_warning: Load is reaching the limit
+      spec:
+        query:
+          prometheus:
+            expr: <promql query>
+        signal_grouping:
+          label_names:
+            - name
+        series_conditions::
+            critical:
+              conditions:
+                - op: GT
+                  value: 20
+                  sustain: 120s
+            warn:
+              conditions:
+                - op: GT
+                  value: 15
+                  sustain: 120s
+        notification_policy_slug: iowait-notification-policy
+        interval: 60s
+    ```
+
+    This is the notification policy:
+
+    ```yaml copy
+    api_version: v2
+    kind: NotificationPolicy
+    spec:
+      policy:
+        slug: iowait-notification-policy
+        name: iowait notification policy
+        routes:
+          defaults:
+            critical:
+              notifiers:
+                - slug: default-route-slack-bot
+                  name: Default route slack bot
+            warn:
+              notifiers:
+                - slug: default-route-slack-bot
+                  name: Default route slack bot
+          overrides:
+            - alert_label_matchers:
+              - {name: tag_iowait, type: EXACT_MATCHER_TYPE, value: true}
+                notifiers:
+                  critical:
+                  - slug: slack-ops-bots
+                    name: slack-ops-bots
+                  - slug: pagerduty-critical
+                    name: pagerduty-critical
+                  warning:
+                  - slug: slack-ops-warning-bots
+                    name: slack-ops-warning-bots
+                  - slug: pagerduty-warning
+                    name: pagerduty-warning
+    ```
+
+    And separate notifier routes:
+
+    Slack, for an Alerts channel:
+
+    ```yaml copy
+    api_version: v1/config
+    kind: Notifier
+    spec:
+      notifier:
+        name: Default route slack bot
+        slug: default-route-slack-bot
+        slack:
+          api_url: <slack url>
+          channel: alerts
+          username: oncall-bot
+          base_config:
+            send_resolved: true
+    ```
+
+    Slack, for an on-call channel:
+
+    ```yaml copy
+    api_version: v1/config
+    kind: Notifier
+    spec:
+      name: slack-ops-bots
+      slug: slack-ops-bots
+      skip_resolved: false
+      slack:
+          api_url: <slack url>
+          channel: oncall
+          username: oncall-bot
+    ```
+
+    Critical alerts sent to PagerDuty
+
+    ```yaml copy
+    api_version: v1/config
+    kind: Notifier
+    spec:
+        name: pagerduty-critical
+        slug: pagerduty-critical
+        skip_resolved: false
+        pagerduty:
+            service_key: <service_key>
+            url: https://events.pagerduty.com/v2/enqueue
+            severity: critical
+    ```
+
+    Warnings sent to PagerDuty:
+
+    ```yaml copy
+    api_version: v1/config
+    kind: Notifier
+    spec:
+        name: pagerduty-warning
+        slug: pagerduty-warning
+        skip_resolved: false
+        pagerduty:
+            service_key: <service_key>
+            url: https://events.pagerduty.com/v2/enqueue
+            severity: warning
+    ```
+  </Tab>
+</Tabs>
+
+## Field mapping
+
+Chronosphere and Datadog fields have many equivalent functions. Use the following
+tables to map fields between these apps.
+
+<Info>
+Names of Chronosphere equivalents are subject to change as the conversion process
+  improves.
+</Info>
+
+### Configuration mapping
+
+This table matches Datadog fields to their Chronosphere equivalents for monitor
+specification.
+
+| Datadog field        | Chronosphere equivalent |
+| -------------------- | ----------------------- |
+| `created`            | N/A |
+| `creator`            | N/A |
+| `id`                 | Add to `Monitor.labels`. |
+| `message`            | Add to `Monitor.annotations` and create `Notify` routes - See details. |
+| `modified`           | N/A |
+| `multi`              | `Monitor.spec.signal_grouping.signal_per_series` |
+| `name`               | `Monitor.name` - This can also contain variables. |
+| `options`            | [Monitor options](#monitor-options) |
+| `threshold_windows`  | N/A - Used only for `anomalies`. |
+| `thresholds`         | `Monitor.spec.series_conditions.severity_conditions .conditions` |
+| `timeout_h`          | N/A |
+| `overall_state`      | For monitors with an `Ignored / Skipped / Unknown` state, still create the monitor but have it either go to a black hole route or create it as muted. |
+| `priority`           | Can support as a message annotation. |
+| `query`              | `Monitor.spec.query.expr` |
+| `restricted_roles`   | N/A |
+| `state`              | N/A |
+| `matching_downtimes` | Equivalent to schedules. |
+| `tags`               | An arbitrary list of strings that fits the tag format (which can be single word tags). Chronosphere can support this using `Monitor.labels`, if the field requires a key/value format. Tags are used as label names with the value set to `true.` |
+| `type`               | The type of monitor. Chronosphere supports query alert and metric alerts. |
+
+### Monitor options
+
+Use these values in the specification's `options` field.
+
+| Datadog field                  | How to map |
+| ------------------------------ | ---------- |
+| `aggregation`                  | N/A - For log alerts only. |
+| `enable_logs_sample`           | N/A - For log alerts only. |
+| `enable_samples`               | N/A - Per [Datadog docs](https://docs.datadoghq.com/api/latest/monitors/#get-all-monitor-details). This is used only by CI Test and Pipeline monitors. |
+| `escalation_message`           | No separate message for renotify notifications; can append this to the generic alert message. |
+| `evaluation_delay`             | Can support by using offset in the query. |
+| `group_retention_duration`     | N/A - Not for metrics monitors. |
+| `groupby_simple_monitor`       | N/A - For log alerts only. |
+| `include_tags`                 | Use Prometheus  `{{ $value }}` template. |
+| `min_failure_duration`         | `Monitor.spec.series_conditions.severity_conditions.conditions.sustain` |
+| `min_location_failed`          | Can support by adding thresholds to the PromQL expression. |
+| `new_group_delay`              | N/A |
+| `new_host_delay`               | N/A - Deprecated, use `new_group_delay` instead. |
+| `no_data_timeframe`            | Threshold for a `no data` alert. See [severity](#severity) section for details. |
+| `notification_preset_name`     | N/A - Datadog [docs](https://docs.datadoghq.com/api/latest/monitors/#get-all-monitor-details). |
+| `notify_audit`                 | N/A |
+| `notify_by`                    | Equivalent to `Monitor.spec.signal_grouping`, except the inverse. Note: This can be set to `*`, which is the same as setting `Monitor.spec.signal_grouping.signal_per_series`. |
+| `notify_no_data`               | Add a `NOT_EXISTS` series condition in the MonitorSpec. Review [severity](#severity) for details. |
+| `on_missing_data`              | N/A - Not for metrics alerts. |
+| `renotify_interval`            | `NotificationPolicy.routes.overrides.notifiers.repeat_interval` |
+| `renotify_occurences`          | N/A |
+| `renotify_statuses`            | Only renotify on status X. Create overrides using `NotificationPolicy.routes.overrides.notifiers.repeat_interval` for each severity listed here. |
+| `require_full_window`          | Only evaluate if there's a full window of data. Datadog recommends setting this to `false`. Supportable using the `count_over_time` function. |
+| `scheduling_evaluation_window` | [Cumulative time windows](https://docs.datadoghq.com/monitors/configuration/?tab=thresholdalert#cumulative-time-windows). For example, "evaluate this alert every hour on the :00 mark". |
+| `silenced`                     | Dictionary of [muted tags to end timestamp](https://docs.datadoghq.com/monitors/guide/monitor_api_options/#common-options). Create MutingRule objects for each tag. |
+| `thresholds`                   | Thresholds for severity. Can map to `MonitorSpec.series_conditions.severity_conditions` for warning and critical. No support for separate thresholds for recovery. |
+| `variables`                    | N/A |
+
+## Severity
+
+Chronosphere supports both critical and warning severities by implementing different
+thresholds for the metric values. In addition to this, Datadog also supports alerting
+on no data for a particular metric as a distinct `severity`. Although this state
+isn't a true severity, the state is treated the same as critical and warning alerts
+for configuration.
+
+Chronosphere supports alerting on `no data` conditions using a series condition in
+the MonitorSpec:
+
+```yaml copy
+api_version: v1/config
+kind: Monitor
+spec:
+  spec:
+    prometheus_query: <promql query>
+    series_conditions:
+      defaults:
+        critical:
+          conditions:
+            - op: NOT_EXISTS
+              sustain: 60s
+```
+
+## Message and route
+
+Datadog allows different messages and routing endpoints for the different severity
+levels (critical, warning, no data). Chronosphere can support different messages by
+using separate annotations:
+
+```yaml copy
+
+api_version: v1/config
+kind: Monitor
+spec:
+  annotations:
+    message_critical: This is the critical threshold message
+    message_warning: This is the warning threshold message
+    message_no_data: This is the message for no data
+```
+
+To support different routes, users must use a separate monitor with different labels,
+set using notification policies.
+
+## Notification policy resources
+
+Link a `Monitor` resource to a `Notification` resource by defining a
+[notification policy](/investigate/alerts/notifications/policies). Each unique
+route in the Datadog message field maps to a `Notification` resource. The `Monitor`
+contains a `label` specifying the notification route it links to, and the default
+`NotificationPolicy` defines overrides that point to each Notification resource.
+
+For example:
+
+```yaml copy
+api_version: v1/config
+kind: Monitor
+spec:
+  labels:
+    datadog_id: 1234567
+    route_slack_ops_bots_critical: true
+    route_slack_ops_bots_warning: true
+    route_pagerduty_critical: true
+
+---
+api_version: v1/config
+kind: NotificationPolicy
+spec:
+    routes:
+      overrides:
+        - alert_label_matchers:
+            name: route_slack_ops_bots_critical
+            type: EXACT_MATCHER_TYPE
+            value: critical
+          notifiers:
+            critical:
+              notifier_slugs:
+                - slack-ops-bots
+                name: slack-ops-bots
+```
+
+## Evaluation frequency
+
+Datadog doesn't support the use of different evaluation frequencies per monitor, but
+instead relies on a hard-coded interval dependant on the
+[evaluation window](https://docs.datadoghq.com/monitors/configuration/?tab=thresholdalert#evaluation-frequency).
+For windows of less than `24h`, the window defaults to `1m`. Set this to a value you
+want to use with the `MonitorSpec.interval` field, or default to `15s` to receive
+faster alerts.

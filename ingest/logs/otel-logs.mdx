@@ -1,0 +1,61 @@
+---
+title: Use OpenTelemetry protocol endpoints
+description: Learn how to configure and use Chronosphere Observability Platform endpoints for OpenTelemetry protocol ingestion of log data.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere Observability Platform supports ingesting log data using OpenTelemetry
+protocol (OTLP) HTTP ingestion endpoints.
+
+<Info>
+For best results, ingest telemetry through a local OpenTelemetry Collector or Fluent
+Bit for processing and batching. Sending telemetry directly from an OpenTelemetry SDK
+can be less reliable.
+</Info>
+
+## Requirements
+
+Your OTLP configuration must meet certain requirements.
+
+- **`API-Token` header:** All requests must include the `API-Token` HTTP header,
+  with the API token of a valid [service account](/administer/accounts-teams/service-accounts)
+  with write permissions as the value.
+- **OTLP version support:** Only v1.0 and higher are supported.
+- **Supported compression methods:** Chronosphere supports both `gzip` and `zstd`
+  compression.
+- **Encryption:** All requests must be encrypted using TLS.
+
+### Recommendations
+
+Chronosphere recommends setting the timeout value for a logs request to 30 seconds,
+and to enable retries to prevent transient network errors from causing data loss.
+
+## OTLP endpoint URLs
+
+Observability Platform provides HTTP endpoints for logs, metrics, and traces.
+
+| Telemetry type | HTTP endpoint URL                                              |
+|----------------|----------------------------------------------------------------|
+| Logs           | `https://TENANT.chronosphere.io/data/opentelemetry/v1/logs`    |
+| Metrics        | `https://TENANT.chronosphere.io/data/opentelemetry/v1/metrics` |
+| Traces         | `https://TENANT.chronosphere.io/data/opentelemetry/v1/traces`  |
+
+Replace `TENANT` with your organization prefixed to your Observability Platform
+instance. For example, _`MY_ORGANIZATION`_`.chronosphere.io`.
+
+OpenTelemetry exporters complete the path based on the telemetry type. For the
+`otlphttp` exporter, set the endpoint base path as follows:
+
+```yaml copy
+exporters:
+  otlphttp/chronosphere:
+    endpoint: https://TENANT.chronosphere.io/data/opentelemetry/
+    compression: zstd
+    headers:
+      API-Token: ${env:API_TOKEN}
+    ...
+```
+
+For an example OTLP exporter configuration, see
+[Configure the OpenTelemetry Collector](/ingest/metrics-traces/otel/otel-ingest#configure-the-opentelemetry-collector).

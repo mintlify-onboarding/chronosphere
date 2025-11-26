@@ -1,0 +1,163 @@
+---
+title: Ingest DogStatsD metrics with the OpenTelemetry Collector
+description: How to use the OpenTelemetry Collector to ingest DogStatsD metrics.
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+The [OpenTelemetry Collector StatsD receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/statsdreceiver)
+accepts, transforms, and aggregates DogStatsD metrics into OpenTelemetry protocol
+(OTLP) metrics for use in the Chronosphere Observability Platform.
+
+## Install the OpenTelemetry Collector
+
+To install the OpenTelemetry Collector, deploy it as a Kubernetes DaemonSet on the
+same node as your DogStatsD clients.
+
+DogStatsD clients use the User Datagram Protocol (UDP) to send metrics. The OpenTelemetry
+Collector must be on the same node as the DogStatsD client to ensure reliable network
+communication between the DogStatsD client and the OpenTelemetry Collector.
+
+## Configure the OpenTelemetry StatsD receiver
+
+You can configure the StatsD receiver by adding it to your
+[OpenTelemetry Configuration](https://opentelemetry.io/docs/collector/configuration/).
+
+The following configuration defines an OpenTelemetry receiver and a
+[StatsD receiver](https://github.com/statsd/statsd/blob/master/README.md) to accept
+DogStatsD metrics from Datadog clients.
+
+```yaml copy
+receivers:
+  otlp:
+    protocols:
+      grpc:
+
+  statsd/dogstatsd:
+    # Default UDP port.
+    endpoint: "localhost:8125"
+    # Default interval. Use your licensed resolution: 60s, 30s or 15s.
+    aggregation_interval: 60s
+    # Metric type must be enabled. Default.
+    enable_metric_type: true
+    # DogStatsD clients support key-only tags, but attributes without a value are ignored in the Prometheus data model.
+    enable_simple_tags: false
+    # DogStatsD clients send delta counters (non-monotonic counters).
+    is_monotonic_counter: true
+    enable_ip_only_aggregation: true
+    # Aggregates DogStatsD timers as exponential histograms.
+    timer_histogram_mapping:
+      - statsd_type: "timing"
+        observer_type: "histogram"
+        histogram:
+          max_size: 160
+      - statsd_type: "histogram"
+        observer_type: "histogram"
+        histogram:
+          max_size: 160
+      - statsd_type: "distribution"
+        observer_type: "histogram"
+        histogram:
+          max_size: 160
+```
+
+## Configure an OpenTelemetry protocol exporter to send DogStatsD metrics
+
+DogStatsD metrics sent to Datadog are normalized to follow
+[Datadog's best practices](https://docs.datadoghq.com/developers/guide/what-best-practices-are-recommended-for-naming-metrics-and-tags/).
+For example, Datadog lowercases tag names and values and modifies tag values to
+begin with an alphabetical character.
+
+To reduce migration efforts and minimize changes to queries, Observability Platform
+can apply the same sanitization to ensure metric names, tags, and values are the
+same in both Observability Platform and Datadog by passing an additional header.
+
+The following configuration defines these OpenTelemetry protocol (OTLP) exporters:
+
+- `otlp/chronosphere` defines a default configuration to send OTLP metrics without
+  applying Datadog normalization. Use this exporter to send all metrics from any
+  source _except_ Datadog clients.
+- `otlp/chronosphere/dogstatsd` defines a configuration to send OTLP metrics and
+  apply Datadog normalization. Use this exporter only to send metrics that were
+  sent by Datadog clients.
+
+```yaml copy
+exporters:
+  # Exporter configured without normalization
+  otlp/chronosphere:
+    endpoint: ADDRESS.chronosphere.io:443
+    timeout: 30s
+    retry_on_failure:
+      enabled: true
+    compression: zstd
+    headers:
+      API-Token: $API_TOKEN
+  # Exporter configured to apply Datadog metric normalization
+  otlp/chronosphere/dogstatsd:
+    endpoint: ADDRESS.chronosphere.io:443
+    timeout: 30s
+    retry_on_failure:
+      enabled: true
+    compression: zstd
+    headers:
+      API-Token: ${env:API_TOKEN}
+      # Validation Response verbosity: SHORT, SUMMARY, DETAILED
+      Chronosphere-Metrics-Validation-Response: SHORT
+      # Enable Datadog metric name and tag normalization
+      Chronosphere-Metrics-Translation: datadog
+      Chronosphere-Metrics-Translation-Datadog-NormalizeLabelValues: "true"
+```
+
+To configure these exporters for your instance:
+
+1. Replace `ADDRESS` with the company name subdomain in your Observability Platform
+   instance address ending in `.chronosphere.io:443`. For example, if your instance's
+   domain is `MY_COMPANY.chronosphere.io:443`, replace `ADDRESS` with `MY_COMPANY`.
+1. Set `$API_TOKEN` to the API token generated from your Chronosphere service account,
+   specified as an HTTP header. Chronosphere recommends calling this value as an
+   [environment variable](/ingest/metrics-traces/otel/otel-ingest#prerequisites).
+1. Set `retry_on_failure` to `true` to retry attempts after any recoverable errors.
+1. Set `timeout` to `30s` to prevent larger requests from timing out, since the
+   upstream system might require more time for internal batching.
+
+## Define OpenTelemetry Collector pipelines
+
+To receive metrics, connect the receivers and exporters with two separate pipelines:
+
+- **`metrics` pipeline:** The default metrics pipeline receives all OTLP metrics
+  and sends them to the Chronosphere OTLP endpoint.
+- **`metrics/dogstatsd` pipeline:** The DogStatsD metrics pipeline receives DogStatsD
+  metrics and exports them to a Chronosphere endpoint with a header to enable Datadog
+  metric name and tag normalization.
+
+The following service configuration enables the StatsD receiver for the appropriate
+pipeline:
+
+```yaml copy
+service:
+  pipelines:
+    # Defines the default metrics pipeline.
+    metrics:
+      receivers: [otlp]
+      processors: [batch, resourcedetection, resource/service-instance]
+      exporters: [otlp/chronosphere]
+    # Defines a metrics pipeline with Datadog metric normalization.
+    metrics/dogstatsd:
+      receivers: [otlp/chronosphere/dogstatsd]
+      processors: [batch, resourcedetection, resource/service-instance]
+      exporters: [otlp/chronosphere/dogstatsd]
+```
+
+The `processors` value adds processors to define batching and ensure time series
+uniqueness.
+
+- `batch`: Sets batch processing. For more information, see the "Configure batch
+  processing" step in
+  [Configure the OpenTelemetry Collector](/ingest/metrics-traces/otel/otel-ingest#configure-the-opentelemetry-collector).
+- `resourcedetection`: Collects information about the environment in which the
+  OpenTelemetry Collector is running.
+- `resource/service-instance`: Observability Platform requires a `service.instance.id`
+  attribute and value for all time series to ensure time series uniqueness. The
+  ingestion API rejects metrics that lack `service.instance.id`. For more information,
+  see the
+  [Map resource attributes](/ingest/metrics-traces/otel/otel-ingest#map-resource-attributes-to-prometheus-job-and-instance).

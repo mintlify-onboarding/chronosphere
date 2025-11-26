@@ -1,0 +1,115 @@
+---
+title: Install Core Agent on Linux (Debian-based)
+description: Learn how to install Core Agent on Debian-based Linux distributions.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+In Chronosphere Telemetry Pipeline, you can use [fleets](/fleets) to manage instances
+of Core Agent. Use this guide to install Core Agent on Debian-based Linux distributions.
+
+## Supported environments
+
+Core Agent supports the following Debian-based distributions and architectures:
+
+| Distribution | Architectures |
+|--------------|---------------|
+| Debian 11 (Bullseye) | x86-64, arm64v8 |
+| Debian 10 (Buster) | x86-64, arm64v8 |
+| Ubuntu 22.04 (Jammy Jellyfish) | x86-64, arm64v8 |
+| Ubuntu 20.04 (Focal Fossa) | x86-64, arm64v8 |
+| Ubuntu 18.04 (Bionic Beaver) | x86-64, arm64v8 |
+| Ubuntu 16.04 (Xenial Xerus) | x86-64 |
+
+## Dependencies
+
+For Debian-based installations, Core Agent has the following general dependencies:
+
+- libc
+- libsasl
+- libsystemd
+- libyaml
+- OpenSSL
+- zlib
+
+To retrieve a list of specific dependencies for your environment, run the following command:
+
+```shell copy /PACKAGE/
+dpkg -I PACKAGE
+```
+
+Replace _`PACKAGE`_ with the name of the Core Agent package.
+
+## Validate packages
+
+When retrieving packages from the Core Agent repository, Chronosphere uses dual
+validation (SHA256) and a GPG key.
+
+### SHA256 check
+
+The SHA256 file is distributed as the `files.sha256` file in the Core Agent repository.
+This file contains a list of all included packages.
+
+```shell
+shasum -a 256 calyptia-fluent-bit-X.<extension>
+```
+
+## Verify signatures
+
+Core Agent packages are signed with `calyptia.key`. You can use dpkg and apt-key
+to verify these signatures.
+
+```shell copy
+apt-key add calyptia.key && \
+dpkg-sig --list PACKAGE
+```
+
+Replace _`PACKAGE`_ with the name of the Core Agent package.
+
+## Install
+
+Use these steps to install and enable Core Agent:
+
+1. Run the following command to update your APT package list:
+
+   ```shell copy
+   sudo apt-get update
+   ```
+
+1. Run the following command to upgrade your APT packages:
+
+   ```shell copy
+   sudo apt-get upgrade
+   ```
+
+1. Run the following command to install Core Agent:
+
+   ```shell copy
+   sudo apt-get install calyptia-fluent-bit
+   ```
+
+1. Run the following command to instruct systemd to enable the Core Agent service:
+
+   ```shell copy
+   sudo systemctl calyptia-fluent-bit start
+   ```
+
+1. Perform a status check to confirm Core Agent is active. The status check
+   should return output similar to the following:
+
+   ```shell
+   sudo service calyptia-fluent-bit status
+   ● calyptia-fluent-bit.service - Calyptia Fluent Bit
+      Loaded: loaded (/lib/systemd/system/calyptia-fluent-bit.service; disabled; vendor preset: enabled)
+      Active: active (running) since mié 2016-07-06 16:58:25 CST; 2h 45min ago
+    Main PID: 6739 (calyptia-fluent-bit)
+       Tasks: 1
+      Memory: 656.0K
+         CPU: 1.393s
+      CGroup: /system.slice/calyptia-fluent-bit.service
+              └─6739 /opt/calyptia-fluent-bit/bin/calyptia-fluent-bit -c /etc/calyptia-fluent-bit/calyptia-fluent-bit.conf
+   ```
+
+   The default configuration of Core Agent is to collect metrics of CPU usage
+   and send those metrics to stdout. You can see this outgoing data in your
+   `/var/log/messages` file.

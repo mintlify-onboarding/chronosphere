@@ -1,0 +1,44 @@
+---
+title: Experimental PromQL functions and operators
+description: Learn experimental PromQL functions in Observability Platform.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Prometheus makes experimental functions and operators available behind a feature flag.
+The Prometheus project might change the name, syntax, or semantics of experimental
+functions or remove them entirely.
+
+Observability Platform accepts a subset of PromQL experimental functions determined
+to be relatively stable, and which provide significant value while also being at
+a low risk of being removed by the Prometheus project.
+
+When the upstream Prometheus project makes breaking changes, Observability Platform
+will either preserve backward compatibility if possible or notify users and provide
+a deprecation timeline.
+
+The following experimental functions are available in Observability Platform:
+
+## `double_exponential_smoothing()`
+
+Use the `double_exponential_smoothing()` experimental function to smooth a time series
+based on the importance you assign to older data and possible trends. See the
+[PromQL documentation](https://prometheus.io/docs/prometheus/latest/querying/functions/#double_exponential_smoothing).
+
+## `holt_winters()` (deprecated)
+
+As of Prometheus 3.0, this function is named `double_exponential_smoothing()`.
+Although Observability Platform aliases `holt_winters()` to provide backward
+compatibility, you should replace it with the new name to avoid issues when
+Observability Platform removes the `holt_winters()` alias.
+
+## `histogram_*()` (native histogram functions)
+
+All Prometheus native histogram functions remain behind a feature flag in the Prometheus
+project. Observability Platform has made the native histogram functions generally
+available for users to query OpenTelemetry exponential histograms and Prometheus
+native histograms.
+
+For details on using these functions in Observability Platform and examples, as well
+as other supported histogram types, see
+[Querying histograms](/investigate/querying/promql#querying-histograms).

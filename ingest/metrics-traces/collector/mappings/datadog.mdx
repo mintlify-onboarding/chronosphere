@@ -1,0 +1,56 @@
+---
+title: Datadog migration information
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Datadog is a monitoring and analytic tool for measuring system performance metrics
+and event monitoring.
+
+The custom metrics are ingested into Datadog platform using locally installed
+components, such as:
+
+- Datadog Agent, which collects metrics through integration.
+- DogStatsD is a UDP server listening for applications to send the metrics
+  based on a push model.
+  [Learn more about ingesting DogStatsD](/ingest/metrics-traces/collector/addl-metrics/dogstatsd).
+- Using the HTTP API.
+
+Datadog Agent and DogStatsD are lightweight software designed to get metrics and
+forwarding them to the Datadog back end for persistence.
+
+As metrics data increases in scale, the cost of ingress traffic and data persistence
+can increase exponentially and become difficult to control.
+
+Chronosphere Observability Platform approaches monitoring and analysis differently.
+The Collector ingests metrics and traces using a pull model, sending data to the
+Observability Platform back end. The Collector is compliant with the major open
+source standards, including Prometheus, OpenTelemetry, and older formats (like
+Graphite/StatsD).
+
+The Observability Platform control layer determines how metrics and traces should be
+aggregated, dropped, or rolled-up. Businesses can take advantage of these
+features to save costs and improve monitoring performance.
+
+Many of the Datadog constructs translate to Observability Platform. Although the
+Customer Success team handles the initial migration from Datadog to Observability
+Platform, use the following pages to understand how each product approaches data:
+
+- [Migration considerations](/ingest/metrics-traces/collector/mappings/datadog/migration-issues): What you need
+  to know before you migrate.
+- [Querying metrics](/ingest/metrics-traces/collector/mappings/datadog/dogstatsd): Understanding how
+  Observability Platform differs from the Datadog query syntax.
+- [Monitor migration](/ingest/metrics-traces/collector/mappings/datadog/convert-monitors): Understanding how
+  Observability Platform monitors differ from Datadog monitors.
+- [Mapping](/ingest/metrics-traces/collector/mappings/datadog/mapping): A breakdown of how various functions and
+  operations work in each product, and how they correspond.
+- [Widgets versus dashboards](/ingest/metrics-traces/collector/mappings/datadog/dashboards): Learn how some
+  Datadog widgets relate to Observability Platform dashboards.
+
+Migrating from Datadog to Observability Platform follows these general steps:
+
+1. Review the ingestion model.
+1. Migrate metric collection.
+1. Migrate dashboards.
+1. Migrate monitors and alerts.
+1. Optimize data ingestion and persisted data.

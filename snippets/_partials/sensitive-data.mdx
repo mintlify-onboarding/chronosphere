@@ -1,0 +1,11 @@
+
+<Warning>
+Chronosphere recommends you store sensitive data, such as passwords or API tokens,
+externally to your configuration files using secrets. You can define variables
+with Terraform or use a separate provider to extract secrets from a secret store
+(a vault provider, such as [HashiCorp Vault](https://learn.hashicorp.com/tutorials/terraform/secrets-vault)).
+
+Terraform stores secrets in state as plain text. Refer to the
+[Terraform documentation](https://www.terraform.io/language/state/sensitive-data)
+for other options for storing sensitive data in state.
+</Warning>

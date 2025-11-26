@@ -1,0 +1,96 @@
+---
+title: Get started with the Chronosphere API
+description: How to access and use the Chronosphere API for programmatic access to your observability data.
+---
+import { Link } from '@/components';
+import ApiSupportedEndpoints from '/snippets/_partials/api-supported-endpoints.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+The Chronosphere API is an HTTP/JSON REST API for Chronosphere Observability
+Platform, where the HTTP method and the URL path define endpoints. To access the
+Chronosphere API, you need an _API token_.
+
+For information about using the Prometheus API, see
+[Prometheus API overview](/tooling/prometheus-api#prometheus-http-api).
+
+<ApiSupportedEndpoints />
+
+## Create an API token
+
+A service can access the Chronosphere API by authenticating with its API token.
+Many Chronosphere API requests require an unrestricted service account. For details,
+see [Service accounts](/administer/accounts-teams/service-accounts).
+
+A user with sufficient permissions can access the Chronosphere API by creating a
+temporary personal access token. For details, see
+[Personal access tokens](/administer/accounts-teams/personal-access-tokens).
+
+## Send requests
+
+Send requests to your Chronosphere Observability Platform domain, which must include
+your Chronosphere API token in an `API-Token` HTTP header.
+
+For example, you can pass the token and domain using environment variables to the
+`curl` command:
+
+```shell copy /"TOKEN"/ /INSTANCE/ /METHOD/ /ENDPOINT_PATH/
+export CHRONOSPHERE_API_TOKEN="TOKEN"
+export CHRONOSPHERE_DOMAIN="INSTANCE.chronosphere.io"
+curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" \
+     -X METHOD \
+     "https://${CHRONOSPHERE_DOMAIN}/ENDPOINT_PATH"
+```
+
+Replace the following:
+
+- _`TOKEN`_: Your API token.
+- _`INSTANCE`_: The subdomain name for your organization's Observability Platform
+  instance.
+- _`METHOD`_: The HTTP method to use with the request, such as `GET` or `POST`.
+- _`ENDPOINT_PATH`_: The specific endpoint you want to access.
+
+<Info>
+[Chronoctl](/tooling/chronoctl) also uses the environment variable `CHRONOSPHERE_API_TOKEN`.
+</Info>
+
+For example, to list all collections:
+
+```shell copy
+curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" \
+     -X GET \
+     "https://${CHRONOSPHERE_DOMAIN}/api/v1/config/collections"
+```
+
+To create a collection, send a POST request with JSON body:
+
+```shell copy
+curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" \
+     -X POST \
+     --data '{"collection": {"name": "My Test Collection"}}' \
+     "https://${CHRONOSPHERE_DOMAIN}/api/v1/config/collections"
+```
+
+## Use an API token
+
+You can use an API token to make HTTP API calls.
+
+For HTTP calls, use the `Authorization` header with the `Bearer` token authentication
+scheme.
+
+For example, to use the API token to call the Query API with `curl`, run:
+
+```shell copy
+curl -H "Authorization: Bearer ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics/api/v1/query?query=up"
+```
+
+## Available endpoints
+
+For a full list of Chronosphere API endpoints, see:
+
+<Columns cols={2}>
+  <Card icon="cards" title="Config endpoints - Create and manage Observability Platform resources" href="/tooling/api-info/definition" />
+  <Card icon="book-pen" title="Data endpoints - Read and write data to Observability Platform" href="/tooling/api-info/data_definition" />
+  <Card icon="check" title="State endpoints - Access the runtime state of Observability Platform" href="/tooling/api-info/state_definition" />
+</Columns>

@@ -1,0 +1,146 @@
+---
+title: Datagen source plugin
+sidebarTitle: Datagen source plugin (Telemetry Pipeline)
+description: Use the Datagen source plugin to generate simulated log data to test your pipeline configuration.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import PluginDuplicates from '/snippets/_partials/plugin-duplicates.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-generated.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Datagen [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `datagen`, alias: `apache_common`) generates simulated log data through
+[Gofakeit](https://github.com/brianvoe/gofakeit). You can use this simulated
+data to test your pipeline configurations.
+
+<SourceStyle/>
+
+<Info>
+This plugin doesn't support the use of a
+[descriptive metadata name](/pipeline-data/plugins#descriptive-names) in the
+Pipeline Builder interface.
+</Info>
+
+<PluginDuplicates/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name         | Key | Description | Default |
+| ------------ | --- | ----------- | ------- |
+| **Template** | `template` | Required. A JSON object that specifies how to generate log data. Accepted types: Apache common, Syslog rfc3164, or Syslog rfc5424. See [Templates](#templates). | _none_ |
+| _none_       | `rate` | How often to generate logs, in seconds. | `1` |
+
+### Advanced
+
+| Name     | Key | Description | Default |
+| -------- | --- | ----------- | ------- |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |
+
+## Templates
+
+Templates define the structure and content of your simulated log data. When you
+configure the Datagen source plugin in a pipeline's YAML configuration file, use
+the `template` key to create a JSON object. For example:
+
+```yaml copy
+pipeline:
+  inputs:
+    - name: datagen
+      template: |-
+        {
+            "host":            "{{ IPv4Address }}",
+            "user": {
+              "user-identifier": "{{ Username }}",
+              "auth-user-id":    "{{ UUID }}",
+            }
+            "method":          "{{ HTTPMethod }}",
+            "request":         "{{ URLPath }}",
+            "protocol":        "{{ HTTPVersion }}",
+            "response-code":   "{{ HTTPStatusCode }}",
+            "bytes":           "{{ Number 0 30_000 }}"
+        }
+```
+
+When the Datagen plugin generates logs, each log matches the format of your template,
+but any included [functions](#functions) are replaced by simulated data. For best
+results, Chronosphere recommends creating a JSON object that uses custom strings
+for its keys and functions for its values.
+
+## Functions
+
+The Datagen plugin uses functions to generate randomized values that follow a
+consistent pattern. For example, `{{ HTTPMethod }}` can output a string like
+`GET`, `POST`, or `PUT`, but not a string like `GREEN` or `SUNDAY`.
+
+To invoke a function in a [template](#templates), surround the name of that
+function with double curly braces.
+
+### Suggested functions
+
+You can use any of the available
+[Gofakeit functions](https://github.com/brianvoe/gofakeit#functions)
+in a template. The following functions are best suited for generating realistic
+log data:
+
+- `{{ HTTPMethod }}`: Returns an HTTP method, like `GET`.
+- `{{ HTTPStatusCode }}`: Returns an HTTP status code, like `403`.
+- `{{ HTTPVersion }}`: Returns an HTTP protocol version, like `HTTP/1.1`.
+- `{{ IPv4Address }}`: Returns a random IPv4 address.
+- `{{ IPv6Address }}`: Returns a random IPv6 address.
+- `{{ Username }}`: Returns a random username, like `Bailey1270`.
+- `{{ UUID }}`: Returns a string of numbers in UUID format.
+- `{{ Date }}`: Returns a random time in UTC format.
+- `{{ LogLevel syslog }}`: Returns a log type, like `alert`.
+- `{{ Number 0 30_000 }}`: Returns a number between 0 and 30,000.
+- `{{ URLPath }}`: Returns a string that resembles a URL path, like `/foo/bar`.
+  This function is unique to Datagen and isn't included in Gofakeit.
+- `{{ URLScheme }}`: Returns either `http` or `https`. This function is unique
+  to Datagen and isn't included in Gofakeit.
+
+## Example output
+
+For a pipeline with the following template:
+
+```yaml copy
+pipeline:
+  inputs:
+    - name: datagen
+      template: |-
+        {
+            "response-code":   "{{ HTTPStatusCode }}",
+            "bytes":           "{{ Number 0 30_000 }}"
+            "host":            "{{ IPv4Address }}",
+        }
+```
+
+The Datagen source plugin generates simulated log data in the following format:
+
+```shell
+{"response-code"=>201.000000, "bytes"=>29600.000000, "host"=>"64.15.54.123"}
+
+{"response-code"=>302.000000, "bytes"=>429.000000, "host"=>"214.221.240.201"}
+
+{"response-code"=>205.000000, "bytes"=>3507.000000, "host"=>"27.79.197.250"}
+
+{"response-code"=>504.000000, "bytes"=>758.000000, "host"=>"211.135.114.51"}
+
+{"response-code"=>404.000000, "bytes"=>12190.000000, "host"=>"84.74.177.0"}
+```

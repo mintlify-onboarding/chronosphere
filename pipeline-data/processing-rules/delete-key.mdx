@@ -1,0 +1,60 @@
+---
+title: Delete key
+description: Learn about the delete key processing rule in Chronosphere Telemetry Pipeline.
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The delete keys [processing rule](/pipeline-data/processing-rules) deletes a
+specified key and its associated value from every record that passes through your
+pipeline.
+
+## Configuration parameters
+
+<Params />
+
+| Name        | Key         | Description | Default |
+| ----------- | ----------- | ----------- | ------- |
+| **Key**     | `key` | Required. The key to delete from your records. You can use [record accessor syntax](/pipeline-data/processing-rules#record-accessor-syntax) to reference keys nested within another object. | _none_ |
+| **Comment** | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Example
+
+Using the block keys rule lets you pare down telemetry data by eliminating
+key/value pairs you don't want to keep.
+
+For example, given the following sample website log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Key** value `user_id` returns the following result:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","action":"purchase","page_id":30}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","action":"purchase","page_id":10}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","action":"click","page_id":50}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","action":"purchase","page_id":40}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","action":"purchase","page_id":30}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","action":"click","page_id":40}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","action":"click","page_id":30}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","action":"view","page_id":20}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","action":"purchase","page_id":50}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","action":"view","page_id":10}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","action":"view","page_id":50}
+```
+
+This rule removed the `user_id` key and its associated values from each log entry.

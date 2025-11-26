@@ -1,0 +1,49 @@
+---
+title: Enable change events on traces
+description: Learn how to enable and overlay change events on tracing data in Trace Explorer.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+When troubleshooting issues, on-call engineers want as much information as possible
+to quickly identify the root cause. To expedite problem resolution, you can overlay
+[change events](/overview/types/change-events) on tracing data to help determine whether
+a code deploy, alerting monitor, feature flag, or other change in your environment
+might have caused, or correlates to, the issue you're trying to solve.
+
+Overlaying change events on tracing data adds vertical lines to the tracing timeline
+graph, which responds to criteria you add in the **Query builder**. You can pin
+individual or groups of change events to the graph, and then explore the details of
+what changed, where the change occurred, and when the change happened.
+
+To overlay change events on tracing data:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Trace Explorer**.
+
+1. Choose the time period to display results for, which defaults to the last 15
+   minutes.
+
+1. Use the **Query builder** to
+   [define a search](/investigate/querying/traces#define-a-search), and then
+   click **Run**.
+
+1. Click **Events** to open the **Events** panel.
+
+1. Select the [event categories](/observe/enable-events/use-events#categorize-change-events-intentionally)
+   you want to display, and then click **Save**.
+
+   The selected change event categories display on the timeline graph.
+
+1. In the timeline graph, click a change event or group of change events to pin them
+   to the graph.
+
+1. In the pinned pane on the graph, click **View details** to display the **Change
+   event** or **Change event group** panel. Use this panel to view details about the
+   selected events, such as the source app that generated the event, when the event
+   happened, and any links or labels associated with the event.
+
+To view more details about the selected events, click **Open in Changes Explorer** to
+open Changes Explorer scoped to that query. In Changes Explorer, you can
+[modify the filter](/investigate/querying/filter-events) to specify a different
+time period, and change the criteria included in the query.

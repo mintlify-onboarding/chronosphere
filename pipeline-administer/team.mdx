@@ -1,0 +1,35 @@
+---
+title: Team members in Telemetry Pipeline
+description: Add and manage team members in Chronosphere Telemetry Pipeline.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+To add new team members to a project in Chronosphere Telemetry Pipeline, you can
+[send email invitations](/pipeline-administer/team/invite-members)
+or configure [single sign-on](/pipeline-administer/team/sso).
+
+<Info>
+Teams and [roles](#roles) are managed at the project level. If you're part of multiple
+projects in Telemetry Pipeline, adding or configuring a team member in one project
+won't affect your other projects.
+</Info>
+
+## Roles
+
+Telemetry Pipeline offers several role types, each with a different set of permissions
+for reading, updating, creating, and deleting Telemetry Pipeline resources.
+These resources include any pipelines, Core Instances, plugins, processing
+rules, fleets, agents, and members associated with a project.
+
+The following table shows the different permissions available to each role:
+
+|     | Viewer | Team | Manager | Admin |
+| --- | ------ | ---- | ------- | ----- |
+| Read | <YesIcon /> | <YesIcon /> | <YesIcon /> | <YesIcon /> |
+| Update | <NoIcon /> | <YesIcon /> | <YesIcon /> | <YesIcon /> |
+| Create | <NoIcon /> | <NoIcon /> | <YesIcon /> | <YesIcon /> |
+| Delete | <NoIcon /> | <NoIcon /> | <NoIcon /> | <YesIcon /> |

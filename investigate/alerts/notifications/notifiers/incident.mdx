@@ -1,0 +1,150 @@
+---
+title: Create an incident.io notifier
+description: Create an incident.io notifier with Chronosphere Observability Platform.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import ChronoctlCreate from '/snippets/_partials/chronoctlnotifiers.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+To create an incident.io notifier, configure an alert source in incident.io and then
+create a webhook notifier in Chronosphere Observability Platform.
+
+## Create an alert in incident.io
+
+Before creating an incident.io notifier in Observability Platform, you must configure
+an alert source in incident.io.
+
+To configure an alert source:
+
+1. In incident.io, go to **[Alerts](https://app.incident.io/~/alerts/sources)**.
+1. On the **Alerts** page, click the **Sources** tab.
+1. Click **New alert source**.
+1. In the search box, enter **Chronosphere** to locate the Chronosphere alert source.
+1. Enter a name for the alert source such as **alerts**, and then click
+   **Continue** to create the alert source.
+
+Next, [create an incident.io notifier](#create-an-incidentio-notifier-in-observability-platform)
+in Observability Platform.
+
+## Create an incident.io notifier in Observability Platform
+
+After [creating an alert source in incident.io](#create-an-alert-in-incidentio), you
+can create a notifier in Observability Platform. You can use
+[variables](/investigate/alerts/notifications/notifiers#use-variables-in-notifiers) in your notifiers.
+
+
+<Tabs>
+<Tab title="Web" id="create-incident-notifier">
+
+To create an incident.io notifier:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Notifiers**.
+1. Click **Create notifier**.
+1. Enter a descriptive name for the notifier, such as **incident.io**.
+1. Select **Webhook** as the type of notifier you want to create.
+1. In the **URL** field, enter the URL from your incident.io dashboard, which is
+   called as a `POST` request. For example:
+
+   ```text copy
+   https://incident-io-my-url/api/public/v2/alert_events/chronosphere/01HZKELEKAMDNE8D9FNEKD
+   ```
+1. Optional: Select **Notify when resolved** to send a resolved alert notification.
+1. Click **Save**.
+
+</Tab>
+<Tab title="Chronoctl" id="webhooks-chronoctl">
+
+<ChronoctlCreate />
+
+1. Define the resource definition for your incident.io webhook notifier:
+
+   ```yaml copy /NAME/ /SLUG/ /URL/
+   api_version: v1/config
+   kind: Notifier
+   spec:
+     name: NAME
+     slug: SLUG
+     skip_resolved: true
+     webhook:
+       - url: URL
+   ```
+
+   Replace the following:
+
+   - _`NAME`_: A descriptive name, such as `incident-io`.
+   - _`SLUG`_: A unique identifier, such as `incident-io`.
+   - _`URL`_: Your incident.io webhook URL, such as `https://incident-io-my-url/api/public/v2/alert_events/chronosphere/01HZKELEKAMDNE8D9FNEKD`
+
+1. Add the URL from your incident.io dashboard, called as a `POST` request, to the
+   `url` key.
+
+1. Apply the changes:
+
+   ```shell copy /FILE_NAME/
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of your notifier YAML file.
+
+</Tab>
+<Tab title="Terraform" id="webhooks-terraform">
+
+To create a webhook notifier for incident.io:
+
+1. Create a webhook notifier with Terraform by using the
+   `chronosphere_webhook_alert_notifier` type followed by a name in a resource
+   declaration:
+
+   ```ruby copy
+   resource "chronosphere_webhook_alert_notifier" "webhook_notifier" {
+     name = "incident.io notifier"
+
+     # Optional slug of the webhook notifier.
+     slug = "incident-io-notifier"
+
+     # Notifier-specific required configuration
+     # Detailed definitions can be found at: https://prometheus.io/docs/alerting/latest/configuration/#webhook_config
+     url = "https://incident-io-my-url/api/public/v2/alert_events/chronosphere/01HZKELEKAMDNE8D9FNEKD"
+
+     ## (Optional) Base configuration common to all notifiers
+     send_resolved = true # The default value
+
+     ## (Optional) HTTP configuration common to HTTP notifiers
+     basic_auth_username = "username"
+     basic_auth_password = "strong+p@ssword"
+     # Can use bearer_token instead of basic auth
+     proxy_url                = "https://my-proxy-url"
+     tls_insecure_skip_verify = false
+   }
+   ```
+
+1. Add the URL from your incident.io dashboard, called as a `POST` request, to the
+   `url` key.
+
+1. Run `terraform apply` to create the notifier resource.
+
+   ```ruby copy
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="API" id="indcident-API">
+
+To complete this action with the Chronosphere API, use the `webhook` object in the
+[`CreateNotifier`](/tooling/api-info/definition/operations/CreateNotifier) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+After creating your notifier, you can
+[create a notification policy](/investigate/alerts/notifications/policies#create-a-notification-policy)
+that uses the incident.io notifier you created.
+
+When you [create a monitor](/investigate/alerts/monitors#create-a-monitor) in Observability
+Platform, select the incident.io notification policy to send alerts from incident.io
+to Observability Platform.

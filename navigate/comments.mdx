@@ -1,0 +1,230 @@
+---
+title: Use comments to provide context
+sidebarTitle: Comments
+Description: Learn about how to use comments in Chronosphere Observability Platform to identify important data.
+---
+import { Tab} from '@/components';
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+Metric data provides insights that users can add to queries and dashboards to better
+understand their system, especially when investigating issues. To make sense of these
+metrics, users often need to consult with experts in their organization, or spend
+time sifting through heaps of data to identify which metrics and labels have high
+utility.
+
+To provide additional context about open source metrics like Prometheus and
+OpenTelemetry metrics, use _comments_. This capability lets you annotate metrics with
+information to signify importance, help other users to understand usage context, and
+turn informal knowledge into institutional knowledge that can be used across your
+organization.
+
+You can add comments to metrics in any of the locations within Observability Platform
+mentioned on this page. Comments, and responses to comments, persist until the
+comments are deleted. This behavior applies to metrics impacted by
+[drop rules](/control/shaping/rules/drop-rules) and
+[rollup rules](/control/shaping/rules/rollup), and comments on metrics and labels
+that were removed from queries.
+
+## View comments
+
+You can view a list of recent comments from your [personal home page](/observe/personal-homepage),
+and view specific comments in context of the Chronosphere entity that they're attached to.
+
+### View recent comments
+
+To view recent comments, use the
+[**Recent comments** panel](/observe/personal-homepage#recent-comments) on your personal
+home page.
+
+### View contextual comments
+
+Chronosphere entities that have comments display a **<Icon icon="message" /> message**
+icon with a number that indicates how many comments were added.
+
+Choose one of the following options to view comments in context:
+
+<Tabs>
+<Tab title="Metrics Usage" id="view-metrics-usage">
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Usage**.
+1. In the list of metrics, select the metric you want to view comments for and then
+   click **View comments**.
+
+</Tab>
+<Tab title="Metrics Explorer" id="view-query-builder">
+
+<LimitedAvail />
+
+1. In the navigation menu, click
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Metrics Explorer**.
+1. Click the **Builder** tab.
+1. In the **Metric** field, enter the name of the metric you want to view.
+1. Click the metric name to display the most recent or pinned comment.
+1. To view all comments, click **View all comments**.
+
+</Tab>
+
+<Tab title="Changes Explorer" id="view-changes-explorer">
+
+1. In the navigation menu, click
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span>
+   Changes Explorer**.
+1. [Create a filter](/investigate/querying/filter-events) to focus on specific change
+   events.
+1. Click the change event you want to view comments for.
+1. In the **Change event** drawer, click the **Comments** tab to view all available
+   comments for the selected change event.
+
+</Tab>
+
+<Tab title="Aggregation Rules" id="view-agg-rules">
+
+1. In the navigation menu, click
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Aggregation Rules**.
+1. Click the name of the metric you want to view a comment for.
+1. In the panel with the name of the selected metric, click **View comments**.
+
+</Tab>
+
+<Tab title="Drop Rules" id="view-drop-rules">
+
+1. In the navigation menu, click
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Drop Rules**.
+1. Click the name of the metric you want to view a comment for.
+1. In the **Edit Drop Rule** panel click the **Comments** tab.
+
+</Tab>
+
+<Tab title="Monitors" id="view-monitors">
+
+1. In the navigation menu, click
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Click the name of the monitor you want to view a comment for.
+1. In the panel with the name of the selected monitor, click **View comments**.
+
+</Tab>
+</Tabs>
+
+The **Comments** drawer appears and shows all comments for the selected metric. From
+there, you can take [global actions](#global-actions) and
+[individual actions](#actions-for-your-comments) for your comments.
+
+## Add comments
+
+If a metric doesn't have any comments, you can add them. If comments were already
+added to a metric, you can [view comments](#view-comments) to add additional
+comments, or reply to existing ones.
+
+You can use Markdown syntax to style your comment, and then click **Show preview** to
+preview the rendered content before saving.
+
+To mention a teammate in a comment, either enter their full email address, or enter
+`@` and then choose as an option from the suggestions drop-down menu. For refined
+suggestions, enter `@` followed by a partial value, such as `@alice`.
+
+To add a chart in a comment, click the **<Icon icon="chart-line" /> line chart** icon
+to open a dialog that supports PromQL metrics. Enter the metric you want to include
+in the chart and then click **Insert**.
+
+Choose one of the following options to add comments:
+
+<Tabs>
+<Tab title="Metrics Usage" id="add-metrics-usage">
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Usage**.
+1. In the list of metrics, select the metric you want to view comments for and then
+   click **Add comment**.
+1. In the **Comments** drawer, enter your comment.
+1. Click **Submit** to save your comment.
+
+</Tab>
+
+<Tab title="Metrics Explorer" id="add-query-builder">
+
+<LimitedAvail />
+
+1. In the navigation menu, click
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Metrics Explorer**.
+1. Click the **Builder** tab.
+1. In the **Metric** field, enter the name of the metric you want to add a comment for.
+1. Click the metric name, and then click **Add comment**.
+1. In the **Comments** drawer, enter your comment.
+1. Click **Submit** to save your comment.
+
+</Tab>
+
+<Tab title="Changes Explorer" id="add-changes-explorer">
+
+1. In the navigation menu, click
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Changes Explorer**.
+1. [Create a filter](/investigate/querying/filter-events) to focus on specific change
+   events.
+1. Click the change event you want to add a comment for.
+1. In the **Change event** drawer, click the **Comments** tab.
+1. In the **Comment** field, enter your comment.
+1. Click **Submit** to save your comment.
+
+</Tab>
+
+<Tab title="Aggregation Rules" id="add-agg-rules">
+
+1. In the navigation menu, click
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Aggregation Rules**.
+1. Click the name of the metric you want to add a comment for.
+1. In the panel with the name of the selected metric, click **Add comment**.
+1. In the **Comments** drawer, enter your comment.
+1. Click **Submit** to save your comment.
+
+</Tab>
+
+<Tab title="Drop Rules" id="add-drop-rules">
+
+1. In the navigation menu, click
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Drop Rules**.
+1. Click the name of the metric you want to add a comment for.
+1. In the **Edit Drop Rule** panel click the **Comments** tab.
+1. In the **Comments** field, enter your comment.
+1. Click **Submit** to save your comment.
+
+</Tab>
+
+<Tab title="Monitors" id="add-monitors">
+
+1. In the navigation menu, click
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Click the name of the monitor you want to add a comment for.
+1. In the panel with the name of the selected monitor, click **Add comment**.
+1. In the **Comments** drawer, enter your comment.
+1. Click **Submit** to save your comment.
+
+</Tab>
+</Tabs>
+
+The **Comments** drawer displays your comment for the selected metric. From
+there, you can take [global actions](#global-actions) and
+[individual actions](#actions-for-your-comments) on your comment.
+
+## Comment actions
+
+When viewing or adding comments, you can complete global actions and individual actions
+as described in the following sections.
+
+### Global actions
+
+The following actions are available to all users for any comment:
+
+- **<Icon icon="link" /> link**: Copy a link to a comment.
+- **<Icon icon="message" /> message**: Reply to an existing comment.
+- **<Icon icon="thumbtack" /> pin**: Pin a comment to the top of the comment
+  thread.
+- **<Icon icon="circle-check" /> checkmark**: Resolve a comment.
+- **<Icon icon="rotate" /> refresh**: Reopen a resolved comment.
+- **New comment**: Add a new comment to an existing comment.
+
+### Actions for your comments
+
+The following actions are available only for comments that you added:
+
+- **<Icon icon="pencil" /> pencil**: Edit an existing comment.
+- **<Icon icon="trash" /> trash can**: Delete an existing comment.

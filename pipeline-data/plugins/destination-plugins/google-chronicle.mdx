@@ -1,0 +1,57 @@
+---
+title: Google Chronicle destination plugin
+sidebarTitle: Google Chronicle destination plugin (Telemetry Pipeline)
+description: Send pipeline data to Google Chronicle.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Google Chronicle [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `chronicle`) lets you configure your telemetry pipeline to output data to
+Google Chronicle.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Chronicle Settings
+
+| Name                                | Key | Description | Default |
+| ----------------------------------- | --- | ----------- | ------- |
+| **Google Service Credentials Path** | `google_service_credentials` | The Service Credentials file lets Telemetry Pipeline communicate directly with Google Cloud Services using a [service account](https://cloud.google.com/logging/docs/agent/logging/authorization#create-service-account). | _none_ |
+| **GCP Service Account Email**       | `service_account_email` | Account email associated with the service. Available only if no credentials file has been provided. | _none_ |
+| **GCP Service Account Secret**      | `service_account_secret` | Private key content associated with the service account. Available only if no credentials file has been provided. | _none_ |
+| **GCP Project Id**                  | `project_id` | The project ID containing the tenant of Google Chronicle to stream into. | _none_ |
+| **Google Chronicle Customer ID**    | `customer_id` | Required. The customer ID to identify the tenant of Google Chronicle to stream into. | _none_ |
+| **Google Chronicle Log Type**       | `log_type` | Required. The log type to handle the request entries. Users must set up the valid, [supported log type](https://cloud.google.com/chronicle/docs/ingestion/parser-list/supported-default-parsers) or the Google Chronicle service denies log ingestion. | _none_ |
+| **Google Chronicle Log Key**        | `log_key`  | Required. Specifies the field that contains the log type specified in `log_type`. By default, the whole log record is sent to Google Chronicle. | _none_ |
+
+### Advanced
+
+| Name                | Key | Description | Default |
+| ------------------- | --- | ----------- | ------- |
+| **Region Location** | `region` | The GCP region in which to store Google Chronicle security logs. Accepted values: `ASIA`, `EU`, `UK`, `US`. | `US` |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

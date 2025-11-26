@@ -1,0 +1,133 @@
+---
+title: History and rollback
+description: View your pipeline history and revert to previous versions.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Telemetry Pipeline saves a history of each pipeline's configuration settings
+and statuses over time.
+
+## View configuration history
+
+To view the configuration history for a specific pipeline, use the following
+command:
+
+```shell copy
+calyptia get pipeline_config_history --pipeline PIPELINE_ID
+```
+
+Replace _`PIPELINE_ID`_ with the [pipeline ID](/pipeline-configure/metadata#get-pipeline-ids)
+of your pipeline.
+
+This command returns a list of configuration IDs that correspond to different
+snapshots from that pipeline's configuration history. Its output
+will be similar to the following:
+
+```text
+ ID                                    AGE
+ 7c636cb9-2734-4168-81e3-3a84208049ae  36 seconds
+ 1542066b-c2ff-4908-bd81-4d815f9ae22a  1 minute
+ 7a3d0d8d-2e7a-4443-b5be-11b86942499c  5 minutes
+ 237e3f6f-52e9-4dea-a7da-070a58bf4884  15 hours
+```
+
+### Limit results
+
+Use the `--last` flag to display only a subset of configuration snapshots. For example, to
+return a list of the last five snapshots, run:
+
+```shell copy
+calyptia get pipeline_config_history --pipeline my-pipeline --last 5
+```
+
+### View specific changes
+
+Use the `-o yaml` flag to view the specific changes over time to that
+pipeline's [configuration file](/pipeline-configure/config-files):
+
+```shell copy
+calyptia get pipeline_config_history --pipeline my-pipeline -o yaml
+```
+
+## Roll back pipeline configuration history
+
+<Warning>
+If you used the `--skip-config-validation` flag when you created or modified
+a pipeline, you must also include that flag when you run the `rollout` command
+for that pipeline.
+</Warning>
+
+To roll back a pipeline to a previous configuration, use the following command:
+
+```shell copy
+calyptia rollout pipeline PIPELINE_ID --to-config-id CONFIG_ID
+```
+
+Replace the following:
+
+- _`PIPELINE_ID`_: The [pipeline ID](/pipeline-configure/metadata#get-pipeline-ids)
+  of your pipeline.
+- _`CONFIG_ID`_: The [configuration ID](#view-configuration-history)
+  you want to roll your pipeline back to.
+
+### Roll back a specific number of steps
+
+In addition to using the history ID of a previous configuration, you can also
+specify the number of steps you want to roll back through the configuration history
+of a pipeline. To do so, use the following command:
+
+```shell copy
+calyptia rollout pipeline PIPELINE_ID --steps-back COUNT
+```
+
+Replace the following:
+
+- _`PIPELINE_ID`_: The [pipeline ID](/pipeline-configure/metadata#get-pipeline-ids)
+  of your pipeline.
+- _`COUNT`_: The number of steps to roll back through the pipeline's configuration
+  history. This must be an integer value.
+
+## View status history
+
+To view the status history for a specific pipeline, use one of these methods:
+
+<Tabs>
+<Tab title="Web interface" id="status-ui">
+
+{/* markdownlint-disable MD013 */}
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Open the project that contains the pipeline whose status you want to view.
+1. Go to **Core Instances**, then click the name of the Core Instance associated
+   with the pipeline whose status you want to view.
+1. Under **Data Pipelines**, find the pipeline whose status you want to view, and
+   then click **<Icon icon="gear" />Settings&nbsp;<span aria-label="and then">></span> <Icon icon="clock-rotate-left" />Status History**.
+
+{/* markdownlint-enable MD013 */}
+
+The pane that appears shows a list of statuses changes over time for that pipeline.
+
+</Tab>
+<Tab title="Pipeline CLI" id="status-cli">
+
+Run the following [Pipeline CLI](/pipeline-cli) command:
+
+```shell copy
+calyptia get pipeline_status_history --pipeline PIPELINE_ID
+```
+
+Replace _`PIPELINE_ID`_ with the [pipeline ID](/pipeline-configure/metadata#get-pipeline-ids)
+of your pipeline.
+
+This command returns a list of statuses and corresponding configuration
+IDs over time for that pipeline. Its output will be similar to the following:
+
+```text
+ STATUS   CONFIG ID                             AGE
+ STARTED  237e3f6f-52e9-4dea-a7da-070a58bf4884  15 hours
+ NEW      237e3f6f-52e9-4dea-a7da-070a58bf4884  15 hours
+```
+
+</Tab>
+</Tabs>

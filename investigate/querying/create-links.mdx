@@ -1,0 +1,357 @@
+---
+title: Create links to related information
+description: Learn how to create links from one telemetry type to other information in Observability Platform.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Individually, telemetry data can provide insights into your app and its connected
+services and operations. Linking these data types across Chronosphere Observability
+Platform provides even greater context beyond logs, metrics, or traces on their own.
+
+## Create links to log data
+
+If you want to link from other telemetry data to related logs in Logs Explorer, you
+must construct a log URL. You then copy the query, decode it, and replace values with
+variables in the encoded URL. The following URL is an example of the decoded base
+URL:
+
+```copy /TENANT/ /TIME/ /QUERY/ /FUNCTION/
+https://TENANT.chronosphere.io/logs/explorer?start=TIME&query=QUERY|+FUNCTION
+```
+
+Replace the following:
+
+- _`TENANT`_: Your organization name prefixed to your Observability Platform
+  instance.
+- _`TIME`_: The absolute or relative time interval you want the query to use, such as
+  `1h` for one hour or `1d` for one day. You can also include a start and end time by
+  adding `"start":"START_TIME"&"end":"END_TIME"` to your query. If you specify the
+  start and end time, the values must be in Unix time as milliseconds, such as
+  `1721243232284`.
+- `QUERY`: The log query you want to open in Logs Explorer when someone clicks the
+  link.
+- `FUNCTION`: Queries in Logs Explorer separate query operators and functions with a
+  pipe (`|`), as shown in the following example:
+
+  ```sql copy
+  httpRequest.requestMethod = "POST"
+  AND httpRequest.status =~ "40*"
+  AND service = "nginx"
+  | summarize count()
+  ```
+
+  See [logging query syntax](/investigate/querying/query-logs#logging-query-syntax) for
+  more information.
+
+The URL in Logs Explorer uses URL-encoded characters that can be difficult to parse
+visually. You can use the base URL to create your query, or define your query in Logs
+Explorer and then decode the URL with an online tool such as
+[URL Decoder](https://www.urldecoder.org/). The following steps follow the URL
+Decoder-based approach.
+
+To create the URL for your query:
+
+1. In the navigation menu, select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
+1. In Logs Explorer, [construct a query](/investigate/querying/query-logs)
+   to define the log data you're searching for.
+1. In your browser address bar, copy the resulting URL from the Logs Explorer page.
+1. In a new tab, navigate to [URL Decoder](https://www.urldecoder.org/).
+1. Paste the URL you copied and click **Decode**.
+
+   Review the decoded URL and identify the values you want to replace with variables.
+   For example, the decoded URL might contain the name of a service like
+   `nginx`:
+
+   ```text copy
+   service+=+"nginx"
+   ```
+
+1. In the encoded URL you pasted into URL Decoder, replace any values where you want
+   to use variables. For example, the encoded URL might contain the `service`
+   parameter with a value of `nginx`:
+
+   ```text copy /nginx/
+   service+%3D+%22nginx%22%
+   ```
+
+   Replace `nginx` with the `{{ service }}` variable:
+
+   ```text copy /{{ service }}/
+   service+%3D+%22{{ service }}%22%
+   ```
+
+   See [logging query examples](#log-query-examples) for examples.
+
+1. After replacing values with variables, copy the encoded URL, complete with all
+   URL-encoded characters.
+
+After constructing the URL, you can [create links](#link-between-telemetry-data-types)
+between telemetry types.
+
+## Create links from trace data
+
+When viewing span details in Trace Explorer for a selected trace, you can add links
+to related information, such as dashboards within Chronosphere Observability
+Platform, related logs in Logs Explorer, external services such as related tracing
+logs stored in your cloud provider, or links to other observability tools.
+
+You can dynamically generate links to external services using templated variables,
+such as `{{ trace_id }}`, `{{ service }}`, and `{{ operation }}`. When you click one
+of these links that contains a variable, Observability Platform interpolates the
+variables with information from the selected span. For example, Observability
+Platform replaces the `{{ service }}` variable with the name of the service from the
+selected span.
+
+These links persist across all traces in Observability Platform.
+
+1. In Trace Explorer, [define the criteria](/investigate/querying/traces#define-a-search) for your search.
+
+1. To view a specific trace related to your search, click the **Trace list** tab and then
+   select an individual trace to open the trace details page.
+
+1. On the trace details page, in the **Links** section, click **+ Add link**.
+
+1. Enter a display name for the link, and then define a URL for your link.
+
+   For example, the following link opens the Services Overview dashboard scoped to
+   the service in the selected span. When you click the link, Observability Platform
+   replaces the `{{ service }}` variable with the name of the service from the
+   selected span.
+
+   ```text copy
+   https://example.chronosphere.io/dashboards/services-overview/services-overview?orgId=1&var-svc={{ service }}&var-root_svc={{ service }}
+   ```
+
+1. Click **Save** to save your link.
+
+After constructing the URL, you can [create links](#link-between-telemetry-data-types)
+between telemetry types.
+
+## Link between telemetry data types
+
+Before linking between data types, you must construct a URL to include in your query:
+
+- [Create links to log data](#create-links-to-log-data)
+- [Create links to trace data](#create-links-from-trace-data)
+
+You can then choose which data type to link to and from.
+
+### Link to logs from traces
+
+If you want to link from trace span details to related logs in Logs Explorer,
+construct a URL for your logging query, and then create a link in the span details of
+Trace Explorer.
+
+These links persist across all traces in Observability Platform.
+
+To link to logs from trace span details:
+
+1. [Construct a URL](#create-links-to-log-data) for your logging query.
+1. In Trace Explorer,
+   [define the criteria](/investigate/querying/traces#define-a-search)
+   for your search.
+
+1. To view a specific trace related to your search, click the **Trace list** tab and then
+   select an individual trace to open the trace details page.
+
+1. On the trace details page, in the **Links** section, click **+ Add link**.
+
+1. Enter a display name for the link, and then define a URL for your link.
+
+   For example, the following link opens Logs Explorer scoped to the service in the
+   selected span. When you click the link, Observability Platform replaces the
+   `{{ service }}` variable with the name of the service from the selected span:
+
+   ```text copy /{{ service }}/
+   https://TENANT.chronosphere.io/logs/explorer/?orgId=1&var-svc={{ service }}&var-root_svc={{ service }}
+   ```
+
+1. Click **Save** to save your link.
+
+### Link to logs and traces from dashboards
+
+You can create data links from dashboards to relevant traces and logs. You first
+create links for the data type you want to link to, and then create a data link to
+express a search in Logs Explorer or Trace Explorer.
+
+Observability Platform takes the contextual information in dashboard metrics and uses
+it to build links to search for data. Clicking the link navigates you to the
+appropriate Explorer, and replaces the variables with matching criteria defined in
+the search.
+
+Data links operate on both native metrics and metrics derived from traces within
+Observability Platform.
+
+The [Trace Metrics](/control/sampling/trace-metrics) dashboard that Observability
+Platform provides contains a data link for each of the included panels. Data links in
+dashboards use [Observability Platform parameters](#data-link-parameters) to refer to
+series fields, labels, and values.
+
+<Info>
+Before creating a data link from a dashboard, you must
+[create custom variables](/observe/dashboards/customization/dashboard-variables)
+to use in your link. For example, create a `metric` variable that you can reference
+as `${metric}`. Pair this variable with the `d_metricname` parameter and reference
+the variable in your data link as `d_metricname=${metric}`.
+</Info>
+
+- **Traces**: Use the following URL as the basis for creating a data link to trace
+  data from a dashboard:
+
+  ```shell copy
+  /traces/?d_closeto=${__series.timestamp}&d_metricname=${metric}
+  ```
+
+- **Logs**: Use the following URL as the basis for creating a data link to log data
+  from a dashboard:
+
+   ```shell copy
+   /logs/explorer?start=1h&query=service+%3D+%22${service}%22&visualization=list
+   ```
+
+To create a data link from a dashboard:
+
+1. In any dashboard panel, hold the pointer over the panel, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon, and click **Edit panel**.
+
+1. In the **Edit Panel** screen, click the **Links** tab.
+
+1. In the **Links** tab, click **Add link**.
+
+1. In the **Link type** dropdown, select **Link**.
+
+1. Define the **Name** and **URL** for your data link, which can link to traces and
+   other external data sources that use the context in the graph as inputs.
+
+   For example, the following trace URL uses the value of the `__series.timestamp`
+   and `service` variables as inputs, based on the specific series in the chart (if
+   the chart shows multiple series) and the name of the service in the query.
+
+   ```text copy
+   /traces/explorer?d_closeto=${__series.timestamp}& d_service=${service}
+   ```
+
+1. In the **Edit panel** screen, click **Apply**.
+
+1. On your dashboard screen, click **Save** to save your changes.
+
+After saving your data link, click any point in the chart you created a link for,
+click the <Icon icon="link" /> link icon, and then click the link name to view the
+contextual link to your data.
+
+### Data link parameters
+
+Use any of the following parameters when creating a data link from a dashboard to
+trace data. You can specify parameters in conjunction with Grafana data link
+[variables](https://grafana.com/docs/grafana/v7.5/linking/data-link-variables/)
+to refer to series fields, labels, and values.
+
+Any parameters in the Trace Explorer search that you define when creating the
+trace metric override parameters you specify in the data link URL.
+
+- `d_closeto`: Identifies a value ten minutes before and after the specified point
+   you select in the graph. For example, `d_closeto=${__value.time}` identifies a
+   time window that includes ten minutes before and after the time you select in the
+   graph.
+
+- `d_error`: Specifies whether to include the error count in the data link. For
+   example, `d_error=true`.
+
+- `d_metricname`: The trace metric name to pull from the dashboard panel. For
+   example, `d_metricname=${metric}`.
+
+- `d_minduration`: The minimum duration for the selected metric. Use this parameter
+   for charts that measure duration or latency, such as p99 or p50 duration. For
+   example, `&d_minduration=${__value.numeric}`.
+
+- `d_operation`: The operation to include in the data link. For example,
+   `&d_operation=${__field.labels.to_op}` identifies the value of the `to_op` label
+   for the selected time series on the dashboard panel.
+
+- `d_service`: The service to include in the data link. For example,
+   `d_service=${__field.labels.to_svc}`.
+
+- `d_tagname`: The name of a tag. For example, `d_tagname=environment`.
+
+- `d_tagoperator`: Use this parameter in conjunction with the `d_tagvalue`,
+  `d_tagvalues`, and `d_tagname` operators to specify value match and comparison
+  operators. This parameter supports the following operators:
+
+    - **Value match**: `EXACT`, `EXACT_NEGATION`, `REGEX`, `REGEX_NEGATION`, `IN`,
+      `NOT_IN`.
+    - **Comparison**: `EQUAL`, `NOT_EQUAL`, `GREATER_THAN_OR_EQUAL`, `GREATER_THAN`,
+      `LESS_THAN`, `LESS_THAN_OR_EQUAL`.
+
+- `d_tagvalue`: The value of a tag. For example, `d_tagvalue=production`.
+
+## Log query examples
+
+The following examples show both the encoded and decoded URLs for a query in Logs
+Explorer to help explain the syntax and how to replace parameter values with
+variables.
+
+<Info>
+To improve readability, each of the following examples uses carriage returns. If you
+copy any examples, remove these characters before including them in a span link so
+the URL is valid.
+</Info>
+
+The following URL defines an encoded query from Logs Explorer. This query includes
+the following parameters:
+
+- An `operation` named `/authorize-card-payment`
+- A `service` named `payment_gateway_service`
+- A `severity` equal to `ERROR`
+- An `environment` named `production`
+
+```text copy showLineNumbers /operation/ /service/ /environment/ /severity/ /payment_gateway_service/ /authorize-card-payment/ /production/ /ERROR/
+https://TENANT.chronosphere.io/logs/explorer?start=1h&visualization=list
+&query=operation+%3D+%22/authorize-card-payment%22%0A
+AND+service+%3D+%22payment_gateway_service%22%0A
+AND+severity+%3D+%22ERROR%22%0A
+AND+environment+%3D+%22production%22
+```
+
+Without URL encoding, the URL looks like this:
+
+```text copy showLineNumbers /operation/ /service/ /environment/ /severity/ /payment_gateway_service/ /authorize-card-payment/ /production/ /ERROR/
+https://TENANT.chronosphere.io/logs/explorer?start=1h&visualization=list
+&query=operation+=+"/authorize-card-payment"
+AND+service+=+"payment_gateway_service"
+AND+severity+=+"ERROR"
+AND+environment+=+"production"
+```
+
+Viewing this version of the URL helps to determine where the values are you want to
+replace, such as `payment_gateway_service` or `/authorize-card-payment`.
+
+You can then replace these values for `service` and `operation` with the
+`{{ service }}` and `{{ operation }}` templated variables. The resulting URL with
+variables should be similar to the following:
+
+```text copy showLineNumbers /{{ service }}/ /{{ operation }}/
+https://TENANT.chronosphere.io/logs/explorer?start=1h&visualization=list
+&query=operation+%3D+%22{{ operation }}%22%0A
+AND+service+%3D+%22{{ service }}%22%0A
+AND+severity+%3D+%22ERROR%22%0A
+AND+environment+%3D+%22production%22
+```
+
+Copy the resulting encoded URL, navigate to Trace Explorer, and then
+[create a link](#create-links-to-log-data) in the span details. When users click the
+link, Observability Platform replaces the templated `{{ service }}` and `{{ operation
+}}` variables with the service and operation of the selected span.
+
+Similarly, you can use the `{{ span_id }}` and `{{ trace_id }}` variables in your
+templated link.
+
+```text copy showLineNumbers /{{ trace_id }}/ /{{ span_id }}/
+https://TENANT.chronosphere.io/logs/explorer?start=1h
+&query=operation+%3D+%22{{ operation }}%22%0A
+AND+service+%3D+%22{{ service }}%22%0A
+AND+severity+%3D+%22ERROR%22%0A
+AND+environment+%3D+%22production%22
+AND+traceID%3D%22{{ trace_id }}%22
+```

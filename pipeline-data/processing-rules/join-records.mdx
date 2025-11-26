@@ -1,0 +1,60 @@
+---
+title: Join records
+description: Learn about the join records processing rule in Chronosphere Telemetry Pipeline.
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The join records [processing rule](/pipeline-data/processing-rules) combines values
+from multiple records into an array of values within a single record.
+
+<Info>
+To determine which values to combine, this rule checks the timestamp of each record,
+then combines values from records that occur within the same nanosecond. This timestamp
+is a piece of metadata that Chronosphere Telemetry Pipeline assigns to all records that
+pass through a pipeline, and is unrelated to any keys within the record itself.
+</Info>
+
+## Configuration parameters
+
+<Params />
+
+| Name                                                                   | Key | Description | Default |
+| ---------------------------------------------------------------------- | --- | ----------- | ------- |
+| **Source key**                                                         | `key` | Required. The key that contains values to join in an array. The resulting array will be assigned to a key with the same name. | _none_ |
+| **Skip records where the specified key is missing** checkbox           | `skipMissing` | Indicates whether to modify the record if the key isn't found. | Not selected |
+| **Comment**                                                            | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Example
+
+Using the join records processing rule lets you restructure your telemetry data
+by turning multiple standalone events into a combined array. For example, given
+these sample logs:
+
+```json showLineNumbers
+{"log":{"user_id":3,"action":"purchase"}}
+{"log":{"user_id":4,"action":"click"}}
+{"log":{"user_id":1,"action":"view"}}
+{"log":{"user_id":5,"action":"click"}}
+{"log":{"user_id":2,"action":"click"}}
+```
+
+A processing rule with the **Source key** value `log` returns the following result:
+
+```json
+{"log":[{"user_id":3,"action":"purchase"},{"user_id":4,"action":"click"},{"user_id":1,"action":"view"}]}
+{"log":[{"user_id":5,"action":"click"},{"user_id":2,"action":"click"}]}
+```
+
+This rule combined the `log` key from multiple standalone records into a series
+of unified `log` arrays. Because the first three events occurred within the same
+nanosecond, their `log` values were combined within one array, and because the
+fourth and fifth events occurred one nanosecond later, their `log` values were
+combined within another array.
+
+## Related rules
+
+For a processing rule with the opposite effect, see
+[split record](/pipeline-data/processing-rules/split-record).

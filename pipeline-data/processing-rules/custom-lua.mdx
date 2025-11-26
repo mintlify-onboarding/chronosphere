@@ -1,0 +1,215 @@
+---
+title: Custom Lua
+description: Learn about the custom Lua processing rule in Chronosphere Telemetry Pipeline.
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+You can use the custom Lua [processing rule](/pipeline-data/processing-rules) to
+write your own Lua scripts for transforming telemetry data.
+
+This rule uses [LuaJIT 5.1](https://www.lua.org/manual/5.1/manual.html#5) and runs
+in protected mode to ensure that malformed Lua code doesn't harm pipelines.
+
+## Configuration parameters
+
+<Params />
+
+| Name        | Key | Description | Default |
+| ----------- | --- | ----------- | ------- |
+| **Script**  | `script` | Required. Your custom Lua script. | _none_ |
+| **Comment** | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. You can also use [GPT generation](#gpt-generation) to treat this comment as the prompt for a new Lua script. | _none_ |
+
+## GPT generation
+
+<Info>
+Keep in mind that this feature is experimental, and that Chronosphere can't guarantee
+the accuracy or quality of generated scripts.
+</Info>
+
+{/* vale Chronosphere.Spelling = NO */}
+
+The custom Lua rule processing rule lets you turn text descriptions into scripts
+by using generative pre-trained transformer (GPT) generation. To use this
+feature, enter a description of your script in the **Comment** text box, and then
+click **Generate Lua Script From Comment With Gpt Experimental**.
+
+{/* vale Chronosphere.Spelling = YES */}
+
+## Best practices
+
+To ensure that custom Lua scripts run efficiently within your pipelines, Chronosphere
+recommends following these best practices:
+
+- Test new scripts in the processing rules playground. Before adding a
+  custom Lua script to an active pipeline, try running the script in the
+  processing rules playground in the Telemetry Pipeline UI. This lets you test
+  your script on sample input data, view the script's transformed output, and
+  catch syntax errors.
+
+- Add `print` and `error` statements to your scripts. These statements help
+  you track the value of variables and see details about specific errors when
+  they occur.
+
+- Use profiling. In the processing rules playground, you can toggle the
+  **Enable profiling** setting to view more information about a script's
+  transformed output, including how long it took for that script to run.
+
+## Example scripts
+
+The following examples show several possible types of Lua scripts you can incorporate into
+your pipeline.
+
+### Conditional statement
+
+You can use conditional statements to transform data that meets certain criteria.
+This example script looks for a key named `log`, and then determines whether
+its value is `line`. If both of these conditions are true, the script sets
+the value of `log` to `Y`.
+
+```lua copy
+return function(tag, ts, record)
+    if record['log'] ~= nil and record['log'] == 'line' then
+        record['log'] = 'Y'
+    end
+    return 1, ts, record
+end
+```
+
+### Reference to a secret
+
+If your pipeline includes [secrets](/pipeline-configure/secrets), you can reference
+these secrets through Lua scripts. Because secrets are stored as environment variables
+within a pipeline, this example accesses that environment variable, and then stores its
+value in a new variable named `secret`.
+
+Additionally, this script calls the `resolve` function only if the `secret` key
+hasn't been defined before, which helps improve performance.
+
+```lua copy
+function resolve(SECRET_<STR>)
+  local token = os.getenv(SECRET_<STR>)
+  if token == nill
+    then error(string.format("Could not resolve token"))
+  else
+    return token
+  end
+end
+
+local secret = nil
+
+return function(tag, ts, record, code)
+  if secret == nil then
+    secret = resolve("SECRET_<STR>")
+    record.new_field = secret
+  else
+    record.new_field = secret
+  end
+  return code, ts, record
+end
+```
+
+### Call to a third-party API
+
+You can use Lua scripts to call a third-party HTTP API, and then use data from that
+API to perform various actions.
+
+This example imports the Lua JSON library to support the JSON response returned
+by a specific API, then uses a separate function to call that API, and then
+creates a new key to store the value of a successful API response.
+
+```lua copy
+local json = require 'json'
+
+local function try_curl(url, max_retries, timeout)
+  local retries = 0
+  while retries < max_retries do
+    local success, result = pcall(function()
+      local command = string.format('curl -s -L --max-time %d %s', timeout, url)
+      local proc = io.popen(command)
+      local output = proc:read('*a')
+      proc:close()
+      return output
+    end)
+
+    if success and result ~= "" then
+      return result
+    end
+
+    retries = retries + 1
+    if retries < max_retries then
+      os.execute("sleep 1")  -- Wait for 1 second before retrying
+    end
+  end
+  return nil
+end
+
+return function(tag, ts, record, code)
+  if record.___dummyFlush__ then
+    return 1, ts, record
+  end
+
+
+  local url = 'https://gist.githubusercontent.com/agup006/7fbc70a9a821bb39977504afb9ec290e/raw/9ced93796b9eb5a8d0b0d69bdeed630d5c7f2744/test.json'
+  local max_retries = 3
+  local timeout = 10  -- seconds
+
+  local response = try_curl(url, max_retries, timeout)
+
+  if response then
+    local success, result = pcall(json.decode, response)
+    if success then
+      record.json = result
+    else
+      record.json = { message = "failed to parse JSON" }
+    end
+  else
+    record.json = { message = "failed to connect" }
+  end
+
+  return code, ts, record
+end
+```
+
+### Reading a pipeline file
+
+You can use pipeline files to store arbitrary data, including JSON, and use a
+Lua script to access that data.
+
+This example imports the Lua JSON library, then uploads a file called `schema`,
+and then converts and returns the data stored in that file.
+
+<Info>
+The processing rules playground can't access pipeline files. To test a Lua script
+that reads files, Chronosphere recommends creating a small pipeline that uses mock
+data.
+</Info>
+
+```lua copy
+local json = require 'json'
+
+local file_path = "/config/schema"
+local file = io.open(file_path, "r")
+if not file then
+    error("Could not open file at " .. file_path)
+end
+
+local jsonschema_content = file:read("*all")
+file:close()
+
+local jsonschema = json.decode(jsonschema_content)
+if not jsonschema then
+    error("Failed to parse JSON from file at " .. file_path)
+end
+
+return function(tag, ts, record, code)
+  if record.___dummyFlush__ then
+    return 1, ts, record
+  end
+
+  return code, ts, jsonschema
+end
+
+```

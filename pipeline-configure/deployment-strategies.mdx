@@ -1,0 +1,56 @@
+---
+title: Pipeline deployment strategies
+description: Set deployment strategies for pipeliens in Chronosphere Telemetry Pipeline.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Deployment strategies govern how a pipeline's [replicas](/pipeline-configure/scaling)
+behave during the [upgrade](/pipeline-install/upgrade) process. Chronosphere
+Telemetry Pipeline offers these deployment strategies:
+
+- **Rolling Update**: Default. Individually upgrades and restarts each replica of
+  a pipeline. This ensures that at least one replica is always running, which
+  lets telemetry data continue to flow without interruption. If a pipeline has
+  only one replica, this strategy creates a new, upgraded replica, and then destroys
+  the old replica.
+- **Hot Reload**: Upgrades all of a pipeline's replicas simultaneously
+  without restarting any of them. During this upgrade process, pipelines continue
+  to run and they attempt to maintain the flow of telemetry data.
+
+## Modify a pipeline's deployment strategy
+
+Use one of these methods to modify a pipeline's deployment strategy.
+
+<Tabs>
+<Tab title="Web interface" id="strategy-ui">
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Open the project that contains the pipeline whose deployment strategy you want
+   to modify.
+1. Go to **Core Instances**, and then click the name of the Core Instance associated
+   with the pipeline whose deployment strategy you want to modify.
+1. In the **Data Pipelines** section, click the name of the pipeline whose deployment strategy
+   you want to modify.
+1. Click <Icon icon="square-pen" />&nbsp;**Advanced Settings**.
+1. In the **Deployment Strategy** section, select either **Rolling Update** or **Hot Reload**.
+1. To save your changes, click **Update**.
+
+</Tab>
+<Tab title="Pipeline CLI" id="strategy-cli">
+
+In [Pipeline CLI](/pipeline-cli), run the following command:
+
+```shell copy /PIPELINE/ /OPTION/
+calyptia update pipeline PIPELINE --deployment-strategy OPTION
+```
+
+Replace the following:
+
+- _`PIPELINE`_: The name or [unique ID](/pipeline-configure/metadata#get-pipeline-ids)
+  of your pipeline.
+- _`OPTION`_: The deployment strategy to use for that pipeline. Possible values
+  are `rollingupdate` and `hotReload`.
+
+</Tab>
+</Tabs>

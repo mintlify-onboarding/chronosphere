@@ -1,0 +1,117 @@
+---
+title: Scrape Prometheus native histograms
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+> Requires Chronosphere Collector version 0.107.0 or later.
+
+To scrape Prometheus native histograms, you must configure the Collector to enable
+native histogram scraping.
+
+Observability Platform persists Prometheus native histograms as a
+[histogram metric type](/control/shaping/types#histogram).
+You can define aggregation rules to control histogram costs. For more information,
+see [supported histogram aggregation operations](/control/shaping/rules/rollup#histograms-aggregation-operations).
+
+Histogram persisted writes, persisted cardinality, and matched writes consume
+[Histogram Metric License](/administer/limits-licensing/licensing) capacity.
+
+## Backward compatibility
+
+Prometheus clients don't support exposing native histograms in the text-based exposition
+format. To scrape native histograms, Chronosphere Collector negotiates the Protobuf
+format for scraping.
+
+The change to scrape the Protobuf format can cause problems for backward compatibility.
+Depending on the Prometheus client, the value for classic histogram `le` labels and
+summary quantile labels appear as an integer in text format (`le="50"`) and a decimal
+number (`le="50.0"`) in Protobuf format.
+
+Because these values are strings, queries that filter by the integer label value
+stop working when the `le` values are in a decimal number format. For more information,
+see the
+[Prometheus documentation](https://prometheus.io/docs/prometheus/latest/feature_flags/#native-histograms).
+
+The Chronosphere Collector provides backward compatibility by dual-scraping the
+text-based format and the Protobuf format. The Collector first scrapes the Protobuf
+exposition and keeps only native histogram metrics. The Collector then scrapes the
+text-based format for all other metrics to preserve the `le` value format in histogram
+and quantile time series. Dual-scraping ensures backward compatibility and adds
+only minor overhead.
+
+## Migrate from classic Prometheus histograms to native histograms
+
+The Prometheus Java and Go clients support Prometheus native histograms. Because
+native histograms are an experimental feature, use the latest version of the Prometheus
+Java and Go clients for the best experience.
+
+### Prometheus client configuration
+
+The Prometheus Java client maintains both
+[classic and native histogram representation](https://prometheus.github.io/client_java/api/io/prometheus/metrics/core/metrics/Histogram.html)
+by default. It exposes the classic histogram representation in the text-based format
+and the native histogram representation in the Protobuf format.
+
+The Go Prometheus client can also expose both classic and native histogram
+representations. However, unlike the Java client it requires you to opt-in to each
+bucket layout. To make the classic histogram available for scraping, users must
+explicitly define the
+[custom bucket layouts](https://github.com/prometheus/client_golang/blob/6e3f4b1091875216850a486b1c2eb0e5ea852f98/prometheus/histogram.go#L394).
+To make the native histogram representation available, users must set a value for
+[`NativeHistogramBucketFactor`](https://github.com/prometheus/client_golang/blob/6e3f4b1091875216850a486b1c2eb0e5ea852f98/prometheus/histogram.go#L399).
+
+<Info>
+The `Buckets` field configures classic histograms. To collect exponential histograms,
+use the `NativeHistogramBucketFactor` parameter.
+</Info>
+
+### Chronosphere Collector configuration
+
+Start by configuring the Chronosphere Collector to collect both the classic and native
+histogram representations. After you've built up enough historical data and modified
+your queries to use native histograms, you can modify the Collector configuration
+to scrape only the Protobuf format.
+
+Collect both classic and native histogram representations for at least as long as
+your query time windows. For example, if you have service-level objective queries
+with a 30-day look-back period, collect both representations for at least 31 days
+before changing your settings to scrape only the Protobuf format.
+
+### Recommended initial configuration
+
+Chronosphere recommends the following Collector configuration when initially
+transitioning from classic histograms to native histograms. The configuration sets up
+the Collector to:
+
+- Negotiate scraping both the Protobuf and text-based expositions.
+- Scrape native histograms from the Protobuf exposition when present.
+- Scrape all other metrics from the text-based exposition.
+- Send both the classic and native histogram representations to Observability Platform,
+  when a histogram exists in both formats.
+
+```yaml copy
+scrape:
+  nativeHistograms:
+    enabled: true                    # Enables scraping native histograms. Defaults to false.
+  defaults:
+    scrapeClassicHistograms: true    # Sends both the classic and native histogram
+                                     # representation when both are present. Defaults to false.
+```
+
+### Fully-migrated configuration
+
+After you've collected enough histogram data and have modified your queries to query
+the native histogram representation, you can configure the Collector to no longer
+send the classic histogram representation.
+
+The following configuration configures the Collector to:
+
+- Negotiate scraping both the Protobuf and text-based expositions.
+- Scrape all metrics from the Protobuf exposition when present.
+
+```yaml copy
+scrape:
+  nativeHistograms:
+    enabled: true                    # Enables scraping native histograms. Defaults to false.
+```

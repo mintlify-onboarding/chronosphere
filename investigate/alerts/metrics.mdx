@@ -1,0 +1,54 @@
+---
+title: Querying metrics about alerts
+---
+{/* -- dri: Adam Locke -- */}
+
+
+In addition to monitors and alerts, you can query metrics for any triggered series.
+The series are all under a single metric name `ALERTS` that you can query with PromQL
+as normal. The series contain metadata such as `alertname`, `alertstate`, and `severity`.
+
+The value for these is only ever `1`, which occurs when triggering the alert, or
+the alert is in a pending state. When the alert is in a passing state, the series
+isn't emitted.
+
+For example, the following monitor definition emits a corresponding series with the
+value of `1` when triggering the alert:
+
+## Definition
+
+```yaml
+monitors:
+  - name: Errors per second
+    labels:
+      - name: priority
+        value: sev-0
+      - name: team
+        value:
+    spec:
+      query:
+        prometheus:
+          expr: sum(rate(fetch_errors{code="4XX"}[1m]))
+      series_conditions:
+        defaults:
+          critical:
+            conditions:
+              - op: GEQ
+                value: 1
+                sustain: 180s
+```
+
+## Metric
+
+```text
+ALERTS{alertname="Errors per second", alertstate="firing", code="4XX", priority="sev-0", team="A"}
+```
+
+The labels attached to this special `ALERTS` metric are a combination of the labels
+from the alerting time series and the labels defined in the `labels` section of
+the monitor specification.
+
+Annotations, if defined, aren't included as part of the labels, and labels in the
+`labels` configuration override any labels on the metric itself. For example, if
+there's a `job` label on the alerting time series and a `job` label defined in the
+alert definition, the alert definition label takes priority.

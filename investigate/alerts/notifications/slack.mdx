@@ -1,0 +1,77 @@
+---
+title: Slack unfurling integration
+description: Learn how to unfurl monitor graphs in Slack.
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+Alerting is critical to problem response. Reliable, available, actionable information
+lets observability teams act on problems quickly. Alert criticality and other
+metadata can help determine the severity of an issue, but the graph in a given alert
+is the first place users look to create a representation of their data and the state
+of their metrics.
+
+Chronosphere Observability Platform supports unfurling of monitor graphs in
+[Slack](https://slack.com/), enabling Slack users to view or share monitors in Slack
+channels aimed at mitigating alerts.
+
+
+<Info>
+Unfurling isn't supported for Metrics Explorer and Dashboard links.
+</Info>
+
+If your Slack alerting management uses a Slack app with granular permissions, such as
+the [PagerDuty app](https://writethedocs.slack.com/apps/A1FKYAUUX-pagerduty?tab=more_info),
+and that app pastes the alerting Observability Platform monitor link in the Slack
+message, those links unfurl.
+
+If you use a legacy app, such as the [incoming webhook](https://api.slack.com/messaging/webhooks?_gl=1*5z9zlo*_gcl_au*NDgyNTg2ODE5LjE2OTMyNDI1NDM)
+app, those links won't unfurl. The Observability Platform's
+[Slack notifier](/investigate/alerts/notifications/notifiers/slack) uses an incoming webhook
+and doesn't support unfurling.
+
+If a user posts a monitor link, it always unfurls.
+
+## Adding Observability Platform to Slack
+
+Chronosphere recommends completing this procedure as a user who is part of a team
+with the
+[SysAdmin role](/administer/accounts-teams/user-accounts#grant-system-administrator-sysadmin-privileges-to-users).
+The Slack integration uses the same Observability Platform permissions as the user
+who installed the app. Users with lower permissions levels might not unfurl all
+graphs.
+
+You can create a [Slack notifier](/investigate/alerts/notifications/notifiers/slack)
+in Observability Platform.
+
+To integrate Slack with Observability Platform:
+
+1. Go to `https://MY_COMPANY.chronosphere.io/auth/slack/redirect`
+   to install the Slack app for Chronosphere.
+
+   _`MY_COMPANY`_ is your company or organization name.
+
+1. If you have multiple workspaces, select the workspace you're interested in from
+   the menu.
+1. If you have multiple Observability Platform tenants you want to have expanded graphs
+   in, go to `https://MY_COMPANY.chronosphere.io/auth/slack/redirect` to associate
+   your Slack user with a user in that tenant.
+1. Follow the prompts to authorize the integration.
+1. Add the Slack app to the specific channel you wan to send alerts to.
+
+   <Info>
+The Slack app is channel-specific, and must be added to each channel in a
+   workspace that needs unfurled graphs.
+</Info>
+
+A confirmation page displays when integration successfully completes.
+
+After integration, pasting a Observability Platform graph URL into Slack displays
+a thumbnail of the graph as a threaded message.
+
+Chart images expire after seven days.
+
+## Remove the Observability Platform integration from Slack
+
+To remove Observability Platform from Slack, follow the
+[Slack procedure for removal](https://slack.com/help/articles/360003125231-Remove-apps-and-custom-integrations-from-your-workspace#remove-an-app).

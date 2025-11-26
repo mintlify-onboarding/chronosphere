@@ -1,0 +1,60 @@
+---
+title: Kafka source plugin
+sidebarTitle: Kafka source plugin (Telemetry Pipeline)
+description: Receive pipeline data from Kafka.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+import BufferParams from '/snippets/_partials/plugin-buffer-params.mdx';
+import ExtendedLibrdkafka from '/snippets/_partials/plugin-librdkafka-info.mdx';
+import LibrdkafkaBuffer from '/snippets/_partials/plugin-librdkafka-buffer.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+You can use the Kafka [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `kafka`, alias: `kafka_input`) to ingest data from your Apache Kafka
+instances into a telemetry pipeline.
+
+<SourceStyle/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name        | Key | Description | Default |
+| ----------- | --- | ----------- | ------- |
+| **Brokers** | `brokers` | Required. Single of multiple lists of Kafka brokers. For example, `192.168.1.3:9092`, `192.168.1.4:9092`. | _none_ |
+| **Topics**  | `topics` | Required. Single entry or list of topics separated by comma (`,`) that Telemetry Pipeline uses to receive messages from Kafka. | _none_ |
+
+### Advanced
+
+| Name                        | Key | Description | Default |
+| --------------------------- | --- | ----------- | ------- |
+| **Minimum Queued Messages** | `rdkafka.queued.min.messages` | Minimum number of messages per topic and partition Telemetry Pipeline tries to maintain in the local consumer queue. | `10` |
+| **Group ID**                | `rdkafka.group.id` | The client group ID string. All clients with the same group ID belong to the same group. | _none_ |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |
+
+### Other
+
+<BufferParams/>
+
+### Extended librdkafka parameters
+
+<ExtendedLibrdkafka/>
+
+<LibrdkafkaBuffer/>

@@ -1,0 +1,559 @@
+---
+title: Control your log data
+description: Use log control rules to define actions for a subset of your log data that match specific criteria.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import TerraformPlan from '/snippets/_partials/terraformplan.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere Observability Platform provides control rules that let you manage log
+data by transforming, reshaping, retaining, or excluding data before it's stored.
+These rules let you control the volume of persisted log data and improve data
+quality. By controlling which data you keep or drop, you can reduce noise, better
+control costs, and focus on data that matters most to your business. Observability
+Platform offers the following control rules:
+
+- **Drop logs** that match a specific filter to remove unnecessary or low-value data.
+- **Drop fields** from logs that match specified conditions, which helps reduce the
+  size of individual logs. If a log contains no data after fields are dropped, you
+  can choose to drop the entire log.
+- **Sample logs** to retain a certain percentage of matching logs and drop the
+  remainder, which can significantly reduce volume and maintain visibility.
+- **Emit metric** converts log data to metric data. Use this control rule when you
+  want to reduce the volume of logs, retain data for a longer period, and increase
+  the speed of querying and filtering for metrics instead of logs.
+- **Replace field** identifies a specified field in your log data and uses a regular
+  expression to replace any matches based on the selected replacement mode. Use this
+  control rule to truncate long fields and preserve your log structure.
+
+## View control rules
+
+Select from one of the following methods to view control rules.
+
+<Tabs>
+<Tab title="Web" id="view-control-rules-web">
+
+To view control rules:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Control Rules**.
+
+   All defined control rules display.
+   {/* vale off */}
+   {/* Code config is the literal string in the UI */}
+1. To view the code definition for all configured control rules, click the **Code config**
+   tab.
+   {/* vale on */}
+
+</Tab>
+
+<Tab title="Chronoctl" id="view-control-rules-chronoctl">
+
+To use [Chronoctl](/tooling/chronoctl) to return all control rules, use the
+`chronoctl log-control-config read` command:
+
+```shell copy
+chronoctl log-control-config read
+```
+
+</Tab>
+
+<Tab title="Terraform" id="view-control-rules-terraform">
+
+[Use the Code Config tool](/tooling/gitops) in Observability Platform to view a
+control rule's Terraform representation.
+
+</Tab>
+
+<Tab title="API" id="view-control-rules-api">
+
+To complete this action with the Chronosphere API, use the
+[`ReadLogControlConfig`](/tooling/api-info/definition/operations/ReadLogControlConfig)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Create control rules
+
+Use control rules to drop certain logs at ingestion, or fields that you don't want
+to persist. For example, dropping log data from a specific cluster, test data in a
+development environment, or unnecessary individual fields across your logs.
+
+Use one of the following methods to create control rules for log data:
+
+<Tabs>
+<Tab title="Web" id="create-control-rules-web">
+
+Define control rules in Observability Platform, and then
+[use the Code Config tool](/tooling/gitops) to apply the rule definition.
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Control Rules**.
+1. Click **Add control rule** to create a control rule.
+1. In the **Create control rule** page, enter a name for the control rule.
+1. From the **Action** menu, select the type of rule to create:
+
+   - **Drop logs**: Completely drop logs that match the specified filter.
+   - **Drop fields**: Remove specific fields from logs that match the specified
+     filter.
+   - **Sample logs**: Retain a certain percentage of matching logs and drop the
+     remainder.
+   - **Emit metric**: Convert log data to metric data.
+   - **Replace field**: Replace context within a log field using a regular
+     expression.
+1. Enter a filter to return log data for the control rule, and then press
+   <kbd>Ctrl+Enter</kbd> (<kbd>Command+Return</kbd> on macOS) to submit the filter.
+   This rule applies only to logs that match this filter at the time the log data was
+   ingested.
+1. Review the returned data from the preview filter and make changes as necessary.
+
+   <Info>
+Control rules are applied during ingestion, so the preview filter results might
+   differ from a filter submitted in Logs Explorer after ingestion. By default,
+   including a dot (`.`) in a filter indicates nesting within a field.
+
+   In some instances, fields with a key that uses dot notation within the name,
+   such as `resource.type`, must be surrounded by double quotes and brackets in the
+   control rule filter.
+
+   If a warning message displays indicating that `This filter is applied at
+   ingestion` and the filter returns no results, wrap the key in double quotes
+   ( `"`) and brackets (`[]`). For example, the following filter contains the
+   `resource.type` key, which requires surrounding the field in double quotes and
+   brackets for this particular service:
+
+   ```sql copy
+   service = "nginx" and severity = "INFO" and ["resource.type"] = "k8s_container"
+   ```
+</Info>
+
+1. Enter additional information for the specified action:
+   <Tabs>
+   <Tab title="Drop logs" id="drop-logs">
+
+      Review the filter and make changes as needed.
+
+   </Tab>
+   <Tab title="Drop fields" id="drop-fields">
+   Define the criteria for the drop rule:
+
+   - In the **Parent path** field, enter the level of depth in the log to apply the
+     regular expression to. For example, if you wanted to apply the regular
+     expression to fields under `httpRequest`, such as `httpRequest.status`, enter
+     `httpRequest` in the **Parent path** field.
+
+     For fields with no nesting, leave the **Parent path** field empty.
+     {/* vale off */}
+     {/* regex is in the name of the UI */}
+   - In the **Field regex** field, enter the regular expression that determines
+     which fields to match on.
+     {/* vale on */}
+   </Tab>
+
+   <Tab title="Sample logs" id="sample-logs">
+
+   In the **Logs to keep** field, enter a percentage of logs you want to keep. For
+   example, `25` for 25%.
+
+   </Tab>
+   <Tab title="Emit metric" id="emit-metric">
+    Define the criteria for the rule to emit metrics from logs:
+
+    - Enter a unique name for the generated metric.
+    - Select the metric mode for the generated metric:
+      - **Counter**: A metric that counts the number of times a certain event has
+        occurred.
+      - **Gauge**: A metric that tracks a value which changes over time. Choose
+        **Last** (most recent), **Min** (minimum value), or **Max** (maximum value)
+        to define which value to use.
+      - **Exponential Histogram**: A metric that tracks the distribution of values
+        across data groupings with exponentially increasing size.
+    - Enter a name for the log field whose value you want to use as the metric value.
+      Use `field[field]` syntax to indicate nested fields.
+    - Enter labels as key/value pairs to add to the metric.
+    - To drop the original log, select the **Drop original log after emitting metric**
+      checkbox.
+
+   </Tab>
+   <Tab title="Replace fields" id="replace-fields">
+
+   {/* vale off */}
+   {/* regex is in the name of the UI */}
+   Define the criteria for the replace rule:
+   - Enter the name of the log field to apply the rule to. In the **Match regex**
+     field, enter the regular expression that determines which data to match on in
+     the specified field.
+   {/* vale on */}
+   - Determine whether to replace the first match only (**Replace first**), or to
+     replace all matches (**Replace all**).
+   - Select the replacement mode:
+     - **Static value**: Replace the matched content with a static string. For
+       example, replace punctuation in a field with an empty string, or truncate the
+       ends of long stack traces.
+     - **Mapped value**: Replace the matched content with specified key/value pairs.
+       For example, reduce log volume by replacing a string error with a specific
+       error code. If none of the key/value pairs match, the provided default value
+       is used.
+
+       Click **Provide default value** to specify a default value if no matching key
+       is found.
+     - **Hash**: Replace the matched content with a hashed string, which can help
+       reduce the size of large strings. After replacing the original content with a
+       string, there's no way to recover that information.
+    </Tab>
+    </Tabs>
+
+1. Click **Done** to save the control rule definition.
+1. In the **Code Config** tab, [use the Code Config tool](/tooling/gitops) to apply
+   the definition.
+</Tab>
+<Tab title="Chronoctl" id="create-control-rules-chronoctl">
+
+To use [Chronoctl](/tooling/chronoctl) to create control rules, use the
+`chronoctl log-control-config create` command:
+
+```shell copy
+chronoctl log-control-config create
+```
+
+1. Run the following command to generate a sample control rule configuration you can
+   use as a template:
+
+   ```shell copy
+   chronoctl log-control-config scaffold
+   ```
+
+   In the template, `kind: LogControlConfig` defines an individual control rule
+   configuration.
+
+1. With a completed definition, submit it with:
+
+   ```shell copy /FILE_NAME/
+   chronoctl log-control-config create -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+See the [Chronoctl example](#chronoctl-example) for more information.
+
+</Tab>
+
+<Tab title="Terraform" id="create-control-rules-terraform">
+
+<TerraformPlan />
+
+To create a control rule with [Terraform](/tooling/infrastructure/terraform):
+
+1. Create a Terraform resource with the `chronosphere_log_control_config` resource
+   type, followed by a resource name.
+1. Add the definition to a Terraform file.
+1. Run this command to create the resource:
+
+   ```shell copy
+   terraform apply
+   ```
+
+See the [Terraform example](#terraform-example) for more information.
+
+</Tab>
+
+<Tab title="API" id="create-control-rules-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateLogControlConfig`](/tooling/api-info/definition/operations/CreateLogControlConfig)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Chronoctl example
+
+The following example defines a control rules file for Chronoctl, and contains the
+following rules:
+
+- The first rule samples 10% of logs that match the defined filter.
+- The second rule drops all logs for the `nginx` service of severity `INFO` where the
+  `http.Request.status` equals `200`.
+- The third rule drops all `kubernetes` fields that match the defined filter. The
+  regular expression indicates that any fields matching `kubernetes.[FIELD]` are
+  dropped from all logs.
+- The fourth rule uses a mapped value to search for the `error_code` field, and
+  replaces values based on the provided key/value pairs. If the rule matches on
+  `INTERNAL_SERVER_ERROR`, it replaces that value with `500`. If the rule matches on
+  `NOT_FOUND`, it replaces the value with `401`.
+
+```yaml copy
+api_version: v1/config
+kind: LogControlConfig
+spec:
+  # The ordered list of control rules.
+  rules:
+    - name: "Sample billing service with missing user ID"
+      mode: ENABLED
+      # Log filter syntax to select logs. Only matching logs will have control action applied.
+      filter: "cluster_name:'production'\n
+              AND service='billing-service'\n
+              AND message = 'missing user ID'"
+      type: SAMPLE
+      sample:
+        # Percentage of matching logs to keep. Must be in the range [0, 1].
+        rate: 0.10
+    - name: "Drop NGINX information logs"
+      mode: ENABLED
+      filter: "service = 'nginx' and severity = 'INFO' and httpRequest.status = '200'"
+      type: DROP
+    - name: 'Drop Kubernetes fields from development environments'
+      mode: ENABLED
+      filter: "namespace = 'development' and kubernetes.cluster_name = 'test'"
+      # The configuration for a drop field action.
+      type: DROP_FIELD
+      drop_field:
+        # Regular expression to match the field names to drop.
+        field_regex: .*
+        # Selector to indicate field path. Use 'parent[child]' syntax to
+        # indicate nesting.
+        parent_path:
+          selector: kubernetes
+    - name: error replacement
+      mode: ENABLED
+      filter: service = "nginx" and severity = "ERROR"
+      type: REPLACE_FIELD
+      replace_field:
+        field:
+          selector: error_code
+        replace_regex: .*
+        replace_all: true
+        replace_mode: MAPPED_VALUE
+        mapped_value:
+          pairs:
+            - key: INTERNAL_SERVER_ERROR
+              value: "500"
+            - key: NOT_FOUND
+              value: "401"
+```
+
+### Terraform example
+
+The following example defines a control rules resource for Terraform, and contains
+the following rules:
+
+- The first rule samples 10% of logs that match the defined filter.
+- The second rule drops all logs for the `nginx` service of severity `INFO` where the
+  `http.Request.status` equals `200`.
+- The third rule drops all `kubernetes` fields that match the defined filter. The
+  regular expression indicates that any fields matching `kubernetes.[FIELD]` are
+  dropped from all logs.
+- The fourth rule uses a mapped value to search for the `error_code` field, and
+  replaces values based on the provided key/value pairs. If the rule matches on
+  `INTERNAL_SERVER_ERROR`, it replaces that value with `500`. If the rule matches on
+  `NOT_FOUND`, it replaces the value with `401`.
+
+```ruby copy
+resource "chronosphere_log_control_config" "log_control_config" {
+  # The ordered list of control rules.
+  rules {
+    name   = "Sample billing service with missing user ID"
+    # Log filter syntax to select logs. Only matching logs will have control action applied.
+    filter = chomp(<<-EOF
+    cluster_name:"rc"
+    AND service="billing-service"
+    AND message = "missing user ID"
+    EOF
+    )
+    mode = "ENABLED"
+
+    sample {
+      # Percentage of matching logs to keep. Must be in the range [0, 1].
+      rate = 0.01
+    }
+    # The configuration for a drop field action.
+    type = "SAMPLE"
+  }
+
+  rules {
+    name   = "Drop NGINX information logs"
+    filter = "service = \"nginx\" and severity = \"INFO\" and httpRequest.status = \"200\""
+    mode   = "ENABLED"
+    type   = "DROP"
+  }
+
+  rules {
+    name = "Drop Kubernetes fields from development environments"
+
+    drop_field {
+      # Regular expression to match the field names to drop.
+      field_regex = ".*"
+      # Selector to indicate field path. Use 'parent[child]' syntax to
+      # indicate nesting.
+      parent_path {
+        selector = "kubernetes"
+      }
+    }
+
+    filter = "chronosphere_namespace = \"rc-logging\" and kubernetes.cluster_name = \"rc-b\""
+    mode   = "ENABLED"
+    type   = "DROP_FIELD"
+  }
+
+  rules {
+    name   = "error replacement"
+    filter = "service = \"nginx\" and severity = \"ERROR\""
+    mode   = "ENABLED"
+
+    replace_field {
+      field {
+        selector = "error_code"
+      }
+
+      mapped_value {
+        pairs {
+          key   = "INTERNAL_SERVER_ERROR"
+          value = "500"
+        }
+
+        pairs {
+          key   = "NOT_FOUND"
+          value = "401"
+        }
+      }
+
+      replace_all   = true
+      replace_mode  = "MAPPED_VALUE"
+      replace_regex = ".*"
+    }
+
+    type = "REPLACE_FIELD"
+  }
+}
+```
+
+## Edit control rules
+
+When creating or editing control rules, you can [use the Code Config tool](/tooling/gitops)
+to view code representations of the rules. The displayed code also responds to
+changes you make in the **Visual editor** tab.
+
+Select from the following methods to edit control rules.
+
+<Tabs>
+<Tab title="Web" id="edit-control-rules-web">
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Control Rules**.
+1. In the row of the control rule you want to edit, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and then click **Edit control rule**.
+1. In the **Edit control rule** drawer, make changes to your control rule, and then
+   click **Save**.
+
+Observability Platform saves changes to your control rule.
+
+</Tab>
+
+<Tab title="Chronoctl" id="edit-control-rules-chronoctl">
+
+To update control rules with [Chronoctl](/tooling/chronoctl), use the
+`log-control-config update` command:
+
+```shell copy
+chronoctl log-control-config update
+```
+
+1. Update the control rule definition file.
+1. Run the following command to submit the changes:
+
+   ```shell copy /FILE_NAME/
+   chronoctl log-control-config update -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+</Tab>
+
+<Tab title="Terraform" id="edit-control-rules-Terraform">
+
+<InfoTerraformLockout />
+
+To edit control rules using [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file that updates the resource's existing properties.
+1. Run this command to apply the changes:
+
+   ```shell copy
+   terraform apply
+   ```
+
+You can also [Use the Code Config tool](/tooling/gitops) to view the control rule's
+Terraform representation.
+
+</Tab>
+
+<Tab title="API" id="edit-control-rules-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateLogControlConfig`](/tooling/api-info/definition/operations/UpdateLogControlConfig)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Delete control rules
+
+Select from the following methods to delete control rules.
+
+<Tabs>
+<Tab title="Web" id="delete-control-rules-web">
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Control Rules**.
+1. In the row of the control rule you want to delete, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and then click **Delete control rule**.
+
+Observability Platform deletes your control rule.
+
+</Tab>
+
+<Tab title="Chronoctl" id="delete-control-rules-chronoctl">
+
+To delete a control rule with [Chronoctl](/tooling/chronoctl), use the
+`chronoctl log-control-config delete` command:
+
+```shell copy
+chronoctl log-control-config delete
+```
+
+</Tab>
+
+<Tab title="Terraform" id="delete-control-rules-terraform">
+
+<InfoTerraformLockout />
+
+<TerraformDel />
+
+</Tab>
+
+<Tab title="API" id="delete-control-rules-api">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteLogControlConfig`](/tooling/api-info/definition/operations/DeleteLogControlConfig)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+
+</Tabs>

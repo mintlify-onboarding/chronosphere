@@ -1,0 +1,178 @@
+---
+title: Using custom PromQL functions in Observability Platform
+---
+import PanelQueries from '/snippets/_partials/panel-queries.mdx';
+import OtherQueryingFeatures from '/snippets/_partials/other-querying-features.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+In addition to
+[PromQL's standard functions](/investigate/querying/promql#applying-functions),
+Chronosphere Observability Platform also supports the following custom functions.
+
+<PanelQueries/>
+
+## `cardinality_estimate`
+
+The `cardinality_estimate` function returns the count estimate of elements in the
+given instant vector. For example, `cardinality_estimate(vec{})` returns the estimate
+cardinality of the `vec` metric.
+
+Use the `cardinality_estimate` function in the following ways:
+
+- To help approximate cardinality for specific metrics, labels, or label-value pairs
+  over time that can't be correlated using the Persisted Cardinality Quotas
+  dashboard.
+- To have a general trend of your cardinality growth over time, because this function
+  can return results for millions of time series.
+
+Don't use this function to help understand the relative cardinality impact of a
+particular series on your license. Instead, use the
+[Persisted Cardinality Quotas dashboard](/observe/dashboards/chronosphere-managed-dashboards#persisted-cardinality-quotas)
+to understand cardinality costs across specific teams, services, and pools, and to
+help pinpoint specific sources of cardinality growth, such as a particular pool or
+priority group.
+
+<Info>
+The `cardinality_estimate` function doesn't measure cardinality in the same
+150-minute rolling time window used by license metrics.
+
+Instead, this function approximates relative cardinality using 120-minute disjointed
+blocks, which can create drift. When looking over historical periods of time, the
+`cardinality_estimate` function uses even longer blocks.
+</Info>
+
+This function supports grouping time series by labels, and returns an estimate
+cardinality for each unique value of the label using the `by` clause in a query. For
+example, the following query returns the cardinality estimate of all time series that
+match the metric name with a value for the `device` label equal to `eth0`, grouped by
+unique values for the `k8s_cluster` label:
+
+```text copy
+cardinality_estimate(node_network_receive_bytes_total{device="eth0"}) by (k8s_cluster)
+```
+
+You can't group by [derived telemetry](/investigate/querying/metrics/derived-telemetry) with
+this function.
+
+### Counting and downsampling
+
+The `cardinality_estimate` function isn't a direct alternative to the `count`
+function. Because it's mostly optimized for performance and low-latency use cases,
+results might not be exact. This function also returns results with much lower
+resolution than the `count` function. The resolution aligns with the index block
+size.
+
+<Info>
+This function provides an alternative to the Prometheus `count_over_time` function,
+which isn't performant when viewing time series with high cardinality.
+</Info>
+
+The `cardinality_estimate` is affected by
+[long term downsampling](/control/shaping/downsampling) of the data it's based on,
+and results might change based on the querying window's time range. When querying the
+raw namespace, this function returns the count of time series over a two-hour period.
+However, when querying the downsampled namespace, this function returns the count of
+time series over a period between 24 hours and four days, which makes the volume look
+much larger than it actually is.
+
+## `head_{agg}`
+
+`head_{agg}(q, n)` sorts the time series by the largest value based on the specified
+aggregation function and returns the top `n` number of series.
+
+The list of available `head_{agg}` functions are:
+
+- `head_avg`
+- `head_min`
+- `head_max`
+- `head_sum`
+- `head_count`
+
+For example, `head_avg(MY_METRIC{}, 10)` returns the top 10 time series sorted by the
+largest average of their values.
+
+In most cases, `head_{agg}()` is appropriate. However, if you have time series with a
+high churn rate, such as metrics that track Kubernetes pod level data, use `topk()`.
+This is because the `head_{agg}` family of functions aggregates across all time
+series in the graph, and if you have a metric with high churns, you can miss outliers
+(depending on their values). In contrast, `topk()` takes the top `x` time series
+based on their value at each timestamp.
+
+## `tail_{agg}`
+
+`tail_{agg}` sorts the time series by the largest value based on the specified
+aggregation function and returns the bottom `n` number of series.
+
+The list of available `tail_{agg}` functions are:
+
+- `tail_avg`
+- `tail_min`
+- `tail_max`
+- `tail_sum`
+- `tail_count`
+
+For example, `tail_avg(MY_METRIC{}, 10)` returns the bottom 10 time series sorted by the
+largest average of their values.
+
+In most cases, `tail_{agg}()` is appropriate. However, if you have times series with
+a high churn rate, such as metrics that track Kubernetes pod level data, use
+`bottomk()`. This is because the `tail_{agg}` family of functions aggregates across
+all time series in the graph, and if you have a metric with high churns, you can miss
+outliers (depending on their values). In contrast, `bottomk()` takes the bottom `x`
+time series based on their value at each timestamp.
+
+## `sum_per_second()`
+
+`sum_per_second()` calculates the per-second rate for a delta counter or delta histogram
+time series. It is equivalent to dividing the result of `sum_over_time()` by the
+sliding time window duration.
+
+Assuming a step value of `5m`, these PromQL queries return the same result:
+
+```text
+sum_per_second(http_request_count{}[5m])
+
+sum_over_time(http_request_count{}[5m]) / 300
+```
+
+<Info>
+To ensure the chart value at each step represents the sum of observations for each
+step's start and end time, you **must** set the query's step size to be equal to
+the sliding time window value. For more guidance, see
+[Best practices for adding dashboard charts](/investigate/querying/metrics/delta-queries#best-practices-for-adding-dashboard-charts).
+</Info>
+
+## `__histogram_quantiles()`
+
+The experimental `__histogram_quantiles()` function calculates and returns multiple
+quantiles from Chronosphere histograms (native or exponential histogram) or classic
+Prometheus histograms in a single query, eliminating the need to write multiple queries
+ to plot multiple quantiles.
+
+For example, to create a dashboard panel for API latency that might need to visualize
+`p50`, `p90`, `p95`, and `p99`, write the query using `__histogram_quantiles()` as:
+
+```
+# Chronosphere histogram (native or exponential histogram)
+__histogram_quantiles(sum(rate(my_histogram{foo="bar"}[5m])), .5, .9, .95, .99)
+
+# Classic Prometheus histogram
+__histogram_quantiles(sum by(le) (rate(my_histogram_seconds_bucket{foo="bar"}[5m])), .5, .9, .95, .99)
+```
+
+The `__histogram_quantiles()` function returns a result for each quantile differentiated
+by `__hist_quantile__`, a synthetic label whose value is the quantile argument used
+to compute the given result. For example, the above query might return:
+
+| Time | `__hist_quantile__` | Value |
+| ---- | ------------------- | ----- |
+| 2025-08-06 11:32:50 | 0.500 | 0.0025 |
+| 2025-08-06 11:32:50 | 0.900 | 0.0045000000000000005 |
+| 2025-08-06 11:32:50 | 0.950 | 0.004749999999999999 |
+| 2025-08-06 11:32:50 | 0.990 | 0.00495 |
+
+## Other querying features
+
+<OtherQueryingFeatures/>

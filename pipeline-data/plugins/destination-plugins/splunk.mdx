@@ -1,0 +1,100 @@
+---
+title: Splunk destination plugin
+sidebarTitle: Splunk destination plugin (Telemetry Pipeline)
+description: Send pipeline data to Splunk.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import BasicAuthentication from '/snippets/_partials/pipeline-basic-auth.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Splunk [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `splunk`, alias: `splunk_obs` or `splunk_siem`) lets you configure your
+telemetry pipeline to send your telemetry data to Splunk.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics     | Traces     |
+| :---------: | :---------: | :--------: |
+| <YesIcon /> | <YesIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                  | Key | Description | Default |
+| --------------------- | --- | ----------- | ------- |
+| **Host**              | `host` | Required. IP address or hostname of the target Splunk service. | `127.0.0.1` |
+| **Port**              | `port` | Required. TCP port of the target Splunk service. | `8088` |
+| **Compress**          | `compress` | Sets the payload compression mechanism. Accepted values: `gzip`, _none_. | _none_ |
+| **Splunk HTTP Token** | `splunk_token` | Required. Specifies the authentication token for the HTTP Event Collector interface. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced
+
+{/* vale Chronosphere.OptionalPlurals = NO */}
+
+| Name                       | Key | Description | Default |
+| -------------------------- | --- | ----------- | ------- |
+| **Splunk Channel** | `channel` | The `X-Splunk-Request-Channel` header to send to the HTTP Event Collector. | _none_ |
+| **Enable Splunk Send Raw** | `splunk_send_raw` | When enabled, the recorded keys and values are set in the top level of the map instead of under the event key. For more information, see [Raw events](#raw-events). Accepted values: `true`, `false`. | `false` |
+| **Event Key**              | `event_key` | Specifies the key name that will be used to send a single value as part of the record. | _none_ |
+| **Event Host**             | `event_host` | Sets the host value to the event data. The value allows a record accessor pattern. | _none_ |
+| **Event Source**           | `event_source` | Sets the source value to assign to the event data. | _none_ |
+| **Event Source Type**      | `event_sourcetype` | Sets the sourcetype value to assign to the event data. | _none_ |
+| **Event Source Type Key**  | `event_sourcetype_key` | Sets a record key that will populate `sourcetype`. If the key is found, it will have precedence over the value set in `event_sourcetype`. | _none_ |
+| **Event Index**            | `event_index` | The name of the index by which the event data is to be indexed. | _none_ |
+| **Event Index Key**        | `event_index_key` | Sets a record key that will populate the `index` field. If the key is found, it will have precedence over the value set in `event_index`. | _none_ |
+| **Event Field(s)**         | `event_field` | Sets event fields for the record. This option can be set multiple times and the format is `key_name record_accessor_pattern`. | _none_ |
+| **Proxy**                  | `proxy` | Specifies an HTTP Proxy. The expected format of this value is `http://host:port`. HTTPS is not supported. | _none_ |
+
+{/* vale Chronosphere.OptionalPlurals = YES */}
+
+### Advanced Networking
+
+<AdvancedNetwork />
+
+### Basic Authentication
+
+<BasicAuthentication />
+
+### Debugging
+
+| Name                              | Key | Description | Default |
+| --------------------------------- | --- | ----------- | ------- |
+| **HTTP Buffer Size**              | `http_buffer_size` | Specifies the buffer size used to read the response from the Splunk HTTP service. This option is used for debugging purposes when it's required to read full responses. Response size grows depending of the number of records inserted. To set an unlimited amount of memory, set this value to `false`. Otherwise the value must be according to the Unit Size specification. | _none_ |
+| **Enable HTTP Debug Bad Request** | `http_debug_bad_request` | If the server returns an HTTP `400 Bad Request` status code and this flag is enabled, it will print the full HTTP request and response to the stdout interface. Used for debugging purposes. Accepted values: `true`, `false`. | `false` |
+
+## Raw events
+
+{/* vale Chronosphere.OptionalPlurals = NO */}
+
+By default, the Splunk destination plugin sends data to the `/services/collector/event`
+Splunk endpoint. However, if **Enable Splunk Send Raw** is enabled, this plugin
+sends data to the `/services/collector/raw` endpoint instead.
+
+The `/services/collector/raw` endpoint doesn't support nested fields in events, and also ignores
+any settings defined in the **Event Field(s)** plugin parameter. Because of these limitations,
+Chronosphere only recommends sending raw events in specific scenarios, like for machine
+data or IoT device data. Additionally, you should only send raw events after you configure
+Splunk to receive them accordingly.
+
+For more information about sending raw events, see
+the Splunk [Format events for HTTP Event Collector](https://docs.splunk.com/Documentation/Splunk/latest/Data/FormateventsforHTTPEventCollector#Event_metadata)
+documentation.
+
+{/* vale Chronosphere.OptionalPlurals = YES */}

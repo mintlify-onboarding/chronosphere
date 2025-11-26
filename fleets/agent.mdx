@@ -1,0 +1,50 @@
+---
+title: Agent types
+description: Learn about the types of agents compatible with Chronosphere Telemetry Pipeline.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+In addition to creating comprehensive [custom pipelines](/pipeline-data/create-modify),
+you can deploy a standalone agent to collect observability data. Chronosphere
+Telemetry Pipeline supports these agent types:
+
+- [Fluent Bit](#fluent-bit)
+- [Core Agent](#core-agent)
+
+<Info>
+You can either send data directly from an agent to the destination of your
+choice, or send data from an agent to an intermediary pipeline before it reaches
+its final destination. The latter method lets you take advantage of features
+like [processing rules](/pipeline-data/processing-rules).
+</Info>
+
+## Fluent Bit
+
+[Fluent Bit](https://fluentbit.io/) is a lightweight, open source telemetry
+agent for logs, metrics, and traces. Although Chronosphere now sponsors its
+development, Fluent Bit is a [CNCF](https://www.cncf.io/) graduated sub-project
+and remains licensed under the terms of the
+[Apache License v2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+For information about setting up and using Fluent Bit, refer to the
+[Fluent Bit documentation](https://docs.fluentbit.io/manual).
+
+## Core Agent
+
+Core Agent is an enterprise fork of Fluent Bit available to Chronosphere customers.
+It offers extended support for maintenance and security fixes.
+
+To compare versions of Fluent Bit and Core Agent, see
+[Version equivalents](/fleets/agent/version-equivalents).
+
+For information about installing Core Agent, refer to the following pages:
+
+- [Install in Docker](/fleets/agent/docker-install)
+- [Install on Linux (Debian-based)](/fleets/agent/linux-debian-install)
+- [Install on Linux (RHEL-based)](/fleets/agent/linux-rhel-install)
+- [Install on macOS](/fleets/agent/macos-install)
+- [Install on Windows](/fleets/agent/windows-install)
+
+For all other information about using Core Agent, refer to the equivalent
+[Fluent Bit documentation](https://docs.fluentbit.io/manual).

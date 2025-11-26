@@ -1,0 +1,46 @@
+---
+title: Send Buildkite events to Observability Platform
+---
+import EventsToken from '/snippets/_partials/events-token.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+To send Buildkite events to Chronosphere Observability Platform, create a webhook
+within Buildkite and include your API key to authenticate with Observability
+Platform.
+
+## Obtain an API token
+
+Before sending events from Buildkite, contact [Chronosphere Support](/support) to
+obtain an API token for use with authenticating your third-party app with
+Observability Platform.
+
+<EventsToken />
+
+## Create a Buildkite webhook
+
+To send Buildkite events to Observability Platform:
+
+1. In Buildkite, go to
+   `https://buildkite.com/organizations/COMPANY/services`
+   and [create a webhook](https://buildkite.com/docs/apis/webhooks).
+
+   Replace _`COMPANY`_ with the name of your company or organization.
+1. Click **Add Webhook** to define a webhook.
+1. Enter a description for the webhook, such as **Chronosphere Buildkite**.
+1. In the **URL** field, enter
+   `https://ADDRESS.chronosphere.io/api/v1/data/events/receiver/buildkite`.
+
+   Replace _`ADDRESS`_ with your company name prefixed to your Observability Platform
+   instance that ends in `.chronosphere.io`. For example,
+   _`MY_COMPANY`_`.chronosphere.io`.
+1. In the **Token** field, enter the API token you obtained from Chronosphere
+   Support.
+1. Select **Send an HMAC signature**.
+1. Select one or more of the following options for your webhook:
+   - **build.finished**
+   - **build.running**
+   - **build.scheduled**
+1. Select which pipelines you want to enable events for.
+1. Save your webhook.

@@ -1,0 +1,53 @@
+---
+title: Amazon Kinesis Stream Input source plugin
+sidebarTitle: Amazon Kinesis Stream Input source plugin (Telemetry Pipeline)
+description: Receive pipeline data from Amazon Kinesis Stream Input.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import PluginDuplicates from '/snippets/_partials/plugin-duplicates.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Amazon Kinesis Stream Input [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `aws_kinesis_stream`)
+lets you retrieve data from Amazon Kinesis Stream and ingest it into a telemetry
+pipeline.
+
+<SourceStyle/>
+
+<PluginDuplicates/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name | Key | Description | Default |
+|------|-----|-------------|---------|
+| **AWS Access Key** | `aws_access_key_id` | Required. Your AWS access key path. | _none_ |
+| **AWS Secret Key** | `aws_secret_access_key` | Required. Your AWS secret key path. | _none_ |
+| **AWS Kinesis Stream Name** | `stream_name` | Required. The AWS Kinesis stream name. | _none_ |
+| **AWS Region** | `aws_region` | Required. The name of the AWS region. For example, `us-east-1`. | _none_ |
+
+### Advanced
+
+| Name | Key | Description | Default |
+|------|-----|-------------|---------|
+| **Number of fetched records** | `limit` | The maximum number of records to fetch from the stream on each iteration. | `1000`|
+| **Pull Interval** | `empty_interval` | How long to wait before fetching more records. If the stream returns empty, Telemetry Pipeline will continue to pull. | `1s` |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |

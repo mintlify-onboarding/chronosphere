@@ -1,0 +1,100 @@
+---
+title: Elasticsearch destination plugin
+sidebarTitle: Elasticsearch destination plugin (Telemetry Pipeline)
+description: Send pipeline data to Elasticsearch.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import BasicAuthentication from '/snippets/_partials/pipeline-basic-auth.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Elasticsearch [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `es`) lets you configure your telemetry pipeline to store, search, and
+visualize your data using Elasticsearch's indexing and querying capabilities.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name                | Key | Description | Default |
+| ------------------- | --- | ----------- | ------- |
+| **Host**            | `host` | Required. IP address or hostname of the target Elasticsearch instance. | `127.0.0.1` |
+| **Port**            | `port` | Required. TCP port of the target Elasticsearch instance. | `9200` |
+| **Index**           | `index` | Required. Index name. | `calyptia-core` |
+| **Logstash Format** | `logstash_format` | Enables Logstash format compatibility. Accepted values: `true`, `false`. | `false` |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced
+
+| Name                     | Key | Description | Default |
+| ------------------------ | --- | ----------- | ------- |
+| **Replace Dots**         | `replace_dots` | When enabled, replaces field name dots with underscore, required by versions of Elasticsearch. Accepted values: `true`, `false`. | `false` |
+| **Type**                 | `type` | Required. Type Name. | `_doc` |
+| **Suppress Type Name**   | `suppress_type_name` | If true, mapping types are removed. For v7.0.0 or later. Accepted values: `true`, `false`. | `false` |
+| **Buffer Size**          | `buffer_size` | Specifies the buffer size used to read the response from the Elasticsearch HTTP service. Use this option for debugging purposes where it's required to read full responses. Response size grows depending of the number of records inserted. To set an unlimited amount of memory set this value to `false`, otherwise the value must be according to the Unit Size specification. | `512k` |
+| **Path**                 | `path` | Elasticsearch accepts new data on HTTP query path `/_bulk`. It's also possible to serve Elasticsearch behind a reverse proxy on a sub path. This option defines such path on the Telemetry Pipeline side. It adds only a path prefix in the indexing HTTP POST URI. | _none_ |
+| **Pipeline**             | `pipeline` | Newer versions of Elasticsearch let you set up filters, also called pipelines. This option lets you define which pipeline the database should use. For performance reasons, it's strongly suggested to do parsing and filtering on Telemetry Pipeline side. | _none_ |
+| **Generate ID**          | `generate_id` | When enabled, generates `_id` for outgoing records. This prevents duplicate records when retrying ES. Accepted values: `true`, `false`. | `false` |
+| **Write Operation**      | `write_operation` | Operation to use to write in bulk requests. | `create` |
+| **ID Key**               | `id_key` | If set, `_id` is the value of the key from incoming record. | _none_ |
+| **Replace Dots**         | `current_time_index` | Uses current time for index generation instead of message record. Accepted values: `true`, `false`. | `false` |
+| **Logstash Prefix**      | `logstash_prefix` | When `logstash_format` is enabled, the Index name is composed using a prefix and the date. For example, if `logstash_prefix` is equal to `mydata`, your index becomes `mydata-YYYY.MM.DD`. The last string appended belongs to the date when the data is being generated. | _none_ |
+| **Logstash Prefix Key**  | `logstash_prefix_key` | When included, the value in the record that belongs to the key will be looked up and over-write the `logstash_prefix` for index generation. If the key/value isn't found in the record, the `logstash_prefix` option acts as a fallback. Nested keys are supported through record accessor pattern. | _none_ |
+| **Logstash Date Format** | `logstash_dateformat` | Time format (based on `strftime`) to generate the second part of the Index name. | `%Y.%m.%d` |
+| **Time Key**             | `time_key` | When `logstash_format` is enabled, each record will get a new timestamp field. The `time_key` property defines the name of that field. | `@timestamp` |
+| **Time Key Format**      | `time_key_format` | When `logstash_format` is enabled, this property defines the format of the timestamp. | _none_ |
+| **Time Key Nanos**       | `time_key_nanos` | When `logstash_format` is enabled, enabling this property sends nanosecond precision timestamps. Accepted values: `true`, `false`. | `false` |
+| **Include Tag Key**      | `include_tag_key` | When enabled, it append the Tag name to the record. Accepted values: `true`, `false`. | `false` |
+| **Tag Key**              | `tag_key` | When `include_tag_key` is enabled, this property defines the key name of the tag in the message. | `flb-key` |
+
+### Basic Authentication
+
+<BasicAuthentication />
+
+### AWS Authentication
+
+| Name                          | Key | Description | Default |
+| ----------------------------- | --- | ----------- | ------- |
+| **Enable AWS Authentication** | `aws_auth` | Enable AWS Sigv4 Authentication. Accepted values: `true`, `false`. | `false` |
+| **AWS Region**                | `aws_region` | AWS Region of your service. | _none_ |
+| **AWS STS Endpoint**          | `aws_sts_endpoint` | Custom endpoint for the AWS STS API, used with the `aws_role_arn` option. | _none_ |
+| **AWS IAM Assume Role**       | `aws_role_arn` | Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role to assume, for uses like cross-account access. | _none_ |
+| **AWS External ID**           | `aws_external_id` | Specifies an external ID for the STS API, can be used with the `aws_role_arn` parameter if your role requires an external ID. | _none_ |
+
+### Elastic Cloud Authentication
+
+| Name                                         | Key | Description | Default |
+| -------------------------------------------- | --- | ----------- | ------- |
+| **Elastic Cloud ID**                         | `cloud_id` | Elastic Cloud ID of the cluster to connect to. | _none_ |
+| **Elastic Cloud Authentication Credentials** | `cloud_auth` | Elastic Cloud authentication credentials. | _none_ |
+
+### Advanced Networking
+
+<AdvancedNetwork />
+
+### Debugging
+
+| Name             | Key | Description | Default |
+| ---------------- | --- | ----------- | ------- |
+| **Trace Output** | `trace_output` | When enabled, print the Elasticsearch API calls to `stdout`. For diagnostics only. Accepted values: `true`, `false`. | `false` |
+| **Trace Error**  | `trace_error` | When enabled, print the Elasticsearch exception to `stderr`. For diagnostics only. Accepted values: `true`, `false`. | `false` |

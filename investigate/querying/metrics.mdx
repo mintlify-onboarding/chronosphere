@@ -1,0 +1,41 @@
+---
+title: Search and query metrics
+description: Learn how to search and query metrics in Metrics Explorer.
+---
+import OtherQueryingFeatures from '/snippets/_partials/other-querying-features.mdx';
+import RegexGlob from '/snippets/_partials/regex-glob.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+When you create dashboards, monitors, or use the
+[Metrics Explorer](/investigate/querying/metrics/explorer), you use a query to select and
+filter the metrics in which you're interested, and then apply functions to them. When
+querying data, you can use [regular expressions](/investigate/querying/regular-expressions)
+or [glob syntax](/investigate/querying/glob-syntax) where supported.
+
+<RegexGlob />
+
+Chronosphere Observability Platform supports these languages for querying metrics
+data. Contact [Chronosphere Support](/support) to configure the data sources you want
+to use.
+
+- **[Prometheus Query Language (PromQL)](/investigate/querying/promql)**: Used with
+  Prometheus-compatible metrics. Default.
+- **Graphite**: Used with StatsD metrics data. Enabled on request.
+
+  <Info>
+Although Chronosphere supports both PromQL and Graphite, this document provides
+  information only about the use of PromQL. For more details about Graphite, see the
+  [Graphite documentation](https://graphite.readthedocs.io/en/1.0.0/functions.html).
+</Info>
+
+To help construct, optimize, and debug queries, use the
+[Query Builder](/investigate/querying/metrics/query-builder) or the
+[classic Query Builder](/investigate/querying/metrics/builder). To analyze expensive
+queries and understand their relative load, use the
+[Query Analyzer](/investigate/analyze/query-analyzer).
+
+## Additional features
+
+<OtherQueryingFeatures />

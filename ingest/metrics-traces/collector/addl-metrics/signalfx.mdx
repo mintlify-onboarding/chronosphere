@@ -1,0 +1,34 @@
+---
+title: SignalFx ingestion
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+You can configure the Collector to process SignalFx data points. The Collector serves
+SignalFx traffic at the `/signalfx/v2/datapoint` HTTP endpoint from the
+`listenAddress`, which defaults to `0.0.0.0:3030`. The `/v2/datapoint` suffix is the
+default expected path appended by SignalFx client libraries.
+
+This integration pattern assumes that you've instrumented your apps with a SignalFx
+client library, such as the [golib](https://github.com/signalfx/golib) library for
+Go.
+
+For equivalent functions between SignalFx and PromQL, see the
+[equivalent function list](/ingest/metrics-traces/collector/mappings/signalfx).
+
+## Configure SignalFx ingestion
+
+1. Download this
+   [annotated manifest](https://storage.googleapis.com/chronosphere-release/latest/kubernetes/chronocollector.yaml)
+   as a starting point.
+
+1. Enable SignalFx mode under the `push.signalFX.enabled` YAML collection in the
+   Collector manifest.
+
+   ```yaml
+   push:
+      signalFX:
+          enabled: true
+   ```
+
+1. Modify additional configuration options under the `push.signalFX` YAML collection.

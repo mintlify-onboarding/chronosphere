@@ -1,0 +1,181 @@
+---
+title: Prometheus API overview
+description: How to access and use Prometheus API endpoints for programmatic access to your observability data.
+---
+import ApiSupportedEndpoints from '/snippets/_partials/api-supported-endpoints.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Chronosphere exposes Prometheus API endpoints to authorized users.
+
+For information about the Chronosphere API, see
+[Get started with the Chronosphere API](/tooling/api-info).
+
+<ApiSupportedEndpoints />
+
+## Authentication
+
+Use of the Prometheus API requires you to authenticate with an API token.
+
+### Creating an API token
+
+A service can access the Prometheus API by authenticating with its API token. For
+details, see [Service Accounts](/administer/accounts-teams/service-accounts).
+
+A user can access the Prometheus API by creating a temporary
+[personal access token](/administer/accounts-teams/personal-access-tokens).
+
+### Using an API token
+
+You can use an API token to make HTTP API calls.
+
+For HTTP calls, use the `Authorization` header with the `Bearer` token authentication
+scheme.
+
+Example:
+
+```shell copy
+curl -H "Authorization: Bearer ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics/api/v1/query?query=up"
+```
+
+## Prometheus HTTP API
+
+For the API documentation for the routes, see [the Prometheus website](https://prometheus.io/docs/prometheus/latest/querying/api).
+
+<Info>
+Chronosphere supports only the instant query, range query, series metadata and labels
+endpoints.
+</Info>
+
+When accessing the Prometheus HTTP API, the URL begins with
+`https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics/_`.
+
+Here's an example of a request to the instant query endpoint:
+
+```shell copy
+curl -H "Authorization: Bearer ${CHRONOSPHERE_API_TOKEN}" \
+  "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics/api/v1/query?query=up"
+```
+
+### Supported headers for Prometheus HTTP API extensions
+
+There are a set of supported headers for extensions to the Prometheus HTTP API.
+
+#### `M3-Restrict-By-Tags-JSON`
+
+This header restricts metrics fetched and returned for queries specified by the
+request.
+
+Each key as part of the options JSON is optional. Here's a complete JSON example:
+
+```json
+{
+  "match": [
+    {
+      "name": "label-name",
+      "type": "EQUAL",
+      "value": "label-value"
+    }
+  ],
+  "strip": ["label-name"]
+}
+```
+
+- `match`: A set of match restrictions to apply to every fetch that's a part of a
+  query, ensuring every fetched series satisfies these restrictions.
+- `match[].name`: The label name to restrict metric fetches by.
+- `match[].value`: The label value to restrict metric fetches by.
+- `match[].type`: The type to restrict metric fetches by. Must be one of these
+  values:
+  - `EQUAL`
+  - `NOTEQUAL`
+  - `REGEXP`
+  - `NOTREGEXP`
+  - `EXISTS`
+  - `NOTEXISTS`
+
+  The types `EXISTS` and `NOTEXISTS` apply only to the label name. All other types
+  require you set both the label name and a value.
+- `strip[]`: A set of label names to remove from the query response. By default, no
+  labels are stripped from queries. If `match[]` is set, this defaults to
+  `match[].name` (the unique set of label names from the provided matchers). If you
+  don't want to strip the labels, set `strip` to an empty list (such as `"strip": []`).
+  As such, `strip` behaves in the following ways:
+  - With no set restrict by tags header, no labels are stripped from the response
+    results.
+  - When a restrict by tags header set with `match` is specified and `strip` isn't
+    specified, it strips any labels requiring a match as defined by `match[].name`
+    values. For example, `{"match":[{"name":"item","type":"EQUAL","value":"bar"}]}`
+    strips the `item` label from all time series the metadata returns.
+  - When a restrict by tags header is set with `strip` specified, it strips exactly
+    only those labels regardless of other parameters. For example,
+    `{"match":[{"name":"item","type":"EQUAL","value":"bar"}],"strip":[]}` doesn't
+    strip any labels from the response results because `[]` is specified.
+
+**Example: Restrict by `org` label**
+
+This adds a restriction to all queries that they must include `org="company"` as part of
+the underlying response. All `org` labels on resulting metrics are also stripped from
+the response.
+
+```shell copy
+RESTRICT=$(cat <<'EOF'
+{
+  "match": [
+    {
+      "name": "org",
+      "value": "company",
+      "type": "EQUAL"
+    }
+  ]
+}
+EOF
+)
+
+curl \
+  -H "Authorization: Bearer ${CHRONOSPHERE_API_TOKEN}" \
+  -H "M3-Restrict-By-Tags-JSON: $(echo $RESTRICT | tr -d ' ')" \
+  "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics/api/v1/query?query=up"
+```
+
+## Prometheus remote read API
+
+The Prometheus remote read API implements the Snappy compressed binary Protobuf
+[Remote Read](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_read)
+endpoint, which provides debug capabilities that make raw vector selector data
+available from a PromQL query in a JSON format.
+
+When accessing the Prometheus Remote Read API, the URL is
+`https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics/api/v1/prom/remote/read`.
+
+### Viewing raw values as JSON
+
+To read raw values from storage and avoid any PromQL evaluation you can set the
+`start` (Unix timestamp seconds), `end` (Unix timestamp seconds), `format` (`json`)
+and `query` (any valid PromQL query) URL query parameters and call the Remote Read
+API endpoint.
+
+```shell copy
+END=$(date +%s)
+START=$(expr $END - 600)
+curl -H "Authorization: Bearer ${CHRONOSPHERE_API_TOKEN}" \
+  "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics/api/v1/prom/remote/read?start=${START}&end=${END}&format=json&query=up"
+```
+
+## Using Chronosphere as a data source for your own Grafana deployment
+
+Some times you might want to maintain an internal deployment of Grafana and point it
+to the Chronosphere backend. To do this, set up a `Prometheus` data source with the
+following configurations:
+
+- Name: `Chronosphere`
+- URL: `https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics`
+- Access: `Server (Default)`
+- Auth: `Basic Auth`
+- Basic Auth Details:
+
+  ```text
+  User: chronosphere
+  Password: $CHRONOSPHERE_API_TOKEN
+  ```

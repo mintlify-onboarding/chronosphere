@@ -1,0 +1,149 @@
+---
+title: Select time ranges
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Many features in Chronosphere Observability Platform share a common interface and
+methods for selecting a _time range_. Tools such as [monitors](/investigate/alerts/monitors),
+[dashboards](/observe/dashboards), [service pages](/observe/services/service-pages),
+and [explorers](/investigate) use time ranges to segment or scope queries, charts,
+tables, and graphs.
+
+In these tools, the **<Icon icon="clock" /> time range selector** displays
+the defined time range and provides multiple methods to select a new time range.
+
+- Click the time range selector as a dropdown menu to select a range relative to
+  the current time from a list of predefined options, such as **Last 30 minutes**.
+- Click the time range selector as a dropdown menu and click **Custom date range**
+  to interactively select a time and date range using a calendar.
+- Click the time range selector as a text field and enter a custom relative range,
+  such as `Last 2 weeks`, `2 weeks`, or `2w`.
+- Click the time range selector as a text field and enter a custom absolute time
+  and date range using a `MM/DD/YYYY hh:mm:ss AM/PM` format.
+
+Some time range selectors also provide additional controls to shift, expand, refresh,
+or pin the selected time range.
+
+## Use the time range selector
+
+The time range selector provides options for defining a date and time range. The selector
+also displays the currently applied time range, including the abbreviated time zone
+applied to the range.
+
+### Select a predefined relative time range
+
+To select a predefined time range:
+
+1. Click the **<Icon icon="clock" /> time range selector** as a dropdown
+   menu.
+1. Select a time range in the list.
+
+### Select a custom time and date range
+
+To interactively select a custom time and date range from a calendar:
+
+1. Click the **<Icon icon="clock" /> time range selector** as a dropdown
+   menu.
+1. Select **Custom time range**.
+1. Navigate to the month of the start date. To go forward or backward one month
+   at a time, click
+   **<Icon icon="chevron-left" alt="Previous month icon"/> Previous month**
+   and **<Icon icon="chevron-right" alt="Next month icon"/> Next month**.
+
+1. Optional: Instead of using the calendar, you can also click the **From** and
+   **To** date fields and enter the date, using the format `MM/DD/YYYY`.
+1. Click the **From** and **To** time fields to select the time range's starting
+   and ending times.
+1. Optional: Instead of using the dropdown selector, you can click the time
+   fields and enter the times, using the format `HH:MM:SS` followed by `AM` or `PM`.
+1. Optional: You can set the **To** fields to the current date and time by clicking
+   **Set to now**.
+1. Click **Apply** to confirm the set time range, or **Cancel** to discard it.
+
+### Enter a custom relative time range
+
+To enter a custom relative time range:
+
+1. Click the **<Icon icon="clock" /> time range selector** as a text
+   field.
+1. Enter a custom relative time range using Observability Platform's
+   [time units](/overview/concepts/time-units).
+
+   The time range selector accepts any of these formats, where `1` in the quantity
+   and `week` and `w` represent the time unit:
+
+   - `Last 1 week`
+   - `1 week`
+   - `1w`
+
+You can enter any integer quantity greater than zero. Relative ranges support only
+millisecond and larger time units, and convert units smaller than a second to decimal
+values of a second.
+
+<Warning>
+The time range selector doesn't support entering decimal values of time units,
+even if it sometimes displays them.
+</Warning>
+
+### Enter a custom absolute time range
+
+To enter a custom absolute time range:
+
+1. Click the **<Icon icon="clock" /> Time range selector** as a text
+   field.
+1. Enter a custom absolute time range using a `MM/DD/YYYY hh:mm:ss AM/PM` format,
+   separated by a dash (`-`).
+
+Absolute times apply your account's [configured time zone](/navigate#your-account),
+which is displayed as an abbreviation in the time range selector.
+
+For example, the value `01/01/2025 09:00:00 AM - 01/05/2025 09:00:00 PM` selects
+a range from January 1, 2025, at 9:00 AM (09:00) to January 5, 2025 at 9:00 PM
+(21:00) in your account's configured time zone.
+
+### Shift a time range
+
+To shift the defined time range forward or backward in time while retaining the
+same duration, click the **<Icon icon="chevron-left" /> previous** and
+**<Icon icon="chevron-right" /> next time range** buttons.
+
+Shifting a relative time range also converts it to an absolute time range.
+
+### Expand a time range
+
+To expand the defined time range's duration while retaining the same point in time
+at the range's center, click the **<Icon icon="magnifying-glass-minus" /> zoom out**
+button.
+
+Expanding a relative time range also converts it to an absolute time range.
+
+On data visualization tools, there is no control to shrink, or "zoom in," for a time
+range. Instead, click and drag within a panel visualization to select a time range.
+
+### Refresh a time range
+
+To manually refresh the current point in time for a relative time range, or to update
+a visualization's contents within an absolute time range, click the time range selector's
+**<Icon icon="rotate" /> Refresh** button.
+
+On dashboards, you can also configure a default automatic refresh interval. For
+details, see [Manage dashboard time ranges](/observe/dashboards/customization/time-ranges).
+
+### Pin a time range
+
+You can **pin a time range** to specify a default range for a time range selector. When you
+return to a feature where you've pinned time range, that feature applies the pinned
+range as the new default.
+
+To pin a time range:
+
+1. In the time range dropdown, click the
+   **<Icon icon="thumbtack" alt="Pin time range"/> pin time range** icon.
+1. If a relative time range is selected, select whether to pin the relative time
+   range, or an absolute custom time range of the same duration that ends at the
+   current time.
+
+To unpin a time range, click the
+**<Icon icon="thumbtack" alt="Unpin time range"/> Unpin time range** icon in the
+time range dropdown.

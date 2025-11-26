@@ -1,0 +1,128 @@
+---
+title: Use Prometheus Agent to send metrics
+description: Configure Prometheus to send metrics to Chronosphere for analysis.
+robots: noindex, nofollow
+---
+import RemoteWriteRequirements from '/snippets/_partials/remote-write-requirements.mdx';
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+<LimitedAvail/>
+
+You can configure Prometheus to send metrics to Chronosphere Observability Platform
+using the
+[Remote-Write Protocol 2.0 API](/ingest/metrics-traces/prometheus-remote-write)
+over HTTPS.
+
+<RemoteWriteRequirements/>
+
+## Prerequisites
+
+To forward metrics from Prometheus, you must first create a
+[restricted service account](/administer/accounts-teams/service-accounts#create-a-restricted-service-account)
+in Observability Platform, which generates an API token for Prometheus to authenticate
+with Observability Platform. The API token only needs write access for Prometheus to
+send metrics to Observability Platform.
+
+<Warning>
+Store your API token in a secure location, such as a separate file or as a Kubernetes
+Secret, and reference it using an environment variable, such as `$API_TOKEN`.
+You can also bind a Kubernetes
+[Secret](https://kubernetes.io/docs/concepts/configuration/secret/) to an environment
+variable on the Pod.
+
+If you lose your token, you must create a new service account.
+</Warning>
+
+## Configure Prometheus
+
+To implement remote write, you must configure your application and Prometheus to
+use it. You must also install Prometheus Agent, which is beyond the scope of these
+instructions and can vary depending on your usage.
+
+For more information, see the Prometheus Operator documentation for
+[installing the Prometheus Agent in Kubernetes](https://prometheus-operator.dev/docs/platform/prometheus-agent/)
+or the
+[Prometheus installation documentation](https://prometheus.io/docs/prometheus/latest/installation/)
+for other scenarios.
+
+1. Instrument your app with
+   [Prometheus client libraries](https://prometheus.io/docs/instrumenting/clientlibs/)
+   for scraping or
+   [push metrics](https://prometheus.io/docs/instrumenting/pushing/) to the PushGateway.
+1. Configure [third-party exporters](https://prometheus.io/docs/instrumenting/exporters/)
+   to scrape or push metrics from third-party tools and services.  
+1. Add a
+   [`remote_write`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
+   section to your `prometheus.yml` to forward metrics to Chronosphere.
+
+   ```yaml copy
+   remote_write:
+     - url: https://<COMPANY>.chronosphere.io/data/api/v1/prom/remote/write
+       remote_timeout: 30s
+       protobuf_message: io.prometheus.write.v2.Request
+       headers:
+         API-Token: $API_TOKEN
+         Chronosphere-Metrics-Validation-Response: SHORT
+
+       queue_config:
+         batch_send_deadline: 1s
+         max_samples_per_send: 2000
+   ```
+
+   - `url`: Replace `<COMPANY>` with the name of your company as it appears in the
+     subdomain of the Observability Platform URL.
+   - `remote_timeout`: Defines the timeout for Remote Write requests before failing
+     and retrying. Default: `30s`.
+   - `protobuf_message`: Specifies the Remote-Write v2 protobuf format, which provides
+     additional metric types and more efficient egress traffic than the v1 format.
+     For more information, see the
+     [Prometheus Remote-Write 2.0 Specification](https://prometheus.io/docs/specs/prw/remote_write_spec_2_0/).
+   - <a id="http-headers"></a>`headers`: HTTP headers required in each request.
+     - `API-Token`: Provides an Observability Platform API token for a restricted
+       service account with write permissions. See [Prerequisites](#prerequisites) for
+       more information.
+     - `Chronosphere-Metrics-Validation-Response`: Controls the verbosity of details
+       in the response body for partial writes that describe why invalid series were
+       rejected. The Prometheus server logs partial-write responses for visibility.
+       Higher verbosity levels require more processing and are best enabled temporarily
+       to investigate issues. Valid values are `SHORT`, `SUMMARY`, and `DETAILED`.
+       Default: `SHORT`.
+   - `queue_config`: Prometheus maintains a sharded queue to batch series together
+     for better performance and compression efficiency. These parameters control
+     batching for processing and ingress efficiency by optimizing payload size and
+     request frequency.
+     - `batch_send_deadline`: Defines the period between requests to send items
+       in the queue. Chronosphere recommends a value of `1s`.
+     - `max_samples_per_send`: Limits the number of samples that Prometheus sends
+       in each request. Requests can be sent with fewer samples than this limit.
+       Set to `2000` to force splitting requests that would include more than 2,000
+       items.
+
+### Configure multiple remote write endpoints
+
+You can configure multiple remote write endpoints to help in a cutover from one
+target to another, or when migrating from v1 to v2. The following example demonstrates
+a configuration for a Prometheus Agent writing metrics to a remote write v1 endpoint
+and a remote write v2 endpoint.
+
+```yaml copy
+remote_write:
+  - url: https://...
+    protobuf_message: prometheus.WriteRequest
+    ...
+
+  - url: https://<COMPANY>.chronosphere.io/data/api/v1/prom/remote/write
+    protobuf_message: io.prometheus.write.v2.Request
+    ...
+```
+
+## Next steps
+
+Verify that Observability Platform is
+[receiving metrics](/ingest/metrics-traces/collector/monitor/verify-metrics).
+
+If you encounter issues, review the Prometheus Agent logs and
+[Troubleshooting](/ingest/metrics-traces/troubleshooting).

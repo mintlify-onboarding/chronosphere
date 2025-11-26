@@ -1,0 +1,514 @@
+---
+title: Teams
+description: Chronosphere Observability Platform lets you create and manage teams, assign roles, and set permissions for effective collaboration.
+---
+import { CollectionNavIcon} from '@/components';
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import TerraformCreate from '/snippets/_partials/terraformcreate.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+A _team_ defines how an organization grants permissions for sensitive
+management and administrative operations to _accounts_, including
+[_user accounts_](/administer/accounts-teams/user-accounts) and
+[_service accounts_](/administer/accounts-teams/service-accounts).
+
+A team's accounts have a shared responsibility for certain services. Chronosphere
+Observability Platform represents those services as
+[_collections_](/administer/collections), which contain resources related to the
+service a collection represents, such as dashboards and monitors. A team can own
+multiple collections.
+
+All user and service accounts in a team that has the special System Administrator
+(`SysAdmin`) role are _administrators_. If you're an administrator, you can
+[add this role to a team](#add-a-role-to-a-team).
+
+Teams can own collections and services, which in turn own other functions:
+
+```mermaid
+flowchart TD
+    accDescr: Ownership flow for teams and functions
+    Team[**Team**]
+    Col(<A href="/administer/collections">Collections</a>)
+    Ser(<a href="/observe/services">Services</a> )
+
+    Team --> Col
+    Team --> Ser
+
+    Dash(<a href="/observe/dashboards">Dashboards</a>)
+    Mon(<a href="/investigate/alerts/monitors">Monitors</a>)
+    SLO(<a href="/observe/slo">SLOs</a>)
+
+    Col --> Dash
+    Col --> Mon
+    Col --> SLO
+
+    Dash2(<a href="/observe/dashboards">Dashboards</a>)
+    Mon2(<a href="/investigate/alerts/monitors">Monitors</a>)
+    SLO2(<a href="/observe/slo">SLOs</a>)
+
+    Ser --> Dash2
+    Ser --> Mon2
+    Ser --> SLO2
+    ```
+
+## View teams
+
+To search for a team:
+
+1. Click the search bar to focus on it, or use the keyboard shortcut
+   <kbd>Control+K</kbd> (<kbd>Command+K</kbd> on macOS).
+1. Begin typing any part of the team's name.
+1. Optional: Click the **Teams** filter at the top of the search results to
+   constrain your results to only Teams.
+1. Click the search result you're interested in, or use the arrow keys to select it
+   and press enter, to go to that team.
+
+### View teams and their collections
+
+To view teams and the collections they own, in the navigation menu exit the **Admin**
+menu (if needed, click **<Icon icon="arrow-right-from-bracket" /> Exit Admin**) and select
+**<CollectionNavIcon /> Collections**. For details about working with collections,
+see [Collections](/administer/collections).
+
+### View a list of teams to manage
+
+To view teams in a list that displays their members, provides an audit log of
+membership changes, and includes management options for administrators:
+
+<Tabs>
+<Tab title="Cloud">
+
+In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+**<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
+
+</Tab>
+<Tab title="Chronoctl">
+
+Use the command:
+
+```shell copy
+chronoctl teams list
+```
+
+</Tab>
+</Tabs>
+
+For details, see
+[Accounts and Teams](/administer/accounts-teams#view-accounts-and-teams).
+
+## Manage teams
+
+<Info>
+To manage teams, you must use a user account or
+[service account](/administer/accounts-teams/service-accounts) that belongs to a team
+with the SysAdmin role.
+</Info>
+
+To manage teams, in the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+and then select **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
+
+### Create a team
+
+<Tabs>
+<Tab title="Web" id="create-a-team-cloud">
+
+To create a new team:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+   and then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
+1. Click **Create team**.
+1. In the dialog that appears, enter a name for the new team and the access role it
+   should have.
+1. Click **Save** to create the team.
+
+The team now appears in the list of users and teams.
+
+</Tab>
+<Tab title="Chronoctl" id="create-a-team-chronoctl">
+
+<Warning>
+To create teams or modify team membership with Chronoctl, you must use a user account
+or [service account](/administer/accounts-teams/service-accounts) that
+belongs to a team with the SysAdmin role.
+</Warning>
+
+To create and manage a team with [Chronoctl](/tooling/chronoctl),
+use the `Team` resource type. The resource can contain these fields:
+
+| Field         | Type | Description |
+| ------------- | ---- | ----------- |
+| `name`        | String | The team name as displayed in Observability Platform. |
+| `slug`        | String | Optional. A unique identifier that Observability Platform uses to identify the team. If omitted, Observability Platform generates a slug. |
+| `description` | String | Optional. A description displayed when viewing this team. |
+| `user_emails` | Collection of strings | Contains an item for each member account's email address. |
+
+To generate an example Team resource, run `chronoctl teams scaffold`.
+
+If an email address in `users` doesn't already have an Observability Platform
+account, the app creates a pending user account for that email address. When that
+user signs in, Observability Platform then activates the account.
+
+For example, this YAML resource creates a team named `DBAs` in Observability
+Platform, with the description `Database administrators`, and which the app
+identifies with the slug `dbas`. It also includes the listed accounts identified by
+their email addresses as team members:
+
+```yaml
+api_version: v1/config
+kind: Team
+spec:
+  name: DBAs
+  slug: dbas
+  description: "Database administrators"
+  user_emails:
+    - adam@example.com
+    - betty@example.com
+```
+
+To include service accounts, add the service account's internal email address to
+the `users` list. For details, see [Service Accounts](/administer/accounts-teams/service-accounts).
+
+</Tab>
+<Tab title="Terraform" id="create-a-team-terraform">
+
+<Warning>
+To create teams or modify team membership with Terraform, you must use a user account
+or [service account](/administer/accounts-teams/service-accounts) that
+belongs to a team with the SysAdmin role.
+</Warning>
+
+To create and manage a team with [Terraform](/tooling/infrastructure/terraform),
+declare the `chronosphere_team` resource type and provide a resource name. The resource
+can contain these fields:
+
+| Field         | Type | Description |
+| ------------- | ---- | ----------- |
+| `name`        | String | The team name as displayed in Observability Platform. |
+| `slug`        | String | Optional. A unique identifier that Observability Platform uses to identify the team. If omitted, Observability Platform generates a slug. |
+| `description` | String | Optional. A description displayed when viewing this team. |
+| `user_emails` | Array of strings | The email address for each member account. |
+
+For example, this resource creates a team referred to by Terraform as `dbas`, named
+`DBAs` in Observability Platform, and identified in the app with the slug `dbas`. It
+also includes the listed accounts identified by their email addresses as team
+members:
+
+```ruby
+resource "chronosphere_team" "dbas" {
+  name = "DBAs"
+  slug = "dbas"
+  description = "Database administrators"
+
+  user_emails = [
+    "adam@example.com",
+    "betty@example.com",
+  ]
+}
+```
+
+To include service accounts, add the service account's internal email address to
+the `user_emails` array. For details, see [Service Accounts](/administer/accounts-teams/service-accounts).
+
+<TerraformCreate />
+
+</Tab>
+<Tab title="API">
+
+To complete this action with the Chronosphere API, use the
+[`CreateTeam`](/tooling/api-info/definition/operations/CreateTeam) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Edit team membership
+
+<Tabs>
+<Tab title="Web" id="edit-team-membership-cloud">
+
+To add users to or remove users from a team:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
+1. [Select the team](/administer/accounts-teams#view-accounts-and-teams-cloud)
+   to manage.
+1. Click **<Icon icon="pencil" /> Edit Team**.
+1. In the **Team Members** section, click **Update Membership**.
+1. From the account list that appears, select the checkbox for each account you want
+   to add to the team, and clear the checkbox for each account you want to remove
+   from the team.
+1. Click **Save** to edit the team's membership.
+
+The team page updates its membership list accordingly, and the audit log adds an
+entry logging the operation.
+
+</Tab>
+<Tab title="Chronoctl" id="edit-team-membership-chronoctl-apply">
+
+<Warning>
+To modify teams with Chronoctl, you must use a user account or
+[service account](/administer/accounts-teams/service-accounts) that
+belongs to a team with the `SysAdmin` role.
+</Warning>
+
+You can use [Chronoctl](/tooling/chronoctl) to replace and update a team and
+its membership with those defined in a YAML file.
+
+To generate a YAML description of your current teams and accounts, see
+[View Accounts and Teams](/administer/accounts-teams#view-accounts-and-teams-chronoctl).
+
+Following the `DBAs` team example from [creating a team](#create-a-team),
+to add a user to that team, update the YAML to include the new user's email:
+
+```yaml
+api_version: v1/config
+kind: Team
+spec:
+  name: DBAs
+  slug: dbas
+  description: "Database administrators"
+  user_emails:
+    - adam@example.com
+    - betty@example.com
+    - charles@example.com
+```
+
+To apply the changes, use the Chronoctl `chronoctl teams update` command, which
+updates teams but doesn't create them if they don't already exist:
+
+```shell copy /FILE_NAME/
+chronoctl teams update -f FILE_NAME.yaml
+```
+
+Replace _`FILE_NAME`_ with the path to the YAML definition file.
+
+You can test the changes without applying them by including the `--dry-run` flag:
+
+```shell copy /FILE_NAME/
+chronoctl teams update -f FILE_NAME.yaml --dry-run
+```
+
+To force `teams update` to create a defined team if it doesn't exist, include the
+`--create-if-missing` flag:
+
+```shell copy /FILE_NAME/
+chronoctl teams update -f FILE_NAME.yaml --create-if-missing
+```
+
+</Tab>
+<Tab title="Terraform" id="edit-team-membership-terraform">
+
+To edit a team's membership using [Terraform](/tooling/infrastructure/terraform), modify the
+`user_emails` array in the team's `chronosphere_team` resource, and then apply the
+resource using Terraform.
+
+</Tab>
+<Tab title="API">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateTeam`](/tooling/api-info/definition/operations/UpdateTeam) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Assign team roles and permissions
+
+Observability Platform teams use _roles_ to grant or restrict access to features
+that create, edit, or delete resources, teams, and accounts. Roles are assigned
+to teams, and all accounts that belong to a team gain the permissions granted by
+that team's role.
+
+During creation, accounts are assigned to the **Default** team, which has the `Editor`
+role. The **Default** team can't be deleted, and its role can't be changed.
+[Service accounts](/administer/accounts-teams/service-accounts#create-an-unrestricted-service-account)
+also can't be removed from the **Default** team and therefore always have **Editor**
+access.
+
+<Info>
+To remove editing access from a user,
+[remove the user from the **Default** team](#edit-team-membership). This limits
+the user to read-only access provided they don't have edit
+access through membership in another team.
+</Info>
+
+The available roles are:
+
+- `None`: Accounts on teams with this role can view pages in Observability Platform
+  but can't create, edit, or remove resources or accounts. Accounts that don't
+  belong to any team also have the `None` role by default.
+- `Editor`: Accounts on teams with this role can create, view, edit, and delete
+  resources within Observability Platform, but can't create, edit, or delete accounts
+  and teams.
+- `SysAdmin`: Any account that's a member of a team with the System Administrator
+  (`SysAdmin`) role can create, edit, and delete accounts and teams, assign accounts
+  to teams, and assign roles to teams. Accounts with this role are designated by a
+  <Icon icon="key" /> key icon next to their name in the **Users** list.
+- `User Administrator`: Accounts belonging to teams with this role can access the
+  System for Cross-domain Identity Management (SCIM) API, which manages accounts
+  that use single sign-on. This role grants no other permissions.
+
+  The `User Administrator` role can be assigned to teams only in organizations that
+  have SCIM integration enabled. For more information, see
+  [Okta user synchronization](/administer/accounts-teams/okta).
+
+If an account belongs to multiple teams with different roles, they inherit the
+highest-level permissions of each assigned team. For example, an account in a team
+with the `Editor` role and a second team with the `SysAdmin` role has both sets of
+privileges.
+
+The following chart summarizes roles and permissions:
+
+{/* vale off */}
+
+| Action                                 | None        | Editor      | SysAdmin    | User Admin   |
+| -------------------------------------- | :---------: | :---------: | :---------: | :----------: |
+| Interact with SCIM API                 | <NoIcon />  | <NoIcon />  | <NoIcon />  | <YesIcon />  |
+| View pages in Observability Platform   | <YesIcon /> | <YesIcon /> | <YesIcon /> | <NoIcon />   |
+| Add and edit user and service accounts | <NoIcon />  | <NoIcon />  | <YesIcon /> | <NoIcon />   |
+| Add, edit, and remove teams            | <NoIcon />  | <NoIcon />  | <YesIcon /> | <NoIcon />   |
+| Change users' team membership          | <NoIcon />  | <NoIcon />  | <YesIcon /> | <NoIcon />   |
+| Apply service configuration changes    | <NoIcon />  | <NoIcon />  | <YesIcon /> | <NoIcon />   |
+| Add, edit, and remove trace control plane datasets | <NoIcon /> | <NoIcon /> | <YesIcon /> | <NoIcon /> |
+| Add, edit, and remove derived labels   | <NoIcon />  | <NoIcon />  | <YesIcon /> | <NoIcon />   |
+| Add, edit, and remove other resources  | <NoIcon />  | <YesIcon /> | <YesIcon /> | <NoIcon />   |
+
+{/* vale on */}
+
+### Add a role to a team
+
+To add a role to a team:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
+1. [Select the team](/administer/accounts-teams#view-accounts-and-teams-cloud)
+   to manage.
+1. In the **Team Information** section, click **<Icon icon="pencil" /> Edit**.
+1. Click the **Role** dropdown and select the role you want to assign to the team.
+1. Click **Save**.
+
+### Remove a role from a team
+
+To remove a role from a team:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
+1. [Select the team](/administer/accounts-teams#view-accounts-and-teams-cloud)
+   to manage.
+1. In the **Team Information** section, click **<Icon icon="pencil" /> Edit**.
+1. Click the **Role** dropdown and select the **None** role.
+1. Click **Save**.
+
+### Rename a team
+
+To rename a team:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
+1. [Select the team](/administer/accounts-teams#view-accounts-and-teams-cloud)
+   to manage.
+1. In the **Team Information** section, click **<Icon icon="pencil" /> Edit**.
+1. Change the team's name in the **Name** field.
+1. Click **Save**.
+
+### Describe a team
+
+Team pages can display a brief description in the **Team Information** section.
+You can use this description to clarify the team's purpose, identify the people
+responsible for managing it, or provide general information or context to the team's
+activities.
+
+You can also add links to URLs, whether within or external to Observability Platform,
+to the **Team Information** section.
+
+To access a team's information:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
+1. [Select the team](/administer/accounts-teams#view-accounts-and-teams-cloud)
+   to manage.
+1. In the **Team Information** section, click **<Icon icon="pencil" /> Edit**.
+
+To add, edit, or remove a team's description:
+
+1. Enter the team description in the **Description** field.
+1. Click **Save**.
+
+To add links to a team's information:
+
+1. In the **Team Links** section, click **<Icon icon="plus" /> Add**. This
+   adds a row of fields to the section.
+1. Enter the link text in the **Link Name** field.
+1. Enter the link target in the **URL** field.
+1. Repeat these steps to add more links.
+1. Click **Save**.
+
+To edit a team's links:
+
+1. In the **Team Links** section, modify the link's **Link Name** and **URL** fields.
+1. Click **Save**.
+
+To remove links from a team's information:
+
+1. In the **Team Links** section, click the <Icon icon="trash" /> delete
+   button in the rows of the links you want to delete.
+1. Click **Save**.
+
+### Delete a team
+
+Use one of the following methods to delete a team. The **Default** team can't be deleted.
+
+<Tabs>
+<Tab title="Cloud" id="delete-a-team-cloud">
+
+To delete a team:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
+1. [Select the team](/administer/accounts-teams#view-accounts-and-teams-cloud)
+   to delete.
+1. In the **Team Information** section, click **<Icon icon="pencil" /> Edit**.
+1. Click **Delete team**.
+1. In the confirmation dialog that appears, click **Delete**.
+
+</Tab>
+<Tab title="Chronoctl" id="delete-a-team-chronoctl">
+
+To delete teams with [Chronoctl](/tooling/chronoctl), use the `chronoctl teams delete`
+command:
+
+```shell copy /SLUG/
+chronoctl teams delete SLUG
+```
+
+Replace _`SLUG`_ with the unique slug of the team you want to delete.
+
+For example, to delete the team with the slug `dbas`, run:
+
+```shell copy
+chronoctl teams delete dbas
+```
+
+</Tab>
+<Tab title="Terraform" id="delete-a-team-terraform">
+
+<TerraformDel />
+
+</Tab>
+<Tab title="API">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteTeam`](/tooling/api-info/definition/operations/DeleteTeam) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

@@ -1,0 +1,58 @@
+---
+title: Mock Data source plugin
+sidebarTitle: Mock Data source plugin (Telemetry Pipeline)
+description: Use the Mock Data source plugin.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import PluginDuplicates from '/snippets/_partials/plugin-duplicates.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-generated.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Mock Data [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `dummy`) lets you input user-generated data into a telemetry pipeline.
+
+<SourceStyle/>
+
+<Info>
+To use the Mock Data source plugin, you must create your own dataset and feed that
+data to the plugin. If you'd prefer to have Chronosphere Telemetry Pipeline generate
+simulated log data on your behalf, use the
+[Datagen](/pipeline-data/plugins/source-plugins/datagen) plugin instead.
+</Info>
+
+<PluginDuplicates/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name          | Key | Description | Default |
+| ------------- | --- | ----------- | ------- |
+| **Mock Data** | `dummy` | Required. Your mock data, in JSON format. | _none_ |
+
+### Advanced
+
+| Name                               | Key | Description | Default |
+| ---------------------------------- | --- | ----------- | ------- |
+| **Rate**                           | `rate` | The amount of events per second to mock. | `1` |
+| **Samples**                        | `samples` | How many times to generate events. | `0` |
+| **Base Timestamp in seconds**      | `start_time_sec` | A dummy base timestamp, in seconds. | `-1` |
+| **Base Timestamp in nano seconds** | `start_time_nsec` | A dummy base timestamp, in nanoseconds | `-1` |
+| **Enable Fixed Timestamp**         | `fixed_timestamp` | If `true`, use a fixed timestamp, which lets the message pre-generate once. Accepted values: `true`, `false` | `false` |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |

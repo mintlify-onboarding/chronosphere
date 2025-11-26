@@ -1,0 +1,194 @@
+---
+title: Standalone Collector installation to retrieve metrics
+---
+import CollectorVersions from '/snippets/_partials/collector-versions.mdx';
+import ServiceAccounts from '/snippets/_partials/service-accounts.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+If you don't use Kubernetes, or want to gather metrics from services not managed by
+Kubernetes, you can run the Collector as a standalone binary.
+
+## Create an API token
+
+To interact with the Collector, you must
+[create a service account](/administer/accounts-teams/service-accounts#create-a-restricted-service-account).
+You must be a member of a team with the SysAdmin role to create a new service account.
+Chronosphere recommends creating a restricted service account with a write-only
+scope. Use the generated API token in your Kubernetes `Secret` to authenticate
+with the Collector.
+
+<Warning>
+Store your API token in a secure location. If you lose your token, you must create
+a new service account.
+</Warning>
+
+## Download the Collector binary and make it executable
+
+<CollectorVersions />
+
+1. Download one of the platform-specific binaries:
+
+   - [Linux amd64](https://storage.googleapis.com/chronosphere-release/latest/chronocollector-linux-amd64)
+   - [Linux arm64](https://storage.googleapis.com/chronosphere-release/latest/chronocollector-linux-arm64)
+   - [Windows x86-64](https://storage.googleapis.com/chronosphere-release/latest/chronocollector-windows-amd64.exe)
+   - [macOS](https://storage.googleapis.com/chronosphere-release/latest/chronocollector-darwin-amd64)
+
+1. Modify the permissions on the binary to make it executable. For example,
+   to change permissions on the `linux-amd64` version of the binary:
+
+   ```shell copy
+   chmod +x chronocollector-linux-amd64
+   ```
+
+## Define the Collector configuration file
+
+{/* vale Chronosphere.Terms = NO */}
+
+Download the [example configuration file](https://storage.googleapis.com/chronosphere-release/latest/standalone/config.yml)
+and modify any configuration values based on your needs.
+
+For applicable fields, you can set environment variables instead of specifying them
+in the configuration file. For example, to specify the `listenAddress`, set an
+environment variable named `${LISTEN_ADDRESS}` with the value you want to use, such
+as:
+
+```yaml
+listenAddress: "${LISTEN_ADDRESS:0.0.0.0:3029}"
+```
+
+The following list includes key fields for which you can specify values:
+
+- **Backend**: You must add a `gateway` backend to specify your Chronosphere
+  instance.
+
+  ```yaml
+  backend:
+     type: gateway
+     gateway:
+        address: {MY_COMPANY}.chronosphere.io:443
+        insecure: false
+        cert: ""
+        certSkipVerify: false
+  ```
+
+  Replace _`MY_COMPANY`_ with your company name prefixed to your Chronosphere instance that
+  ends in `.chronosphere.io:443`. For example, _`MY_COMPANY`_`.chronosphere.io:443`.
+
+- **Global Labels**: If you don't need to apply global labels to all metrics, remove
+  the `labels` key. If you need global labels and are scraping metrics from a
+  Prometheus endpoint, you can apply labels to each scrape target.
+
+  For example, to add `host` and `rack` to each metric:
+
+  ```yaml
+  static_configs:
+     - targets: ['0.0.0.0:9100']
+        labels:
+           host: 'prod-server'
+           rack: '14'
+  ```
+
+  <Info>
+Each Prometheus scrape configuration type has a different way of specifying global
+  labels. Refer to the Prometheus
+  [scrape configuration documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config)
+  for more details.
+</Info>
+
+- **Discovery**: To scrape a static Prometheus endpoint, configure a scrape setting.
+  Refer to the Prometheus
+  [service discovery documentation](/ingest/metrics-traces/collector/discover)
+  for more details.
+
+## Run the Collector
+
+You can run the Collector standalone with a binary, with Docker, or as a Systemd
+service. To run the Collector, pass the configuration file and generated API token.
+
+Replace the following values before running the startup commands:
+
+- _`MY_COMPANY`_: Your company name prefixed to your Chronosphere instance that
+  ends in `.chronosphere.io:443`. For example, _`MY_COMPANY`_`.chronosphere.io:443`.
+- _`PATH_TO_FILE`_: The path to your Collector configuration file.
+- _`API_TOKEN`_: The API token generated from your service account.
+- _`VERSION`_: Version of the Collector that you want to run, prefixed with `v`.
+
+### Run standalone with a binary
+
+```shell copy
+GATEWAY_ADDRESS=MY_COMPANY.chronosphere.io:443 API_TOKEN=API_TOKEN PATH_TO_FILE/COLLECTOR_BINARY -f PATH_TO_FILE/config.yml
+```
+
+### Run standalone with Docker
+
+```shell copy
+docker run -v $(pwd)/PATH_TO_FILE/config.yml:/etc/chronocollector/config.yml -e "GATEWAY_ADDRESS=MY_COMPANY.chronosphere.io:443" -e "API_TOKEN=API_TOKEN" gcr.io/chronosphereio/chronocollector:vVERSION
+```
+
+### Run standalone as a service
+
+You can install the Collector as a Systemd service on Linux systems:
+
+1. Create a `chronocollector` user and group:
+
+   ```shell copy
+   sudo groupadd -f chronocollector
+   sudo useradd -g chronocollector --no-create-home --shell /bin/false chronocollector
+   ```
+
+1. Change the ownership of the directory containing the Collector configuration file.
+   The following command expects the Collector `config.yml` file in the
+   `/etc/chronocollector` directory:
+
+   ```shell copy
+   sudo chown -R chronocollector:chronocollector /etc/chronocollector
+   ```
+
+1. Copy the Collector binary to the `/usr/bin` directory and modify the permissions:
+
+   ```shell copy
+   sudo cp ./chronocollector /usr/bin/
+   sudo chown chronocollector:chronocollector /usr/bin/chronocollector
+   ```
+
+1. In the `/usr/lib/systemd/system` directory, create and define a script such as
+   `chronocollector.service` for the Collector service:
+
+   ```text copy
+   [Unit]
+   Description=Chronocollector
+   Documentation=https://docs.chronosphere.io/ingest/metrics-traces/collector
+   Wants=network-online.target
+   After=network-online.target
+
+   [Service]
+   User=chronocollector
+   Group=chronocollector
+   Type=simple
+   Restart=on-failure
+
+   Environment="GATEWAY_ADDRESS=MY_COMPANY.chronosphere.io:443"
+   Environment="API_TOKEN=API_TOKEN"
+
+   ExecStart=/usr/bin/chronocollector -f /etc/chronocollector/config.yml
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+1. Change the permissions of the `chronocollector.service` script you created:
+
+   ```shell copy
+   sudo chmod 664 /usr/lib/systemd/system/chronocollector.service
+   ```
+
+1. Enable and verify the `chronocollector` service:
+
+   ```shell copy
+   sudo systemctl daemon-reload
+   sudo systemctl start chronocollector
+   sudo systemctl status chronocollector
+   sudo systemctl enable chronocollector.service
+   ```

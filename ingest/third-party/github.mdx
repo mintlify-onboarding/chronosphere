@@ -1,0 +1,106 @@
+---
+title: Send GitHub events to Observability Platform
+description: Create a webhook to send your GitHub events to Chronosphere Observability Platform as change events.
+---
+import EventsToken from '/snippets/_partials/events-token.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+To send GitHub events to Chronosphere Observability Platform, create a webhook
+within GitHub and include your API key to authenticate with Observability Platform.
+For more information, refer to
+[webhook events and payloads](https://docs.github.com/en/webhooks/webhook-events-and-payloads)
+in the GitHub documentation.
+
+## Obtain an API token
+
+Before sending events from GitHub, contact [Chronosphere Support](/support) to obtain
+an API token for use with authenticating your third-party app with Observability
+Platform.
+
+<EventsToken />
+
+## Create a GitHub webhook
+
+To send GitHub events to Observability Platform:
+
+1. In GitHub, open the repository you want to configure a webhook for.
+1. Click **Settings**.
+1. Under **Code and automation**, click **Webhooks**.
+1. In the **Add webhook** window, in the **Payload URL** field, enter:
+
+   ```text copy /TENANT/
+   https://TENANT.chronosphere.io/api/v1/data/events/receiver/github
+   ```
+
+   Replace _`TENANT`_ with your organization name from your Observability Platform
+   tenant.
+
+1. Select **application/json** as the **Content type**.
+1. In the **Secret** field, enter the API token you obtained from Chronosphere
+   Support.
+1. Choose **Let me select individual events**, and then select **Deployment** and
+   **Deployment Status** as the events to trigger the webhook.
+1. Save your webhook.
+
+## Map GitHub events to Observability Platform events
+
+After creating a GitHub webhook to send events to Observability Platform, you can use
+Observability Platform or the CreateEvent API to
+[create change events](/observe/enable-events/use-events#create-change-events).
+
+Observability Platform automatically maps the GitHub payload to change events in
+Observability Platform. You can't customize how the payload maps to change events. If
+you want to modify how the GitHub payload gets mapped, contact
+[Chronosphere Support](/support).
+
+The following table indicates the fields and values required to create a GitHub event
+in Observability Platform:
+
+| Field         | Value |
+| ------------- | ----- |
+| `category`    | `deploys` |
+| `type`        | `deploy_ACTION` |
+| `source`      | `github` |
+| `happened_at` | `TIMESTAMP` |
+| `title`       | `TITLE` |
+
+Replace the following:
+
+- _`ACTION`_: The type of `deploy` event to create, such as `deploy_start`,
+  `deploy_in_progress`, or `deploy_end`.
+- _`TIMESTAMP`_: The time event occurred, which must be between 24 hours in the
+  past or 24 hours in the future. Defaults to `now` if not specified.
+- _`TITLE`_: A short description of the event that occurred, such as a commit
+  message of a code deploy.
+
+The following sample request creates a `deploy` event from GitHub with a `type` of
+`deploy_start`. Observability Platform maps the `environment`, `deploy.sha`, and
+`deploy.log_url` labels by default.
+
+Replace the following:
+
+- _`TENANT`_: Your organization name from your Observability Platform tenant.
+- _`CHRONOSPHERE_API_TOKEN`_: The API token for authenticating with Observability Platform.
+
+```shell copy /TENANT/ /CHRONOSPHERE_API_TOKEN/
+curl --request POST \
+  --url https://TENANT.chronosphere.io/api/v1/data/events/receiver/github \
+  --header "API-Token: $CHRONOSPHERE_API_TOKEN" \
+  --data '{
+  "event": {
+    "category": "deploys",
+    "happened_at": "2024-07-24T14:15:22Z",
+    "payload": {},
+    "labels": {
+      "environment": "staging",
+      "deploy.sha": "fr123456f5g1234c2e01c12345f5bc1a2bf0g40"
+      "deploy.log_url": "https://link_to_github_deploy_event"
+    },
+    "source": "github",
+    "title": "Deploy to staging environment",
+    "type": "deploy_start"
+  }
+}'
+```

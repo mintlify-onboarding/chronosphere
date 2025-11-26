@@ -1,0 +1,105 @@
+---
+title: Cloudflare LogPush source plugin
+sidebarTitle: Cloudflare LogPush source plugin (Telemetry Pipeline)
+description: Receive pipeline data from Cloudflare LogPush.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import PluginDuplicates from '/snippets/_partials/plugin-duplicates.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-push.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+> Requires [pipeline agent](/pipelines/core-components) v25.3.8 or later.
+
+The Cloudflare LogPush [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `cloudflare`) lets you ingest data from Cloudflare LogPush jobs into a
+telemetry pipeline.
+
+<SourceStyle/>
+
+<PluginDuplicates/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name | Key | Description | Default |
+|---|---|---|---|
+| **Port** | `addr` | The port where Telemetry Pipeline will listen for incoming data. In the Telemetry Pipeline web interface, you only need to specify the actual port number. In pipeline configuration files, this value combines the network interface and port number. The network interface for this plugin is always `0.0.0.0`. | `9880` in the web interface, `0.0.0.0:9880` in pipeline configuration files |
+
+### Security and TLS
+
+| Name | Key | Description | Default |
+|---|---|---|---|
+| **HTTP Username** | `http_user` | Your username for HTTP basic authentication, if applicable. | _none_ |
+| **HTTP Password**| `http_passwd` | Your password for HTTP basic authentication, if applicable. | _none_ |
+| **TLS Certificate** | `cert_file` | The path to your TLS certificate file, if applicable. | _none_ |
+| **TLS Key** | `key_file` | The path to your TLS key file, if applicable. | _none_ |
+
+
+{/* vale Chronosphere.WordList = NO */}
+
+### Ownership Challenge
+
+| Name | Key | Description | Default |
+|---|---|---|---|
+| **Skip Ownership Challenge** | `skipownershipchallenge` | If `false`, this plugin will trigger a [Cloudflare ownership challenge](#ownership-challenge). If `true`, this plugin won't trigger an ownership challenge. | `true` |
+| **Cloudflare API Key or API Token** | `cloudflareapikey` | Required if **Skip Ownership Challenge** is `false`. The Cloudflare API key or API token to use in the ownership challenge. This parameter supports plain text values and the environment variables `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_API_KEY`. | _none_ |
+| **Cloudflare Email** | `cloudflareemail` | Required if **Skip Ownership Challenge** is `false` and if using key-based authentication, but not token-based authentication. The email address associated with your Cloudflare account. In addition to plain text values, this parameter supports the environment variable `CLOUDFLARE_EMAIL`. | _none_ |
+| **Destination** | `destination` | Required if **Skip Ownership Challenge** is `false`. The HTTP destination that you configured for your LogPush job. This parameter supports plain text values and the environment variable `CLOUDFLARE_DESTINATION`. | _none_ |
+| **Cloudflare Account ID** | `cloudflareaccountid` | Required if **Skip Ownership Challenge** is `false` and if **Cloudflare Zone ID** is unset. The Cloudflare account ID associated with your LogPush job. This parameter supports plain text values and the environment variable `CLOUDFLARE_ACCOUNT_ID`. | _none_ |
+| **Cloudflare Zone ID** | `cloudflarezoneid` | Required if **Skip Ownership Challenge** is `false` and if **Cloudflare Account ID** is unset. The Cloudflare zone ID associated with your LogPush job. This parameter supports plain text values and the environment variable `CLOUDFLARE_ZONE_ID`. | _none_ |
+
+{/* vale Chronosphere.WordList = YES */}
+
+### Advanced
+
+| Name | Key | Description | Default |
+|---|---|---|---|
+| **Response Headers** | `resp_headers` | The header for Telemetry Pipeline to include in responses to Cloudflare. To include multiple headers, include each header as a new line. Supports templating. | `Content-Type:application/json` |
+| **Response Status Code** | `resp_status_code` | The HTTP status code for Telemetry Pipeline to include in responses to Cloudflare. | `200` |
+| **Response Body** | `resp_body` | The response body for Telemetry Pipeline to send to Cloudflare. Supports templating. | `{"status": "ok"}` |
+| **Time Extraction Template** | `time_from` | The template to extract time data from logs. For example, if your logs use the RFC3339 time format, set the value `{{.Format time.RFC3339Nano}}`. If no value is set, Telemetry Pipeline assigns a timestamp to each log based on when we _receive_ that log. | _none_ |
+| **Cloudflare Base URL** | `baseurl` | Required if **Skip Ownership Challenge** is `false`. The Cloudflare API base URL to use in the ownership challenge. This parameter supports plain text values and the environment variable `CLOUDFLARE_BASE_URL`. | `https://api.cloudflare.com/client/v4/` |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |
+
+## LogPush jobs
+
+For information about setting up Cloudflare LogPush jobs, consult the Cloudflare
+LogPush [Enable HTTP destination](https://developers.cloudflare.com/logs/get-started/enable-destinations/http/)
+guide.
+
+When you create a new LogPush job in Cloudflare, there might be a delay before
+data from that job starts flowing to Telemetry Pipeline. Similarly, when you delete
+a LogPush job in Cloudflare, there might be a delay before data stops flowing.
+These delays can range anywhere from a few minutes to 15 minutes.
+
+## Ownership challenge
+
+You can set **Skip Ownership Challenge** to `false` to trigger a one-time
+[Cloudflare ownership challenge](https://developers.cloudflare.com/api/resources/logpush/subresources/ownership/methods/create/)
+for enhanced security and safety. However, this ownership challenge is optional,
+and it's possible to send LogPush data to Telemetry Pipeline without it.
+
+<Info>
+If you trigger an ownership challenge outside of Telemetry Pipeline, the ensuing
+challenge response will appear in your pipeline logs, including tokens, and will
+be sent to any of your pipeline's active destinations. This behavior occurs even
+when the **Skip Ownership Challenge** setting in Telemetry Pipeline is set to
+`true`.
+</Info>

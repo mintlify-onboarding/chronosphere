@@ -1,0 +1,82 @@
+---
+title: Troubleshoot Telemetry Pipeline installations on Linux
+sidebarTitle: Troubleshoot Telemetry Pipeline Linux installations
+description: Steps to troubleshoot Chronosphere Telemetry Pipeline Linux installations
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+As part of the installation process, Chronosphere Telemetry Pipeline performs
+[health checks](/pipeline-install/install-operator/linux#health-checks) on your behalf.
+If you encounter any issues when trying to install Telemetry Pipeline, Chronosphere
+recommends taking the following troubleshooting steps.
+
+{/* vale Chronosphere.Units = NO */}
+
+1. Check for any warnings or errors in the output of the health checks
+   that Telemetry Pipeline ran on your behalf.
+
+1. Confirm that you've met the
+   [networking and OS requirements](/pipeline-install/prereqs)
+   for Telemetry Pipeline.
+
+1. Confirm that you've met the
+   [K3s requirements](https://docs.k3s.io/installation/requirements).
+
+1. Run the following command to disable FIPS mode, and then reboot:
+
+   ```shell copy
+   fips-mode-setup --disable
+   ```
+
+1. Run the following command to disable your firewall:
+
+   <Tabs>
+   <Tab title="RHEL">
+
+      ```shell copy
+      systemctl disable firewalld --now
+      ```
+
+   </Tab>
+   <Tab title="Ubuntu">
+
+      ```shell copy
+      ufw disable
+      ```
+
+   </Tab>
+   </Tabs>
+
+1. Verify that SELinux is either disabled or in permissive (not enforcing) mode.
+
+1. For Red Hat Enterprise Linux only, verify that your cryptographic policy is set to
+   either `default` or `legacy`.
+
+1. For Red Hat Enterprise Linux only, run the following command to disable
+   `nm-cloud-setup`, then reboot the node:
+
+   ```shell copy
+   systemctl disable nm-cloud-setup.service nm-cloud-setup.timer
+   reboot
+   ```
+
+1. Examine the following K3s network ranges to ensure they aren't conflicting
+   with your network settings:
+
+   - Pods are allocated in the CIDR range `10.42.0.0/16`. Use the
+     `INSTALL_CALYPTIA_CLUSTER_CIDR` environment variable to override.
+   - Services are allocated in the CIDR range `10.43.0.0/16`. Use the
+     `INSTALL_CALYPTIA_SERVICE_CIDR` environment variable to override.
+   - Cluster DNS is set to `10.43.0.10`. Use the `INSTALL_CALYPTIA_CLUSTER_DNS`
+     environment variable to override.
+   - The cluster domain suffix is set to `cluster.local`. Use the
+     `INSTALL_CALYPTIA_CLUSTER_DOMAIN` environment variable to override.
+   - Node ports are allocated in the range `30000` to `32767`. Use the
+     `INSTALL_CALYPTIA_SERVICE_NODE_PORT_RANGE` environment variable to override
+     during installation.
+
+1. Examine your local `/etc/resolv.conf` configuration to ensure it isn't using
+   a DNS server or specifying any override that might conflict with K3s.
+
+{/* vale Chronosphere.Units = YES */}

@@ -1,0 +1,35 @@
+---
+title: Set up single sign-on
+description: Set up SSO for Telemetry Pipeline through your organization's identity provider.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+If your organization manages user credentials through an identity provider,
+you can use either SAML or OIDC to set up single sign-on (SSO) access to the
+Chronosphere Telemetry Pipeline web interface.
+
+## SAML authentication
+
+To set up SAML authentication through your identity provider, you must:
+
+- Use the value `CONNECTION_NAME` for your connection name.
+- Set the single sign-on URL to `https://sso.calyptia.com/login/callback?connection=CONNECTION_NAME`.
+- Set the audience URI or SP entity ID to `urn:auth0:dev-15smjh-e:CONNECTION_NAME`.
+- Include the attributes `name`, `email`, and `email_verified` in your SAML assertion:
+    - Use the value `user.firstName` for the `name` attribute.
+    - Use the value `user.email` for the `email` attribute.
+    - Use the value `true` for the `email_verified` attribute.
+- Download an X.509 certificate from your identity provider.
+
+After completing these tasks, notify Chronosphere that you've enabled a SAML
+connection, and include a copy of your X.509 certificate with your message.
+
+## OIDC authentication
+
+To set up OIDC authentication through your identity provider, you must:
+
+- Set the sign-in redirect URIs to `https://sso.calyptia.com/login/callback` and
+  `https://dev-15smjh-e.us.auth0.com/login/callback`.
+
+After completing this task, notify Chronosphere that you've enabled an OIDC connection.

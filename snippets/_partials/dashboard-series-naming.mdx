@@ -1,0 +1,8 @@
+
+**Series naming**: Select a method to filter for metrics:
+
+  - **Labels** require a **Naming pattern**. Use `{{ label_name }}` to include a
+    label value. For example, `{{ env }}` will be replaced with values like staging-1, prod-1.
+  - **Regex**: Use a [regular expression](/investigate/querying/regular-expressions)
+    in the **Regex** text field to match a time series. You can also use a
+    **Naming pattern** to rename series using capture groups.

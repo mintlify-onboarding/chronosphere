@@ -1,0 +1,45 @@
+---
+title: Fixing slow queries and dashboards
+description: Learn about ways to improve slow queries and dashboards to avoid query truncation.
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+There are several ways to improve slow queries and dashboards and avoid query
+truncation.
+
+Use the [Metrics Query Capacity Overview dashboard](/observe/dashboards/chronosphere-managed-dashboards#metrics-query-capacity-overview)
+to find slow queries.
+
+- **Use aggregation functions.**
+
+  Use functions like `sum()`, `avg()`, `min()`, and `max()` to aggregate time series.
+  Although the query fetches all the underlying metrics, it displays only the
+  aggregated result.
+
+- **Use aggregation rules to reduce the number of time series returned by queries.**
+
+  [Rollup rules](/control/shaping/rules) can eliminate labels that aren't needed.
+  [Drop rules](/control/shaping/rules/drop-rules) reduce data before it's stored.
+
+  Query Accelerator automatically scans for slow dashboard aggregation queries and
+  replaces them with pre-aggregated results to accelerate dashboard load times.
+
+- **Narrow a query's scope by time or label.**
+
+  Queries often return more time series than needed for analysis or visualization.
+
+  For example, to improve performance and visualization usability when querying
+  `http_requests_total`, you can split either `endpoint` or `status_code` into
+  separate graphs.
+
+  ```shell copy
+  http_requests_total{status_code="2xx"}
+  http_requests_total{status_code=~"3xx|4xx|5xx"}
+  ```
+
+- **Collapse unused dashboard rows.**
+
+  Grafana can [define rows](https://grafana.com/docs/grafana/v7.5/dashboards/#rows).
+  When you collapse a row, Grafana doesn't load the underlying graphs. Grafana saves
+  each row's state and doesn't load graphs in a collapsed row until you expand it.

@@ -1,0 +1,106 @@
+---
+title: Ingest, query, and control your trace data
+description: Learn about interacting with trace data in Chronosphere Observability Platform.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+[Distributed tracing](/overview/concepts/distributed-tracing) is the process of
+mapping and analyzing requests as they flow through a distributed system. Use the
+following documentation to learn about how to interact with trace data in
+Chronosphere Observability Platform.
+
+## Ingest
+
+Observability Platform supports ingesting trace data with both the Chronosphere
+Collector and the OpenTelemetry Collector. An added benefit of using the
+OpenTelemetry Collector is configuring [head sampling](/control/sampling/head-sampling),
+which is a powerful control mechanism for managing your tracing costs.
+
+<Columns cols={2}>
+  <Card icon="paper-plane"
+    title="Ingest data"
+    titleBackgroundColor="#a63923"
+    titleTextColor="#FFFFFF"
+    href="/ingest/metrics-traces"
+  />
+</Columns>
+
+## Query
+
+Learn how to construct queries in Trace Explorer to search for traces and spans to
+help identify, triage, and understand the root cause of problems. See the
+[features overview](/investigate/querying/traces/features) to learn more about the
+capabilities that Trace Explorer provides.
+
+<Columns cols={2}>
+  <Card icon="magnifying-glass-plus"
+    title="Query data"
+    titleBackgroundColor="#a63923"
+    titleTextColor="#FFFFFF"
+    href="/investigate/querying/traces"
+  />
+</Columns>
+
+## Observe
+
+Create standard dashboards query and
+[visualize log data](/investigate/querying/dashboard-query) queries. You can also
+create [alerts](/investigate/alerts/monitors) to watch time series data that's
+specified in a monitor query, and receive notifications when the query matches
+specified logs.
+
+<Columns cols={2}>
+  <Card icon="display"
+    title="Observe data"
+    titleBackgroundColor="#a63923"
+    titleTextColor="#FFFFFF"
+    href="/observe/dashboards"
+  />
+</Columns>
+
+## Connect
+
+Create links to related data from other parts of Observability Platform, such as
+linking to logs from traces and linking to traces from dashboards.
+
+<Columns cols={2}>
+  <Card icon="link"
+    title="Create links"
+    titleBackgroundColor="#a63923"
+    titleTextColor="#FFFFFF"
+    href="/investigate/querying/create-links"
+  />
+</Columns>
+
+## Analyze
+
+Analyze your trace data to gain insights, understand the value of your data
+semantics, and highlight changes and their impacts. Use
+[differential diagnosis](/investigate/analyze/differential-diagnosis/traces)
+to identify issues behind suspicious trends.
+
+<Columns cols={2}>
+  <Card icon="chart-bar"
+    title="Analyze data"
+    titleBackgroundColor="#a63923"
+    titleTextColor="#FFFFFF"
+    href="/investigate/analyze/trace-analyzer"
+  />
+</Columns>
+
+## Control
+
+Use the Chronosphere Trace Control Plane to narrow your focus to only a
+representative sample of your data and drop everything else. Identify and evaluate
+data, and then sample the overall dataset to eliminate waste, unnecessary noise, and
+cost.
+
+<Columns cols={2}>
+  <Card icon="shapes"
+    title="Control data"
+    titleBackgroundColor="#a63923"
+    titleTextColor="#FFFFFF"
+    href="/control/sampling"
+  />
+</Columns>

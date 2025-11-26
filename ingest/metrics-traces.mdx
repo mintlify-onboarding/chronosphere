@@ -1,0 +1,54 @@
+---
+title: Ingest metric and trace data
+sidebarTitle: Ingest metrics and traces
+description: Learn about the collection methods used to ingest metrics and traces into Chronosphere Observability Platform.
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Chronosphere Observability Platform supports two
+[Collectors](#chronosphere-collector-or-opentelemetry-collector) to ingest metric
+and trace data, the Chronosphere Collector and the OpenTelemetry Collector.
+Observability Platform also supports direct metric imports from
+[Google Cloud](#google-cloud).
+
+## Chronosphere Collector or OpenTelemetry Collector
+
+Your Collector selection depends on the telemetry data you plan to ingest.
+
+Chronosphere recommends using the vendor-supported, optimized, and highly performant
+[Chronosphere Collector](/ingest/metrics-traces/collector) for Prometheus discovery and scrape
+workloads. This use case typically works best with metrics data.
+
+Use the [OpenTelemetry Collector](/ingest/metrics-traces/otel/) if your organization uses
+OpenTelemetry SDKs for app instrumentation. An added benefit of using the
+OpenTelemetry Collector is you can configure dynamic, remotely configurable
+[head sampling](/control/sampling/head-sampling), which is a powerful control
+mechanism for managing your tracing costs. Observability Platform supports the
+[OpenTelemetry JaegerRemoteSampler](https://opentelemetry.io/docs/specs/otel/trace/sdk/#jaegerremotesampler)
+head sampling standard for remotely controlling the sampling configuration of
+OpenTelemetry SDKs.
+
+| Chronosphere Collector                  | OpenTelemetry Collector        |
+|:----------------------------------------|:-------------------------------|
+| Proprietary                             | Open source                    |
+| Fully supported by Chronosphere Support | Exporter configuration support |
+| No remote trace sampling support        | Remote trace sampling support  |
+
+<Info>
+Chronosphere doesn't provide customer support for OpenTelemetry components.
+</Info>
+
+## Google Cloud
+
+Observability Platform can import metrics data directly from
+[Google Cloud](/ingest/metrics-traces/gcp). Google Cloud metrics map closely to the
+default Prometheus metrics that Observability Platform uses.
+
+## Amazon Web Services
+
+Observability Platform supports receiving CloudWatch metrics through
+[CloudWatch Metrics Streams](/ingest/metrics-traces/aws-cloudwatch-metric-stream).
+You can configure Amazon Web Services (AWS) to continually stream metrics to
+Observability Platform by configuring CloudWatch Metric Streams, either manually in
+the AWS Management Console or by using Terraform.

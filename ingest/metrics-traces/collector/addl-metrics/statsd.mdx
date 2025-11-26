@@ -1,0 +1,113 @@
+---
+title: Receive and aggregate metrics from StatsD
+sidebarTitle: StatsD ingestion
+description: Processes and configuration for receiving StatsD metrics to Chronosphere Observability Platform.
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+The Chronosphere Collector supports Graphite metrics and two methods of configuring
+Graphite-related ingestion: StatsD or
+[Carbon](/ingest/metrics-traces/collector/addl-metrics/carbon). To enable or make
+changes to Graphite ingestion, contact [Chronosphere Support](/support).
+
+StatsD sends unaggregated data to the Chronosphere Collector, which aggregates StatsD
+metrics at a configurable interval and sends them to Chronosphere Observability Platform.
+
+## Deploy the Chronosphere Collector
+
+{/* This section is reused in /ingest/metrics-traces/collector/addl-metrics/tagged-statsd */}
+
+StatsD metrics libraries primarily send metrics using the User Datagram Protocol
+(UDP), which sends packets with no handshakes, retries, acknowledgments, or other
+reliability mechanisms. Using UDP to send data over the network increases the risk
+of losing metrics data due to lost packets or other network issues. Keeping communication
+on the same Kubernetes node reduces these issues because local UDP communication
+is generally more stable.
+
+### Install Collector as a Kubernetes DaemonSet
+
+To install the Chronosphere Collector, follow the steps described in
+[Kubernetes Collector installation to retrieve metrics](/ingest/metrics-traces/collector/install/kubernetes).
+
+## Configure Chronosphere Collector for StatsD metrics
+
+Perform the following steps to configure Chronosphere Collector for StatsD metrics.
+
+1. Use the configuration in the
+   [annotated manifest](https://storage.googleapis.com/chronosphere-release/latest/kubernetes/chronocollector.yaml)
+   from
+   [Kubernetes Collector installation to retrieve metrics](/ingest/metrics-traces/collector/install/kubernetes)
+   as a starting point.
+1. Enable StatsD mode using the `push.statsd.enabled` YAML collection in the Collector
+   manifest:
+
+   ```yaml copy
+   push:
+     statsd:
+       enabled: true
+   ```
+
+1. Configure additional [StatsD configuration options](#statsd-configuration-options)
+   under the `push.statsd` YAML collection as necessary.
+
+## StatsD configuration options
+
+You can configure the following options in the Collector manifest for StatsD,
+with the exception of those denoted in the following list as not configurable, which
+appear in code configuration output but can't be overridden by changing their values.
+
+- `enabled`: A Boolean option that determines whether to enable StatsD mode under
+  the `push.statsd.enabled` YAML collection in the Chronosphere Collector configuration.
+  Default: `true`.
+- `listenAddress`: The address and port on which the server listens for connections.
+  Point StatsD clients sending metrics to this address and port. Default: `0.0.0.0:3031`.
+- `listenProtocol`: Defines whether to use `udp` or `tcp` protocols. Default: `udp`.
+- `aggregation`: A YAML collection that defines how the Collector aggregates data
+  samples.
+
+  When Chronosphere Collector ingests a data sample, it aggregates the data based
+  on the metric type and sends a single data point to Observability Platform that
+  represents the sample for the defined `interval`. These aggregations reduce network
+  egress and processed writes to Observability Platform.
+
+  Chronosphere Collector aggregates data points based on the metric type as follows:
+  - `counters` (not configurable): Sums all data point values for a time series
+    and sends the `SUM` as a [`DELTA COUNTER`](/control/shaping/types#delta-counter).
+  - `gauges` (not configurable): Selects the `LAST` value for a time series in the
+    interval.
+  - `timers`: A YAML collection that defines the aggregation type of timers.
+
+    By default, Chronosphere Collector doesn't aggregate timer values.
+    Aggregation rules are required to aggregate timers at ingestion.
+    - `aggregationType`: Defines how Chronosphere Collector aggregates timers.
+      Default: `none`, which supports using Graphite to query metrics.
+
+      Set this value to `histogram` to instead send a
+      [`DELTA EXPONENTIAL HISTOGRAM`](/control/shaping/types#delta-exponential-histograms)
+      that can be queried only by using PromQL.
+  - `interval`: Defines the amount of time before writing to Observability Platform.
+    Use an interval value that aligns with your licensed persisted writes and
+    cardinality ratio. A more frequent aggregation interval increases persisted writes.
+    Default: `60s`.
+  - `inactiveExpireAfter`: Determines the amount of time before Chronosphere Collector
+    evicts unused aggregation keys from the local cache. Default: `2m`.
+
+## Example configuration
+
+The following example YAML collection lists all of the configuration options for
+receiving StatsD metrics with Chronosphere Collector:
+
+```yaml copy
+push:
+  statsd:
+    enabled: true
+    listenAddress: 0.0.0.0:3031
+    listenProtocol: udp
+    aggregation:
+      timers:
+        # Valid values are "histogram" and "none"
+        aggregationType: none
+      interval: 60s
+      inactiveExpireAfter: "2m"
+```

@@ -1,0 +1,251 @@
+---
+title: Tagged StatsD ingestion
+description: Processes and configuration for receiving tagged StatsD metrics to Chronosphere Observability Platform and using the parsed results.
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Various StatsD libraries have extended
+[StatsD](/ingest/metrics-traces/collector/addl-metrics/statsd) to add key-value tags
+to the metric path.
+
+Beginning with v0.111.0, [Chronosphere Collector](/ingest/metrics-traces/collector)
+supports parsing key-value tags from segments of the metric path where the path segment
+contains a defined prefix. This variant is referred to in Chronosphere Observability Platform
+as the `taggedStatsd` protocol.
+
+Chronosphere Collector aggregates and converts tagged StatsD metrics to Observability Platform
+metric types. You can query metrics ingested with the `taggedStatsd` protocol only using PromQL.
+
+The following mapping illustrates how Chronosphere Collector processes this variant
+of a tagged StatsD metric upon ingestion, transforms it to an Observability Platform-compatible
+metric with corresponding labels and values, and makes it queryable using PromQL.
+
+| StatsD metric | Parsed result |
+| ------------- | ------------- |
+| `metric.path.__key1=value1.__key2=value2` | `metric_path{key1="value1", key2="value2"}` |
+| `metric.path.__key1`                      | `metric_path{key1=""}` |
+
+## Deploy the Chronosphere Collector
+
+{/* This section is reused in /ingest/metrics-traces/collector/addl-metrics/statsd */}
+
+StatsD metrics libraries primarily send metrics using the User Datagram Protocol
+(UDP), which sends packets with no handshakes, retries, acknowledgments, or other
+reliability mechanisms. Using UDP to send data over the network increases the risk
+of losing metrics data due to lost packets or other network issues. Keeping communication
+on the same Kubernetes node reduces these issues because local UDP communication
+is generally more stable.
+
+### Install Collector as a Kubernetes DaemonSet
+
+To install the Chronosphere Collector, follow the steps described in
+[Kubernetes Collector installation to retrieve metrics](/ingest/metrics-traces/collector/install/kubernetes).
+
+The manifest defines a ClusterRole with the permissions required to access the local
+Kubelet API and mounts a volume to access the `cgroups` directory on the node.
+
+## Configure Chronosphere Collector for tagged StatsD metrics
+
+Perform the following steps to configure Chronosphere Collector for tagged StatsD
+metrics.
+
+1. Use the configuration in the
+   [annotated manifest](https://storage.googleapis.com/chronosphere-release/latest/kubernetes/chronocollector.yaml)
+   from
+   [Kubernetes Collector installation to retrieve metrics](/ingest/metrics-traces/collector/install/kubernetes)
+   as a starting point.
+1. Add `hostNetwork: true` to the DaemonSet `template.spec` YAML to enable network
+communication on the host network. This is necessary to preserve the source
+IP address for IP-based Pod association.
+
+   ```yaml copy file="template.spec"
+   spec:
+     template:
+     spec:
+       hostNetwork: true
+   ```
+
+1. Enable tagged StatsD mode using the `push.taggedStatsd.enabled` YAML collection
+   in the Collector manifest:
+
+   ```yaml copy
+   push:
+     taggedStatsd:
+       enabled: true
+   ```
+
+1. Configure [additional tagged StatsD configuration options](#tagged-statsd-configuration-options)
+   as necessary in the `push.taggedStatsd` YAML collection.
+
+## Tagged StatsD configuration options
+
+You can configure the following options in the Collector manifest for tagged StatsD,
+with the exception of those denoted in the following list as not configurable. Those
+options appear in code configuration output but can't be overridden by changing their
+values.
+
+In addition to augmenting labels with metadata from Kubernetes Pods, Collector v0.115.0
+and later also supports label augmentation derived from the Kubernetes Node on which
+the Collector is running. Node metadata is fetched only once, at startup.
+
+- `enabled`: A Boolean option that determines whether to enable Tagged StatsD mode under
+  the `push.taggedStatsd.enabled` YAML collection in the Chronosphere Collector
+  configuration. Default: `true`.
+- `listenAddress`: The address and port on which the server listens for connections.
+  Point tagged StatsD clients sending metrics to this address and port.
+  Default: `0.0.0.0:8225`.
+- `listenProtocol`: Defines whether to use `udp` or `tcp` protocols. Default: `udp`.
+- `aggregation`: A YAML collection that defines how the Collector aggregates data
+  samples.
+
+  When Chronosphere Collector ingests a data sample, it aggregates the data based
+  on the metric type and sends a single data point to Observability Platform that
+  represents the sample for the defined `interval`. These aggregations reduce network
+  egress and processed writes to Observability Platform.
+
+  Chronosphere Collector aggregates data points based on the metric type as follows:
+  - `counters` (not configurable): Sums all data point values for a time series
+    and sends the `SUM` as a [`DELTA COUNTER`](/control/shaping/types#delta-counter).
+  - `gauges` (not configurable): Selects the `LAST` value for a time series in the
+    interval.
+  - `timers` (not configurable): Aggregates timer values into a
+    [`DELTA EXPONENTIAL HISTOGRAM`](/control/shaping/types#delta-exponential-histograms).
+    - `interval:` Defines the amount of time before writing to Observability Platform.
+      Use an interval value that aligns with your licensed persisted writes and
+      cardinality ratio. A more frequent aggregation interval increases persisted writes.
+      Default: `60s`.
+    - `inactiveExpireAfter:` Determines the amount of time before Chronosphere Collector
+      evicts unused aggregation keys from the local cache and sends a staleness marker for
+      the time series. Default: `2m`.
+- `labels`: Adds labels to all pushed tagged StatsD metrics. Define each label as
+  a key-value pair. For example, the default configuration adds the labels `env`
+  and `k8s_cluster_name` and uses environment variables for the values.
+- `prefix`: Adds a prefix to all pushed tagged StatsD metrics. For example, setting
+  this value to `qa` prefixes all metric names with `qa` followed by the dot operator
+  (`.`). A metric such as `build_info.ip` is renamed `qa.build_info.ip` and normalized
+  to `qa_build_info_ip`.
+- `labelsFromMetricPath.prefixedKeyValuePairs.prefix`: Defines how to extract key-value
+  pairs from the metric path. For example, if the `prefix` value is `__`,  then
+  `metric.path.__key=value` becomes `metric_path{key="value"}` when converted to
+  Prometheus format.
+
+  Chronosphere Collector does not define a default prefix. Provide a prefix value
+  to enable tag extraction.
+- `sanitization:` A YAML collection that Defines character replacement rules for
+  producing sanitized metric names and label values.
+  - `metricName:` Creates a map of each character to replace in a metric name and
+    its replacement character.
+  - `labelValue:` Creates a map of each character to replace in a label value and
+    its replacement character.
+- `kubernetesMetadataAugmentation`: A YAML collection that defines the configuration
+  and addition of Kubernetes metadata, labels, and annotations to be added to the
+  time series. Chronosphere Collector maps the incoming connection IP address to
+  the Kubernetes Pod IP address to associate data points with the originating Kubernetes Pod.
+
+  To associate data points with the originating Kubernetes Pod, Chronosphere Collector v0.110.0
+  and later maps the incoming connection IP address to the Kubernetes Pod IP address.
+
+  Chronosphere Collector doesn't support using node or namespace metadata as the
+  source for label augmentation.
+  - `enabled`: A Boolean value that toggles augmentation. Default: `false`.
+    Chronosphere Collector retrieves metadata from the local Kubelet API and doesn't
+    support other sources.
+  - `kubelet`: A YAML collection that defines the Kubelet configuration.
+    - `kubeletNodeIP`: Defines the public IP address assigned to Kubelet. Default: the
+      value of the `KUBERNETES_NODE_IP` environment variable.
+    - `kubeletNodePort`: Defines the port on which the Kubelet listens for HTTP requests.
+      Default: `10250`.
+    - `kubeletNodePodsEndpoint`: Overrides the URL of Kubelet's `/pods` endpoint,
+      which by default is constructed from kubeletNodePort and kubeletNodeIP as
+      `https://${kubeletNodePort}:${kubeletNodeIP}/pods`.
+    - `kubeletNodeTLSInsecureSkipVerify`: Determines whether Chronosphere Collector
+      skips verification of Kubelet's TLS certificate. Default: `true`.
+    - `kubeletNodeBearerTokenFile`: Defines the path to the file containing
+      Chronosphere Collector's [service account](/administer/accounts-teams/service-accounts)
+      token. Default: `/var/run/secrets/kubernetes.io/serviceaccount/token`.
+    - `timeout`: Defines the amount of time that Chronosphere Collector waits for
+      a response from the metadata source. Default: `1s`.
+    - `refreshInterval`: Defines the amount of time between refreshes if a cache miss
+      doesn't trigger a cache update from the Kubelet. Default: `10s`.
+  - `metadataToAugment`: Adds time series labels based on Kubernetes metadata from the
+    Pod that sent the metrics or the Node on which the Collector is running.
+    Node metadata is fetched only once, at startup. Supported metadata keys are
+    `name` and `namespace`.
+  - `labelsToAugment`: Adds time series labels based on Kubernetes labels from the
+    Pod that sent the metrics or the Node on which the Collector is running.
+    Node metadata is fetched only once, at startup.
+
+    Specify the source Kubernetes label by name, and provide a name for the label
+    as it should appear on the resulting metric time series.
+
+    For example, the default configuration uses the value from the Kubernetes Pod
+    label `app` as the value for the `service_name` label for all metrics.
+  - `annotationsToAugment`: Adds time series labels based on Kubernetes annotations
+    from the Pod that sent the metrics or the Node on which the Collector is running.
+
+    Specify the source Kubernetes annotation by name, and provide a name for the
+    label as it should appear on the resulting metric time series.
+
+    For example, the default configuration uses the Kubernetes Pod annotation `app.myorg.com/owner`
+    value as the value for the `team_owner` label.
+
+## Example configuration
+
+The following example YAML collection lists all of the configuration options for
+receiving tagged StatsD metrics with Chronosphere Collector:
+
+```yaml copy
+push:
+  taggedStatsd:
+    enabled: true
+    listenAddress: 0.0.0.0:8225
+    listenProtocol: udp
+    aggregation:
+      interval: 60s
+      inactiveExpireAfter: "2m"
+    labels:
+      env: ${ENV:""}
+      k8s_cluster_name: ${KUBERNETES_CLUSTER_NAME:""}
+    # prefix: "qa"
+    # Extract key-value pairs from the metric name/path.
+    # For example, if the prefix value is `__` then `metric.path.__key=value`
+    # becomes `metric_path{key=\"value\"}` when converted to Prometheus format."
+    # labelsFromMetricPath:
+    #   prefixedKeyValuePairs:
+    #     prefix: "__"
+    # sanitization:
+    #   metricName:
+    #     ".": ":"  # Replaces `.` in metric name with `:`
+    #   labelValue:
+    #     ".": "_"  # Replaces `.` in label name with `_`
+    #     ":": "_"  # Replaces `:` in label name with `_`
+    #     "=": "_"  # Replaces `=` in label name with `_`
+    kubernetesMetadataAugmentation:
+      enabled: true
+      kubelet:
+        kubeletNodeIP: ${KUBERNETES_NODE_IP}
+        kubeletNodePort: 10250
+        # kubeletNodePodsEndpoint: https://${KUBERNETES_NODE_IP}:10250/pods
+        kubeletNodeTLSInsecureSkipVerify: true
+        kubeletNodeBearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+        refreshInterval: 10s
+        timeout: 1s
+      # Note: Node metadata is fetched only once, at startup.
+      metadataToAugment:
+        pod: # map of metadata_keyname: metric_label
+          name: kube_pod_name
+          namespace: kube_namespace
+        node: # map of node_metadata_key: metric_label
+          name: kube_node_name
+      labelsToAugment:
+        pod: # map of pod_label: metric_label
+          app: service_name
+        node: # map of node_label: metric_label
+          app: kube_node_name
+      annotationsToAugment:
+        pod: # map of pod_annotation: metric_label
+          "app.myorg.com/owner": owner_team
+        node: # map of node_annotation: metric_label
+          "app.myorg.com/owner": node_owner
+```

@@ -1,0 +1,109 @@
+---
+title: User accounts
+description: Chronosphere Observability Platform lets you manage user access by handling account creation, modification, and role assignments.
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+A _user account_ represents a user's identity in Chronosphere Observability Platform.
+Accounts can belong to [_teams_](/administer/accounts-teams/teams).
+
+## Grant System Administrator (`SysAdmin`) privileges to users
+
+A user account that's a member of a team with the `SysAdmin` role has administrative
+access to Observability Platform features, including the abilities to create teams
+and user accounts, assign users to teams, and define team permissions.
+
+For instructions about assigning roles to a team, see
+[Add a role to a team](/administer/accounts-teams/teams#add-a-role-to-a-team).
+
+## Authenticating as a user
+
+To [authenticate](/overview/authenticating) with Observability Platform, a user
+typically signs in interactively with their user account.
+
+A user account can also use a temporary
+[personal access token](/administer/accounts-teams/personal-access-tokens)
+for non-interactive authentication, such as with tools like Chronoctl or for clients
+that interact with the Chronosphere API.
+
+Observability Platform attributes all actions that a user takes to their user
+account.
+
+<Info>
+User accounts are distinct from *service accounts*, which provide identities for
+services and allow administrators to define what each service can access. Service
+accounts authenticate non-interactively using a unique API token permanently associated
+with each account.
+
+For details, refer to [Service accounts](/administer/accounts-teams/service-accounts).
+</Info>
+
+## View accounts
+
+You can view accounts in the navigation menu, or by using Chronoctl.
+
+In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+**<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Users**.
+
+For details, see
+[Accounts and teams](/administer/accounts-teams#view-accounts-and-teams).
+
+## Add a user account
+
+<Info>
+To add user accounts, you must use an account that belongs to a team with the
+`SysAdmin` role.
+
+This process applies only to accounts _without_ single sign-on enabled. For details,
+see [Authenticating with Chronosphere](/overview/authenticating).
+</Info>
+
+To add a user account, you must have administrative privileges:
+
+1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Users**.
+1. Click **<Icon icon="plus" /> Add user**.
+1. Enter the user's email address into the field.
+1. Click **Invite User**.
+1. Optional: Add the user to a [team](/administer/accounts-teams/teams). Users
+   without an assigned team receive viewer permissions.
+
+Observability Platform sends an invitation email to the address containing a link to
+verify and access the user account.
+
+After the user accepts the invitation, they must verify their account, at which point
+the user's email address appears in the list of accounts with a green checkmark.
+
+## Delete a user account
+
+To remove a user account from Observability Platform:
+
+1. If your environment uses a single sign-on (SSO) provider, remove the user account
+   from the identity provider (IdP) permission group to prevent the user from signing
+   in to Observability Platform.
+1. To remove the user account from display in Observability Platform itself, create a
+   ticket with Chronosphere Support and request to have the user account deleted.
+
+### Users of Okta with SCIM
+
+If you're using Okta and have SCIM integrated with the Observability Platform
+connection, removing the user from access in the IdP deprovisions and removes the
+user from Observability Platform.
+
+### Service accounts
+
+<Warning>
+Ensure a service account isn't being used before you delete it. Service account
+tokens are used by critical components of Observability Platform (including the
+Chronosphere Collector), and incorrectly deleting a service account can significantly
+impact your environment.
+</Warning>
+
+Deleted user accounts with access to a service account token can continue to access
+Observability Platform when using tools like Chronoctl and Terraform. To avoid access
+by these accounts, delete any service accounts created by deleted user accounts. To
+find these accounts, in the navigation menu, click
+**<Icon icon="shield" /> Go to Admin** and then select
+**<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Service Accounts**
+and review the **Created By** column.

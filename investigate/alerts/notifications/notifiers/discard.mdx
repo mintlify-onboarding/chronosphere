@@ -1,0 +1,80 @@
+---
+title: Create a discard notifier
+description: Create a discard notifier with Chronoctl or Terraform.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import TerraformCreate from '/snippets/_partials/terraformcreate.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+The discard notifier discards all notifications.
+
+<Info>
+You can't create discard notifiers from within the Chronosphere Observability
+Platform interface.
+</Info>
+
+Select from the following methods to create a discard notifier.
+
+<Tabs>
+<Tab title="Chronoctl" id="discard-chronoctl">
+
+To create a discard notifier using [Chronoctl](/tooling/chronoctl):
+
+1. Define the resource definition for your discard notifier:
+
+   ```yaml copy /NAME/ /SLUG/
+   api_version: v1/config
+   kind: Notifier
+   spec:
+     name: NAME
+     slug: SLUG
+     discard: true
+   ```
+
+   Replace the following:
+
+   - _`NAME`_: A descriptive name, such as `Example discard`.
+   - _`SLUG`_: A unique identifier, such as `example-discard`.
+
+1. Apply the changes:
+
+   ```shell copy /FILE_NAME/
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of your notifier YAML file.
+
+</Tab>
+<Tab title="Terraform" id="discard-terraform">
+
+To create a discard notifier using [Terraform](/tooling/infrastructure/terraform):
+
+1. Create a discard notifier with Terraform by using the
+   `chronosphere_blackhole_alert_notifier` type followed by a name in a resource
+   declaration:
+
+   ```ruby copy
+   resource "chronosphere_blackhole_alert_notifier" "discard" {
+     name = "Example discard"
+   }
+   ```
+
+1. Run `terraform apply` to create the notifier resource.
+
+   ```ruby copy
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="API" id="discard-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateNotifier`](/tooling/api-info/definition/operations/CreateNotifier)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

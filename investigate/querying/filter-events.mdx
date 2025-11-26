@@ -1,0 +1,343 @@
+---
+title: Search and filter change events
+description: Search and filter change events in Chronosphere Observability Platform to identify the root cause of issues.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Viewing all events in your environment while trying to remediate an issue can be
+overwhelming. Use Changes Explorer to focus on specific _change events_ that matter
+when you're trying to understand the root cause of an issue. Each change event
+describes a change within your environment or Chronosphere Observability Platform
+tenant at a specific time.
+
+You can filter change events by different attributes to locate where and when an
+issue occurred so that you can understand what changed leading up to an issue. Having
+this context helps determine the actions required to minimize the mean time to
+recovery.
+
+## Modify filters
+
+Changes Explorer lets you filter change events to narrow the focus of your search.
+Begin by selecting a broader attribute, such as specifying a time window, and then
+use the [filtering syntax](#filtering-syntax) to incorporate additional filtering
+attributes. If you know specifics about the change event you're looking for, enter a
+regular expression matching the title of the change event or a specific label.
+
+### Basic filtering
+
+Use this method of selecting individual attributes to filter change events from a
+broad scope to a narrow focus. The following steps are recommended methods of
+filtering. You can choose to start with a different attribute based on what change
+event you're searching for.
+
+To use basic filtering:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Changes Explorer**.
+
+1. On the Changes Explorer page, select a time window to display change events for.
+   The default time window is the last hour.
+
+1. Define your filter. You can use the sidebar, filter box, or a combination of both
+   to specify your filter criteria:
+
+   - **Sidebar**: Expand the section relating to the attribute you want to filter on.
+     Hold the pointer over the attribute, and then click the operator next to the
+     attribute name to include or exclude that attribute as part of your filter.
+
+     For example, click the equals operator next to the **Alerts** category:
+
+     ```text
+     category = "alerts"
+     ```
+
+   - **Filter box**: Use the [filtering syntax](#filtering-syntax) to enter the
+     attribute you want to search for, such as the type of change event to display.
+     For example, you might want to display only alerts because you're trying to
+     locate an alert for a particular monitor.
+
+     ```text
+     category = "alerts"
+     ```
+
+     <Info>
+Change event categories are case sensitive, and must be all lowercase when
+     entering values in the filter box. For example, `category = "alerts"` is valid,
+     but entering `category = "Alerts"` returns no data.
+</Info>
+
+     If you're unsure what attributes you can search for, click the filter box and
+     press <kbd>Control+Space</kbd> to display all available attributes.
+
+1. Click **Run**, or press <kbd>Shift+Enter</kbd> (<kbd>Shift+Return</kbd> on
+   macOS) to submit your filter.
+
+1. Expand your filter by adding a type of change event to display. If you entered
+   `alerts` as the `category`, you might enter `monitor_triggered_notification_sent`
+   as the type to display only alerts where the monitor triggered and sent a
+   notification.
+
+    ```text
+    category = "alerts" AND type = "monitor_triggered_notification_sent"
+    ```
+
+    <Info>
+The operators `AND` plus `OR` are case insensitive, so you can use `AND`,
+    `and`, `OR`, and `or` interchangeably.
+</Info>
+
+1. As you refine your filter, click and select a portion of the time chart to zoom in
+   to a smaller time window.
+
+1. Add to your filter by entering the `title` of the change event you want to focus on.
+
+   For example, you might to include results where the `title` begins with
+   `slack-receiver` to narrow your scope.
+
+   ```text
+   category = "alerts" AND type = "monitor_triggered_notification_sent" AND title =~ "^slack-receiver.*"
+   ```
+
+   The results update to include only change events that contain the value you enter.
+
+1. Click a change event in the results list to display its
+   [full details](/observe/enable-events/use-events#change-event-details).
+
+### Advanced filtering
+
+If you know details about the change event you're searching for, use the
+[filtering syntax](#filtering-syntax) to build your filter. For example, if you know
+you're searching for an alert in your production environment, create a filter to
+help you locate a related change event.
+
+To use advanced filtering:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Changes Explorer**.
+
+   The alert you received was for the `production_cluster`, but you're unsure which
+   production environment you need to investigate.
+
+1. In the filter box, define a filter to match any `alerts` from a triggered monitor
+   that sent a notification, which also contains `production` in the `title`.
+
+   ```text
+   category = "alerts" AND type = "monitor_triggered_notification_sent" AND title =~ ".*production_cluster.*"
+   ```
+
+   This filter matches any change events that contains `production_cluster` in the
+   `title`, such as `production_cluster=production-east` and
+   `production_cluster=production-west`.
+
+   <Info>
+Including a `type` in your filter is a shortcut for narrowing focus to a particular
+     change event category. For example, `type="deploy_end"` displays only change events
+     of the `deploy` type, because only that `category` includes this `type`.
+</Info>
+
+1. Click **Run**, or press <kbd>Shift+Enter</kbd> (<kbd>Shift+Return</kbd> on
+   macOS) to submit your filter.
+
+1. As you refine your filter, click and select a portion of the time chart to zoom in
+   to a shorter time window.
+
+1. Click a change event in the results list to display its
+   [full details](/observe/enable-events/use-events#change-event-details).
+
+### Access recent and saved filters
+
+When investigating issues, you might use the same change events filter frequently.
+Rather than redefining the filter, use recent and saved filters to access previously
+defined filters in Observability Platform. You can apply a fully defined filter from
+a previous time period by clicking the filter from the list.
+
+Recent filters are available globally to all users in Observability Platform and
+persist for 14 days.
+
+To access recent and saved filters:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Changes Explorer**.
+1. Click **<Icon icon="font" /> View filters** to display all available filters.
+1. Click the **Recent** tab or the **Saved** tab to display the filters you want to
+   view.
+1. Locate the filter you want to apply and click it.
+
+The parameters in the filter override any parameters in the filter box.
+
+### Save a filter
+
+You can save change event filters that you access frequently so they're always
+available in Observability Platform. Saved filters are like bookmarks you can
+reference when you need them.
+
+To save a filter:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Changes Explorer**.
+1. In the filter box, define your filter. The **Save filter** button is unavailable
+   until you run your filter.
+1. Click **Run** to run your filter.
+1. Click **Save filter** to save your filter.
+1. In the **Filters** window, enter a name for your filter and click **Save**.
+
+Your filter displays in the **Saved** tab of the **Filters** window. You can
+[access your saved filters](#access-recent-and-saved-filters) and apply them at any
+time.
+
+Users with [SysAdmin](/administer/accounts-teams#grant-system-administrator-sysadmin-privileges-to-a-team)
+privileges can share their saved filters with all users.
+
+To share a quick filter:
+
+1. Hold the pointer over the filter you want to share.
+1. Click the <Icon path={ mdiDotsVertical } /> three vertical dots icon.
+1. Click **Add to quick filters**.
+
+To stop sharing a quick filter, hold the pointer over the filter and then click the
+**<Icon icon="trash" /> trash can** icon. You can't delete the default
+filters.
+
+## Filtering syntax
+
+Observability Platform provides a lightweight, flexible syntax for filtering change
+events, both in Changes Explorer and when filtering change events in results for a
+monitor. This syntax implements predefined keys that accept a comparison operator,
+such as an equals sign `=`, and a value.
+
+```text
+KEY =|!=|=~|!~ VALUE AND|OR (KEY =|!=|=~|!~ VALUE)
+```
+
+For example, the following filter matches any `deploys` where the type is either
+`build_finished` or `deploy_end`, and the title contains `production_cluster`:
+
+```text
+category = "deploys" AND (type = "build_finished" OR type = "deploy_end") AND title =~ ".*production_cluster.*"
+```
+
+<Info>
+Change Event categories are case sensitive. Each of the categories that Chronosphere
+[supports by default](/observe/enable-events/use-events#categorize-change-events-intentionally)
+are lowercase and must be queried in all lowercase. For example,
+`"category": "alerts"` is valid, but `"category": "Alerts"` is invalid.
+
+Any custom categories must be queried using the case they were created in. For
+example, if you created a category called `INGEST`, any queries in Changes Explorer
+must use `INGEST` in all uppercase as the category to query.
+</Info>
+
+### Features
+
+The filtering syntax for change events supports the following features:
+
+- **Autocomplete**: Start typing a key to get autocomplete values. Press
+  <kbd>Control+Space</kbd> to display suggestions.
+- **Nested queries**: Use parentheses `()` to establish the order of operations for
+  complex filters.
+- **Label search**: Filter on labels by using a dot separator between the `labels`
+  key and the value you want to match on.
+- **String identification**: Use either single `''` or double `""` quotes to identify
+  strings.
+
+### Keys
+
+The filtering syntax supports the following keys:
+
+- `category`: Event category for organizing change events. This key supports the
+  following values:
+  - `alerts`: Changes in telemetry caught by Observability Platform monitors and the
+    event life cycle they use to track them. This includes alert triggers, resolved
+    alerts, and alert notifications.
+  - `broadcasts`: Changes that track visibility for an outage, large marketing
+    campaigns starting, or events that might cause an increase in usage such as the
+    end of a sporting event or a big shopping day of the year.
+  - `chronosphere`: Changes to the configuration of Observability Platform that can
+    affect the behavior of persisted data, evaluated by monitors and presented in
+    dashboards.
+  - `deploys`: Changes that track the progress of new code deployed into an
+    environment.
+  - `feature_flags`: Changes to feature flags and other dynamic configuration
+    controls that affect the way code executes in a program without requiring a
+    deployment.
+  - `infrastructure`: Changes to the underlying operating structures and fabric of
+    an environment, such as networking, security, container orchestration, and data
+    stores.
+  - `lens_service`: Changes specific to an individual [service](/observe/services).
+    Create a filter including `lens_service` and the name of the service you want to
+    filter on, such as `lens_service = "auth"`.
+  - `third_party`: Changes to the availability or status of dependencies outside of
+    your organization, such as APIs your services rely on that other organizations
+    provide and operate.
+- `labels`: Label metadata you've annotated your change events with, such as `build`,
+  `environment`, or `description`. To search for labels, use a dot separator between
+  the `labels` key and the value you want to match on. For example, to match on the
+  `build.branch` label for the `master` branch, enter `labels.build.branch = "master"`.
+- `source`: Event source, such as `alert_history`, `buildkite`, or `deployer`. Each
+  category has a unique subset of sources.
+- `title`: Event title, either partial or complete. Use regular expressions to match
+  on parts of a title.
+- `type`: Event type, such as `build_started`, `deploy_start`, or `monitor_muted`.
+
+### Operators
+
+After entering an operator in the filter box, you can click the operator to display a
+dropdown with additional supported operators. This feature lets you quickly change
+operators in your existing filter. If you modify operators with this feature, you
+must click **Run** to submit the modified filter.
+
+The filtering syntax supports the following operators:
+
+| Operator | Description          |
+| -------- | -------------------- |
+| =        | Equals               |
+| !=       | Does not equals      |
+| =\~      | Matches regex        |
+| !\~      | Does not match regex |
+| AND      | Additive operator    |
+| OR       | Subjective operator  |
+
+When using a regular expression, enter `.*` on either side of the expression you want
+to match. For example, `".*production_cluster.*"` matches both
+`"production_cluster=production-east"` and `"production_cluster=production-west"`.
+
+Filters with the `AND` operator take precedence. If your filter doesn't use
+parentheses, Observability Platform evaluates all `AND` statements sequentially,
+followed by any `OR` statements and the next set of `AND` filters.
+
+The operators `AND` plus `OR` are case insensitive, so you can use `AND`, `and`,
+`OR`, and `or` interchangeably.
+
+### Examples
+
+This syntax supports nesting using parentheses so you can create complex queries. For
+example, the following filter matches on two different types, or where the source is
+not `deployer` and the `cluster` label starts with `production-cluster`.
+
+```text copy
+type =~ "build_started|build_running" OR (source != "deployer" AND labels.cluster =~ "^production-cluster.*")
+```
+
+The following filter matches on two different types where the `title` begins with
+`usagestats`.
+
+```text copy
+type =~ "monitor_triggered|monitor_triggered_notification_failed_to_send" AND title =~ "^usagestats.*"
+```
+
+The following filter matches on `deploys` from the `deployer` source where the
+`deployment_id` equals a particular value.
+
+```text copy
+category = "deploys" AND source = "deployer" AND labels.deployment_id = "36z9aaebqcc4oosuwr3v97qrgp"
+```
+
+You can filter specifically on
+[services](/observe/services/service-pages#display-change-events) by including
+`lens_service` and the name of the service you want to display. For example, the
+following filter displays all `deploy` events for the `auth` service:
+
+```text copy
+lens_service = "auth" AND category = "deploys"
+```

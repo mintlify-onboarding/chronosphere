@@ -1,0 +1,104 @@
+---
+title: Chronosphere Pulumi provider
+description: Use the Chronosphere Pulumi provider to create and manage Chronosphere Observability Platform resources.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+[Pulumi](https://www.pulumi.com/) is an open source infrastructure-as-code software
+tool you can use to create, deploy, and manage infrastructure on any cloud in the
+language of your choosing.
+
+{/* vale Chronosphere.WordList = NO */}
+
+Chronosphere provides a
+[Pulumi package](https://www.pulumi.com/registry/packages/chronosphere/installation-configuration/)
+for managing Chronosphere Observability Platform resources. See
+[Supported resources](/tooling/infrastructure#supported-resources) for a list
+of supported resources.
+
+{/* vale Chronosphere.WordList = YES */}
+
+Use Observability Platform and Pulumi together to provide a seamless process to
+manage and monitor Kubernetes workloads. When you deploy Kubernetes resources using
+Pulumi, you can use Observability Platform to monitor those resources in real time.
+
+Codify your infrastructure using Pulumi, and gain observability using Observability
+Platform.
+
+## Getting started
+
+Complete the following steps to get started with the Chronosphere Pulumi provider.
+
+1. [Install the provider](#install).
+1. [Configure environment variables](#configure).
+
+### Install
+
+To use the Chronosphere Pulumi provider, install the Pulumi provider for your
+preferred language.
+
+{/* vale off */}
+{/* markdownlint-disable MD013 */}
+
+<Columns cols={2} rowGroup="2">
+  <Card icon="golang" title="Go"
+  href="https://pkg.go.dev/github.com/chronosphereio/pulumi-chronosphere/sdk" />
+  <Card icon="js" title="JavaScript"
+  href="https://www.npmjs.com/package/@pulumi-chronosphere/pulumi-chronosphere" />
+  <Card icon="c" title=".NET" href="https://www.nuget.org/packages/Chronosphere.Pulumi.Chronosphere" />
+  <Card icon="python" title="Python" href="https://pypi.org/project/pulumi-chronosphere/" />
+</Columns>
+
+{/* markdownlint-enable MD013 */}
+{/* vale on */}
+
+### Configure
+
+After installing the Chronosphere Pulumi provider, configure environment variables to
+authenticate with Observability Platform and manage resources in your tenant.
+
+#### API token
+
+Pulumi performs tasks that require administrative privileges, and requires an API
+token with administrative privileges to authenticate. Use either an unrestricted
+service account, or a user or service account that belongs to a team with the
+SysAdmin role.
+
+To authenticate as a service account, use the API token generated and provided upon
+account creation. For details, see [service accounts](/administer/accounts-teams/service-accounts).
+To authenticate as an administrative user account, use a
+[personal access token](/administer/accounts-teams/personal-access-tokens).
+
+If you don't provide a token as an argument, Pulumi then looks for it in the
+environment variable `CHRONOSPHERE_API_TOKEN`, which you can set by running the
+following command or adding it to your shell profile:
+
+```shell copy /API_TOKEN/
+export CHRONOSPHERE_API_TOKEN=API_TOKEN
+```
+
+Replace _`API_TOKEN`_ with the API token you generated to authenticate with Observability
+Platform.
+
+#### Organization name
+
+Pulumi needs the name of your team's organization as the `--org-name` argument. If
+you don't provide your organization's name as an argument, Pulumi looks for it in the
+environment variable `CHRONOSPHERE_ORG_NAME`.
+
+To set this variable, run the following command or add it to your shell profile:
+
+```shell copy /SUBDOMAIN_NAME/
+export CHRONOSPHERE_ORG_NAME=SUBDOMAIN_NAME
+```
+
+Replace _`SUBDOMAIN_NAME`_ with the subdomain name you use to access Chronosphere. For example,
+if your team uses `example.chronosphere.io`, your team's organization name is
+`example`.
+
+### Resources
+
+Refer to the Chronosphere Pulumi provider
+[API docs](https://www.pulumi.com/registry/packages/chronosphere/api-docs/) for a
+list of resources you can create and manage with the provider.

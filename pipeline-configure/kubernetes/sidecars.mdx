@@ -1,0 +1,246 @@
+---
+title: Pipeline sidecars
+description: Learn about pipeline sidecars in Chronosphere Telemetry Pipeline.
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+You can use [Kubernetes sidecar containers](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/)
+to add, update, and remove additional
+[containers](/pipeline-configure/kubernetes/pods-containers) parallel to your pipeline's
+primary container. These pipeline sidecars let you add monitoring containers, include
+proxy servers, run support services, and implement service meshes.
+
+
+## Sidecar specification files
+
+Each pipeline sidecar is governed by a JSON specification file. The following example
+shows the format and sample content of a basic specification file:
+
+```json copy filename="sidecar.json"
+{
+    "name": "my-sidecar",
+    "image": "nginx:latest",
+    "imagePullPolicy": "IfNotPresent",
+    "command": ["/bin/sh"],
+    "args": ["-c", "sleep", "infinity"]
+}
+```
+
+To create a sidecar, you must include a specification file. However, you can also use
+the [`calyptia update sidecar`](#update-a-sidecar) command to update the
+specification file for an existing sidecar.
+
+## Create a sidecar
+
+<Info>
+You can only create sidecars for existing pipelines. If you attempt to create
+a sidecar for a pipeline that doesn't exist, the operation will fail.
+</Info>
+
+To create a pipeline sidecar, run the following command:
+
+```shell copy
+calyptia create sidecar --pipeline NAME --spec FILE_NAME.json
+```
+
+Replace the following:
+
+- _`NAME`_: The name of the pipeline to create a sidecar for.
+- _`FILE_NAME`_: Your [sidecar specification file](#sidecar-specification-files), which
+  must include a `.json` file extension.
+
+### Multiple sidecars
+
+You can add multiple sidecars to a single pipeline. Each sidecar operates
+independently and can have its own [specification file](#sidecar-specification-files),
+[volumes](#volumes), and [probes](#probes).
+
+The following example shows the process of adding multiple sidecars to a pipeline
+named `myPipeline`:
+
+```shell copy
+calyptia create sidecar --pipeline myPipeline --spec sidecar1.json
+calyptia create sidecar --pipeline myPipeline --spec sidecar2.json
+calyptia create sidecar --pipeline myPipeline --spec sidecar3.json
+```
+
+## Optional configuration
+
+Pipeline sidecars support these optional configuration settings.
+
+### Volumes
+
+You can use [Kubernetes ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
+to mount volumes to a sidecar.
+
+<Info>
+Pipeline sidecars only support ConfigMap volumes, and no other types of volumes.
+
+Additionally, before you create a sidecar that will reference a ConfigMap, you must
+create the required ConfigMap in the Kubernetes cluster that contains your pipeline.
+The ConfigMap must also exist in the same namespace as your pipeline.
+</Info>
+
+The following example shows a [sidecar specification file](#sidecar-specification-files)
+that includes mounted volumes:
+
+```json copy filename="sidecarWithVolumes.json"
+{
+  "name": "envoy-sidecar",
+  "image": "envoyproxy/envoy:v1.28-latest",
+  "imagePullPolicy": "IfNotPresent",
+  "command": [
+    "/usr/local/bin/envoy",
+    "-c",
+    "/etc/envoy/envoy.yaml",
+    "--service-cluster",
+    "proxy-service"
+  ],
+  "ports": [
+    {
+      "name": "proxy",
+      "containerPort": 10000,
+      "protocol": "TCP"
+    },
+    {
+      "name": "admin",
+      "containerPort": 9901,
+      "protocol": "TCP"
+    }
+  ],
+  "volumeMounts": [
+    {
+      "name": "envoy-config",
+      "mountPath": "/etc/envoy",
+      "readOnly": true
+    }
+  ],
+  "volumes": [
+    {
+      "name": "envoy-config",
+      "configMap": {
+        "name": "envoy-config"
+      }
+    }
+  ]
+}
+```
+
+### Probes
+
+Pipeline sidecars support liveness, readiness, and startup probes. For more information,
+refer to the
+[Kubernetes probe documentation.](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/).
+
+Each probe's configuration must be a valid Kubernetes probe specification.
+Invalid probe configurations cause the sidecar creation or update process to fail.
+
+Additionally, the port specifications for each probe must be valid numbers.
+
+The following example shows a [sidecar specification file](#sidecar-specification-files)
+that includes all three types of probes:
+
+```json copy filename="sidecarWithProbes.json"
+{
+  "name": "probe-sidecar",
+  "image": "nginx:latest",
+  "imagePullPolicy": "IfNotPresent",
+  "ports": [
+    {
+      "name": "http",
+      "containerPort": 80,
+      "protocol": "TCP"
+    }
+  ],
+  "livenessProbe": {
+    "httpGet": {
+      "path": "/",
+      "port": 80,
+      "httpHeaders": [
+        {
+          "name": "Custom-Header",
+          "value": "test"
+        }
+      ]
+    },
+    "initialDelaySeconds": 10,
+    "timeoutSeconds": 1,
+    "periodSeconds": 10,
+    "successThreshold": 1,
+    "failureThreshold": 3
+  },
+  "readinessProbe": {
+    "httpGet": {
+      "path": "/",
+      "port": 80
+    },
+    "initialDelaySeconds": 5
+  },
+  "startupProbe": {
+    "exec": {
+      "command": [
+        "/bin/sh",
+        "-c",
+        "test -f /var/run/nginx.pid"
+      ]
+    },
+    "periodSeconds": 5
+  }
+}
+```
+
+## Manage sidecars
+
+Use these commands to manage existing pipeline sidecars.
+
+### List sidecars
+
+To list all sidecars associated with a pipeline, run the following command:
+
+```shell copy
+calyptia get sidecar --pipeline NAME
+```
+
+Replace _`NAME`_ with the name of your pipeline.
+
+### Update a sidecar
+
+You can update an existing sidecar by modifying its [specification file](#sidecar-specification-files).
+These changes can include updates to its image, [volumes](#volumes), and [probes](#probes).
+
+To update a sidecar, run the following command:
+
+```shell copy
+calyptia update sidecar --sidecar ID --spec FILE_NAME.json
+```
+
+Replace the following:
+
+- _`ID`_: The ID of the sidecar to update.
+- _`FILE_NAME`_: Your updated [sidecar specification file](#sidecar-specification-files), which
+  must include a `.json` file extension.
+
+### Delete a sidecar
+
+Deleting a sidecar removes that sidecar container from all pipeline replicas.
+To delete a sidecar, run the following command:
+
+```shell copy
+calyptia delete sidecar --sidecar ID --yes
+```
+
+Replace _`ID`_ with the ID of the sidecar to delete.
+
+[Deleting a pipeline](/pipeline-data/create-modify#delete-a-pipeline)
+removes any sidecars for that pipeline.
+
+## Troubleshoot
+
+Use these troubleshooting methods if you have any issues while creating or updating a
+sidecar:
+
+- Consult the pipeline's logs and status information.
+- Confirm that the sidecar's [specification file](#sidecar-specification-files) is valid.
+- Search your Kubernetes pod events for any errors.
+- Ensure that the sidecar image is accessible to your Kubernetes cluster.

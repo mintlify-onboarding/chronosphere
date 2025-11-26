@@ -1,0 +1,65 @@
+---
+title: OpenTelemetry destination plugin
+sidebarTitle: OpenTelemetry destination plugin (Telemetry Pipeline)
+description: Send pipeline data to OpenTelemetry.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import BasicAuthentication from '/snippets/_partials/pipeline-basic-auth.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The OpenTelemetry Output [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `opentelemetry`, alias: `OpenTelemetry`) lets you configure your
+telemetry pipeline to send telemetry data to a wide range of data sources, such
+as observability platforms, analytics tools, and logging systems.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics     | Traces      |
+| :---------: | :---------: | :---------: |
+| <YesIcon /> | <YesIcon /> | <YesIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name            | Key | Description | Default |
+| --------------- | --- | ----------- | ------- |
+| **Host**        | `host` | Required. IP address or hostname of the target HTTP Server. | `127.0.0.1` |
+| **Port**        | `port` | Required. TCP port of the target HTTP Server. | `80` |
+| **Metrics URI** | `metrics_uri` | Specifies an optional HTTP URI for the target web server listening for metrics. For example, `/v1/metrics`. | `/` |
+| **Logs URI**    | `logs_uri` | Specifies an optional HTTP URI for the target web server listening for metrics. For example, `/v1/logs`. | `/` |
+| **Traces URI**  | `traces_uri` | Specifies an optional HTTP URI for the target web server listening for metrics. For example, `/v1/traces`. | `/` |
+
+### Advanced
+
+| Name                                    | Key | Description | Default |
+| --------------------------------------- | --- | ----------- | ------- |
+| **Headers**                             | `header` | Adds an HTTP header key/value pair. You can set multiple headers. | _none_ |
+| **Additional Prometheus Metric Labels** | `add_label` | Adds custom labels to all metrics exposed through the OpenTelemetry exporter. You can set multiple headers. | _none_ |
+| **HTTP Proxy**                          | `proxy` | Specifies an HTTP proxy. The expected format of this value is `http://host:port`. | _none_ |
+| **Log Response Payload**                | `log_response_payload` | Logs the response payload within the Core Pipeline log. | `false` |
+| **Compress**                            | `compress` | Sets the payload compression mechanism. Accepted values: `gzip`, _none_. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />
+
+### Basic Authentication
+
+<BasicAuthentication />

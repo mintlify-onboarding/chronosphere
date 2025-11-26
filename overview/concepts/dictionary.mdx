@@ -1,0 +1,247 @@
+---
+title: Metrics dictionary
+description: Use the metrics dictionary to learn about metrics created by and specific to Chronosphere Observability Platform.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+This dictionary defines metrics created by and specific to Chronosphere Observability
+Platform. These metrics are often included in default [dashboards](/overview), and
+you can search for them anywhere you use metrics. These curated metrics can help
+track basic important information about your Observability Platform instance.
+
+The
+[Chronosphere Health Check](/observe/dashboards/chronosphere-managed-dashboards#chronosphere-health-check)
+dashboard includes links to the **Collectors**,
+**Usage Dashboard**, and **Licensing Information** dashboards.
+
+Use the [Metrics Catalog](/investigate/querying/metrics/metrics-catalog) to learn
+what metrics are in your tenant.
+
+Query these metrics as their respective [Prometheus type](/control/shaping/types#prometheus).
+
+## Capacity limits
+
+[Licensing capacity](/administer/limits-licensing/licensing) is based on your telemetry types and
+usage. The following tables describe metrics used for specific sections of your
+license.
+
+Chronosphere recommends creating [alerts](/investigate/alerts) using the existing
+Capacity Limit metrics, which are also used in the
+[License Overview](/administer/limits-licensing/licensing#license-overview) dashboard. Use alerts
+to be notified when you're close to or over 100% of your license limit and therefore
+at risk of experiencing drops:
+
+### Persisted cardinality
+
+The following metrics apply to
+[persisted cardinality](/administer/limits-licensing/licensing#persisted-cardinality), which is a
+cumulative measure that calculates the sum of the unique time series of the persisted
+writes that Observability Platform stores, seen over the last 2.5 hours only.
+
+| Metric name | Description |
+| ------------| ----------- |
+| `chrono_metrics_persisted_cardinality_license_limit` | License limit for active persisted time series cardinality. |
+| `chrono_metrics_persisted_cardinality_license_capacity` | Capacity limit for active persisted time series cardinality. |
+| `chrono_metrics_persisted_cardinality_license_consumed` | Consumption of the persisted write cardinality limit by datapoint type. |
+
+Query the following metric to understand if data is actively being dropped:
+
+```text copy
+chrono_metrics_persisted_license_dpps_dropped{limit="persisted_cardinality"}
+```
+
+### Persisted writes
+
+The following metrics apply to [persisted writes](/administer/limits-licensing/licensing#persisted-writes),
+which are writes to the Observability Platform database.
+
+| Metric name | Description |
+| ----------- | ----------- |
+| `chrono_metrics_persisted_writes_license_dpps_limit` | License limit for persisted write DPPS by datapoint type. |
+| `chrono_metrics_persisted_writes_license_dpps_capacity` | Capacity limit for persisted write DPPS by datapoint type. |
+| `chrono_metrics_persisted_writes_license_dpps_consumed` | Consumption rate in DPPS of persisted write license by datapoint type. |
+
+For each of these metrics, you can query by `datapoint_type`, such as `histogram` or
+`standard`. For the `_dpps_capacity` and `_dpps_consumed` metrics, you can
+additionally query by `pool_name`, and `priority`.
+
+For example, the following query returns the consumption rate in DPPS of your
+persisted write license for `histogram` data points on the `Auth Services` pool.
+Because `priority` isn't specified, the query returns a series for each priority:
+
+```text copy
+chrono_metrics_persisted_writes_license_dpps_consumed{datapoint_type="histogram", pool_name="Auth Services"}
+```
+
+If you wanted to return only high priority histogram data points for the
+`Auth Services` pool, specify `priority = "high"` in your query:
+
+```text copy
+chrono_metrics_persisted_writes_license_dpps_consumed{datapoint_type="histogram", pool_name="Auth Services", priority="high"}
+```
+
+Query the following metric to understand if data is actively being dropped:
+
+```text copy
+chrono_metrics_persisted_license_dpps_dropped{limit="persisted_writes"}
+```
+
+### Matched writes
+
+The following metrics apply to [matched writes](/administer/limits-licensing/licensing#aggregations),
+which are the number of writes per second being matched for transformation and
+reshaping by the Observability Platform aggregation tier.
+
+| Metric name | Description |
+| ------------| ----------- |
+| `chrono_metrics_matched_writes_license_dpps_limit`    | License limit for matched write DPPS by datapoint type. |
+| `chrono_metrics_matched_writes_license_dpps_capacity` | Capacity limit for matched write DPPS by datapoint type. |
+| `chrono_metrics_matched_writes_license_dpps_consumed` | Consumption rate in DPPS of matched write license by datapoint type. |
+
+Query the following metric to understand if data is actively being dropped:
+
+```text copy
+chrono_metrics_matched_license_dpps_dropped
+```
+
+### Legacy licensing metrics
+
+The following table explains metrics that might be present in your environment, but
+will be replaced by new metrics. The following metrics replace this table:
+
+- [Persisted writes](#persisted-writes)
+- [Persisted cardinality](#persisted-cardinality)
+- [Matched writes](#matched-writes)
+
+These metrics create the following tags during
+[dashboard creation](/observe/dashboards#create-a-dashboard):
+
+- `chronosphere_service`
+
+| Metric name | [Metric type](/control/shaping/types) | Description |
+| ------------|-------------------------------------- | ----------- |
+| `limit_service_cardinality_count`<br /> replaced by <br />`chrono_metrics_persisted_cardinality_license_consumed` | Counter | Current cardinality count across all Collectors. |
+| `limit_service_licensed_cardinality_limit`<br /> replaced by <br />`chrono_metrics_persisted_cardinality_license_limit` | Counter | Current cardinality limit across all Collectors. |
+| `limit_service_licensed_persist_limit`<br /> replaced by <br />`chrono_metrics_persisted_writes_license_dpps_limit` | Counter | Current limit for data points persisted in the database across all Collectors, as defined in the contract. |
+| `limit_service_capacity_limit` | Counter | Current capacity limit for data points persisted in the database across all Collectors, based on grant by Chronosphere. |
+| `limit_service_persisted_count`<br /> replaced by <br />`chrono_metrics_persisted_writes_license_dpps_consumed` | Counter | Total number of data points persisted in database. |
+| `limit_service_matched_limit`<br /> replaced by <br />`chrono_metrics_matched_writes_license_dpps_limit` | Counter | Current license limit for matched write DPPS by datapoint type. |
+| `limit_service_capacity_limit`<br /> replaced by <br />`chrono_metrics_matched_writes_license_dpps_capacity` | Counter | Current capacity limit for matched write DPPS by datapoint type. |
+| `chronosphere_rule_metrics_matched`<br /> replaced by <br />`chrono_metrics_matched_writes_license_dpps_consumed` | Counter | Consumption rate in DPPS of matched write license by datapoint type. |
+
+## Collectors
+
+The **Collectors** dashboard includes the following metrics that Collectors generate.
+Use this dashboard to monitor the health of your Collectors.
+
+See the [Collectors tags](#collectors-tags) that these metrics create during
+dashboard creation.
+
+| Metric name | [Metric type](/control/shaping/types) | Description |
+| ------------| ------------------------------------- | ----------- |
+| `chronocollector_build_information` | Gauge | Metrics relating to current build of Collectors. |
+| `chronocollector_gateway_push_errors` | Counter | Current total number of push errors from Collector. |
+| `chronocollector_gateway_push_latency` | Summary | Latency of pushed writes by Collector. |
+| `chronocollector_gateway_push_success` | Counter | Total count of requests and RPC calls successfully pushed to the Chronosphere gateway. |
+| `chronocollector_gateway_write_success` | Counter | Total count of each time series that are successfully written to the Chronosphere gateway. <br /> <br /> Counts only the metrics that the Collector scrapes, and not metrics from push-based protocols such as tracing data.|
+| `chronocollector_k8s_gatherer_sink_targets_active` | Gauge | Current number of active targets Collector is scraping. |
+| `process_cpu_seconds_total` | Counter | Current total number of seconds of CPU processing time. |
+
+<Info>
+Prior to Collector v0.104.0, `chronocollector_k8s_gatherer_sink_targets_active`
+was named `chronocollector_k8s_gatherer_processor_targets_active`.
+</Info>
+
+### Collectors tags
+
+The following metrics create these tags during
+[dashboard creation](/observe/dashboards#create-a-dashboard):
+
+| Metric name                         | Tags                                |
+| ------------------------------------| ------------------------------------|
+| `chronocollector_build_information` |`branch`<br />`build_date`<br />`build_version`<br />`chronosphere_k8s_cluster`<br />`chronosphere_k8s_container_port`<br />`chronosphere_k8s_namespace`<br />`cluster`<br />`go_version`<br />`hostname`<br />`instance`<br />`job`<br />`k8s_cluster_id`<br />`pod_name`<br />`namespace`<br />`region`<br />`revision`<br />`service`<br /> |
+| `chronocollector_gateway_push_errors` | `chronosphere_k8s_cluster`<br />`chronosphere_k8s_container_port`<br />`chronosphere_k8s_namespace`<br />`component`<br />`environment`<br />`hostname`<br />`instance`<br />`job`<br />`k8s_cluster_id`<br />`namespace`<br />`region`<br />`service`<br /> |
+| `chronocollector_gateway_push_latency` | `chronosphere_k8s_cluster`<br />`chronosphere_k8s_container_port`<br />`chronosphere_k8s_namespace`<br />`component`<br />`environment`<br />`instance`<br />`job`<br />`k8s_cluster_id`<br />`namespace`<br />`quantile`<br />`region`<br />`service`<br /> |
+| `chronocollector_gateway_push_success` | `annotationsPrefix`<br />`cluster`<br />`component`<br />`env`<br />`environment`<br />`instance`<br />`job`<br />`node`<br />`region`<br />`service`<br />`service_account`<br />`team`<br />`version` |
+| `chronocollector_gateway_write_success` | `annotationsPrefix`<br />`cluster`<br />`component`<br />`env`<br />`environment`<br />`instance`<br />`job`<br />`node`<br />`region`<br />`service`<br />`service_account`<br />`team`<br />`version` |
+| `chronocollector_k8s_gatherer_sink_targets_active` | `environment`<br />`instance`<br />`job`<br />`k8s_cluster_id`<br />`namespace`<br />`region`<br />`service`<br /> |
+| `process_cpu_seconds_total` | `environment`<br />`instance`<br />`job`<br />`k8s_cluster_id`<br />`namespace`<br />`node`<br />`region`<br />`service`<br /> |
+
+## Impact statistics
+
+The following usage metric applies to impact statistics.
+
+This metric creates the following tags during
+[dashboard creation](/observe/dashboards#create-a-dashboard):
+
+- `applied`
+- `mode`
+
+| Metric name             | [Metric type](/control/shaping/types) | Description                                 |
+| ----------------------- | --------------------------------------| ------------------------------------------- |
+| `chrono_metrics_drop_rule_dpps_matched` | Counter | Provides visibility into drop rule behavior across enabled, disabled, and preview rules. |
+
+## Usage statistics
+
+Observability Platform provides different usage metrics you can use to understand and
+manage your overall metric data usage.
+
+### Shaping usage statistics
+
+The following usage metrics apply to shaping statistics.
+
+| Metric name | [Metric type](/control/shaping/types) | Description | Tags provided during [dashboard creation](/observe/dashboards#create-a-dashboard) |
+| --------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `chrono_poolstats_count` | Counter | Shaping statistics that include pool information. | `drop_reason`<br />`dropped`<br />`type` |
+| `chrono_poolstats_total` | Counter | Total shaping statistics without any tag information. | `drop_reason`<br />`dropped`<br />`type` |
+| `chrono_poolstats_sampling` | Counter | Emitted only when the number of unique usage statistics values<br /> exceeds the configured maximum allowed tags. | `node`<br />`type` |
+
+### Usage metrics
+
+The **Usage Dashboard** includes the following usage statistics metrics. Use this
+dashboard to identify who is contributing most to your Chronosphere usage and manage
+your overall usage.
+
+| Metric name | [Metric type](/control/shaping/types) | Description | Tags provided during [dashboard creation](/observe/dashboards#create-a-dashboard) |
+| ---------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `chronosphere_uptime`  | Counter | Represents the Service Level Agreement (SLA) results for SLA checks. | _none_ |
+| `chrono_usagestats_count` | Counter | Usage statistics grouped by tags. | `drop_reason`<br />`dropped`<br />`type` |
+| `chrono_usagestats_total` | Counter | Total usage statistics without any grouping. | `drop_reason`<br />`dropped`<br />`type` |
+| `chrono_usagestats_count_sampling` | Counter | Emitted only when the number of unique usage statistics values<br /> exceeds the configured maximum allowed tags. | `node`<br />`type` |
+
+Other usage statistics count label and metric name usage.
+
+| Metric name | Metric type | Description |
+|-----------------|-----------------|-----------------|
+| `chrono_datapoints_by_metric_per_second` | Gauge | Contains the `metric_name` label. Emits the average data points per second over the last two minutes by metric name. |
+| `chrono_datapoints_by_label_per_second`  | Gauge | Contains the `label_name` label. Emits the average data points per second over the last two minutes by label name. |
+| `chrono_unique_label_values_count`       | Gauge | Contains the `label_name` label. Emits the unique values seen over the last two minutes, by label name. |
+
+### Service token usage
+
+The following metric applies to
+[service account tokens](/administer/accounts-teams/service-accounts):
+
+| Metric name | Metric type | Description |
+|-------------|-------------|-------------|
+| `chrono_api_token_requests_total` | Counter | Monitors the number of requests made with a service account token. Can be inaccurate if more than 1000 service accounts are in use. |
+
+The `email` label for this metric corresponds to the `email` field queryable in the
+[service accounts API](/tooling/api-info/definition/operations/ListServiceAccounts).
+
+## Alerts
+
+To learn about alert metrics, see [Querying metrics about alerts](/investigate/alerts/metrics).
+
+## Google Cloud integration
+
+The following metrics apply to Observability Platform's
+[Google Cloud](/ingest/metrics-traces/gcp) integration:
+
+| Metric name | Metric type | Description |
+|-------------|-------------|-------------|
+| `chrono_gcp_integration_shards_total` | Gauge | The number of Google Cloud metric shards successfully ingested. |
+| `chrono_gcp_integration_active_shards_total` | Gauge | The number of active Google Cloud metric shards successfully ingested. |
+| `chrono_gcp_integration_data_points_total` | Counter | The total number of data points ingested. |
+| `chrono_gcp_integration_metric_descriptors` | Gauge | List of all metric descriptors ingested, indicated by value of `1`. |

@@ -1,0 +1,77 @@
+---
+title: Install Pipeline CLI
+description: Learn how to install Pipeline CLI.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Pipeline CLI is compatible with Linux, macOS, and Windows for both arm64 and x86_64
+architectures. Use one of the following methods to install Pipeline CLI:
+
+| Method          | Linux | macOS | Windows |
+| --------------- | :---: | :---: | :-----: |
+| Homebrew        | <YesIcon /> | <YesIcon /> | <NoIcon /> |
+| curl            | <YesIcon /> | <YesIcon /> | <NoIcon /> |
+| Direct download | <YesIcon /> | <YesIcon /> | <YesIcon /> |
+
+<Info>
+If you used the `install-core.sh` script to
+[install a Core Operator on Linux](/pipeline-install/install-operator/linux),
+the script installed Pipeline CLI for you. You don't need to install
+it again.
+</Info>
+
+## Download and install Pipeline CLI
+
+Select from the following methods to download and install the latest version of
+Pipeline CLI.
+
+<Tabs>
+<Tab title="Homebrew" id="installation-homebrew">
+
+To install Pipeline CLI using Homebrew, run the following commands:
+
+```shell copy
+brew tap calyptia/tap
+brew install calyptia
+```
+
+These commands fetch the latest version of Pipeline CLI.
+
+</Tab>
+<Tab title="Curl" id="installation-curl">
+
+To install Pipeline CLI using curl, run the following command, which is the same
+for both Zsh and Bash:
+
+```shell copy
+curl -sSfl https://raw.githubusercontent.com/calyptia/cli/main/install.sh | bash
+```
+
+This command fetches the latest version of Pipeline CLI.
+
+</Tab>
+<Tab title="Direct download" id="installation-direct">
+
+To install Pipeline CLI by downloading its files directly:
+
+1. Go to the [Pipeline CLI release page](https://github.com/chronosphereio/calyptia-cli/releases).
+1. Locate the latest release artifact and download the `.tar.gz` archive that
+   corresponds to your operating system and architecture.
+1. Extract the Pipeline CLI binary from the archive that you downloaded.
+1. Run the executable file to install Pipeline CLI.
+
+Alternatively, you can download the Pipeline CLI source code from its release
+page and compile it yourself.
+
+</Tab>
+</Tabs>
+
+## Update Pipeline CLI
+
+To update Pipeline CLI, use any of the previous methods to run the Pipeline CLI
+installation process again. If you use the direct download method, be sure to
+download the release artifact for the latest version of Pipeline CLI.

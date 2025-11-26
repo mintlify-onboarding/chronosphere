@@ -1,0 +1,53 @@
+---
+title: Kafka destination plugin
+sidebarTitle: Kafka destination plugin (Telemetry Pipeline)
+description: Send pipeline data to Kafka.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import ExtendedLibrdkafka from '/snippets/_partials/plugin-librdkafka-info.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Kafka [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `kafka`) lets you configure your telemetry pipeline to integrate your
+data with Apache Kafka for real-time processing and analysis.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name        | Key | Description | Default |
+| ----------- | --- | ----------- | ------- |
+| **Brokers** | `brokers` | Required. Single of multiple list of Kafka brokers. For example, `192.168.1.3:9092` or `192.168.1.4:9092`. | _none_ |
+| **Topics**  | `topics` | Required. Single entry or list of comma-separated topics that Telemetry Pipeline uses to send messages to Kafka. If only one topic is set, that topic is used for all records. If multiple topics exists, the one set in the record by `topic_key` is used. | `calyptia-core` |
+| **Format**  | `format` | Specifies data format. Accepted values: `json`, `msgpack`. | `json` |
+
+### Advanced
+
+| Name                   | Key | Description | Default |
+| ---------------------- | --- | ----------- | ------- |
+| **Message Key**        | `message_key` | Optional key to store the message. | _none_ |
+| **Message Key Field**  | `message_key_field` | If set, the value of `message_key_field` in the record will indicate the message key. If not set or found in the record, `message_key` will be used (if set). | _none_ |
+| **Timestamp Key**      | `timestamp_key` | Sets the key to store the record timestamp. | _none_ |
+| **Timestamp Format**   | `timestamp_format` | Sets the format of the timestamp. Accepted values: `double`, `iso8601`. | `double` |
+| **Body Key**           | `body_key` | Specifies the key that contains the body. | _none_ |
+| **Queue Full Retries** | `queue_full_retries` | Telemetry Pipeline queues data into rdkafka library. If the underlying library can't flush the records, the queue might fill up, blocking new addition of records. This key sets the number of local retries to enqueue the data. The interval between each retry is one second. Setting the key to `0` sets an unlimited number of retries. | `10` |
+
+### Extended librdkafka parameters
+
+<ExtendedLibrdkafka/>

@@ -1,0 +1,187 @@
+---
+title: Applying PromQL functions
+description: Learn about how to apply PromQL functions in Observability Platform.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+[PromQL functions](https://prometheus.io/docs/prometheus/latest/querying/functions/)
+perform calculations with and on your metrics data, letting you complete
+complex processing with pre-built operations.
+
+Each function takes different arguments, but typically at minimum, an instant or
+range vector. You can use standard arithmetic and binary comparison operators inside
+and outside the function such as addition, subtraction, greater than, or less than.
+Using operators is one of the main methods to perform calculations on a combination
+of different time series. However if you apply the operator to more than one instant
+vectors, it applies only to matching series.
+
+You can find more information about matching series and vectors in the
+[PromQL documentation](https://prometheus.io/docs/prometheus/latest/querying/operators/#vector-matching).
+
+PromQL has dozens of functions, but a popular one is `rate()`, which calculates the
+per-second average rate of increase of the multiple time series in a range vector.
+
+The following query calculates the per-second average rate of increase over the last
+10 minutes for the matching metric name with a `device` label whose value is equal
+to `eth0`:
+
+```text copy
+rate(node_network_receive_bytes_total{device="eth0"}[10m])
+```
+
+## Aggregating time series
+
+Use PromQL aggregation functions to reduce the elements in a vector returned by a
+query.
+
+For example, a popular aggregation function is `sum()`, which totals the values of
+resulting time series from a query and returns one element.
+
+The following query returns the total values of all time series with an offset of
+five minutes ago that match the metric name with a value for the `device` label
+that matches the value `eth0`:
+
+```text copy
+sum(node_network_receive_bytes_total{device="eth0"} offset 5m)
+```
+
+Another aggregation function is `avg()`, which averages the values of resulting time
+series from a query and returns one element.
+
+You can group time series by labels, returning an element for each unique value of
+the label using the `by` or `without` clause in a query.
+
+- `by`: Groups time series by the labels you specify.
+- `without`: Groups or every other labels that has differing values.
+
+The following query returns the average values of all time series that match the
+metric name with a value for the `device` label equal to `eth0` grouped by unique
+values for the `k8s_cluster` label:
+
+```text copy
+avg(node_network_receive_bytes_total{device="eth0"}) by (k8s_cluster)
+```
+
+<Info>
+The interval you define in functions such as `rate()` and `increase()` must be greater
+than or equal to the scrape interval of the metrics which you apply the function
+to. The recommendation is to use at least twice the scrape interval.
+</Info>
+
+## Querying histograms
+
+The Chronosphere Observability Platform histogram metric type persists a histogram as
+one data point and one time series. Query methods depend on the type of histogram
+you're querying.
+
+### Querying histogram metric types
+
+A histogram of the histogram metric type is a single structured value that contains
+all of the information about the histogram. The Observability Platform histogram
+metric type supports Prometheus native histograms and OpenTelemetry exponential
+histograms.
+
+To query histograms in Observability Platform, use
+[PromQL histogram functions](https://prometheus.io/docs/prometheus/latest/querying/functions/#histogram_avg).
+
+The following querying examples use a histogram metric named `http_request_duration_seconds`.
+If the metric being queried instead uses delta temporality, replace uses of the
+`rate()` function in these examples with `sum_per_second()` and ensure that the
+step value equals the sliding time window's value. For more information, see
+[Querying delta temporality metrics](/investigate/querying/metrics/delta-queries).
+
+#### Rate of HTTP requests
+
+Use the `histogram_count()` function to calculate the rate of HTTP requests:
+
+```copy
+histogram_count(sum(rate(http_request_duration_seconds{}[5m])))
+```
+
+#### Average HTTP request duration
+
+Use the `histogram_avg()` function to query the average HTTP request duration:
+
+```copy
+histogram_avg(sum(rate(http_request_duration_seconds[5m])))
+```
+
+#### 90th percentile HTTP request duration
+
+Use the `histogram_quantile()` function to query the 90th percentile HTTP request
+duration by HTTP method and request path:
+
+```copy
+histogram_quantile(0.9, sum(rate(http_request_duration_seconds[5m])))
+```
+
+#### Percentage of HTTP requests under given latency
+
+Service level objectives are commonly defined in tolerances by percentile, such
+as delivering 90% of requests in less than 200 ms and 99% of requests in less than
+500 ms. Use the `histogram_fraction()` function to calculate the percentage of requests
+with responses in 200 ms or less:
+
+```copy
+histogram_fraction(0, 0.2, sum(rate(http_request_duration_seconds[5m])))
+```
+
+### Querying classic Prometheus histograms
+
+If you're querying a histogram with a metric name ending in `_bucket`, you're querying
+a classic Prometheus histogram.
+
+A classic Prometheus histogram is composed of individual counter time series and
+stored as separate time series. For example, if your histogram aggregates HTTP
+request observations and is named `http_request_duration_seconds`, the resulting
+time series is:
+
+- `http_request_duration_seconds_bucket` with a time series for each unique bucket.
+  The time series has a label named `le` whose value represents the bucket's upper
+  boundary.
+- `http_request_duration_seconds_sum`, the sum of all observed values.
+- `http_request_duration_seconds_count`, the total count of all observed values.
+
+The scrape endpoint exposes:
+
+```text
+http_request_duration_seconds_bucket{le="0.1"} 2764
+http_request_duration_seconds_bucket{le="0.25"} 3653
+http_request_duration_seconds_bucket{le="0.5"} 8735
+http_request_duration_seconds_bucket{le="0.75"} 12763
+http_request_duration_seconds_bucket{le="1"} 13172
+http_request_duration_seconds_bucket{le="+Inf"} 13865
+http_request_duration_seconds_sum 7732
+http_request_duration_seconds_count 13865
+```
+
+Using `http_request_duration_seconds` as an example, you can write the following
+PromQL queries:
+
+#### Rate of HTTP requests (legacy)
+
+Use the `rate()` function and the `_count` time series to calculate the rate of HTTP
+requests:
+
+```copy
+sum(rate(http_request_duration_seconds_count[5m]))
+```
+
+#### Average HTTP request duration (legacy)
+
+Query the average HTTP request duration by diving the sum of observations by the
+count of observations:
+
+```copy
+sum(rate(http_request_duration_seconds_sum[5m])) / sum(rate(http_request_duration_seconds_count[5m]))
+```
+
+#### 90th percentile HTTP request duration (legacy)
+
+Use the histogram_quantile() function to get the 90th percentile HTTP request duration
+by HTTP method and request path:
+
+```copy
+histogram_quantile(0.9, sum by(le)(rate(http_request_duration_seconds_bucket[5m])))
+```

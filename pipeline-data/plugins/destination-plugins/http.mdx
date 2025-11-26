@@ -1,0 +1,78 @@
+---
+title: HTTP destination plugin
+sidebarTitle: HTTP destination plugin (Telemetry Pipeline)
+description: Use the HTTP destination plugin.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import BasicAuthentication from '/snippets/_partials/pipeline-basic-auth.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The HTTP [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `http`, alias: `HTTP`) lets you configure your telemetry pipeline to send
+your data to remote servers or services over the internet to an HTTP endpoint,
+such as a web server or an API.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name       | Key | Description | Default |
+| ---------- | --- | ----------- | ------- |
+| **Host**   | `host` | Required. IP address or hostname of the target HTTP Server. | `0.0.0.0` |
+| **Port**   | `port` | Required. TCP port of the target HTTP Server. | `80` |
+| **URI**    | `uri` | Required. Specifies an optional HTTP URI for the target web server. | `/` |
+| **Format** | `format` | Required. Specifies the data format to be used in the HTTP request body. Accepted values: `json`, `json_lines`, `json_stream`. | `json_lines` |
+
+### Advanced
+
+| Name                 | Key | Description | Default |
+| -------------------- | --- | ----------- | ------- |
+| **Headers**          | `header` | Adds an HTTP header key/value pair. You can set multiple headers. | _none_ |
+| **Compress**         | `compress` | Sets the payload compression mechanism. Accepted values: `gzip`, _no value_ | _none_ |
+| **HTTP Proxy**       | `proxy` | Specifies an HTTP Proxy. The expected format of this value is `http://host:port`. | _none_ |
+| **JSON Date Format** | `json_date_format` | Specifies the format of the date. Accepted values: `double`, `epoch`, `iso8601` (for example, `2018-05-30T09:39:52.000681Z`), `java_sql_timestamp` (for example, `2018-05-30 09:39:52.000681`, which can be used with AWS Athena). | _none_ |
+| **JSON Date Key**    | `json_date_key` | Specifies the name of the date field in output. | _none_ |
+| **Body Key**         | `body_key` | Specifies the key that contains the body. | _none_ |
+| **Header Tag**       | `header_tag` | Sets an HTTP header whose value is the tag of the record. | _none_ |
+| **Header Key**       | `headers_key` | Specifies the key that contains the headers. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />
+
+### Basic Authentication
+
+<BasicAuthentication />
+
+### AWS Authentication
+
+| Name                             | Key | Description | Default |
+| -------------------------------- | --- | ----------- | ------- |
+| **Enable AWS Authentication**    | `aws_auth` | Enable AWS Sigv4 Authentication. Accepted values: `true`, `false`. | `false` |
+| **AWS Destination Service Code** | `aws_service` | AWS destination service code, used by SigV4 authentication. | _none_ |
+| **AWS Region**                   | `aws_region` | AWS Region of your service. | _none_ |
+| **AWS STS Endpoint**             | `aws_sts_endpoint` | Custom endpoint for the AWS STS API, used with the `aws_role_arn` option. | _none_ |
+| **AWS IAM Assume Role**          | `aws_role_arn` | Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role to assume, for uses like cross-account access. | _none_ |
+| **AWS External ID**              | `aws_external_id` | Specifies an external ID for the STS API. Can be used with the `aws_role_arn` parameter if your role requires an external ID. | _none_ |

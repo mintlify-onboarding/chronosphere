@@ -1,0 +1,383 @@
+---
+title: Setting monitor muting rules
+description: View and create muting rules for alerts.
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+Use muting rules to mute notifications for an entire monitor, a signal from a
+monitor, an SLO, or any stored time series. You can use this capability when you're
+fixing a known issue and don't want to keep receiving alerts, during scheduled
+maintenance windows, or when deploying new services.
+
+## View muting rules
+
+Use the Chronosphere Observability Platform or Chronoctl to view a list of muting
+rules. Observability Platform provides detailed information about muting rules,
+such as which alerts a muting rule affects.
+
+<Tabs>
+<Tab title="Web" id="viewing-monitor-muting-rules-cloud">
+
+To display a list of defined muting rules, in the navigation menu select
+**<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Muting Rules**.
+
+You can take the following actions:
+
+- Use the **Search muting rules** box to find a specific rule by name.
+- Filter the list of rules by choosing a rule status, which can be **Active**,
+  **Scheduled**, or **Expired**.
+
+- Point to any muting rule to display additional actions:
+
+  - **<Icon icon="clone" /> Copy muting rule:** Available for rules
+    that are **Active**, **Scheduled**, or **Expired**.
+  - **<Icon icon="circle-stop" /> Expire Muting Rule:** Available for rules
+    that are **Active** or **Scheduled**.
+
+- Select any muting rule in the list to view an overview, which includes the monitor
+  or time series that the muting rule matches, when the muting rule starts and ends,
+  who created the muting rule, and the total monitors and time series affected.
+
+When viewing an active muting rule, you can display a list of alerts that the rule
+mutes during the specified time period. For example, you can show all muted alerts
+for the past hour to help determine whether the muting rule is effectively muting the
+intended alerts.
+
+The **Muted Alerts** section displays the following muting rule statuses. You can
+change the time period to see which alerts the muting rule affects:
+
+- **All alerts** are a complete list of alerts muted during the selected time period.
+- **Active** alerts are actively triggering, but are currently muted by the muting
+  rule.
+- **Resolved** alerts were previously triggered and muted by the muting rule, but are
+  no longer triggering.
+
+Click the name of the alert to display the [Monitor actions](/investigate/alerts/monitors/monitor-actions)
+page for the muted monitor.
+
+</Tab>
+<Tab title="Chronoctl" id="viewing-monitor-muting-rules-chronoctl">
+
+To fetch the defined muting rules with [Chronoctl](/tooling/chronoctl), use this
+command:
+
+```shell copy
+chronoctl muting-rules list
+```
+
+This command returns a list of YAML documents with the following data structure
+for each muting rule:
+
+```yaml
+api_version: v1/config
+kind: MutingRule
+spec:
+  slug: my-rule
+  name: My Rule
+  label_matchers:
+    - type: EXACT
+      name: environment
+      value: staging
+  starts_at: "2023-12-12T18:54:46.000Z"
+  ends_at: "2023-12-12T19:54:46.000Z"
+  comment: mute staging alerts
+```
+
+</Tab>
+<Tab title="API" id="list-muting-API">
+
+To complete this action with the Chronosphere API, use the
+[`ListMutingRules`](/tooling/api-info/definition/operations/ListMutingRules) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Create a muting rule
+
+You can create a muting rule to mute an entire monitor or specific time series.
+If you have specific downtime window requirements, you can
+[schedule](/investigate/alerts/monitors/data-model#schedule) muting rules.
+
+<Tabs>
+<Tab title="Web" id="creating-a-muting-rule-cloud">
+
+You can add a muting rule from the navigation menu from the list of defined monitors
+or directly from the list of muting rules.
+
+Adding a muting rule from an existing monitor pre-populates the matching criteria
+without having to manually enter that information. As you define a muting rule, the
+**Preview Alerts** section displays how your muting rule impacts related alerts.
+Based on this preview, you can view and modify monitoring rule's results before the
+muting rule is active.
+
+To create a muting rule:
+
+1. Choose whether to mute an existing rule or create a new one:
+   - To mute an existing rule:
+     1. In the navigation menu select
+        **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**
+        and click the monitor you want to mute.
+     1. If you want to mute specific time series only (and not the entire monitor),
+        choose the time series from the list in the **Series Legend**.
+     1. On the same line as the monitor's title, click **<Icon icon="clock-rotate-left" /> Mute**.
+   - To create a new muting rule, in the navigation menu select
+     **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Muting Rules**,
+     and click **Create muting rule**.
+1. Define your muting rule:
+
+    - **Name**: Required, but doesn't need to be unique. When creating a muting rule
+      from a monitor, this field is prepopulated with that monitor's name.
+    - **What alerts should be muted?**: Whether the muting rule should mute
+      **A Monitor** or a **Time Series**, the **Matcher** which is the operator to
+      match a value against a key, and the **Key** and **Value** to match on.
+    - **When should it start?**: Start muting **Now** or at a specific **Start time**.
+    - **For how long?**: The **Duration** or defined **End time** of the muting rule.
+      Muting rules are based on the time zone of the creator, with working hours
+      defined as 9 AM to 5 PM Monday through Friday. Creating a rule that extends
+      outside these hours displays an informational message in the muting rule
+      interface.
+
+      <Info>
+Muting rules support regular expressions, which you can use to match key
+      values against. Refer to the section about how to
+      [match on values using regular expressions](/investigate/alerts/muting-rules#match-on-values-using-regular-expressions).
+</Info>
+
+1. Click **Save**.
+
+After you create a muting rule in Observability Platform, select it from the list of
+muting rules and click **Show JSON** to view the complete JSON request for your
+muting rule. You can copy this JSON snippet and use it in a script with the
+[Chronosphere API](/tooling/api-info).
+
+```json
+{
+  "slug": "lifecycle-match-envoy_cluster_name",
+  "name": "Muting Rule",
+  "matchers": [
+    {
+      "type": "REGEXP_MATCHER_TYPE",
+      "name": "envoy_cluster_name",
+      "value": "cluster_span_rc.*"
+    }
+  ],
+...
+}
+```
+
+</Tab>
+<Tab title="Chronoctl" id="creating-a-muting-rule-chronoctl">
+
+To create a muting rule with [Chronoctl](/tooling/chronoctl), use this command:
+
+{/* markdownlint-disable MD013 */}
+
+```shell copy /START_TIME/ /END_TIME/ /RULE_NAME/ /COMMENT/ /LABEL_QUERY/
+chronoctl muting-rules create --starts-at "START_TIME" --ends-at "END_TIME" --name "RULE_NAME" --comment "COMMENT" --match-labels 'LABEL_QUERY'
+```
+
+{/* markdownlint-enable MD013 */}
+
+Replace these values:
+
+- `COMMENT`: A summary of the muting rule, as a string.
+- `END_TIME`: When to end the muting rule, as an RFC3339 timestamp or a relative
+  time, such as `-15m`, `-1h30m`, or `-1d5h15m`.
+- `-LABEL_QUERY`: The labels and values to match for the muting rule, as a PromQL
+  query, which can include regular expressions.
+- `RULE_NAME`: The name of the muting rule, as a string.
+- `START_TIME`: When to start the muting rule, as an RFC3339 timestamp or a relative
+  time, such as `-15m`, `-1h30m`, or `-1d5h15m`.
+
+To mute a specific monitor, use the `alertname` command:
+
+```shell copy
+chronoctl muting-rules create ... --match-labels '{alertname="<monitor-name>"}'
+```
+
+To mute a specific monitor when the monitor name isn't unique, use the `slug`
+command:
+
+```shell copy
+chronoctl muting-rules create ... --match-labels '{__chrono_monitor_slug="<monitor-slug>"}'
+```
+
+For example, this command creates a muting rule that runs for three hours
+on September 7, 2021, starts at 11:49 AM, and matches the label named `instance`,
+for the value `localhost:3030`:
+
+{/* markdownlint-disable MD013 */}
+
+```shell copy
+chronoctl muting-rules create --starts-at "2021-09-07T11:49:35Z" --ends-at "2021-09-07T14:49:35Z" --name "infra rule" --comment "Local requests" --match-labels '{instance="localhost:3030"}'
+```
+
+{/* markdownlint-enable MD013 */}
+
+</Tab>
+<Tab title="API" id="create-muting-API">
+
+To complete this action with the Chronosphere API, use the
+[`CreateMutingRule`](/tooling/api-info/definition/operations/CreateMutingRule) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Match on values using regular expressions
+
+When creating a muting rule, you can use regular expressions to include or exclude
+values.
+
+{/* vale Chronosphere.WordList = NO */}
+
+In Observability Platform, select one of these PromQL **Matchers**:
+
+- Exact match (`=`)
+- Match regex (`=~`)
+
+Then, define regular expressions for the values you want to match on.
+
+{/* vale Chronosphere.WordList = YES */}
+
+If you're creating a muting rule using Chronoctl, pass the `-match-labels` argument
+followed by a PromQL query that includes regular expressions.
+
+For example, you might want to match a time series with a label named
+`envoy_cluster_name` and include any values that begin with `cluster_span_rc`. You
+can use Observability Platform or Chronoctl to define a regular expression pattern
+that matches based on values such as `cluster_span_rc_shared__spanhandler_proxy_r-0`.
+
+<Tabs>
+<Tab title="Web" id="regular-expressions-cloud">
+
+When defining your muting rule in Observability Platform, specify the following
+criteria:
+
+{/* vale Chronosphere.WordList = NO */}
+
+- Select the **match regex** (`=~`) matcher.
+- Enter `envoy_cluster_name` as the key.
+- Enter `cluster_span_rc.*` as the value to match on.
+
+{/* vale Chronosphere.WordList = YES */}
+
+</Tab>
+<Tab title="Chronoctl" id="regular-expressions-chronoctl">
+
+To create a muting rule with the defined regular expression
+with [Chronoctl](/tooling/chronoctl), use this command::
+
+```shell copy
+chronoctl muting-rules create --name "envoy mute" --match-labels '{envoy_cluster_name=~"cluster_span_rc.*"}' --ends-at +1h
+```
+
+</Tab>
+</Tabs>
+
+## Edit a muting rule
+
+Edit a muting rule to change the name of the rule or update the rule's duration.
+
+1. On the **Muting Rules** page, click the muting rule whose duration you want to
+   extend.
+1. On the **Muting Rules Details** page, click **<Icon icon="pencil" /> Edit**.
+
+The **Edit Muting Rule** drawer opens and displays a message stating when the selected
+muting rule duration ends.
+
+### Change the rule name
+
+To change the rule's name:
+
+1. Update the **Name** field.
+1. Click **Save**.
+
+### Extend or shorten the duration
+
+You can extend or reduce the duration of a muting rule to increase the length of time
+that the muting rule remains active. You can extend muting rules from Observability
+Platform only.
+
+1. [Edit the muting rule](#edit-a-muting-rule) you want to change the duration of.
+1. Select **Extend by** to lengthen, or **Shorten by** to reduce the duration.
+1. In the **Time period** field, enter a number and then choose **Hours**, **Minutes**,
+   or **Days** from the menu.
+
+   The new scheduled time displays next to the duration boxes so you can confirm the
+   setting before saving.
+1. Click **Save**.
+
+### Set a new end time
+
+You can also set a specific new end time.
+
+1. Select **End time**.
+1. Set a [custom time](/navigate/time-ranges#select-a-custom-time-and-date-range).
+1. Click **Save**.
+
+## Stop a muting rule
+
+Use Observability Platform or Chronoctl to stop a muting rule, which deactivates
+the rule and changes its status to **Expired**.
+
+<Tabs>
+<Tab title="Web" id="expire-muting-rule-cloud">
+
+When viewing an expired muting rule, a counter displays the number of muted alerts
+and affected monitors while the rule was active.
+
+To stop a muting rule:
+
+1. On the **Muting Rules** page, take one of the following actions:
+   - Hold the pointer over the muting rule you want to mute and click
+     **<Icon icon="circle-stop" /> Expire Muting Rule**.
+   - Click a muting rule to open the **Muting Rules Details** page, and then click
+     **<Icon icon="circle-stop" /> Expire Muting Rule**.
+1. In the confirmation dialog, click **Confirm (Expire)**.
+
+</Tab>
+<Tab title="Chronoctl" id="expire-muting-rule-chronoctl">
+
+To expire a muting rule with [Chronoctl](/tooling/chronoctl), use this command:
+
+```shell copy /SLUG/
+chronoctl muting-rules expire-rule --slug SLUG
+```
+
+Replace _`SLUG`_ with the rule's slug, such as `3021f691-a0bf-4bdd-a4c8-f8468e5b272a`.
+
+</Tab>
+</Tabs>
+
+## Delete a muting rule
+
+Select from the following methods to delete a muting rule.
+
+<Tabs>
+<Tab title="Chronoctl" id="delete-muting-chronoctl">
+
+To permanently delete a muting rule with [Chronoctl](/tooling/chronoctl), use this command:
+
+```shell copy /SLUG/
+chronoctl muting-rules delete SLUG
+```
+
+Replace _`SLUG`_ with the rule's slug, such as `3021f691-a0bf-4bdd-a4c8-f8468e5b272a`.
+
+</Tab>
+<Tab title="API" id="delete-muting-API">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteMutingRule`](/tooling/api-info/definition/operations/DeleteMutingRule) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

@@ -1,0 +1,60 @@
+---
+title: Google Cloud BigQuery destination plugin
+sidebarTitle: Google Cloud BigQuery destination plugin (Telemetry Pipeline)
+description: Send pipeline data to Google Cloud BigQuery.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Google Cloud BigQuery [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `bigquery`) lets you configure your telemetry pipeline to send your log
+data and metrics to Google Cloud BigQuery.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                                | Key | Description | Default |
+| ----------------------------------- | --- | ----------- | ------- |
+| **Google Service Credentials Path** | `google_service_credentials` | Required. The Service Credentials file lets Telemetry Pipeline communicate directly with Google Cloud Services. For information about how to set up service credentials, see the [Google Cloud Observability documentation](https://cloud.google.com/logging/docs/agent/logging/authorization#create-service-account). | _none_ |
+| **Google Project Id**               | `project_id` | The project ID containing the BigQuery dataset to stream into. If the service file is provided then the project ID is taken from there. | _none_ |
+| **Existing Data Set ID**            | `dataset_id` | The dataset ID of the BigQuery dataset to write into. This dataset must exist in your project. | _none_ |
+| **Existing Table ID**               | `table_id` | The table ID of the BigQuery table to write into. This table must exist in the specified dataset and the schema must match the output. | _none_ |
+
+### Advanced
+
+| Name                                    | Key | Description | Default |
+| --------------------------------------- | --- | ----------- | ------- |
+| **Skip Invalid Rows**                   | `skip_invalid_rows` | If `true`, inserts all valid rows of a request, even if invalid rows exist. If `false`, causes the entire request to fail if any invalid rows exist. Accepted values: `true`, `false`. | `false` |
+| **Ignore Unknown Values**               | `ignore_unknown_values` | Accepts rows that contain values that don't match the schema, and ignores unknown values. When set to `false`, treats unknown values as errors. Accepted values: `true`, `false`. | `false` |
+| **Enable Workload Identity Federation** | `enable_workload_identity_federation` | Enables workload identity federation as an alternative authentication method. Can't be used with service account credentials file or environment variable. AWS is the only supported identity provider. Accepted values: `true`, `false`. | `false` |
+| **AWS Region for BigQuery**             | `aws_region` | Google Cloud region for BigQuery. | _none_ |
+| **GCP Project Number**                  | `project_number` | Google Cloud project number where the identity provider was created. Used to construct the full resource name of the identity provider. | _none_ |
+| **GCP Pool Id**                         | `pool_id` | Google Cloud workload identity pool where the identity provider was created. Used to construct the full resource name of the identity provider. | _none_ |
+| **GCP Provider Id**                     | `provider_id` | Google Cloud workload identity provider. Used to construct the full resource name of the identity provider. Only AWS accounts are supported. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

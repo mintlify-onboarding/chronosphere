@@ -1,0 +1,57 @@
+---
+title: Confluent Cloud DataSet destination plugin
+sidebarTitle: Confluent Cloud destination plugin (Telemetry Pipeline)
+description: Use the Confluent Cloud destination plugin.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import ExtendedLibrdkafka from '/snippets/_partials/plugin-librdkafka-info.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Confluent Cloud [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `kafka`, alias: `confluent_cloud_output`) lets you send your telemetry
+pipeline data to Confluent Cloud.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name    | Key | Description | Default |
+| ------- | --- | ----------- | ------- |
+| **Confluent Cloud Bootstrap Servers** | `brokers` | Required. The Confluent Cloud bootstrap servers can be found within the cluster configuration settings. | `SERVERNAME.confluent.cloud:9092` |
+| **Confluent Cloud Topic** | `topics` | Required. The Confluent Cloud Topic to send information to. | _none_ |
+| **Confluent Cloud API Key** | `rdkafka.sasl.username` | Required. Confluent Cloud API Key. | _none_ |
+| **Confluent Cloud API Secret** | `rdkafka.sasl.password` | Required. The Confluent Cloud API Secret. | _none_ |
+| **Format** | `format` | Specifies a data format. Accepted values: `json`, `msgpack`. | `json` |
+
+### Advanced
+
+| Name    | Key | Description | Default |
+| ------- | --- | ----------- | ------- |
+| **Message Key**       | `message_key` | Optional key to store the message. | _none_ |
+| **Message Key Field** | `message_key_field` | If set, the value of `Message_Key_Field` in the record will indicate the message key. If not set nor found in the record, `Message_Key` will be used if set. | _none_ |
+| **Timestamp Key**     | `timestamp_key` | Sets the key to store the record timestamp. | _none_ |
+| **Timestamp Format**  | `timestamp_format` | Sets the format. Accepted values: `double`, `iso8601`. | `double` |
+| **Body Key**          | `body_key` | Specifies the key that contains the body. | _none_ |
+| **Queue Full Retries** | `queue_full_retries` | Telemetry Pipeline queues data into `rdkafka` library. If the underlying library can't flush the records the queue might fill and block new addition of records. This option sets the number of local retries to enqueue the data. The interval between each retry is 1 second. Setting `queue_full_retries` to `0` to set an unlimited number of retries. | `10` |
+| **Security Protocol** | `rdkafka.security.protocol` | The security protocol used to communicate with Confluent Cloud. | `SASL_SSL` |
+| **SASL Mechanism**    | `rdkafka.sasl.mechanisms` | The SASL authentication mechanism for the API. | `PLAIN` |
+
+### Extended librdkafka parameters
+
+<ExtendedLibrdkafka/>

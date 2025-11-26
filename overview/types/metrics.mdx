@@ -1,0 +1,97 @@
+---
+title: Ingest, query, and control your metric data
+sidebarTitle: Analyze and investigate your metric data
+description: Learn about how Observability Platform can help you understand what's driving data storage volume and use.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+A _time series_ is a set of data points with matching labels. A _metric_ is a time
+series with a common name, such as the `__name__` label. Use the following
+documentation to learn about interacting with metric data in Chronosphere
+Observability Platform.
+
+<Info>
+See the [metrics dictionary](/overview/concepts/dictionary) to learn about the
+metrics created by and specific to Observability Platform.
+</Info>
+
+## Ingest
+
+Observability Platform natively supports
+[Prometheus, StatsD, DogStatsD, and other metrics formats](/ingest/metrics-traces/collector/addl-metrics)
+with the Chronosphere Collector, and
+[OpenTelemetry](/ingest/metrics-traces/otel) metrics using the
+OpenTelemetry Collector.
+
+<Columns cols={2}>
+  <Card icon="paper-plane"
+    title="Ingest data"
+    titleBackgroundColor="#28a561"
+    titleTextColor="#FFFFFF"
+    href="/ingest/metrics-traces"
+  />
+</Columns>
+
+## Query
+
+Learn how to construct queries in Metrics Explorer to investigate query requests,
+responses, and statistics. Use a query to select and filter the metrics you’re
+interested in, and then apply functions to them. You can also learn about writing
+[PromQL queries](/investigate/querying/promql) and applying functions to perform
+calculations within queries.
+
+<Columns cols={2}>
+  <Card icon="magnifying-glass-plus"
+    title="Query data"
+    titleBackgroundColor="#28a561"
+    titleTextColor="#FFFFFF"
+    href="/investigate/querying/metrics"
+  />
+</Columns>
+
+## Observe
+
+Create standard dashboards to query and
+[visualize log data](/investigate/querying/dashboard-query) queries. You can also
+create [alerts](/investigate/alerts/monitors) to watch time series data that's
+specified in a monitor query, and receive notifications when the query matches
+specified logs.
+
+<Columns cols={2}>
+  <Card icon="display"
+    title="Observe data"
+    titleBackgroundColor="#28a561"
+    titleTextColor="#FFFFFF"
+    href="/observe/dashboards"
+  />
+</Columns>
+
+## Analyze
+
+Analyze both your metric data and queries to gain insights, understand the value of
+your data semantics, and highlight changes and their impacts.
+
+<Columns cols={2}>
+  <Card icon="chart-bar"
+    title="Analyze data"
+    titleBackgroundColor="#28a561"
+    titleTextColor="#FFFFFF"
+    href="/investigate/analyze"
+  />
+</Columns>
+
+## Control
+
+Use the Chronosphere Control Plane to reduce the amount of metric data retained in
+your system over time. Identify and evaluate data, and then reshape the overall
+dataset to eliminate waste, unnecessary noise, and cost.
+
+<Columns cols={2}>
+  <Card icon="shapes"
+    title="Control data"
+    titleBackgroundColor="#28a561"
+    titleTextColor="#FFFFFF"
+    href="/control/shaping"
+  />
+</Columns>

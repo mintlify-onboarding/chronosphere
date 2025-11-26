@@ -1,0 +1,11 @@
+
+| Name                           | Key | Description | Default |
+| ------------------------------ | --- | ----------- | ------- |
+| **TLS**                        | `tls` | If `true`, enables TLS/SSL. If `false`, disables TLS/SSL. Accepted values: `true`, `false`. | `false` |
+| **TLS Certificate Validation** | `tls.verify` | If `on`, and if `tls` is `true`, enables TLS/SSL certificate validation. If `off`, disables TLS/SSL certificate validation. Accepted values: `on`, `off`. | `on` |
+| **TLS Debug Level**            | `tls.debug` | Sets TLS debug verbosity level. Accepted values: `0` (No debug), `1` (Error), `2` (State change), `3` (Informational), `4` (Verbose). | `1` |
+| **CA Certificate File Path**   | `tls.ca_file` | Absolute path to CA certificate file. | _none_ |
+| **Certificate File Path**      | `tls.crt_file` | Absolute path to certificate file. | _none_ |
+| **Private Key File Path**      | `tls.key_file` | Absolute path to private key file. | _none_ |
+| **Private Key Path Password**  | `tls.key_passwd` | Password for private key file. | _none_ |
+| **TLS SNI Hostname Extension** | `tls.vhost` | Hostname to be used for TLS SNI extension. | _none_ |

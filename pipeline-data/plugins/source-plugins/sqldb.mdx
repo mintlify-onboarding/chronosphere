@@ -1,0 +1,135 @@
+---
+title: SQL DB Input source plugin
+sidebarTitle: SQL DB Input source plugin (Telemetry Pipeline)
+description: Use the SQL DB Input source plugin with Chronosphere Telemetry Pipeline.
+---
+import NoIcon from '/snippets/_partials/no-icon.mdx';
+import PluginDuplicates from '/snippets/_partials/plugin-duplicates.mdx';
+import YesIcon from '/snippets/_partials/yes-icon.mdx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The SQL DB Input [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `sqldb`, alias: `SQL_DB_Input`) lets you ingest log data from a
+relational database into a telemetry pipeline. If you write your logs to a
+relational database, you can use the SQL DB Input plugin to convert that data
+into a pipeline-friendly format.
+
+This plugin supports the following SQL formats:
+
+- Postgres
+- MySQL
+- Oracle
+- Microsoft SQL Server
+- SQLite
+
+<SourceStyle/>
+
+<PluginDuplicates/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                           | Key | Description | Default |
+| ------------------------------ | --- | ----------- | ------- |
+| **DB Type**                    | `driver` | Required. The SQL driver for your relational data. Accepted values: `postgres`, `mysql`, `oracle`, `sqlserver`, `sqlite`. | `postgres` |
+| **Database Connection String** | `dsn` | Required. The data source name for your database, in string format. | _none_ |
+| **SQL Query**                  | `query` | Required. The SQL query to perform. This query supports named arguments in `@named` format. | _none_ |
+
+### Advanced
+
+| Name                           | Key | Description | Default |
+| ------------------------------ | --- | ----------- | ------- |
+| **Argument Column**            | `columnsForArgs` | A list of column names to turn into arguments, separated by spaces. The most recently scanned row in each specified column becomes a `@named` argument you can use to paginate data. For example, if this key has a value of `id log_time`, the plugin creates two arguments you can use in queries: `@last_id` and `@last_log_time`. | _none_ |
+| **Time Column**                | `timeFrom` | The column in your database with the time when each log was ingested. | If unassigned, each ingested log is assigned a time value equivalent to the time the plugin runs its query. |
+| **Time Format**                | `timeFormat` | The time format of your `timeFrom` value. Accepted values: `unix_sec`, `unix_ms`, `unix_us`, `unix_ns`, or any RFC time format layout. | If `timeFrom` is an integer: `unix_ns`. If `timeFrom` is a string: `2006-01-02T15:04:05.999999999Z07:00`. |
+| **Fetch Interval**             | `fetchInterval` | How often to query your database. This value must specify one or more integer and one or more time unit, like `5m` or `1m30s`. Valid time units: `ns`, `us`, `ms`, `s`, `m`, `h`. | `1s` |
+| **Storage Key**                | `storageKey` | A key to store the plugin's metadata, which lets the plugin store arguments and other configuration data even if the plugin restarts. By default, the plugin writes its own metadata in `sqldb_{hash}.gob` format, where `{hash}` is a string generated from your query arguments. You can also specify your own value, which can follow any format and use any file extension. | _none_ |
+| **Storage Path**               | `storageDir` | The path to the directory where the plugin writes its data. You can use an absolute or relative path, but Chronosphere recommends using an absolute path. | `/data/storage` (If this directory does not exist, the plugin writes to your operating system's default directory for temporary data.) |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |
+
+## Example queries
+
+The following examples describe how to configure the SQL DB Input plugin in different
+hypothetical scenarios.
+
+### Serial ID
+
+Given the following database structure, which includes an auto-increasing `id`:
+
+```sql copy
+CREATE TABLE logs (
+    id SERIAL PRIMARY KEY,
+    payload JSON NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT now()
+);
+```
+
+You can use the SQL DB Input plugin to paginate over your data using `id`. To include
+such a query in your pipeline, configure the plugin as follows:
+
+```yaml copy
+pipeline:
+  inputs:
+    - name: sqldb
+      dsn: "postgres://user:password@localhost:5432/dbname"
+      query: |-
+        SELECT *
+        FROM logs
+        WHERE @last_id IS NULL OR id > @last_id
+        ORDER BY id
+        LIMIT 100
+      columnsForArgs: id
+```
+
+The previous query sorts by `id`, and then uses the `id` value from the previous query to
+paginate data.
+
+### Time-based pagination
+
+Given the following database structure, which includes a non-sortable `id`:
+
+```sql copy
+CREATE TABLE logs (
+    id UUID PRIMARY KEY,
+    payload JSON NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT now()
+);
+```
+
+You can use a combination of `id` and `created_at` to paginate data. To include
+such a query in your pipeline, configure the plugin as follows:
+
+
+```yaml copy
+pipeline:
+  inputs:
+    - name: sqldb
+      dsn: "postgres://user:password@localhost:5432/dbname"
+      query: |-
+        SELECT *
+        FROM logs
+        WHERE @last_id IS NULL OR @last_created_at IS NULL OR (created_at >= @last_created_at OR (created_at = @last_created_at AND id > @last_id))
+        ORDER BY created_at, id
+        LIMIT 100
+      columnsForArgs: "id created_at"
+```
+
+The previous query sorts by both `id` and `created_at`, then uses the `id` and
+`created_at` values from the previous query to paginate data.
