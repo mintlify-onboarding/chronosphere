@@ -472,7 +472,6 @@
                               {
                                 "group": "Prometheus",
                                 "pages": [
-                                  "ingest/metrics-traces/collector/mappings/prometheus",
                                   "ingest/metrics-traces/collector/mappings/prometheus/prometheus-recommendations",
                                   "ingest/metrics-traces/collector/mappings/prometheus/operator-collector"
                                 ]
