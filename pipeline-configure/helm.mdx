@@ -21,7 +21,7 @@ passing a YAML file or specific flags to the command.
 Provide a YAML file that specifies the values of parameters while installing the
 chart. For example:
 
-```shell copy
+```shell
 helm upgrade -i core-instance calyptia/core-instance --values FILE
 ```
 
@@ -33,7 +33,7 @@ Replace _`FILE`_ with the name of your YAML file.
 Specify each parameter using `helm upgrade -i`, and supply arguments using
 `--set key=value[,key=value]`. For example:
 
-```shell copy
+```shell
 helm upgrade -i core-instance calyptia/core-instance --set name="core-instance" --set cloudToken="CLOUD_TOKEN" --set coreInstance="CORE_INSTANCE"
 ```
 
@@ -51,7 +51,7 @@ conventions to configure container images.
 
 To set global settings for your container images, use the `global.imageRegistry` parameter:
 
-```shell copy
+```shell
 global:
   imageRegistry: ""
   imagePullSecrets: []
@@ -68,7 +68,7 @@ To set individual settings for your container images, find that image's key
 nested under the `images` key. For example, you can modify the `fromCloud`
 image using the parameters in `images.fromCloud`:
 
-```shell copy
+```shell
 images:
   fromCloud:
     registry: ghcr.io

@@ -38,7 +38,7 @@ with the Collector:
 To enable the Prometheus Pushgateway for the Collector, modify the Collector
 configuration file and add the following lines:
 
-```yaml copy
+```yaml
 # This will register an HTTP endpoint on the listenerAddress for the Collector.
 push:
   pushgateway:
@@ -55,7 +55,7 @@ the Collector, assuming that the listen address is running on port `3030`.
 When running this `curl` command, replace `<collector-ip>` with the IP address of your
 Collector.
 
-```shell copy
+```shell
 curl --data-binary @- http://<collector-ip>:3030/pushgateway/metrics/job/some_job/job_id/my_unique_id <<EOF
 # TYPE some_metric counter
 some_metric{label="val1"} 42
@@ -72,7 +72,7 @@ Deployment, run the following command to enable port forwarding, where
 `<chronocollector-pod-name>` is the name of the Kubernetes pod where the Collector is
 running:
 
-```shell copy
+```shell
 kubectl port-forward <chronocollector-pod-name> 3030
 ```
 

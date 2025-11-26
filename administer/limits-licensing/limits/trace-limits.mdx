@@ -38,7 +38,7 @@ Trace Control Plane, or by querying the
 notifications when tracing data is rejected. The following query returns invalid
 trace data by reason, such as when a span is too far in the past:
 
-```shell copy
+```shell
 sum(rate(chrono_trace_dropped_volume_in_bytes_count[5m])) by (reason) > 0
 ```
 

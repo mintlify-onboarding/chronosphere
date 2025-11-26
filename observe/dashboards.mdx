@@ -105,7 +105,7 @@ or properties.
 To return a list of all dashboards with [Chronoctl](/tooling/chronoctl), use the
 `chronoctl dashboards list` command:
 
-```shell copy
+```shell
 chronoctl dashboards list
 ```
 
@@ -113,7 +113,7 @@ You can list specific dashboards by name or slug by
 passing a comma-delimited list to the `--names` or `--slugs` flags, respectively. For
 example:
 
-```shell copy
+```shell
 chronoctl dashboards list --names LIST
 ```
 
@@ -125,14 +125,14 @@ Dashboard resources returned by `list` don't contain the dashboard's JSON defini
 by default, but resources returned by `read` do. To include dashboard JSON with
 `dashboards list`, add the `--include-dashboard-json` option to the command:
 
-```shell copy
+```shell
 chronoctl dashboards list --include-dashboard-json
 ```
 </Info>
 
 To return a single dashboard, use the `chronoctl dashboards read` command:
 
-```shell copy
+```shell
 chronoctl dashboards read SLUG
 ```
 
@@ -209,7 +209,7 @@ If you don't already have a YAML configuration file, use the
 `chronoctl dashboards scaffold` command to generate a template for a specific
 resource type:
 
-```shell copy
+```shell
 chronoctl dashboards scaffold
 ```
 
@@ -230,7 +230,7 @@ To create a new dashboard as code:
    For example, this resource creates an empty dashboard with the name `Infra Dashboard`
    and slug `infra-dashboard`:
 
-   ```yaml copy
+   ```yaml
    api_version: v1/config
    kind: Dashboard
    spec:
@@ -261,7 +261,7 @@ To create a new dashboard as code:
 
 1. Apply the changes:
 
-   ```shell copy
+   ```shell
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -277,7 +277,7 @@ To create a dashboard with [Terraform](/tooling/infrastructure/terraform):
    existing dashboard and edit it to create a new dashboard.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -543,7 +543,7 @@ You can also delete a dashboard from the [**Dashboards**](#view-dashboards) tabl
 To delete a dashboard with [Chronoctl](/tooling/chronoctl), use the
 `chronoctl delete dashboard` command:
 
-```shell copy
+```shell
 chronoctl dashboards delete SLUG
 ```
 
@@ -558,7 +558,7 @@ To delete a dashboard using [Terraform](/tooling/infrastructure/terraform):
 1. Remove the dashboard definition from the Terraform file.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 

@@ -31,7 +31,7 @@ To create an Opsgenie notifier:
 1. In the **API URL** field, enter the following URL, which is called as a `POST`
    request:
 
-   ```text copy
+   ```text
    https://api.opsgenie.com/
    ```
 1. Optional: Select **Notify when resolved** to send a resolved alert notification.
@@ -44,7 +44,7 @@ To create an Opsgenie notifier:
 
 1. Define the resource definition for your Opsgenie notifier:
 
-   ```yaml copy /NAME/ /SLUG/ /API_KEY/ /API_URL/
+   ```yaml /NAME/ /SLUG/ /API_KEY/ /API_URL/
    api_version: v1/config
    kind: Notifier
    spec:
@@ -66,13 +66,13 @@ To create an Opsgenie notifier:
 1. Enter your Opsgenie API key in the `api_key` field.
 1. Enter the following URL in the `api_url` field:
 
-   ```text copy
+   ```text
    https://api.opsgenie.com/
    ```
 
 1. Apply the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -88,7 +88,7 @@ To create an Opsgenie notifier:
    `chronosphere_opsgenie_alert_notifier` type followed by a name in a resource
    declaration:
 
-   ```ruby copy
+   ```ruby
    resource "chronosphere_opsgenie_alert_notifier" "opsgenie_notifier" {
      name = "Opsgenie Notifier"
 
@@ -134,13 +134,13 @@ To create an Opsgenie notifier:
 1. Enter your Opsgenie API key in the `api_key` field.
 1. Enter the following URL in the `api_url` field:
 
-   ```text copy
+   ```text
    https://api.opsgenie.com/
    ```
 
 1. Run `terraform apply` to create the notifier resource:
 
-   ```ruby copy
+   ```ruby
    terraform apply
    ```
 

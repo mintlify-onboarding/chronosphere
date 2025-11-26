@@ -64,7 +64,7 @@ After examining alerting thresholds, view the `ALERTS` and `ALERTS_VALUE` metric
 
 1. In the **Metrics** field, enter the following query:
 
-   ```text copy
+   ```text
    ALERTS{alertname="ALERT-NAME"}
    ```
 
@@ -81,7 +81,7 @@ After examining alerting thresholds, view the `ALERTS` and `ALERTS_VALUE` metric
 
 1. In the **Metrics** field, enter the following query:
 
-   ```text copy
+   ```text
    ALERTS_VALUE{alertname="ALERT-NAME"}
    ```
 
@@ -121,6 +121,6 @@ evaluating the query. Based on the Prometheus CloudWatch Exporter example, set
 The following query uses an `offset` of one minute to look back and ensure that the
 rollup results are fully calculated:
 
-```text copy
+```text
 histogram_quantile(0.99, sum(rate(graphql_request_duration_seconds_bucket{namespace=~"consumer-client-api-gateway",operationType!="unknown",sub_environment=~"production",operationName=~"setStorefrontUserLocalePreference"}[2m] offset 1m)) by (le,operationName,operationType))
 ```

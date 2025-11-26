@@ -34,7 +34,7 @@ from your telemetry data.
 You can obscure the entire value of a specified key. For example, given
 this sample log data:
 
-```json copy
+```json
 {"timestamp":"2023-03-28T09:08:41.64283645Z","user":{"device":"mobile","ip":"149.206.93.24"},"page_id":30,"action":"purchase"}
 {"timestamp":"2023-03-28T09:08:42.643343109Z","user":{"device":"desktop","ip":"107.30.35.78"},"page_id":10,"action":"purchase"}
 {"timestamp":"2023-03-28T09:08:48.643600498Z","user":{"device":"desktop","ip":"255.255.239.8"},"page_id":50,"action":"click"}
@@ -51,7 +51,7 @@ this sample log data:
 A processing rule with the **Key** value `$user.ip`, the **Regex** value `^.+$`,
 and the **Replacement** value `0` returns the following result:
 
-```json copy
+```json
 {"user":{"ip":"0000000000000","device":"mobile"},"timestamp":"2023-03-28T09:08:41.64283645Z","action":"purchase","page_id":30}
 {"user":{"ip":"000000000000","device":"desktop"},"timestamp":"2023-03-28T09:08:42.643343109Z","action":"purchase","page_id":10}
 {"user":{"ip":"0000000000000","device":"desktop"},"timestamp":"2023-03-28T09:08:48.643600498Z","action":"click","page_id":50}

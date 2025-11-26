@@ -51,7 +51,7 @@ To view parsers:
 To use [Chronoctl](/tooling/chronoctl) to return all parsers, use the
 `chronoctl log-ingest-config read` command:
 
-```shell copy
+```shell
 chronoctl log-ingest-config read
 ```
 
@@ -146,14 +146,14 @@ Define the plain text parser definition in Observability Platform, and then
 To use [Chronoctl](/tooling/chronoctl) to create plain text parsers, use the
 `chronoctl log-ingest-config create` command:
 
-```shell copy
+```shell
 chronoctl log-ingest-config create
 ```
 
 1. Run the following command to generate a sample parser configuration you can use as
    a template:
 
-   ```shell copy
+   ```shell
    chronoctl log-ingest-config scaffold
    ```
 
@@ -163,7 +163,7 @@ chronoctl log-ingest-config create
    log data.
 1. With a completed definition, submit it with:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl log-ingest-config create -f FILE_NAME
    ```
 
@@ -184,7 +184,7 @@ To create a plain text parser with [Terraform](/tooling/infrastructure/terraform
 1. Add the definition to a Terraform file.
 1. Run this command to create the resource:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -258,14 +258,14 @@ Define the field parser definition in Observability Platform, and then
 To use [Chronoctl](/tooling/chronoctl) to create field parsers, use the
 `chronoctl log-ingest-config create` command:
 
-```shell copy
+```shell
 chronoctl log-ingest-config create
 ```
 
 1. Run the following command to generate a sample parser configuration you can use as
    a template:
 
-   ```shell copy
+   ```shell
    chronoctl log-ingest-config scaffold
    ```
 
@@ -275,7 +275,7 @@ chronoctl log-ingest-config create
    log data.
 1. With a completed definition, submit it with:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl log-ingest-config create -f FILE_NAME
    ```
 
@@ -295,7 +295,7 @@ To create a plain text parser with [Terraform](/tooling/infrastructure/terraform
 1. Add the definition to a Terraform file.
 1. Run this command to create the resource:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -342,14 +342,14 @@ Observability Platform saves changes to your parser.
 To update parsers with [Chronoctl](/tooling/chronoctl), use the
 `log-ingest-config update` command:
 
-```shell copy
+```shell
 chronoctl log-ingest-config update
 ```
 
 1. Update the parser definition file.
 1. Run the following command to submit the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl log-ingest-config update -f FILE_NAME.yaml
    ```
 
@@ -366,7 +366,7 @@ To edit parsers using [Terraform](/tooling/infrastructure/terraform):
 1. Create or edit a Terraform file that updates the resource's existing properties.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -408,7 +408,7 @@ Observability Platform deletes your parser.
 To delete a parser with [Chronoctl](/tooling/chronoctl), use the
 `chronoctl log-ingest-config delete` command:
 
-```shell copy
+```shell
 chronoctl log-ingest-config delete
 ```
 
@@ -458,7 +458,7 @@ expression to extract the key/value pairs. Next, add a [field parser](#create-fi
 to parse out the values. The following Terraform definition includes both parsers and
 their definitions:
 
-```ruby copy
+```ruby
 resource "chronosphere_log_ingest_config" "log_ingest_config" {
 
   plain text_parser {

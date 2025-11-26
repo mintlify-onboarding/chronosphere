@@ -58,7 +58,7 @@ for other scenarios.
    [`remote_write`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
    section to your `prometheus.yml` to forward metrics to Chronosphere.
 
-   ```yaml copy
+   ```yaml
    remote_write:
      - url: https://<COMPANY>.chronosphere.io/data/api/v1/prom/remote/write
        remote_timeout: 30s
@@ -108,7 +108,7 @@ target to another, or when migrating from v1 to v2. The following example demons
 a configuration for a Prometheus Agent writing metrics to a remote write v1 endpoint
 and a remote write v2 endpoint.
 
-```yaml copy
+```yaml
 remote_write:
   - url: https://...
     protobuf_message: prometheus.WriteRequest

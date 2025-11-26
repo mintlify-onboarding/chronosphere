@@ -88,7 +88,7 @@ To view your existing trace metrics:
 To view a list of all available trace metrics using [Chronoctl](/tooling/chronoctl),
 use the `chronoctl trace-metrics-rules list` command:
 
-```shell copy
+```shell
 chronoctl trace-metrics-rules list
 ```
 
@@ -98,7 +98,7 @@ To view a single trace metrics rule, use the `chronoctl trace-metrics-rules read
 command, followed by the slug of the rule you want to view. For example, the
 following command returns a trace metrics rule with the slug `telemetry-sdk`:
 
-```shell copy
+```shell
 chronoctl trace-metrics-rules read telemetry-sdk
 ```
 
@@ -222,14 +222,14 @@ the `slug` property:
 To use [Chronoctl](/tooling/chronoctl) to create a trace metric, use the
 `chronoctl trace-metrics-rules` command:
 
-```shell copy
+```shell
 chronoctl trace-metrics-rules scaffold
 ```
 
 1. Run the following command to generate a sample trace metric configuration you can
    use as a template:
 
-   ```shell copy
+   ```shell
    chronoctl trace-metrics-rules scaffold
    ```
 
@@ -240,7 +240,7 @@ chronoctl trace-metrics-rules scaffold
 
 1. With a completed definition, submit it with:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl trace-metrics-rules create -f FILE_NAME
    ```
 
@@ -265,7 +265,7 @@ To create a new trace metric with [Terraform](/tooling/infrastructure/terraform)
 
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -291,7 +291,7 @@ The following resource defines a trace metric that matches spans that include th
 a duration between two and three seconds. The metric also groups by a key called
 `ordering-svc`.
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: TraceMetricsRule
 spec:
@@ -331,7 +331,7 @@ Terraform refers to as `my_trace_metric`, and Observability Platform refers to a
 Error Traces. This trace metric emits metrics named `all_errors` for all traces
 flagged with errors.
 
-```ruby copy
+```ruby
 resource "chronosphere_trace_metrics_rule" "my_trace_metric" {
 {
   trace_metrics_rule: {
@@ -375,14 +375,14 @@ To update a trace metric using [Chronoctl](/tooling/chronoctl):
 
 1. Return a list of all available trace metrics:
 
-   ```shell copy
+   ```shell
    chronoctl trace-metrics-rules list
    ```
 
 1. Modify the YAML file for the trace metrics you want to update.
 1. Apply your changes:
 
-   ```shell copy
+   ```shell
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -398,7 +398,7 @@ To edit a trace metric using [Terraform](/tooling/infrastructure/terraform):
 1. Modify the resource's existing properties.
 1. Run `terraform apply` to apply the changes.
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -438,13 +438,13 @@ To delete a trace metric using [Chronoctl](/tooling/chronoctl):
 
 1. Return a list of all available notification policies:
 
-   ```shell copy
+   ```shell
    chronoctl trace-metrics-rules list
    ```
 
 1. Run the following command to delete the trace metric:
 
-   ```shell copy
+   ```shell
    chronoctl trace-metrics-rules delete SLUG
    ```
 
@@ -595,7 +595,7 @@ objects, instead of directly assigning the value like a field.
 
 For example, to set the `error` field's value in a `trace` filter, use:
 
-```yaml copy
+```yaml
 trace {
   error {
     value = true
@@ -606,7 +606,7 @@ trace {
 Also, the value of a `tag` filter, unlike the key, is also an object with a `value`
 field:
 
-```yaml copy
+```yaml
 span {
   tag {
     key = "region"
@@ -625,7 +625,7 @@ structure, see the [filter examples](#filter-examples).
 
 Matches traces marked as `error` that also took more than five seconds:
 
-```yaml copy
+```yaml
 trace_filter {
     trace {
       duration {
@@ -640,7 +640,7 @@ trace_filter {
 
 Matches traces with at least one span from the service named `"cupcake-factory"`:
 
-```yaml copy
+```yaml
 trace_filter {
     span {
       service {
@@ -653,7 +653,7 @@ trace_filter {
 Matches traces with at least one span tagged `region:us-east` _and_ at least one
 span tagged `region:us-west`:
 
-```yaml copy
+```yaml
 trace_filter {
     span {
       tag {
@@ -677,7 +677,7 @@ trace_filter {
 Matches traces with at least one span tagged _both_ `region:us-east` _and_
 `stack:production`:
 
-```yaml copy
+```yaml
 trace_filter {
     span {
       tag {
@@ -697,7 +697,7 @@ trace_filter {
 
 Matches traces with _at least_ 10 spans containing the `"db-query"` operation:
 
-```yaml copy
+```yaml
 trace_filter {
     span {
       operation {

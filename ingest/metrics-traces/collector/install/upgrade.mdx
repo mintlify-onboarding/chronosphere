@@ -46,7 +46,7 @@ The Collector exposes a [debug endpoint](/ingest/metrics-traces/collector/debugg
 that you can query to return the Collector version. To query this endpoint, run the
 following request:
 
-```shell copy
+```shell
 curl -X GET http://LISTEN_ADDRESS/debug/version
 ```
 
@@ -76,7 +76,7 @@ the same information the Collector prints when starting. For example:
 
 1. Enter the following query in the query field.
 
-   ```text copy
+   ```text
    count(chronocollector_build_information) by (build_version, instance)
    ```
 
@@ -119,7 +119,7 @@ following steps to upgrade your Collector.
 
 1. Complete a rolling restart of your pods:
 
-   ```shell copy
+   ```shell
    kubectl rollout restart daemonset chronocollector -n NAMESPACE
    ```
 
@@ -128,7 +128,7 @@ following steps to upgrade your Collector.
 1. Re-enable port forwarding for your Collector. The following command enables port
    forwarding on port `3030`:
 
-   ```shell copy
+   ```shell
    kubectl port-forward chronocollector-POD_NAME 3030
    ```
 

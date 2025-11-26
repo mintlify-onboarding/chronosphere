@@ -193,7 +193,7 @@ This example [Chronoctl](/tooling/chronoctl) YAML resource definition creates a 
 that drops all metrics from CloudWatch Metric Streams _except_ for metrics about
 the Metric Stream itself.
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DropRule
 spec:
@@ -211,7 +211,7 @@ You can modify the rule to allow additional metrics from additional AWS namespac
 This example allows all metrics from the CloudWatch Metric Streams and AWS ECS
 namespaces.
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DropRule
 spec:
@@ -237,7 +237,7 @@ namespaces to reduce AWS costs associated with the streaming of unwanted metrics
 To view how many data points per second that Observability Platform is dropping
 with the example CloudWatch Metric Streams drop rule, use the following PromQL query:
 
-```text copy
+```text
 sum by (policy_name) (rate(chrono_policies_count{dropped="yes", policy_name="Drop CloudWatch Metric Stream metrics"}[5m]))
 ```
 
@@ -373,7 +373,7 @@ consumption changes. For examples, see
 1. Set values for the following environment variables, and modify the following
    Terraform data, and resources to apply the required settings.
 
-   ```ruby copy
+   ```ruby
    # Variables
 
    variable "chronosphere_org_name" {
@@ -731,6 +731,6 @@ examples, see [Drop CloudWatch Metric Stream metrics](#drop-cloudwatch-metric-st
 You can then write a query around the selected metric. For example, run this query to
 report the rate of CloudWatch metric updates:
 
-```sql copy
+```sql
 rate(aws_cloudwatch_metricstreams_MetricUpdate_sum[5m])
 ```

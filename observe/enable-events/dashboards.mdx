@@ -40,7 +40,7 @@ To enable change events on standard dashboard panels:
    to build your filter. For example, the following filter includes all deploy change
    events in the `production` environment:
 
-   ```text copy
+   ```text
    category = "deploys" AND labels.environment = "production"
    ```
 
@@ -110,7 +110,7 @@ To enable change events on classic dashboard panels:
       query in the **Regex** field. For example, you might create a variable named
      `cluster` with the following query:
 
-      ```text copy
+      ```text
       label_values(frontend_requests, k8s_cluster)
       ```
 
@@ -138,7 +138,7 @@ To enable change events on classic dashboard panels:
    `deploys` that contain an `environment` label including `production-`, and
    includes the `$cluster` variable you defined previously:
 
-   ```text copy
+   ```text
    category = "deploys" AND labels.environment =~ "production-.*" AND title =~ ".*($cluster).*"
    ```
 
@@ -176,7 +176,7 @@ Each of the following examples use the same query in the **Query** field of the
 **Query Options** section when defining a variable called `cluster` for a Grafana
 annotation:
 
-```text copy
+```text
 label_values(production_request_ms_bucket, production_k8s_cluster)
 ```
 

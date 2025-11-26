@@ -58,7 +58,7 @@ If some of your data uses a key with a colon, surround the key with double quote
 brackets in your query. For example, if your data contains a key named `error: code
 value`, a valid query is structured like this example:
 
-```sql copy
+```sql
 ["error:code value"] = critical
 ```
 
@@ -101,7 +101,7 @@ For example, the following query matches any service named `gateway` where the
 `kubernetes.namespace_name` is `test-logging` or `kubernetes.cluster_name` is `test`
 and the log message contains `"insert success"`:
 
-```sql copy
+```sql
 service = "gateway" AND (kubernetes.namespace_name = "test-logging" OR
 kubernetes.cluster_name = "test") AND "insert success"
 ```
@@ -114,14 +114,14 @@ colon operator matches on a substring or indicates that a field contains a value
 example, following query matches any logs where the `kubernetes.cluster_name` field
 contains only `production-us-east`:
 
-```sql copy
+```sql
 kubernetes.cluster_name: "production-us-east"
 ```
 
 The colon operator also matches on a substring. For example, the following query
 matches the specified value of the `httpRequest.requestUrl` key:
 
-```sql copy
+```sql
 service = "nginx" and httpRequest.requestUrl: "example.com/data/api/query"
 ```
 
@@ -144,7 +144,7 @@ to generate alerts and receive notifications. For example, the following query
 includes a calculation for an alert that returns the ratio of logs without errors to
 total logs in the `nginx` service:
 
-```sql copy
+```sql
 service = "nginx"
 | summarize 1 - countif(severity="ERROR")/countif(severity EXISTS)
 ```
@@ -156,14 +156,14 @@ Additionally, you can complete mathematical calculations on expressions. For exa
 the following filter evaluates an expression that calculates the number of bytes
 received for the `emissary-ingress` service where the duration is greater than 10:
 
-```sql copy
+```sql
 service = "emissary-ingress" bytes_received / duration > 10
 ```
 
 You can then expand the filter to display the results as table, with a column named
 `bytes_received / duration`:
 
-```sql copy
+```sql
 service = "emissary-ingress" bytes_received / duration > 10 | project bytes_received / duration
 ```
 
@@ -183,7 +183,7 @@ The `limit` operator returns the most recent log events.
 
 **Syntax**
 
-```text copy /QUERY/ /NUMBER/
+```text /QUERY/ /NUMBER/
 QUERY | limit NUMBER
 ```
 
@@ -196,7 +196,7 @@ QUERY | limit NUMBER
 
 **Example**
 
-```sql copy
+```sql
 severity = "WARNING"
 | limit 500
 ```
@@ -209,7 +209,7 @@ sorts multiple time series in descending order by the last data point value.
 
 **Syntax**
 
-```text copy /QUERY/ /AGGREGATION/ /TIME/ /EXPRESSION/
+```text /QUERY/ /AGGREGATION/ /TIME/ /EXPRESSION/
 QUERY | make-series AGGREGATION step TIME by EXPRESSION
 ```
 
@@ -224,7 +224,7 @@ QUERY | make-series AGGREGATION step TIME by EXPRESSION
 
 **Example**
 
-```sql copy
+```sql
 severity = "WARNING"
 | make-series avg(latencyInSeconds) step 15m by severity, service
 ```
@@ -247,7 +247,7 @@ results.
 
 **Syntax**
 
-```text copy /QUERY/ /KIND/ /FIELD/ /REGEX_STRING/ /NEXT_FIELD/ /NEXT_STRING/
+```text /QUERY/ /KIND/ /FIELD/ /REGEX_STRING/ /NEXT_FIELD/ /NEXT_STRING/
 QUERY | parse [kind = regex] FIELD with REGEX_STRING NEXT_FIELD [NEXT_STRING NEXT_FIELD]
 QUERY | parse-where [kind = regex] FIELD with REGEX_STRING NEXT_FIELD [NEXT_STRING NEXT_FIELD]
 ```
@@ -290,7 +290,7 @@ embedded in a string. The `severity` could be several different values (such as
 value, meaning you can't use the `substring()` function. Instead, use the `parse`
 operator to extract that value from your log data and then compute the average:
 
-```sql copy
+```sql
 "responseTime"
 | parse message with '"responseTime":' time ","
 | summarize avg(time)
@@ -308,7 +308,7 @@ The previous query:
 To complete the same calculation but display the results as a time series
 visualization, use the `make-series` operator:
 
-```sql copy
+```sql
 "responseTime"
 | parse message with "\"responseTime\":"  time ","
 | make-series avg(time)
@@ -317,7 +317,7 @@ visualization, use the `make-series` operator:
 If you want results that only include `"responseTime"`, use the `parse-where`
 operator instead of `parse`:
 
-```sql copy
+```sql
 "responseTime"
 | parse-where message with "\"responseTime\":"  time ","
 | make-series avg(time)
@@ -336,7 +336,7 @@ You want to extract the command name and port number used for each command from 
 single field. To accomplish that task, you can include multiple `parse` clauses in a
 single query:
 
-```sql copy
+```sql
 service = "zookeeper"
 | parse message with "Processing " command " command"
 | parse message with "127.0.0.1:" port
@@ -371,7 +371,7 @@ You can also use the `project()` operator with the [`substring`](#substring) fun
 to extract a substring from the source string based on a starting index character
 position. For example,
 
-```sql copy
+```sql
 severity = "ERROR"
 | project substring(resource.type, 0, 13)
 ```
@@ -381,7 +381,7 @@ Use the `project()` operator to select fields and customize columns and rows bef
 
 **Syntax**
 
-```text copy /QUERY/ /FIELD/
+```text /QUERY/ /FIELD/
 QUERY | project FIELD [, FIELD]
 ```
 
@@ -394,7 +394,7 @@ QUERY | project FIELD [, FIELD]
 
 **Example**
 
-```sql copy
+```sql
 severity = "ERROR" and TraceId EXISTS
 | project service, TraceId, request.latency
 ```
@@ -414,7 +414,7 @@ For example, the following query retrieves all logs that have a `severity` of
 `WARNING`, aggregates the results in a table, and returns the sum of the
 `httpRequest.responseSize` field, ordered by `service`:
 
-```sql copy
+```sql
 severity = "WARNING"
 | summarize sum(httpRequest.responseSize) by service
 ```
@@ -423,7 +423,7 @@ To sort the results, use an alias. The following example expands on the existing
 query and uses an alias named `total`, which simplifies the subsequent `sort by`
 clause:
 
-```sql copy
+```sql
 severity = "WARNING"
 | summarize total = sum(httpRequest.responseSize) by service
 | sort by total
@@ -431,7 +431,7 @@ severity = "WARNING"
 
 **Syntax**
 
-```text copy /QUERY/ /COLUMN/
+```text /QUERY/ /COLUMN/
 QUERY | sort by COLUMN asc|desc [, COLUMN ...]
 ```
 
@@ -446,7 +446,7 @@ QUERY | sort by COLUMN asc|desc [, COLUMN ...]
 
 **Example**
 
-```sql copy
+```sql
 severity = "WARNING"
 | summarize count() by service, severity
 | sort by count_ desc, service asc
@@ -469,7 +469,7 @@ results with subsequent clauses, use the [`top-nested`](#top-nested) operator.
 
 **Syntax**
 
-```text copy /QUERY/ /AGGREGATION/ /FIELD/ /EXPRESSION/
+```text /QUERY/ /AGGREGATION/ /FIELD/ /EXPRESSION/
 QUERY | summarize AGGREGATION by FIELD EXPRESSION
 ```
 
@@ -484,7 +484,7 @@ QUERY | summarize AGGREGATION by FIELD EXPRESSION
 
 **Example**
 
-```sql copy
+```sql
 severity = "ERROR"
 | summarize sum(production) by severity, service
 | limit 100
@@ -506,7 +506,7 @@ a hierarchy of more precise groupings.
 For example, using the `summarize` operator, the following query returns the count of
 logs from each endpoint from the `nginx-requests` service in descending order:
 
-```sql copy
+```sql
 service = "nginx-requests"
 | summarize by http.response.endpoints
 ```
@@ -524,7 +524,7 @@ Using the `top-nested` operator, the following query refines the results from th
 `nginx-requests` service to the top 80 endpoints, and further partitions the data by
 the top nine HTTP response status codes:
 
-```sql copy
+```sql
 service = "nginx-requests"
 | top-nested 80 of http.response.endpoints,
 top-nested 9 of http.response.status_code
@@ -543,7 +543,7 @@ values returned for `http.response.endpoints` times the number of values returne
 
 **Syntax**
 
-```text copy /QUERY/ /NUMBER/ /AGGREGATION/ /EXPRESSION/
+```text /QUERY/ /NUMBER/ /AGGREGATION/ /EXPRESSION/
 QUERY | top-nested NUMBER of EXPRESSION by AGGREGATION asc|desc [, top-nested ...]
 ```
 
@@ -560,12 +560,12 @@ QUERY | top-nested NUMBER of EXPRESSION by AGGREGATION asc|desc [, top-nested ..
 
 **Example**
 
-```sql copy
+```sql
 severity = "ERROR" AND cluster_name = "production"
 | top-nested 10 of service by avg(duration)
 ```
 
-```sql copy
+```sql
 severity = "ERROR" AND cluster_name = "production"
 | top-nested 5 of service, top-nested of kubernetes_namespace
 ```
@@ -587,7 +587,7 @@ For example, the following query creates a time chart that uses `k8` as an alias
 the `k8s.namespace` field. The generated chart uses `k8` instead of the full field
 name.
 
-```sql copy
+```sql
 severity = "ERROR"
 | make-series by k8 = k8s.namespace
 ```
@@ -598,7 +598,7 @@ function, and `svc` for the `service` field. The generated chart includes result
 such as `svc:nginx total`. Without the aliases, the same result would be
 `service:nginx count_`.
 
-```sql copy
+```sql
 severity = "ERROR"
 | make-series total = count() by svc = service
 ```
@@ -635,7 +635,7 @@ contains the following values: `production-1`, `production-2`, `production-3`,
 The following query matches the word `production` anywhere in the
 `kubernetes.cluster_name` field, so it matches all values in the field:
 
-```sql copy
+```sql
 kubernetes.cluster_name =~ "production"
 ```
 
@@ -643,7 +643,7 @@ The following regular expression query includes a period and wildcard (`.*`), wh
 matches the word `production`, followed by zero or more characters anywhere in the
 phrase. This query also matches all values in the field:
 
-```sql copy
+```sql
 kubernetes.cluster_name =~ "production.*"
 ```
 
@@ -652,7 +652,7 @@ more dash characters anywhere in the phrase. This query also matches all values 
 the field, including `productionNEW` and `old_production`, which might not be
 immediately apparent:
 
-```sql copy
+```sql
 kubernetes.cluster_name =~ "production-*"
 ```
 
@@ -661,7 +661,7 @@ characters with a wildcard and add a dollar sign (`$`). The following query matc
 only `production-1`, `production-2`, `production-3`, but doesn't match either
 `productionNEW` or `old_production`:
 
-```sql copy
+```sql
 kubernetes.cluster_name =~ "production-.*$"
 ```
 
@@ -674,7 +674,7 @@ precedes the array index, the index must always be at the end.
 For example, consider the following array of objects belonging to the `nginx` service
 as they display in Logs Explorer:
 
-```json copy
+```json
 tags:
     0:
 	      application: a
@@ -689,7 +689,7 @@ tags:
 To return results in the second array position (`1`) that match `events = e`, use the
 following query:
 
-```sql copy
+```sql
 service = "nginx"
 tags.events[1] = "e"
 ```
@@ -701,7 +701,7 @@ example, the following query matches on two severity values, or where the messag
 contains `“database connection”` and the `mysql.table_name` label starts with
 `production`:
 
-```sql copy
+```sql
 service = "gateway" AND severity =~ "WARN|ERROR" OR (message : "database connection"
 AND mysql.table_name =~ "^production.*")
 ```
@@ -709,14 +709,14 @@ AND mysql.table_name =~ "^production.*")
 The following query matches based on a service named `gateway` where the `kubernetes.pod_id`
 equals `3bf26945-b817-4e72-b22c-662c318af2f1` anywhere in the log payload:
 
-```sql copy
+```sql
 service = "gateway" AND kubernetes.pod_id = "3bf26945-b817-4e72-b22c-662c318af2f1"
 ```
 
 The following query returns all logs for a service named `gateway` that have a
 `logger` other than `deleter`, or have no `logger` set:
 
-```sql copy
+```sql
 SERVICE = "gateway" AND NOT logger = "deleter"
 ```
 
@@ -742,7 +742,7 @@ For example, the following query includes the [`summarize`](#summarize)
 transformation operator to return the average for the `httpRequest.responseSize`
 field, and then groups the results by `service`:
 
-```sql copy
+```sql
 service = "nginx"
 | summarize avg(httpRequest.responseSize) by service
 ```
@@ -758,7 +758,7 @@ For example, the following query creates a table of data that aggregates the con
 of the table from the input query, and displays the count by `service`. The column
 header that contains the total count is named `_count`.
 
-```sql copy
+```sql
 severity = "ERROR"
 | summarize count() by service
 ```
@@ -766,14 +766,14 @@ severity = "ERROR"
 The following query returns the same data, but uses an alias named `total` for the
 `count()` function. The column header containing the total count is named `total`.
 
-```sql copy
+```sql
 severity = "ERROR"
 | summarize total = count() by service
 ```
 
 Similarly, you can create an alias using the `make-series` operator:
 
-```sql copy
+```sql
 severity = "WARN"
 | make-series total = count() by service
 ```
@@ -792,7 +792,7 @@ To specify a more human-readable and intuitive column name, use
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /EXPRESSION/
+```text /QUERY/ /OPERATOR/ /EXPRESSION/
 QUERY | OPERATOR arg_max(EXPRESSION)
 ```
 
@@ -809,7 +809,7 @@ QUERY | OPERATOR arg_max(EXPRESSION)
 The following example returns values for `service` with the largest `_timestamp`,
 ordered by `severity`:
 
-```sql copy
+```sql
 cluster =~ "production-*"
 | summarize largest_service = arg_max(service) by severity
 ```
@@ -819,7 +819,7 @@ operator with the `arg_max` function. The example also uses an alias named
 `service_with_largest_message`, which becomes the column header in the generated
 table.
 
-```sql copy
+```sql
 | summarize service_with_largest_message = arg_max(message, service) by severity
 ```
 
@@ -831,7 +831,7 @@ numeric values.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /EXPRESSION/
+```text /QUERY/ /OPERATOR/ /EXPRESSION/
 QUERY | OPERATOR avg(EXPRESSION)
 ```
 
@@ -845,7 +845,7 @@ QUERY | OPERATOR avg(EXPRESSION)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | summarize avg(httpRequest.responseSize) by service
 ```
@@ -858,7 +858,7 @@ containing numeric values.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/ /EXPRESSION/
+```text /QUERY/ /OPERATOR/ /FIELD/ /EXPRESSION/
 QUERY | OPERATOR avgif(FIELD, EXPRESSION)
 ```
 
@@ -873,7 +873,7 @@ QUERY | OPERATOR avgif(FIELD, EXPRESSION)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | summarize avgif(httpRequest.responseSize, httpRequest.responseSize > 2000) by service
 ```
@@ -891,7 +891,7 @@ expressions.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /COLUMN/ /EXPRESSION/
+```text /QUERY/ /OPERATOR/ /COLUMN/ /EXPRESSION/
 QUERY | OPERATOR COLUMN = case(EXPRESSION..., elseValue)
 ```
 
@@ -915,7 +915,7 @@ uses the `case` function to categorizes bytes sent based on these conditions: sm
 The `project` operator creates three columns named `buckets`, `kubernetes.pod_name`,
 and `environment`, and then sorts the results by `kubernetes.pod_name`.
 
-```sql copy
+```sql
 service = "nginx" and bytesSent <= 50000 and environment =~ "prod-*"
 | extend buckets = case(bytesSent <= 1000, "Small", bytesSent <= 5000, "Medium", "Large")
 | project buckets, kubernetes.pod_name, environment
@@ -929,7 +929,7 @@ function.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/
+```text /QUERY/ /OPERATOR/
 QUERY | OPERATOR count()
 ```
 
@@ -942,7 +942,7 @@ QUERY | OPERATOR count()
 
 **Example**
 
-```sql copy
+```sql
 service = "checkout-service"
 | make-series count() by severity
 | limit 100
@@ -955,7 +955,7 @@ The `countif` function returns a count of rows where the specified filter
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /EXPRESSION/
+```text /QUERY/ /OPERATOR/ /EXPRESSION/
 QUERY | OPERATOR countif(EXPRESSION)
 ```
 
@@ -969,7 +969,7 @@ QUERY | OPERATOR countif(EXPRESSION)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | summarize countif(kubernetes.pod_name =~ "nginx-*") by severity
 ```
@@ -983,7 +983,7 @@ for most use cases.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/
+```text /QUERY/ /OPERATOR/ /FIELD/
 QUERY | OPERATOR count_distinct(FIELD)
 ```
 
@@ -997,7 +997,7 @@ QUERY | OPERATOR count_distinct(FIELD)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | summarize count_distinct(kubernetes.pod_name) by severity
 | limit 100
@@ -1013,7 +1013,7 @@ provides suitable accuracy for most use cases.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/ /CONDITION/
+```text /QUERY/ /OPERATOR/ /FIELD/ /CONDITION/
 QUERY | OPERATOR count_distinctif(FIELD, CONDITION)
 ```
 
@@ -1028,7 +1028,7 @@ QUERY | OPERATOR count_distinctif(FIELD, CONDITION)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | summarize count_distinct(kubernetes.pod_name, severity="ERROR") by cluster
 | limit 100
@@ -1045,7 +1045,7 @@ If you need exact results, use the [`count_distinct`](#count_distinct) function.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/
+```text /QUERY/ /OPERATOR/ /FIELD/
 QUERY | OPERATOR dcount(FIELD)
 ```
 
@@ -1059,7 +1059,7 @@ QUERY | OPERATOR dcount(FIELD)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | make-series dcount(hostname) by severity
 ```
@@ -1077,7 +1077,7 @@ that varies between executions.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/ /EXPRESSION/
+```text /QUERY/ /OPERATOR/ /FIELD/ /EXPRESSION/
 QUERY | OPERATOR dcountif(FIELD, EXPRESSION)
 ```
 
@@ -1092,7 +1092,7 @@ QUERY | OPERATOR dcountif(FIELD, EXPRESSION)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | summarize dcountif(kubernetes.pod_name, kubernetes.pod_name =~ "nginx-*") by "severity"
 ```
@@ -1107,7 +1107,7 @@ columns that display in the results. You can also use this function with the
 
 **Syntax**
 
-```text copy /QUERY/ /COLUMN/ /EXPRESSION/
+```text /QUERY/ /COLUMN/ /EXPRESSION/
 QUERY | extend COLUMN = EXPRESSION, COLUMN = EXPRESSION
 ```
 
@@ -1134,7 +1134,7 @@ the `ratio` column, and then adds them to the value of `max_threads` (which is `
 The `project` operator creates three columns in the result set, named `service`,
 `ratio`, and `v2`, and outputs the results of the calculations to those columns.
 
-```sql copy
+```sql
 service = "logging_service" max_threads > 0
 | extend ratio = max_threads / max_threads, v2 = ratio + max_threads
 | project service, ratio, v2
@@ -1155,7 +1155,7 @@ The `min` function returns the minimum value of the specified field.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/
+```text /QUERY/ /OPERATOR/ /FIELD/
 QUERY | OPERATOR min(FIELD)
 ```
 
@@ -1169,7 +1169,7 @@ QUERY | OPERATOR min(FIELD)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | summarize min(httpRequest.responseSize) by kubernetes.cluster_name
 ```
@@ -1181,7 +1181,7 @@ where the `EXPRESSION` filter evaluates to `true`.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/ /EXPRESSION/
+```text /QUERY/ /OPERATOR/ /FIELD/ /EXPRESSION/
 QUERY | OPERATOR minif(FIELD, EXPRESSION)
 ```
 
@@ -1196,7 +1196,7 @@ QUERY | OPERATOR minif(FIELD, EXPRESSION)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | summarize minif(httpRequest.responseSize, httpRequest.responseSize > 100) by kubernetes.cluster_name
 ```
@@ -1207,7 +1207,7 @@ The `max` function returns the maximum value of the specified field.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/
+```text /QUERY/ /OPERATOR/ /FIELD/
 QUERY | OPERATOR max(FIELD)
 ```
 
@@ -1221,7 +1221,7 @@ QUERY | OPERATOR max(FIELD)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | summarize max(httpRequest.responseSize) by "kubernetes.cluster_name"
 ```
@@ -1233,7 +1233,7 @@ where the `EXPRESSION` filter evaluates to `true`.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/ /EXPRESSION/
+```text /QUERY/ /OPERATOR/ /FIELD/ /EXPRESSION/
 QUERY | OPERATOR maxif(FIELD, EXPRESSION)
 ```
 
@@ -1248,7 +1248,7 @@ QUERY | OPERATOR maxif(FIELD, EXPRESSION)
 
 **Example**
 
-```sql copy
+```sql
 service = "nginx"
 | summarize maxif(httpRequest.responseSize, httpRequest.responseSize > 100) by kubernetes.cluster_name
 ```
@@ -1268,7 +1268,7 @@ and `EXPRESSION` defines the calculation for which this function operates.
 
 **Syntax**
 
-```text copy /QUERY/ /AGGREGATION/ /EXPRESSION/ /NUMBER/ /TIME/ /FIELD/
+```text /QUERY/ /AGGREGATION/ /EXPRESSION/ /NUMBER/ /TIME/ /FIELD/
 QUERY | moving_average(AGGREGATION(EXPRESSION), NUMBER) step TIME by FIELD
 ```
 
@@ -1290,7 +1290,7 @@ last minute (`1m`), takes a moving average of the last five (`5`) summations, an
 then divides by `1000` to convert the results to megabytes. The results are ordered
 in a time chart with an X-axis, sorted by `severity`.
 
-```sql copy
+```sql
 | make-series moving_average(sum(request_size), 5) / 1000 step 1m by severity
 ```
 
@@ -1301,7 +1301,7 @@ The `percentile` function returns the specified percentile value of a filter
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /EXPRESSION/ /NUMBER/
+```text /QUERY/ /OPERATOR/ /EXPRESSION/ /NUMBER/
 QUERY | OPERATOR percentile(EXPRESSION, NUMBER)
 ```
 
@@ -1316,7 +1316,7 @@ QUERY | OPERATOR percentile(EXPRESSION, NUMBER)
 
 **Example**
 
-```sql copy
+```sql
 key1 = 'value1'
 | make-series percentile(duration, 95) by severity
 ```
@@ -1328,7 +1328,7 @@ starting index character position.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/ /START_INDEX/ /LENGTH/
+```text /QUERY/ /OPERATOR/ /FIELD/ /START_INDEX/ /LENGTH/
 QUERY | OPERATOR by substring(FIELD, START_INDEX, LENGTH)
 ```
 
@@ -1349,7 +1349,7 @@ The following query includes a colon (`:`) to find all logs that have a
 by the `resource.type` field, groups the logs by the first 13 characters of the `k8s`
 substring, and returns those groups.
 
-```sql copy
+```sql
 resource.type: "k8s"
 | summarize by substring(resource.type, 0, 13)
 ```
@@ -1362,7 +1362,7 @@ aggregation. This kind of query is helpful when you want to ensure that a partic
 substring matches a value. In this case, the query matches any logs containing
 `writer` in the `kubernetes.pod_name` field:
 
-```sql copy
+```sql
 substring(kubernetes.pod_name, 3, 6) = "writer"
 ```
 
@@ -1373,7 +1373,7 @@ passing through the function.
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /EXPRESSION/
+```text /QUERY/ /OPERATOR/ /EXPRESSION/
 QUERY | OPERATOR sum(EXPRESSION)
 ```
 
@@ -1387,7 +1387,7 @@ QUERY | OPERATOR sum(EXPRESSION)
 
 **Example**
 
-```sql copy
+```sql
 kubernetes.cluster =~ "^production-*"
 | summarize sum(destination.bytes) by location-country
 ```
@@ -1399,7 +1399,7 @@ The `sumif` function computes the sum of values for the specified field where th
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/ /EXPRESSION/
+```text /QUERY/ /OPERATOR/ /FIELD/ /EXPRESSION/
 QUERY | OPERATOR sumif(FIELD, EXPRESSION)
 ```
 
@@ -1415,7 +1415,7 @@ QUERY | OPERATOR sumif(FIELD, EXPRESSION)
 
 **Example**
 
-```sql copy
+```sql
 kubernetes.cluster =~ "^production-*"
 | summarize sumif(destination.bytes, destination.bytes > 1000) by location-country
 ```
@@ -1426,7 +1426,7 @@ The `sum(_payloadSize)` function calculates the size of the log payload in bytes
 
 **Syntax**
 
-```text copy /QUERY/ /OPERATOR/ /FIELD/
+```text /QUERY/ /OPERATOR/ /FIELD/
 QUERY | OPERATOR sum(_payloadSize) by FIELD
 ```
 

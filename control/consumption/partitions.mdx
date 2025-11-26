@@ -86,7 +86,7 @@ Select from the following methods to view and filter available partitions.
 To use [Chronoctl](/tooling/chronoctl) to return all partitions, use the
 `chronoctl consumption-config read` command:
 
-```shell copy
+```shell
 chronoctl consumption-config read
 ```
 
@@ -113,14 +113,14 @@ Select from the following methods to create partitions.
 To use [Chronoctl](/tooling/chronoctl) to create a partitions, use the
 `chronoctl consumption-config create` command:
 
-```shell copy
+```shell
 chronoctl consumption-config create
 ```
 
 1. Run the following command to generate a sample partition configuration you can use
    as a template:
 
-   ```shell copy
+   ```shell
    chronoctl consumption-config scaffold
    ```
 
@@ -128,7 +128,7 @@ chronoctl consumption-config create
 
 1. With a completed definition, submit it with:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl consumption-config create -f FILE_NAME
    ```
 
@@ -151,7 +151,7 @@ To create a partition with [Terraform](/tooling/infrastructure/terraform):
 
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -183,7 +183,7 @@ The following Chronoctl example implements the partition structure outlined in t
 diagram that describes [log partitions](#partition-hierarchy) at the start of this
 page.
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: ConsumptionConfig
 spec:
@@ -255,7 +255,7 @@ The following Terraform example implements the partition structure outlined in t
 diagram that describes [log partitions](#partition-hierarchy) at the start of this
 page.
 
-```ruby copy
+```ruby
 resource "chronosphere_consumption_config" "example" {
   partition {
     name = "Ordering Service"
@@ -373,14 +373,14 @@ Select from the following methods to update log partitions.
 To update partitions with [Chronoctl](/tooling/chronoctl), use the
 `consumption-config update` command:
 
-```shell copy
+```shell
 chronoctl consumption-config update
 ```
 
 1. Update the partition definition file.
 1. Run the following command to submit the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl consumption-config update -f FILE_NAME.yaml
    ```
 
@@ -395,7 +395,7 @@ To edit partitions using [Terraform](/tooling/infrastructure/terraform):
 1. Create or edit a Terraform file that updates the resource's existing properties.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -424,7 +424,7 @@ Select from the following methods to delete log partitions.
 To delete a partition with [Chronoctl](/tooling/chronoctl), use the
 `chronoctl consumption-config delete` command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl consumption-config delete SLUG
 ```
 
@@ -432,7 +432,7 @@ Replace _`SLUG`_ with the slug of the partition you want to delete.
 
 For example, to delete a partition with the slug `ordering-service-production`:
 
-```shell copy
+```shell
 chronoctl consumption-config delete ordering-service-production
 ```
 

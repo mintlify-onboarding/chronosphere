@@ -34,7 +34,7 @@ For Debian-based installations, Core Agent has the following general dependencie
 
 To retrieve a list of specific dependencies for your environment, run the following command:
 
-```shell copy /PACKAGE/
+```shell /PACKAGE/
 dpkg -I PACKAGE
 ```
 
@@ -59,7 +59,7 @@ shasum -a 256 calyptia-fluent-bit-X.<extension>
 Core Agent packages are signed with `calyptia.key`. You can use dpkg and apt-key
 to verify these signatures.
 
-```shell copy
+```shell
 apt-key add calyptia.key && \
 dpkg-sig --list PACKAGE
 ```
@@ -72,25 +72,25 @@ Use these steps to install and enable Core Agent:
 
 1. Run the following command to update your APT package list:
 
-   ```shell copy
+   ```shell
    sudo apt-get update
    ```
 
 1. Run the following command to upgrade your APT packages:
 
-   ```shell copy
+   ```shell
    sudo apt-get upgrade
    ```
 
 1. Run the following command to install Core Agent:
 
-   ```shell copy
+   ```shell
    sudo apt-get install calyptia-fluent-bit
    ```
 
 1. Run the following command to instruct systemd to enable the Core Agent service:
 
-   ```shell copy
+   ```shell
    sudo systemctl calyptia-fluent-bit start
    ```
 

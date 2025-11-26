@@ -98,7 +98,7 @@ To list each team and its member accounts in separate YAML documents with
 [Chronoctl](/tooling/chronoctl), use the `teams list` command. You can also use
 this output as a template for updating each team separately using Chronoctl.
 
-```shell copy
+```shell
 chronoctl teams list
 ```
 
@@ -109,7 +109,7 @@ For example, this output lists a team named _Control team_ with one user account
 and one service account as members, and a second team named _DBAs_ with two
 user account members:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Team
 spec:

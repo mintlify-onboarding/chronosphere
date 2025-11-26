@@ -42,20 +42,20 @@ To use [Chronoctl](/tooling/chronoctl) to return all datasets including
 [trace datasets](/control/sampling/datasets) (if enabled in your tenant), use the
 `chronoctl datasets list` command:
 
-```shell copy
+```shell
 chronoctl datasets list
 ```
 
 To return log datasets only, add the `type` argument to the command and specify
 `LOGS`:
 
-```shell copy
+```shell
 chronoctl datasets list --type LOGS
 ```
 
 To filter for a specific logs dataset, add the `slugs` argument to the command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl datasets list --slugs SLUG
 ```
 
@@ -91,7 +91,7 @@ To create a dataset:
    returns all logs for the `shopper-service` service in the `production-us`
    environment:
 
-   ```text copy
+   ```text
    service = "shopper-service"
    AND environment = "production-us"
    ```
@@ -110,7 +110,7 @@ To create a dataset:
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
-```shell copy
+```shell
 chronoctl datasets scaffold
 ```
 
@@ -123,7 +123,7 @@ To create a dataset with [Chronoctl](/tooling/chronoctl):
 1. Run the following command to generate a sample dataset configuration you can use
    as a template:
 
-   ```shell copy
+   ```shell
    chronoctl datasets scaffold
    ```
 
@@ -131,7 +131,7 @@ To create a dataset with [Chronoctl](/tooling/chronoctl):
 
 1. With a completed definition, submit it with:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl datasets create -f FILE_NAME
    ```
 
@@ -152,7 +152,7 @@ To create a dataset with [Terraform](/tooling/infrastructure/terraform):
 
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -193,7 +193,7 @@ You must escape quotation marks in the `query` field. For example, to specify
 types is permitted. You can use multiple instances of the same operator, such as
 multiple `AND` or multiple `OR` operators.
 
-```yaml copy /shopper-service/ /production-us/
+```yaml /shopper-service/ /production-us/
 api_version: v1/config
 kind: Dataset
 spec:
@@ -226,7 +226,7 @@ The following Terraform resource creates a dataset that Terraform refers to as
 This dataset includes a service named `shopper-service` in the `production-us`
 environment.
 
-```ruby copy /shopper-service/ /production-us/
+```ruby /shopper-service/ /production-us/
 resource "chronosphere_dataset" "shopper_production_us" {
   name        = "Logs for payment service in production US"
   description = "Logs for payment service in US production environment"
@@ -252,7 +252,7 @@ Select from the following methods to update log datasets.
 1. Update the datasets definition file.
 1. Run the following command to submit the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl datasets update -f FILE_NAME.yaml
    ```
 
@@ -267,7 +267,7 @@ To edit datasets using [Terraform](/tooling/infrastructure/terraform):
 1. Create or edit a Terraform file that updates the resource's existing properties.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -295,7 +295,7 @@ Select from the following methods to delete log datasets.
 To delete a dataset with [Chronoctl](/tooling/chronoctl), use the `chronoctl datasets delete`
 command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl datasets delete SLUG
 ```
 
@@ -303,7 +303,7 @@ Replace _`SLUG`_ with the slug of the dataset you want to delete.
 
 For example, to delete a dataset with the slug `log-shopping-service-production`:
 
-```shell copy
+```shell
 chronoctl datasets delete log-shopping-service-production
 ```
 

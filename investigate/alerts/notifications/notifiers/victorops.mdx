@@ -51,7 +51,7 @@ To create a VictorOps notifier:
 1. In the **API URL** field, enter the **URL to notify** value you copied from
    VictorOps, which is called as a `POST` request. For example:
 
-   ```text copy
+   ```text
    https://alert.victorops.com/integrations/generic/20131114/alert/
    ```
 
@@ -66,7 +66,7 @@ To create a VictorOps notifier:
 
 1. Define the resource definition for your VictorOps notifier:
 
-   ```yaml copy /NAME/ /SLUG/ /API_KEY/
+   ```yaml /NAME/ /SLUG/ /API_KEY/
    api_version: v1/config
    kind: Notifier
    spec:
@@ -92,7 +92,7 @@ To create a VictorOps notifier:
 
 1. Apply the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -145,7 +145,7 @@ To create a VictorOps notifier:
    field.
 1. Run `terraform apply` to create the notifier resource.
 
-   ```ruby copy
+   ```ruby
    terraform apply
    ```
 

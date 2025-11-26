@@ -57,7 +57,7 @@ To create a pipeline using [Pipeline CLI](/pipeline-cli):
    and [standard output](/pipeline-data/plugins/destination-plugins/standard-output)
    as a destination:
 
-   ```yaml copy
+   ```yaml
    pipeline:
       inputs:
          - dummy: '{"message":"dummy"}'
@@ -78,7 +78,7 @@ To create a pipeline using [Pipeline CLI](/pipeline-cli):
 
 1. Run the following command:
 
-   ```shell copy /INSTANCE/ /PIPELINE/ /VERSION/ /CONFIG/
+   ```shell /INSTANCE/ /PIPELINE/ /VERSION/ /CONFIG/
    calyptia create pipeline \
    --core-instance INSTANCE \
    --name PIPELINE \
@@ -200,7 +200,7 @@ To delete a pipeline using [Pipeline CLI](/pipeline-cli):
 
 1. Run the following command:
 
-   ```shell copy /PIPELINE/
+   ```shell /PIPELINE/
    calyptia delete pipeline PIPELINE
    ```
 
@@ -212,7 +212,7 @@ To delete a pipeline using [Pipeline CLI](/pipeline-cli):
    stray pipeline resources persist in your cluster. To do so, run the following
    command:
 
-   ```shell copy /NAME/
+   ```shell /NAME/
    kubectl delete pipeline NAME
    ```
 

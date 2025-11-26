@@ -49,7 +49,7 @@ example, the following query returns the cardinality estimate of all time series
 match the metric name with a value for the `device` label equal to `eth0`, grouped by
 unique values for the `k8s_cluster` label:
 
-```text copy
+```text
 cardinality_estimate(node_network_receive_bytes_total{device="eth0"}) by (k8s_cluster)
 ```
 

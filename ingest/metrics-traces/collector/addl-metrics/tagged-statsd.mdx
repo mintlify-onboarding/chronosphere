@@ -59,7 +59,7 @@ metrics.
 communication on the host network. This is necessary to preserve the source
 IP address for IP-based Pod association.
 
-   ```yaml copy file="template.spec"
+   ```yaml file="template.spec"
    spec:
      template:
      spec:
@@ -69,7 +69,7 @@ IP address for IP-based Pod association.
 1. Enable tagged StatsD mode using the `push.taggedStatsd.enabled` YAML collection
    in the Collector manifest:
 
-   ```yaml copy
+   ```yaml
    push:
      taggedStatsd:
        enabled: true
@@ -195,7 +195,7 @@ the Collector is running. Node metadata is fetched only once, at startup.
 The following example YAML collection lists all of the configuration options for
 receiving tagged StatsD metrics with Chronosphere Collector:
 
-```yaml copy
+```yaml
 push:
   taggedStatsd:
     enabled: true

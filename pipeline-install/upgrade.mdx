@@ -32,7 +32,7 @@ If you installed Telemetry Pipeline in a Kubernetes cluster and aren't sure
 whether you used Pipeline CLI or Helm during that installation process, run the
 following kubectl command:
 
-```shell copy
+```shell
 kubectl -n calyptia get deploy calyptia-core-controller-manager --show-labels
 ```
 
@@ -81,7 +81,7 @@ If you don't update Pipeline CLI, subsequent steps will fail.
 1. Run the following command to install the latest version of Core Operator, which
    overwrites any previously installed versions:
 
-   ```shell copy
+   ```shell
    calyptia install operator
    ```
 
@@ -90,7 +90,7 @@ If you don't update Pipeline CLI, subsequent steps will fail.
 
 1. Run the following command to update your associated Core Instance:
 
-   ```shell copy /INSTANCE/
+   ```shell /INSTANCE/
    calyptia update core_instance operator INSTANCE
    ```
 
@@ -101,14 +101,14 @@ If you don't update Pipeline CLI, subsequent steps will fail.
 
 1. Run the following command to upgrade the Telemetry Pipeline chart to the latest version:
 
-   ```shell copy
+   ```shell
    helm repo update calyptia
    ```
 
 1. Run the following command to upgrade the custom resource definitions (CRDs) that
    Telemetry Pipeline relies on:
 
-   ```shell copy
+   ```shell
    helm upgrade --install core-crd calyptia/core-crd
    ```
 
@@ -118,13 +118,13 @@ If you don't update Pipeline CLI, subsequent steps will fail.
 
 1. Run the following command to upgrade your Core Operator:
 
-   ```shell copy
+   ```shell
    helm upgrade --install core-operator calyptia/core-operator -n calyptia
    ```
 
 1. Run the following command to upgrade your Core Instance:
 
-   ```shell copy /INSTANCE/
+   ```shell /INSTANCE/
    helm upgrade --install INSTANCE calyptia/core-instance -n calyptia
    ```
 
@@ -183,7 +183,7 @@ for your pipeline, follow these steps:
 To upgrade an existing pipeline to the latest version, use the following command
 in Pipeline CLI:
 
-```shell copy /PIPELINE/ /VERSION/
+```shell /PIPELINE/ /VERSION/
 calyptia update pipeline PIPELINE --image ghcr.io/calyptia/core/calyptia-fluent-bit:VERSION
 ```
 
@@ -206,7 +206,7 @@ Replace the following:
 To upgrade all of your pipelines in a given environment simultaneously, run the
 following command:
 
-```shell copy
+```shell
 curl -s https://raw.githubusercontent.com/chronosphereio/calyptia-cli/main/update-all-pipeline-images.sh | bash -s -- ghcr.io/calyptia/core/calyptia-fluent-bit:VERSION
 ```
 

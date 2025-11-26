@@ -24,7 +24,7 @@ To create a discard notifier using [Chronoctl](/tooling/chronoctl):
 
 1. Define the resource definition for your discard notifier:
 
-   ```yaml copy /NAME/ /SLUG/
+   ```yaml /NAME/ /SLUG/
    api_version: v1/config
    kind: Notifier
    spec:
@@ -40,7 +40,7 @@ To create a discard notifier using [Chronoctl](/tooling/chronoctl):
 
 1. Apply the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -55,7 +55,7 @@ To create a discard notifier using [Terraform](/tooling/infrastructure/terraform
    `chronosphere_blackhole_alert_notifier` type followed by a name in a resource
    declaration:
 
-   ```ruby copy
+   ```ruby
    resource "chronosphere_blackhole_alert_notifier" "discard" {
      name = "Example discard"
    }
@@ -63,7 +63,7 @@ To create a discard notifier using [Terraform](/tooling/infrastructure/terraform
 
 1. Run `terraform apply` to create the notifier resource.
 
-   ```ruby copy
+   ```ruby
    terraform apply
    ```
 

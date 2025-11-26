@@ -123,7 +123,7 @@ To view trace behaviors:
 To use [Chronoctl](/tooling/chronoctl) to return the trace behavior definition, use the
 `chronoctl trace-behavior-config read` command:
 
-```shell copy
+```shell
 chronoctl trace-behavior-config read
 ```
 
@@ -201,7 +201,7 @@ To assign behaviors to a dataset:
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
-```shell copy
+```shell
 chronoctl trace-behavior-config scaffold
 ```
 
@@ -214,7 +214,7 @@ To assign a behavior with [Chronoctl](/tooling/chronoctl):
 1. Run the following command to generate a sample behavior configuration you can use
    as a template:
 
-   ```shell copy
+   ```shell
    chronoctl trace-behavior-config scaffold
    ```
 
@@ -222,7 +222,7 @@ To assign a behavior with [Chronoctl](/tooling/chronoctl):
 
 1. With a completed definition, submit it with:
 
-   ```shell copy
+   ```shell
    chronoctl trace-behavior-config create -f FILE_NAME
    ```
 

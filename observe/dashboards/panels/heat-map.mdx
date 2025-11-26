@@ -46,7 +46,7 @@ visualize data in a heatmap:
 
 - [Exponential histograms](/control/shaping/types#cumulative-exponential-histograms):
 
-  ```shell copy
+  ```shell
   sum(rate(duration_milliseconds{app_name="$app_name"}[5m]))
   ```
 
@@ -55,7 +55,7 @@ visualize data in a heatmap:
 
 - Explicit histograms:
 
-  ```shell copy
+  ```shell
   sum by (le)(rate(duration_milliseconds_bucket{app_name="$app_name"}[5m]))
   ```
 
@@ -63,7 +63,7 @@ visualize data in a heatmap:
 
 - Non-histogram:
 
-  ```shell copy
+  ```shell
   sum by (pod)(rate(container_cpu_usage_seconds_total{container=~"chronocollector"}[5m]))
   ```
 

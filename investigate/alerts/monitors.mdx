@@ -86,13 +86,13 @@ To search for a specific monitor:
 To use [Chronoctl](/tooling/chronoctl) to return all monitors, use the
 `chronoctl monitors list` command:
 
-```shell copy
+```shell
 chronoctl monitors list
 ```
 
 To filter for a specific monitor, add the `slugs` argument to the command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl monitors list --slugs SLUG
 ```
 
@@ -195,7 +195,7 @@ _entire_ monitor query returns no results. For example, to alert on missing or n
 data, add a `NOT_EXISTS` series condition in the `series_conditions` section of the
 monitor definition:
 
-```yaml copy
+```yaml
 series_conditions:
   defaults:
     critical:
@@ -274,7 +274,7 @@ To add a new monitor:
      `latencyInSeconds`. The `step` parameter defines the time step for each bucket in
      [Prometheus time duration format](https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations):
 
-     ```sql copy
+     ```sql
      severity = "WARNING"
      | make-series avg(latencyInSeconds) step 15m by severity, service
      ```
@@ -364,7 +364,7 @@ To create a monitor with [Chronoctl](/tooling/chronoctl):
 1. Run the following command to generate a sample monitor configuration you can use
    as a template:
 
-   ```shell copy
+   ```shell
    chronoctl monitors scaffold
    ```
 
@@ -372,7 +372,7 @@ To create a monitor with [Chronoctl](/tooling/chronoctl):
 
 1. With a completed definition, submit it with:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl monitors create -f FILE_NAME
    ```
 
@@ -393,7 +393,7 @@ To create a monitor with [Terraform](/tooling/infrastructure/terraform):
 
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -437,7 +437,7 @@ example, if you enter `environment` as a key in the `labels` section, you might 
 `Environments` in the `label_names` section.
 </Info>
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Monitor
 spec:
@@ -549,7 +549,7 @@ example, if you enter `environment` as a key in the `labels` section, you might 
 `Environments` in the `label_names` section.
 </Info>
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Monitor
 spec:
@@ -666,7 +666,7 @@ For example, if you enter `environment` as a key in the `labels` section, you
 might use `Environments` in the `label_names` section.
 </Info>
 
-```ruby copy
+```ruby
 resource "chronosphere_monitor" "infra" {
   name = "Infra Example monitor"
 
@@ -825,7 +825,7 @@ For example, if you enter `environment` as a key in the `labels` section, you
 might use `Environments` in the `label_names` section.
 </Info>
 
-```ruby copy
+```ruby
 resource "chronosphere_monitor" "k8s_production" {
   name = "Kubernetes errors in production us-west"
 
@@ -1002,7 +1002,7 @@ You can also use the following process if you already have a definition file:
 1. Update the monitor's definition file.
 1. Run the following command to submit the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl monitors update -f FILE_NAME
    ```
 
@@ -1019,7 +1019,7 @@ To edit a monitor using [Terraform](/tooling/infrastructure/terraform):
 1. Create or edit a Terraform file that updates the resource's existing properties.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -1134,7 +1134,7 @@ To specify a monitor alert override:
    to the resource's existing properties and apply the changes.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -1263,7 +1263,7 @@ To delete a monitor:
 To delete a monitor with [Chronoctl](/tooling/chronoctl), use the `chronoctl monitors delete`
 command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl monitors delete SLUG
 ```
 
@@ -1271,7 +1271,7 @@ Replace _`SLUG`_ with the slug of the monitor you want to delete.
 
 For example, to delete a monitor with the slug `infra-example-monitor`:
 
-```shell copy
+```shell
 chronoctl monitors delete infra-example-monitor
 ```
 
@@ -1337,7 +1337,7 @@ To add annotations to a monitor:
 
 1. Define the resource definition for your monitor, and add an `annotations` section:
 
-   ```yaml copy
+   ```yaml
    api_version: v1/config
    kind: Monitor
    spec:
@@ -1355,7 +1355,7 @@ To add annotations to a monitor:
 
 1. Apply the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME
    ```
 
@@ -1369,7 +1369,7 @@ To add annotations to a monitor:
 1. Create a monitor with Terraform by using the `chronosphere_monitor` type followed
    by a name in a resource declaration:
 
-   ```ruby copy
+   ```ruby
    resource "chronosphere_monitor" "instance_down" {
      name = "Instance down"
 
@@ -1397,7 +1397,7 @@ To add annotations to a monitor:
 1. In the `annotations` section, define the annotations for your monitor.
 1. Run `terraform apply` to create the monitor resource:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 

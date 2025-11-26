@@ -41,7 +41,7 @@ and available from the [HashiCorp Terraform Registry](https://registry.terraform
 
 <DynamicCode find={'"{terraformVersion}"'} replace={'"' + versions.terraform + '"'}>
 
-```ruby copy
+```ruby
 terraform {
   required_providers {
     chronosphere = {
@@ -68,7 +68,7 @@ To install and use these unsupported versions, configure your provider using the
 
 <DynamicCode find={'"{terraformVersion}"'} replace={'"' + versions.terraform + '"'}>
 
-```ruby copy
+```ruby
 terraform {
   required_providers {
     chronosphere = {
@@ -101,7 +101,7 @@ Chronosphere resources:
 1. In the shell environment where you plan to run Terraform, set the
    `CHRONOSPHERE_API_TOKEN` environment variable:
 
-   ```shell copy /API_TOKEN_VALUE/
+   ```shell /API_TOKEN_VALUE/
    export CHRONOSPHERE_API_TOKEN=API_TOKEN_VALUE
    ```
 
@@ -153,7 +153,7 @@ Linux and macOS.
 
 1. Test the `chronotf` installation by running it:
 
-   ```shell copy
+   ```shell
    chronotf version
    ```
 
@@ -177,7 +177,7 @@ Linux and macOS.
 
 1. Test the `chronotf` installation by running it:
 
-   ```shell copy
+   ```shell
    chronotf version
    ```
 
@@ -198,7 +198,7 @@ Linux and macOS.
 
 1. Test the `chronotf` installation by running it:
 
-   ```shell copy
+   ```shell
    chronotf version
    ```
 
@@ -219,7 +219,7 @@ into the Terraform state with the `chronotf import-state` command before running
    Use the following command to export existing resources to a `main.tf` Terraform
    file:
 
-   ```shell copy /API_TOKEN/ /MY_ORG/
+   ```shell /API_TOKEN/ /MY_ORG/
    ./chronotf export-config -o main.tf --api-token API_TOKEN --org MY_ORG
    ```
 
@@ -233,7 +233,7 @@ into the Terraform state with the `chronotf import-state` command before running
 
    From the directory with the Terraform files and state, run:
 
-   ```shell copy
+   ```shell
    chronotf import-state --dry-run
    ```
 
@@ -241,6 +241,6 @@ into the Terraform state with the `chronotf import-state` command before running
 
    From the directory with the Terraform files and state, run:
 
-   ```shell copy
+   ```shell
    chronotf import-state
    ```

@@ -64,7 +64,7 @@ them.
 To view available notification policies in Chronoctl, use the
 `notification-policies list` command:
 
-```shell copy
+```shell
 chronoctl notification-policies list
 ```
 
@@ -72,7 +72,7 @@ This command returns a list of YAML documents, each representing a notification
 policy. For example, a Chronoctl listing of a notification policy in the
 `example-team-name` team might look like this:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: NotificationPolicy
 spec:
@@ -182,7 +182,7 @@ with the `api-error` team. It defines notifiers for critical and warning alerts,
 with the notification frequency for critical customized to 60 minutes, represented as
 3600 seconds.
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: NotificationPolicy
 spec:
@@ -233,7 +233,7 @@ routes:
 
 Apply your changes:
 
-```shell copy
+```shell
 chronoctl apply -f FILE_NAME.yaml
 ```
 
@@ -258,7 +258,7 @@ To associate a notification policy:
 For example, the following code creates a notification policy that Terraform refers
 to as `infra`, which defines notification routes for Slack and PagerDuty:
 
-```ruby copy
+```ruby
 resource "chronosphere_notification_policy" "infra" {
   name    = "Infra Development Policy"
   slug    = "infra-development-policy"
@@ -355,14 +355,14 @@ To edit a notification policy using [Chronoctl](/tooling/chronoctl):
 
 1. Return a list of all available notification policies:
 
-   ```shell copy
+   ```shell
    chronoctl notification-policies list
    ```
 
 1. Modify the YAML file for the notification policy you want to update.
 1. Apply your changes:
 
-   ```shell copy
+   ```shell
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -378,7 +378,7 @@ To edit a notification policy using [Terraform](/tooling/infrastructure/terrafor
 1. Modify the resource's existing properties.
 1. Run `terraform apply` to apply the changes.
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -423,13 +423,13 @@ To delete a notification policy using [Chronoctl](/tooling/chronoctl):
 
 1. Return a list of all available notification policies:
 
-   ```shell copy
+   ```shell
    chronoctl notification-policies list
    ```
 
 1. Run the following command to delete the notification policy:
 
-   ```shell copy
+   ```shell
    chronoctl notification-policies delete SLUG
    ```
 
@@ -510,7 +510,7 @@ expression matching, provide the `type` value `REGEX`. These are the resource's 
 `type` values.
 </Info>
 
-```yaml copy
+```yaml
 routes:
   defaults: …
   overrides:
@@ -544,7 +544,7 @@ To override a notification policy override in Terraform, use the `override` para
 This Terraform definition adds an override notifier when the `component` label has
 the value of `mysql`, and another if the `importance` label has the value `low`:
 
-```ruby copy
+```ruby
 resource "chronosphere_notification_policy" "infra" {
   …
 

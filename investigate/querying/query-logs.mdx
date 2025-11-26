@@ -43,7 +43,7 @@ To use basic querying:
      For example, expand the `severity` key and click the equals operator next to
      **ERROR**, which adds that expression to your filter.
 
-     ```sql copy
+     ```sql
      severity = "ERROR"
      ```
 
@@ -61,7 +61,7 @@ To use basic querying:
      operators and matching values for keys you enter as you type to help you
      construct your query.
 
-     ```sql copy
+     ```sql
      severity = "ERROR AND service = "nginx"
      ```
 
@@ -92,7 +92,7 @@ To use basic querying:
    full-text string such as `"failed query token"` to find logs that contain the
    expression anywhere in the log. For example:
 
-   ```sql copy
+   ```sql
    severity = "ERROR" and service = "gateway" AND "failed query token"
    ```
 
@@ -124,7 +124,7 @@ To use advanced filtering:
 1. In the query box, construct a query to include any logs with `ERROR` as the
    `severity` for the `gateway` service:
 
-   ```sql copy
+   ```sql
    service = "gateway" AND severity = "ERROR"
    ```
 
@@ -139,7 +139,7 @@ To use advanced filtering:
 1. Add a full-text string to your search to narrow the scope of your query, and then
    click **<Icon icon="arrows-rotate" />Run**:
 
-   ```sql copy
+   ```sql
    service = "gateway" AND severity = "ERROR" AND "failed to query user by token"
    ```
 
@@ -151,7 +151,7 @@ To use advanced filtering:
 1. In the sidebar, click `production-east` and then click **Show matching logs**.
    Observability Platform adds the selected key/value to your query:
 
-   ```sql copy
+   ```sql
    service = "gateway" AND severity = "ERROR" AND "failed to query user by token"
    AND kubernetes.cluster = "production-east"
    ```
@@ -162,7 +162,7 @@ To use advanced filtering:
    same Kubernetes pod is included in many of the logs, so you add that key/value
    pair to your filter:
 
-   ```sql copy
+   ```sql
    service = "gateway" AND severity = "ERROR" AND "failed to query user by token"
    AND kubernetes.cluster = "production-east"
    AND kubernetes.pod_name = "gateway-6agg9df321-o89ef"
@@ -207,7 +207,7 @@ To group and visualize query results:
      `production-us-west` that contain errors, and then groups the results by
      `service` and `environment`:
 
-     ```sql copy
+     ```sql
      severity = "ERROR"
      AND kubernetes.cluster_name = "production-us-west"
      | summarize by service, environment

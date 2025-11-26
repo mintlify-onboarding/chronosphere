@@ -51,7 +51,7 @@ To set tolerations for a new pipeline:
    or [modify a pipeline](/pipeline-data/create-modify#modify-a-pipeline), and add
    the following flag to the associated command:
 
-   ```shell copy /FILE/
+   ```shell /FILE/
     --tolerations-spec FILE
    ```
 
@@ -66,7 +66,7 @@ To remove tolerations from a pipeline:
 1. Use Pipeline CLI to [modify a pipeline](/pipeline-data/create-modify#modify-a-pipeline),
    and add the following flag to that command:
 
-   ```shell copy /EMPTY-ARRAY/
+   ```shell /EMPTY-ARRAY/
     --tolerations-spec EMPTY-ARRAY
    ```
 
@@ -85,7 +85,7 @@ Instance.
 
 To specify tolerations for a new Core Instance, use the `--tolerations` flag:
 
-```shell copy
+```shell
 calyptia create core_instance operator --name INSTANCE --tolerations STRING
 ```
 
@@ -102,7 +102,7 @@ for an existing Core Instance.
 
 To do so, add the following key/value pair to your Helm chart:
 
-```shell copy
+```shell
 calyptiaTolerations: "STRING"
 ```
 
@@ -115,7 +115,7 @@ Replace _`STRING`_ with the string that specifies your tolerations.
 
 The string that specifies your tolerations must follow this syntax:
 
-```shell copy
+```shell
 key1=operator:value1:effect:tolerationSeconds,key2=operator:value2:effect:tolerationSeconds
 ```
 
@@ -131,7 +131,7 @@ Additionally, tolerations with the `Exists` operator must omit the
 
 For example, this is a valid toleration string:
 
-```shell copy
+```shell
 foo=Equal:bar:NoExecute:3600,baz=Exists::PreferNoSchedule
 ```
 
@@ -143,7 +143,7 @@ Per-pipeline tolerations require Chronosphere Telemetry Pipeline v2.34.0 or late
 
 The JSON file that specifies your tolerations must follow this syntax:
 
-```json copy
+```json
 [
   {
     "key": "abc",
@@ -168,7 +168,7 @@ doesn't need a particular parameter, omit that parameter entirely.
 
 For example, this is a valid toleration JSON file:
 
-```json copy filename="tolerations.json"
+```json filename="tolerations.json"
 [
   {
     "key": "foo",

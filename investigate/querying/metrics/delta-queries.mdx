@@ -76,7 +76,7 @@ The following query sums all observations in the specified one-minute sliding ti
 window for the `http_request_count` time series where the `error_code` label equals
 `5xx`, with a resolution of one minute when visualized in a time series chart panel.
 
-```text copy
+```text
 sum_over_time(http_request_count{error_code="5xx", service="my-service"}[1m])
 ```
 
@@ -93,7 +93,7 @@ The following query calculates the per-second average for the specified five-min
 sliding time window for the `http_request_count` time series, where the `error_code`
 label equals `5xx`:
 
-```text copy
+```text
 sum_per_second(http_request_count{error_code="5xx", service="my-service"}[5m])
 ```
 
@@ -106,13 +106,13 @@ observations within the sliding time window.
 
 For Chronosphere delta histograms using an exponential bucket layout:
 
-```text copy
+```text
 histogram_quantile(0.95, sum(sum_per_second(http_request_duration{}[1m])))
 ```
 
 For fixed-bucket delta histograms:
 
-```text copy
+```text
 histogram_quantile(0.95, sum by(le) (sum_per_second(http_request_duration_seconds_bucket{}[1m])))
 ```
 
@@ -180,7 +180,7 @@ Values:         2         3         5         7         2         5         3   
 
 Query:
 
-```text copy
+```text
 sum_over_time(my_counter{}[$__interval])
 ```
 
@@ -218,7 +218,7 @@ Values:         2         3         5         7         2         5         3   
 
 Query:
 
-```text copy
+```text
 sum_over_time(my_counter{}[1m])
 ```
 

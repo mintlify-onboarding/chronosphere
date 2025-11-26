@@ -57,7 +57,7 @@ To view control rules:
 To use [Chronoctl](/tooling/chronoctl) to return all control rules, use the
 `chronoctl log-control-config read` command:
 
-```shell copy
+```shell
 chronoctl log-control-config read
 ```
 
@@ -131,7 +131,7 @@ Define control rules in Observability Platform, and then
     `resource.type` key, which requires surrounding the field in double quotes and
     brackets for this particular service:
 
-    ```sql copy
+    ```sql
     service = "nginx" and severity = "INFO" and ["resource.type"] = "k8s_container"
     ```
     </Info>
@@ -221,14 +221,14 @@ Define control rules in Observability Platform, and then
 To use [Chronoctl](/tooling/chronoctl) to create control rules, use the
 `chronoctl log-control-config create` command:
 
-```shell copy
+```shell
 chronoctl log-control-config create
 ```
 
 1. Run the following command to generate a sample control rule configuration you can
    use as a template:
 
-   ```shell copy
+   ```shell
    chronoctl log-control-config scaffold
    ```
 
@@ -237,7 +237,7 @@ chronoctl log-control-config create
 
 1. With a completed definition, submit it with:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl log-control-config create -f FILE_NAME
    ```
 
@@ -258,7 +258,7 @@ To create a control rule with [Terraform](/tooling/infrastructure/terraform):
 1. Add the definition to a Terraform file.
 1. Run this command to create the resource:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -293,7 +293,7 @@ following rules:
   `INTERNAL_SERVER_ERROR`, it replaces that value with `500`. If the rule matches on
   `NOT_FOUND`, it replaces the value with `401`.
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: LogControlConfig
 spec:
@@ -359,7 +359,7 @@ the following rules:
   `INTERNAL_SERVER_ERROR`, it replaces that value with `500`. If the rule matches on
   `NOT_FOUND`, it replaces the value with `401`.
 
-```ruby copy
+```ruby
 resource "chronosphere_log_control_config" "log_control_config" {
   # The ordered list of control rules.
   rules {
@@ -466,14 +466,14 @@ Observability Platform saves changes to your control rule.
 To update control rules with [Chronoctl](/tooling/chronoctl), use the
 `log-control-config update` command:
 
-```shell copy
+```shell
 chronoctl log-control-config update
 ```
 
 1. Update the control rule definition file.
 1. Run the following command to submit the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl log-control-config update -f FILE_NAME.yaml
    ```
 
@@ -490,7 +490,7 @@ To edit control rules using [Terraform](/tooling/infrastructure/terraform):
 1. Create or edit a Terraform file that updates the resource's existing properties.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -532,7 +532,7 @@ Observability Platform deletes your control rule.
 To delete a control rule with [Chronoctl](/tooling/chronoctl), use the
 `chronoctl log-control-config delete` command:
 
-```shell copy
+```shell
 chronoctl log-control-config delete
 ```
 

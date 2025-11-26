@@ -69,7 +69,7 @@ This example script looks for a key named `log`, and then determines whether
 its value is `line`. If both of these conditions are true, the script sets
 the value of `log` to `Y`.
 
-```lua copy
+```lua
 return function(tag, ts, record)
     if record['log'] ~= nil and record['log'] == 'line' then
         record['log'] = 'Y'
@@ -88,7 +88,7 @@ value in a new variable named `secret`.
 Additionally, this script calls the `resolve` function only if the `secret` key
 hasn't been defined before, which helps improve performance.
 
-```lua copy
+```lua
 function resolve(SECRET_<STR>)
   local token = os.getenv(SECRET_<STR>)
   if token == nill
@@ -120,7 +120,7 @@ This example imports the Lua JSON library to support the JSON response returned
 by a specific API, then uses a separate function to call that API, and then
 creates a new key to store the value of a successful API response.
 
-```lua copy
+```lua
 local json = require 'json'
 
 local function try_curl(url, max_retries, timeout)
@@ -187,7 +187,7 @@ that reads files, Chronosphere recommends creating a small pipeline that uses mo
 data.
 </Info>
 
-```lua copy
+```lua
 local json = require 'json'
 
 local file_path = "/config/schema"

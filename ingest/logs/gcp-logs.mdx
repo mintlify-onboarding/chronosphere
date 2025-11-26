@@ -56,7 +56,7 @@ Observability Platform impersonates.
    Each Google Cloud service account must grant access to the Observability Platform
    principal to impersonate them. The Observability Platform principal format is:
 
-   ```text copy
+   ```text
    gcp-logs-ADDRESS@chronosphere-production-a|b|c.iam.gserviceaccount.com
    ```
 
@@ -136,7 +136,7 @@ The following code provides an example for creating a single Google Cloud servic
 account in the a Google Cloud project, and enables Observability Platform to
 impersonate and gain access.
 
-```ruby copy
+```ruby
 locals {
   // Email address of your Chronosphere Logs tenant-specific principal.
   chronosphere_sa_email = "gcp-logs-ADDRESS@chronosphere-production-b.iam.gserviceaccount.com"

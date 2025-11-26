@@ -13,7 +13,7 @@ and statuses over time.
 To view the configuration history for a specific pipeline, use the following
 command:
 
-```shell copy
+```shell
 calyptia get pipeline_config_history --pipeline PIPELINE_ID
 ```
 
@@ -37,7 +37,7 @@ will be similar to the following:
 Use the `--last` flag to display only a subset of configuration snapshots. For example, to
 return a list of the last five snapshots, run:
 
-```shell copy
+```shell
 calyptia get pipeline_config_history --pipeline my-pipeline --last 5
 ```
 
@@ -46,7 +46,7 @@ calyptia get pipeline_config_history --pipeline my-pipeline --last 5
 Use the `-o yaml` flag to view the specific changes over time to that
 pipeline's [configuration file](/pipeline-configure/config-files):
 
-```shell copy
+```shell
 calyptia get pipeline_config_history --pipeline my-pipeline -o yaml
 ```
 
@@ -60,7 +60,7 @@ for that pipeline.
 
 To roll back a pipeline to a previous configuration, use the following command:
 
-```shell copy
+```shell
 calyptia rollout pipeline PIPELINE_ID --to-config-id CONFIG_ID
 ```
 
@@ -77,7 +77,7 @@ In addition to using the history ID of a previous configuration, you can also
 specify the number of steps you want to roll back through the configuration history
 of a pipeline. To do so, use the following command:
 
-```shell copy
+```shell
 calyptia rollout pipeline PIPELINE_ID --steps-back COUNT
 ```
 
@@ -113,7 +113,7 @@ The pane that appears shows a list of statuses changes over time for that pipeli
 
 Run the following [Pipeline CLI](/pipeline-cli) command:
 
-```shell copy
+```shell
 calyptia get pipeline_status_history --pipeline PIPELINE_ID
 ```
 

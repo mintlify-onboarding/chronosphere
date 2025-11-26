@@ -64,7 +64,7 @@ page for the muted monitor.
 To fetch the defined muting rules with [Chronoctl](/tooling/chronoctl), use this
 command:
 
-```shell copy
+```shell
 chronoctl muting-rules list
 ```
 
@@ -177,7 +177,7 @@ To create a muting rule with [Chronoctl](/tooling/chronoctl), use this command:
 
 {/* markdownlint-disable MD013 */}
 
-```shell copy /START_TIME/ /END_TIME/ /RULE_NAME/ /COMMENT/ /LABEL_QUERY/
+```shell /START_TIME/ /END_TIME/ /RULE_NAME/ /COMMENT/ /LABEL_QUERY/
 chronoctl muting-rules create --starts-at "START_TIME" --ends-at "END_TIME" --name "RULE_NAME" --comment "COMMENT" --match-labels 'LABEL_QUERY'
 ```
 
@@ -196,14 +196,14 @@ Replace these values:
 
 To mute a specific monitor, use the `alertname` command:
 
-```shell copy
+```shell
 chronoctl muting-rules create ... --match-labels '{alertname="<monitor-name>"}'
 ```
 
 To mute a specific monitor when the monitor name isn't unique, use the `slug`
 command:
 
-```shell copy
+```shell
 chronoctl muting-rules create ... --match-labels '{__chrono_monitor_slug="<monitor-slug>"}'
 ```
 
@@ -213,7 +213,7 @@ for the value `localhost:3030`:
 
 {/* markdownlint-disable MD013 */}
 
-```shell copy
+```shell
 chronoctl muting-rules create --starts-at "2021-09-07T11:49:35Z" --ends-at "2021-09-07T14:49:35Z" --name "infra rule" --comment "Local requests" --match-labels '{instance="localhost:3030"}'
 ```
 
@@ -274,7 +274,7 @@ criteria:
 To create a muting rule with the defined regular expression
 with [Chronoctl](/tooling/chronoctl), use this command::
 
-```shell copy
+```shell
 chronoctl muting-rules create --name "envoy mute" --match-labels '{envoy_cluster_name=~"cluster_span_rc.*"}' --ends-at +1h
 ```
 
@@ -347,7 +347,7 @@ To stop a muting rule:
 
 To expire a muting rule with [Chronoctl](/tooling/chronoctl), use this command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl muting-rules expire-rule --slug SLUG
 ```
 
@@ -365,7 +365,7 @@ Select from the following methods to delete a muting rule.
 
 To permanently delete a muting rule with [Chronoctl](/tooling/chronoctl), use this command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl muting-rules delete SLUG
 ```
 

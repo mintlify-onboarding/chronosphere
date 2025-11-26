@@ -243,21 +243,21 @@ For example, you can create a summary for a monitor that uses labels from the
 monitor query. Consider the following monitor query that matches on labels for
 `kube_pod_status`:
 
-```text copy
+```text
 kube_pod_status{cluster="staging",namespace="test",pod=~"staging-[0-9a-z]+-[0-9a-z]+"}
 ```
 
 You can create an annotation that uses variables to substitute values from this
 monitor query. For example:
 
-```text copy
+```text
 Cluster: {{$labels.cluster}} | Namespace: {{$labels.namespace}} | Pod: {{$labels.pod}} is stale after 10m
 ```
 
 When you save your monitor, the annotation replaces variables with values from the
 monitor query and renders as:
 
-```text copy
+```text
   Cluster: staging | Namespace: test | Pod: staging-37s799fcsj-ekg12 is stale after 10m
 ```
 

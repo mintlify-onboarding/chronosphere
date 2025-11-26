@@ -37,7 +37,7 @@ Run the following command to install the
 from the full Prometheus Operator, using the file in the `kube-prometheus-stack`
 Helm chart:
 
-```shell copy
+```shell
 kubectl apply -f https://raw.githubusercontent.com/prometheus-community/helm-charts/e46dc6360b6733299452c8fd65d304004484de79/charts/kube-prometheus-stack/crds/crd-servicemonitors.yaml
 ```
 
@@ -60,7 +60,7 @@ changes:
 1. Add the following options after the `ClusterRole` resource in the manifest under
    `rules`:
 
-   ```yaml copy
+   ```yaml
    kind: ClusterRole
    rules:
      - apiGroups:
@@ -85,7 +85,7 @@ changes:
    keys to `true` in the manifest `ConfigMap` under the `discovery` > `kubernetes`
    key:
 
-   ```yaml copy
+   ```yaml
    discovery:
      kubernetes:
        enabled: true
@@ -135,9 +135,9 @@ changes:
      Each item in the `additionalPodMatching` array must specify a `labelSelector`
      or `fieldSelector` to filter which Pods to watch.
 
-     <Info>
-Additional Pod matching requires Chronosphere Collector v0.113.0 or later.
-</Info>
+      <Info>
+      Additional Pod matching requires Chronosphere Collector v0.113.0 or later.
+      </Info>
 
      - `labelSelector`: Matches Pods where a label value matches the name of the
        Node on which the Collector Pod DaemonSet instance is running. Define the
@@ -177,7 +177,7 @@ In your DaemonSet, add the `serviceMonitor` > `serviceMonitorSelector` key to yo
 manifest and define the following `matchExpressions` to ensure that your DaemonSet
 only matches on `ServiceMonitors` that *don't* contain `kube-state-metrics`:
 
-```yaml copy
+```yaml
 serviceMonitor:
   serviceMonitorSelector:
     matchAll: false
@@ -193,7 +193,7 @@ In your Deployment, add the same key and definitions to your manifest, but set t
 that your Deployment only matches on `ServiceMonitors` that contain
 `kube-state-metrics`:
 
-```yaml copy
+```yaml
 serviceMonitor:
   serviceMonitorSelector:
     matchAll: false
@@ -220,14 +220,14 @@ The available match rules are:
 
 - `matchLabelsRegexp`: Labels and a regular expression to match a value. For example:
 
-  ```yaml copy
+  ```yaml
   matchLabelsRegexp:
     labelone: '[a-z]+'
   ```
 
 - `matchLabels`: Labels and a matching value. For example:
 
-  ```yaml copy
+  ```yaml
   matchLabels:
     labelone: foo
   ```
@@ -251,7 +251,7 @@ The available match rules are:
     `a` **or** `b`, use the `NotIn` operator. The `NotIn` operator also matches
     any `ServiceMonitors` without the `examplelabel` present:
 
-    ```yaml copy
+    ```yaml
     matchExpressions:
       - label: examplelabel
         operator: NotIn
@@ -263,7 +263,7 @@ The available match rules are:
   - To match `ServiceMonitors` that have the `examplelabel` with **any** value,
     use the `Exists` operator:
 
-    ```yaml copy
+    ```yaml
     matchExpressions:
       - label: examplelabel
         operator: Exists
@@ -272,7 +272,7 @@ The available match rules are:
   - To match `ServiceMonitors` that don't have the `examplelabel`, use the
     `DoesNotExist` operator:
 
-    ```yaml copy
+    ```yaml
     matchExpressions:
       - label: examplelabel
         operator: DoesNotExist
@@ -299,7 +299,7 @@ must instead use the `Port` attribute.
 In these cases, run the Collector as a [Kubernetes Deployment](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-using-a-deployment)
 with a single instance, and set the `allowSkipPodInfo` attribute to `true`.
 
-```yaml copy
+```yaml
 serviceMonitor:
   allowSkipPodInfo: true
 ```
@@ -321,7 +321,7 @@ for this method of service discovery.
 For the Collector to start scraping the Pods in a Kubernetes cluster, set the
 following `annotations` on each Pod in the cluster:
 
-```yaml copy
+```yaml
 spec:
   template:
     metadata:
@@ -372,7 +372,7 @@ You can change the annotation prefix, which defaults to `prometheus.io/`, from t
 After any changes, send the updated manifest to the cluster with the following
 command:
 
-```shell copy
+```shell
 kubectl apply -f path/to/manifest.yml
 ```
 
@@ -456,7 +456,7 @@ For a complete list of examples, see the examples section in the
 For the Collector to scrape its own metrics, add another job to the
 `discovery.prometheus.scrape_configs` key:
 
-```yaml copy
+```yaml
 …
 - job_name: 'collector'
   scrape_interval: 30s

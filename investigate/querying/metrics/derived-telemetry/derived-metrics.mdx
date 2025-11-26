@@ -23,13 +23,13 @@ slugs with the `--slugs` flag.
 
 For example, to list all derived metrics:
 
-```shell copy
+```shell
 chronoctl derived-metrics list
 ```
 
 To list derived metrics with slugs `slug_name_1` and `slug_name_2`:
 
-```shell copy
+```shell
 chronoctl derived-metrics list --slugs slug_name_1,slug_name_2
 ```
 
@@ -52,7 +52,7 @@ To complete this action with the Chronosphere API, use the
 Here's a [Chronoctl](/tooling/chronoctl) example of a derived metric
 with two underlying expressions:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DerivedMetric
 spec:
@@ -84,7 +84,7 @@ spec:
 Create a derived metric with [Terraform](/tooling/infrastructure/terraform) by
 using the `chronosphere_derived_metric` type followed by a name in the resource declaration:
 
-```ruby copy
+```ruby
 resource "chronosphere_derived_metric" "my-derived-metric" {
     # The name of the derived metric.
     name        = "my derived metric"
@@ -171,14 +171,14 @@ To delete a derived metric with [Chronoctl](/tooling/chronoctl), use
 the `chronoctl derived-metrics delete` command with the slug of the derived
 metric you want to delete:
 
-```shell copy
+```shell
 chronoctl derived-metrics delete SLUG_NAME
 ```
 
 You can delete more than one metric at a time by providing a comma-separated list
 of slugs. For example:
 
-```shell copy
+```shell
 chronoctl derived-metrics delete SLUG_NAME_1,SLUG_NAME_2
 ```
 
@@ -207,7 +207,7 @@ rule with a derived metric.
 
 For example, this recording rule queries for a number of HTTP status codes:
 
-```yaml copy
+```yaml
  - record: slo:sli_error:ratio_rate5m
     expr: |  (sum(rate(flask_http_request_duration_seconds_count{job="default/productservice-servicemonitor/0", status=~"(5..|4..)"}[5m])))
       /    (sum(rate(flask_http_request_duration_seconds_count{job="default/productservice-servicemonitor/0"}[5m])))
@@ -223,7 +223,7 @@ For example, this recording rule queries for a number of HTTP status codes:
 
 Replacing the recording rule with this derived metric can reduce query load:
 
-```ruby copy
+```ruby
 resource "chronosphere_derived_metric" "slo-error-rate-5m" {
   name     = "slo-error-rate-5m"
   slug     = "slo-error-rate-5m"

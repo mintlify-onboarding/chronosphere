@@ -49,7 +49,7 @@ as a
 
 1. From within Claude Code, run the following command:
 
-   ```bash copy /TENANT/ /API_TOKEN/
+   ```bash /TENANT/ /API_TOKEN/
    claude mcp add --transport http chronosphere "https://TENANT.chronosphere.io/api/mcp/mcp" \
    --header "Authorization: API_TOKEN"
    ```
@@ -69,7 +69,7 @@ as a
 
 1. Test your connection with the Chronosphere MCP server:
 
-   ```bash copy
+   ```bash
    claude mcp get chronosphere
    ```
 
@@ -84,7 +84,7 @@ file to include the Chronosphere MCP server remote endpoint.
    [access the `mcp.json` file](https://cursor.com/docs/context/mcp#using-mcpjson).
 1. Add the following configuration to the `mcp.json` file:
 
-   ```json copy /TENANT/ /API_TOKEN/
+   ```json /TENANT/ /API_TOKEN/
    {
      "mcpServers": {
        "chronosphere": {

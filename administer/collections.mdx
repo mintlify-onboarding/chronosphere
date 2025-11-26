@@ -79,7 +79,7 @@ see [Edit a Collection](#edit-a-collection).
 To view a list of all collections using [Chronoctl](/tooling/chronoctl), use the
 `collections list` command:
 
-```shell copy
+```shell
 chronoctl collections list
 ```
 
@@ -152,7 +152,7 @@ The resource contains these fields:
 For example, this resource creates a new collection named `DBAs` with the slug
 `dbas-collection` and associated with `dbas-team`:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Collection
 spec:
@@ -168,13 +168,13 @@ To create the collection:
 1. Save the `Collection` resource definition to a file, such as `collection.yaml`.
 1. Test the changes with a dry run:
 
-   ```shell copy
+   ```shell
    chronoctl collections create -f collection.yaml -d
    ```
 
 1. Apply the changes:
 
-   ```shell copy
+   ```shell
    chronoctl collections create -f collection.yaml
    ```
 
@@ -254,13 +254,13 @@ To view `Collection` resources as Chronoctl YAML, see
 1. Modify the collection's fields. For details, see [Create a collection](#create-a-collection).
 1. Test the changes with a dry run:
 
-   ```shell copy
+   ```shell
    chronoctl collections create -f collection.yaml -d
    ```
 
 1. Apply the changes:
 
-   ```shell copy
+   ```shell
    chronoctl collections create -f collection.yaml
    ```
 
@@ -311,7 +311,7 @@ To delete a collection, you must have administrative privileges.
 To delete a collection using [Chronoctl](/tooling/chronoctl), use
 the `collections delete` command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl collections delete SLUG
 ```
 
@@ -319,7 +319,7 @@ Replace _`SLUG`_ with the slug for the collection you want to delete.
 
 For example, to delete a collection with the slug `dbas-collection`, run:
 
-```shell copy
+```shell
 chronoctl collections delete dbas-collection
 ```
 

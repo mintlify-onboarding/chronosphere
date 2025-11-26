@@ -54,7 +54,7 @@ Kubelet API and mounts a volume to access the `cgroups` directory on the node.
 1. Add `hostPort` to the DaemonSet `containters.ports` YAML collection to enable
    network communication on the host network.
 
-   ```yaml copy
+   ```yaml
    spec:
      template:
        spec:
@@ -69,7 +69,7 @@ Kubelet API and mounts a volume to access the `cgroups` directory on the node.
 1. Enable DogStatsD mode under the `push.dogstatsd.enabled` YAML collection in the
    Collector manifest.
 
-   ```yaml copy
+   ```yaml
    push:
       dogstatsd:
          enabled: true
@@ -205,7 +205,7 @@ the Collector is running. Node metadata is fetched only once, at startup.
 The following example YAML collection lists all the configuration options for receiving
 DogStatsD metrics with Chronosphere Collector:
 
-```yaml copy
+```yaml
 push:
   dogstatsd:
     enabled: true

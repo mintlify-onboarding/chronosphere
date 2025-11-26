@@ -90,7 +90,7 @@ the Collector to:
 - Send both the classic and native histogram representations to Observability Platform,
   when a histogram exists in both formats.
 
-```yaml copy
+```yaml
 scrape:
   nativeHistograms:
     enabled: true                    # Enables scraping native histograms. Defaults to false.
@@ -110,7 +110,7 @@ The following configuration configures the Collector to:
 - Negotiate scraping both the Protobuf and text-based expositions.
 - Scrape all metrics from the Protobuf exposition when present.
 
-```yaml copy
+```yaml
 scrape:
   nativeHistograms:
     enabled: true                    # Enables scraping native histograms. Defaults to false.

@@ -91,7 +91,7 @@ These are examples of matching configurations for Datadog and Chronosphere.
 
     Configure the monitor:
 
-    ```yaml copy
+    ```yaml
     api_version: v1/config
     kind: Monitor
     spec:
@@ -129,7 +129,7 @@ These are examples of matching configurations for Datadog and Chronosphere.
 
     This is the notification policy:
 
-    ```yaml copy
+    ```yaml
     api_version: v2
     kind: NotificationPolicy
     spec:
@@ -166,7 +166,7 @@ These are examples of matching configurations for Datadog and Chronosphere.
 
     Slack, for an Alerts channel:
 
-    ```yaml copy
+    ```yaml
     api_version: v1/config
     kind: Notifier
     spec:
@@ -183,7 +183,7 @@ These are examples of matching configurations for Datadog and Chronosphere.
 
     Slack, for an on-call channel:
 
-    ```yaml copy
+    ```yaml
     api_version: v1/config
     kind: Notifier
     spec:
@@ -198,7 +198,7 @@ These are examples of matching configurations for Datadog and Chronosphere.
 
     Critical alerts sent to PagerDuty
 
-    ```yaml copy
+    ```yaml
     api_version: v1/config
     kind: Notifier
     spec:
@@ -213,7 +213,7 @@ These are examples of matching configurations for Datadog and Chronosphere.
 
     Warnings sent to PagerDuty:
 
-    ```yaml copy
+    ```yaml
     api_version: v1/config
     kind: Notifier
     spec:
@@ -309,7 +309,7 @@ for configuration.
 Chronosphere supports alerting on `no data` conditions using a series condition in
 the MonitorSpec:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Monitor
 spec:
@@ -329,7 +329,7 @@ Datadog allows different messages and routing endpoints for the different severi
 levels (critical, warning, no data). Chronosphere can support different messages by
 using separate annotations:
 
-```yaml copy
+```yaml
 
 api_version: v1/config
 kind: Monitor
@@ -353,7 +353,7 @@ contains a `label` specifying the notification route it links to, and the defaul
 
 For example:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Monitor
 spec:

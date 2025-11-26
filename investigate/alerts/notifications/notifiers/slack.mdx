@@ -39,7 +39,7 @@ To create a Slack notifier:
 1. In the **API URL** field, enter the URL you created for your webhook in Slack,
    which is called as a `POST` request. For example:
 
-   ```text copy
+   ```text
    https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXX
    ```
 
@@ -59,7 +59,7 @@ To create a Slack notifier:
 
 1. Define the resource definition for your webhook notifier:
 
-   ```yaml copy /NAME/ /SLUG/ /CHANNEL/ /USERNAME/
+   ```yaml /NAME/ /SLUG/ /CHANNEL/ /USERNAME/
    api_version: v1/config
    kind: Notifier
    spec:
@@ -89,7 +89,7 @@ To create a Slack notifier:
 
 1. Apply the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -104,7 +104,7 @@ To create a Slack notifier:
    `chronosphere_slack_alert_notifier` type followed by a name in a resource
    declaration:
 
-   ```ruby copy
+   ```ruby
    resource "chronosphere_slack_alert_notifier" "slack_notifier" {
      name = "Slack Notifier"
 
@@ -174,7 +174,7 @@ To create a Slack notifier:
    field.
 1. Run `terraform apply` to create the notifier resource.
 
-   ```ruby copy
+   ```ruby
    terraform apply
    ```
 

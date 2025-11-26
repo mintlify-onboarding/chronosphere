@@ -27,7 +27,7 @@ Pipelines can run as the following workload types:
 To set the workload type for a new pipeline, use the `--kind` flag in
 [Pipeline CLI](/pipeline-cli):
 
-```shell copy /INSTANCE/ /PIPELINE/ /WORKLOAD/
+```shell /INSTANCE/ /PIPELINE/ /WORKLOAD/
 calyptia create pipeline \
 --core-instance INSTANCE \
 --name PIPELINE \
@@ -50,7 +50,7 @@ After you create a pipeline, you can't change its workload type.
 There are several additional settings unique to StatefulSet pipelines, including
 one required setting:
 
-```shell copy /CLASS/ /POLICY1/ /POLICY2/
+```shell /CLASS/ /POLICY1/ /POLICY2/
 --storage-class CLASS \
 --pvc-retention-policy-when-scaled POLICY1 \
 --pvc-retention-policy-when-deleted POLICY2
@@ -87,7 +87,7 @@ associated with a Core Instance named `my-instance`. It uses a StorageClass name
 `standard`, and Telemetry Pipeline will retain PVCs for any scaled-down pods but delete
 all PVCs if the pipeline is deleted.
 
-```shell copy
+```shell
 calyptia create pipeline \
 --core-instance my-instance \
 --name my-pipeline \

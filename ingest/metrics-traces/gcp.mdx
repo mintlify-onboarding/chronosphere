@@ -74,7 +74,7 @@ to review the status of your integration.
 
    The Observability Platform principal format is similar to:
 
-   ```text copy
+   ```text
    gcp-metrics-<tenant-name>@chronosphere-xyz.iam.gserviceaccount.com
    ```
 
@@ -103,7 +103,7 @@ impersonate and gain access.
 <Tabs>
 <Tab title="Terraform" id="terraform-gcp">
 
-```ruby copy
+```ruby
 locals {
   // Email address of Observability Platform tenant-specific principal.
   chronosphere_sa_email = "SERVICE-ACCOUNT@PROJECT-ID.iam.gserviceaccount.com"
@@ -201,13 +201,13 @@ To list or view Google Cloud integrations, use one of the following options:
 
 To list your Google Cloud integrations:
 
-```shell copy
+```shell
 chronoctl gcp-metrics-integrations list
 ```
 
 To view a Google Cloud integration with Chronoctl, use the command:
 
-```shell copy
+```shell
 chronoctl gcp-metrics-integrations read SLUG
 ```
 
@@ -239,7 +239,7 @@ service account to an Observability Platform team with
 
 To create a Google Cloud integration with Chronoctl, use the command:
 
-```shell copy
+```shell
 chronoctl gcp-metrics-integrations create --filename FILENAME
 ```
 
@@ -247,7 +247,7 @@ Replace _`FILENAME`_ with the name of your Chronoctl configuration file.
 
 To update a Google Cloud integration with Chronoctl, use the command:
 
-```shell copy
+```shell
 chronoctl gcp-metrics-integrations update --filename FILENAME
 ```
 
@@ -255,7 +255,7 @@ Replace _`FILENAME`_ with the name of your Chronoctl configuration file.
 
 The input file uses the following structure:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: GcpMetricsIntegration
 spec:
@@ -275,7 +275,7 @@ spec:
 To create a Google Cloud integration with Terraform, use the
 `chronosphere_gcp_metrics_integration` resource:
 
-```ruby copy
+```ruby
 resource "chronosphere_gcp_metrics_integration" "chronosphere_gcp_metrics" {
   name = "GCP Metrics"
   slug = "gcp-metrics"
@@ -329,7 +329,7 @@ To delete a Google Cloud integration with Chronoctl, your account must have
 [SysAdmin](/administer/accounts-teams/teams#add-a-role-to-a-team) permissions.
 Use the command:
 
-```shell copy
+```shell
 chronoctl gcp-metrics-integrations delete SLUG
 ```
 
@@ -413,7 +413,7 @@ where:
 The following is an example of how to map a CloudSQL metric name in Google Cloud to a
 metric name in Observability Platform:
 
-![Google Cloud metric configuration example](/doc-assets/GC-example.png)
+![Google Cloud metric configuration example](/public/doc-assets/GC-example.png)
 
 For this metric, `cloudsql_database` is the monitored resource name and
 `cloudsql.googleapis.com/database/active_directory/domain_reachable` is the fully

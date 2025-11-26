@@ -111,7 +111,7 @@ To track the `up` metric,
 [create a monitor](/investigate/alerts/monitors#create-a-monitor) that
 generates a notification if this metric is unavailable.
 
-```shell copy
+```shell
 up{instance=~"chronocollector-ksm"} > 0
 ```
 
@@ -124,7 +124,7 @@ endpoints.
 To track the egress traffic in gigabytes over a 24-hour period, use the following
 query:
 
-```shell copy
+```shell
 sum(increase(chronocollector_gateway_push_bytes{}[1d])) / (1024^3)
 ```
 
@@ -137,7 +137,7 @@ Kubernetes environment.
 1. Review the Collector logs for errors. Run the following command to view the
    Collector logs:
 
-   ```shell copy
+   ```shell
    kubectl logs ds/chronocollector
    ```
 
@@ -150,13 +150,13 @@ Kubernetes environment.
 1. If the logs don't provide any insights, ensure the API token and gateway
   address exist as a secret in the Kubernetes cluster:
 
-   ```shell copy
+   ```shell
    kubectl get secrets
    ```
 1. If there's no output to your terminal, a Secret doesn't exist. Create a Secret
   using `kubectl`:
 
-  ```shell copy
+  ```shell
   kubectl create secret generic chronosphere-secret \
     --from-literal=api-token=API_TOKEN \
     --from-literal=address=ADDRESS

@@ -41,7 +41,7 @@ particular node. The app names the metric `node_network_receive_bytes_total`.
 
 The following query returns all time series that match the metric name:
 
-```text copy
+```text
 node_network_receive_bytes_total{}
 ```
 
@@ -51,7 +51,7 @@ brackets (`{}`) after the metric name.
 The following query returns all time series that match the metric name, and which
 also have a `device` label whose value is equal to `eth1`:
 
-```text copy
+```text
 node_network_receive_bytes_total{device="eth1"}
 ```
 
@@ -66,7 +66,7 @@ The following query returns all time series that match the metric name, and whic
 also have both a `device` label whose value is equal to `eth1` and an `instance`
 label whose value is equal to `production`:
 
-```text copy
+```text
 node_network_receive_bytes_total{device="eth1", instance="production"}
 ```
 
@@ -81,7 +81,7 @@ The following query returns all time series that match the metric name, and whic
 also have a `device` label whose value matches `eth` followed by any non-zero number
 of other characters:
 
-```text copy
+```text
 node_network_receive_bytes_total{device=~"eth.+"}
 ```
 
@@ -96,7 +96,7 @@ The following query returns all time series with an `offset` of an hour (`1h`)
 ago that match the metric name, and which also have a `device` label whose value
 matches `eth0`:
 
-```text copy
+```text
 node_network_receive_bytes_total{device="eth0"} offset 1h
 ```
 
@@ -109,7 +109,7 @@ on the resulting range of time series.
 The following query returns all time series from the last ten minutes that match
 the metric name, and which also have a `device` label whose value matches `eth0`:
 
-```text copy
+```text
 node_network_receive_bytes_total{device="eth0"}[10m]
 ```
 

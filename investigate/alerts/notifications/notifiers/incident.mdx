@@ -48,7 +48,7 @@ To create an incident.io notifier:
 1. In the **URL** field, enter the URL from your incident.io dashboard, which is
    called as a `POST` request. For example:
 
-   ```text copy
+   ```text
    https://incident-io-my-url/api/public/v2/alert_events/chronosphere/01HZKELEKAMDNE8D9FNEKD
    ```
 1. Optional: Select **Notify when resolved** to send a resolved alert notification.
@@ -61,7 +61,7 @@ To create an incident.io notifier:
 
 1. Define the resource definition for your incident.io webhook notifier:
 
-   ```yaml copy /NAME/ /SLUG/ /URL/
+   ```yaml /NAME/ /SLUG/ /URL/
    api_version: v1/config
    kind: Notifier
    spec:
@@ -83,7 +83,7 @@ To create an incident.io notifier:
 
 1. Apply the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -98,7 +98,7 @@ To create a webhook notifier for incident.io:
    `chronosphere_webhook_alert_notifier` type followed by a name in a resource
    declaration:
 
-   ```ruby copy
+   ```ruby
    resource "chronosphere_webhook_alert_notifier" "webhook_notifier" {
      name = "incident.io notifier"
 
@@ -126,7 +126,7 @@ To create a webhook notifier for incident.io:
 
 1. Run `terraform apply` to create the notifier resource.
 
-   ```ruby copy
+   ```ruby
    terraform apply
    ```
 

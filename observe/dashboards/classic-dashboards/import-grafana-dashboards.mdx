@@ -31,7 +31,7 @@ Chronosphere supports dashboards exported from Grafana versions up to 7.5. Dashb
     [Chronoctl](/tooling/chronoctl) YAML, use the `convert grafana`
     command:
 
-    ```shell copy
+    ```shell
     chronoctl convert grafana -D <DIRECTORY> > <DASHBOARDS FILE.YML>
     ```
 
@@ -46,7 +46,7 @@ Chronosphere supports dashboards exported from Grafana versions up to 7.5. Dashb
 
     To import the converted dashboard, use the `apply` command:
 
-    ```shell copy
+    ```shell
     chronoctl apply -f DASHBOARDS FILE.YML
     ```
   </Tab>

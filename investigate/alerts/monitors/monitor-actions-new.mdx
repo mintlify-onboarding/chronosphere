@@ -148,7 +148,7 @@ To edit a new or existing monitor:
      `latencyInSeconds`. The `step` parameter defines the time step for each bucket in
      [Prometheus time duration format](https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations):
 
-     ```sql copy
+     ```sql
      severity = "WARNING"
      | make-series avg(latencyInSeconds) step 15m by severity, service
      ```

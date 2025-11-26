@@ -27,7 +27,7 @@ To uninstall Telemetry Pipeline from a Kubernetes cluster using Pipeline CLI:
 1. In [Pipeline CLI](/pipeline-cli), run the following command to verify you
    successfully deleted all pipelines:
 
-   ```shell copy /INSTANCE/
+   ```shell /INSTANCE/
    calyptia get pipelines --core-instance INSTANCE --show-ids
    ```
 
@@ -35,7 +35,7 @@ To uninstall Telemetry Pipeline from a Kubernetes cluster using Pipeline CLI:
 
 1. Run the following command to delete your Core Instance:
 
-   ```shell copy /INSTANCE/
+   ```shell /INSTANCE/
    calyptia delete core_instance operator INSTANCE
    ```
 
@@ -43,7 +43,7 @@ To uninstall Telemetry Pipeline from a Kubernetes cluster using Pipeline CLI:
 
 1. Run the following command to uninstall your Core Operator:
 
-   ```shell copy
+   ```shell
    calyptia uninstall operator
    ```
 
@@ -51,7 +51,7 @@ To uninstall Telemetry Pipeline from a Kubernetes cluster using Pipeline CLI:
    ensures no stray Telemetry Pipeline resources persist in your cluster. To do
    so, run the following `kubectl` command:
 
-   ```shell copy /NAMESPACE/
+   ```shell /NAMESPACE/
    kubectl delete namespace NAMESPACE
    ```
 
@@ -69,7 +69,7 @@ To uninstall Telemetry Pipeline from a Kubernetes cluster using Helm:
 1. Run the following command to determine which Helm charts are installed in your
    cluster:
 
-   ```shell copy
+   ```shell
    helm list -n NAMESPACE
    ```
 
@@ -77,7 +77,7 @@ To uninstall Telemetry Pipeline from a Kubernetes cluster using Helm:
 
 1. Run the following command to uninstall your Core Instance:
 
-   ```shell copy /NAME/ /NAMESPACE/
+   ```shell /NAME/ /NAMESPACE/
    helm uninstall NAME -n NAMESPACE
    ```
 
@@ -91,13 +91,13 @@ To uninstall Telemetry Pipeline from a Kubernetes cluster using Helm:
 
 1. Run the following command to uninstall the CRDs for Telemetry Pipeline:
 
-   ```shell copy
+   ```shell
    helm uninstall core-crd
    ```
 
 1. Run the following command to uninstall your Core Operator:
 
-   ```shell copy /NAMESPACE/
+   ```shell /NAMESPACE/
    helm uninstall core-operator -n NAMESPACE
    ```
 
@@ -106,7 +106,7 @@ To uninstall Telemetry Pipeline from a Kubernetes cluster using Helm:
 1. Run the following command to verify that the uninstall commands removed
    all Helm charts for Telemetry Pipeline:
 
-   ```shell copy
+   ```shell
    helm list -n NAMESPACE
    ```
 
@@ -142,7 +142,7 @@ distributions:
 1. In [Pipeline CLI](/pipeline-cli), run the following command to verify you
    successfully deleted all pipelines:
 
-   ```shell copy /INSTANCE/
+   ```shell /INSTANCE/
    calyptia get pipelines --core-instance INSTANCE --show-ids
    ```
 
@@ -150,7 +150,7 @@ distributions:
 
 1. Run the following command to delete your Core Instance:
 
-   ```shell copy /INSTANCE/
+   ```shell /INSTANCE/
    calyptia delete core_instance operator INSTANCE
    ```
 
@@ -158,7 +158,7 @@ distributions:
 
 1. Run the following command:
 
-   ```shell copy
+   ```shell
    yum remove calyptia-core-operator
    ```
 
@@ -173,7 +173,7 @@ distributions:
 1. In [Pipeline CLI](/pipeline-cli), run the following command to verify you
    successfully deleted all pipelines:
 
-   ```shell copy /INSTANCE/
+   ```shell /INSTANCE/
    calyptia get pipelines --core-instance INSTANCE --show-ids
    ```
 
@@ -181,7 +181,7 @@ distributions:
 
 1. Run the following command to delete your Core Instance:
 
-   ```shell copy /INSTANCE/
+   ```shell /INSTANCE/
    calyptia delete core_instance operator INSTANCE
    ```
 
@@ -189,7 +189,7 @@ distributions:
 
 1. Run the following command:
 
-   ```shell copy
+   ```shell
    apt remove calyptia-core-operator
    ```
 

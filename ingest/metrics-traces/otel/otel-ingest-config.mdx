@@ -141,7 +141,7 @@ You can view OTLP ingestion configurations using one of the following methods.
 
 Use the `read` command of [Chronoctl](/tooling/chronoctl):
 
-```shell copy
+```shell
 chronoctl otel-metrics-ingestion read
 ```
 
@@ -170,7 +170,7 @@ You can change the default OpenTelemetry Metrics ingestion configuration using e
 
 Use the `scaffold` command to generate an example `OtelMetricsIngestion` resource.
 
-```shell copy
+```shell
 chronoctl otel-metrics-ingestion scaffold
 ```
 
@@ -257,14 +257,14 @@ configuration and restore the default configuration.
 
 Use the `delete` command to delete the configuration.
 
-```shell copy
+```shell
 chronoctl otel-metrics-ingestion delete
 ```
 
 If the command fails because of a missing slug, use the `read` command to view the
 resource's slug.
 
-```shell copy
+```shell
 chronoctl otel-metrics-ingestion read
 ```
 

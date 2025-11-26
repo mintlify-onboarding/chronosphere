@@ -24,7 +24,7 @@ adding an annotation to a Kubernetes object, or adding a job configuration.
 To apply those settings globally to all jobs, define the following default scrape
 configuration:
 
-```yaml copy
+```yaml
 scrape:
  defaults:
     metricsPath: "/metrics"
@@ -138,7 +138,7 @@ If you specify multiple ports, the pods must expose all ports in the list. The f
 is an example of a container ports configuration in a pod manifest that exposes
 both `1234` and `5678`:
 
-```yaml copy
+```yaml
 ports:
   - name: metrics
     containerPort: 1234
@@ -153,7 +153,7 @@ override any of the defaults set in the global scrape configuration.
 
 The following example contains the value types for the `jobs` collection:
 
-```yaml copy
+```yaml
 jobs:
   - name: "example_job"
     options:
@@ -179,7 +179,7 @@ changes the name of the label `code` to `status_code` for the `api` job, add the
 following configuration to the `config.yml` field of the `chronocollector-config`
 ConfigMap:
 
-```yaml copy
+```yaml
 jobs:
   - name: api
     options:
@@ -211,7 +211,7 @@ coming from the scrape itself that you want to manipulate.
 In this example, the `relabel` rule replaces the name of the label `code` to
 `status_code` for the `api` job before scraping the metrics:
 
-```yaml copy
+```yaml
 jobs:
   - name: api
     options:
@@ -228,7 +228,7 @@ jobs:
 The following `metricsRelabel` rule replaces the `pod` and `job` labels for the
 `cadvisor` job on `promremotebench-0` to `database`:
 
-```yaml copy
+```yaml
 jobs:
   - name: cadvisor
     options:
@@ -256,7 +256,7 @@ The following actions are available for `metricRelabels`:
 - `keep`: Drop targets for which a regular expression doesn't match the concatenated
   `sourceLabels`.
   
-  ```yaml copy
+  ```yaml
   jobs:
     - name: kubelet
       options:
@@ -271,7 +271,7 @@ The following actions are available for `metricRelabels`:
   The following example demonstrates using `relabels` to drop the `__name__` on
   `cadvisor` metrics:
 
-  ```yaml copy
+  ```yaml
   jobs:
     - name: cadvisor
       options:
@@ -303,7 +303,7 @@ The following actions are available for `metricRelabels`:
   The following example matches all label names that contain
   `container_label_com_amazonaws_ecs_task_arn`:
 
-  ```yaml copy
+  ```yaml
   metricRelabels:
     - regex: 'container_label_com_amazonaws_ecs_task_arn'
       action: labeldrop
@@ -314,7 +314,7 @@ The following actions are available for `metricRelabels`:
 
   The following example drops all label names that don't match `job`:
 
-  ```yaml copy
+  ```yaml
   metricRelabels:
     - regex: 'job'
       action: labelkeep

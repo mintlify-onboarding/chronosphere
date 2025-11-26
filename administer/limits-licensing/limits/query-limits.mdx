@@ -80,14 +80,14 @@ are exceeded for 10 minutes consecutively.
 These metrics track the count of selectors that queries issue per second. For
 example, this metric includes a single selector named `up`:
 
-```text copy
+```text
 up{app="webserver"}
 ```
 
 A more complex query might include multiple selectors. The following query includes
 two `sum` selectors:
 
-```text copy
+```text
 sum(rate(http_server_handled_total{status="200"}[2m]) / sum(rate(http_server_handled_total[2m]))
 ```
 
@@ -114,14 +114,14 @@ Use the following strategies to reduce query load for selectors per second:
   efficiency. For example, you might create two separate alerts for service A and
   service B error rates:
 
-  ```sql copy
+  ```sql
   sum(rate(http_server_handled_total{service="A". status=~"5.*"}[1m])) > 10
   sum(rate(http_server_handled_total{service="B". status=~"5.*"}[1m])) > 10
   ```
 
   Instead, create a single monitor that checks both services:
 
-  ```sql copy
+  ```sql
   sum(rate(http_server_handled_total{service=~"A|B". status=~"5.*"}[1m])) by (service) > 10
   ```
 
@@ -195,14 +195,14 @@ Use the following strategies to reduce the consumption of data reads per second:
 - Ensure that query selectors are as precise as possible, especially in join queries.
   For example, consider this query:
 
-  ```sql copy
+  ```sql
   sum(rate(container_cpu_seconds{cluster="prod"}[1m]) by (node, container) / on (node) node_cpu_capacity
   ```
 
   Including `{cluster="prod"}` in the latter part of the query reduces the number of
   series and in turn data points the query needs to fetch for the right side of the join. Use this instead:
 
-  ```sql copy
+  ```sql
   sum(rate(container_cpu_seconds{cluster="prod"}[1m]) by (node, container) / on (node) node_cpu_capacity{cluster="prod"}
   ```
 
@@ -286,7 +286,7 @@ or [derived metrics](/investigate/querying/metrics/derived-telemetry/derived-met
 aggregated subset of the raw data, or break up the query into smaller chunks (by
 time, for instance) to reduce returned data points.
 
-![query truncation message](/doc-assets/query_truncation_msg.png)
+![query truncation message](/public/doc-assets/query_truncation_msg.png)
 
 ### Enable or disable query truncation
 
@@ -304,7 +304,7 @@ result in timeouts (no results returned for a single query), or might cause the
 browser to crash.
 </Info>
 
-![query truncation options](/doc-assets/query_truncation_options.png)
+![query truncation options](/public/doc-assets/query_truncation_options.png)
 
 ## Query protections in the database
 

@@ -20,7 +20,7 @@ This example demonstrates the process to iterate over every monitor:
 
 1.  Request the first page by sending a plain request with no page token:
 
-    ```shell copy
+    ```shell
     curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}/api/v1/config/monitors"
     ```
 
@@ -45,7 +45,7 @@ This example demonstrates the process to iterate over every monitor:
 2.  The response has a non-empty `page.next_token` field, which means you must send
     another request with this page token to fetch the next page of monitors:
 
-    ```shell copy
+    ```shell
     curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}/api/v1/config/monitors?page.token=abc123"
     ```
 
@@ -70,7 +70,7 @@ This example demonstrates the process to iterate over every monitor:
 3.  Because the non-empty `page.next_token` response field indicates there are more
     results to fetch, request the next page:
 
-    ```shell copy
+    ```shell
     curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}/api/v1/config/monitors?page.token=def456"
     ```
 

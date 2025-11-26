@@ -121,14 +121,14 @@ Select from one of the following methods to view budgets for log partitions.
 To use [Chronoctl](/tooling/chronoctl) to return all budgets, use the
 `chronoctl consumption-budgets list` command:
 
-```shell copy
+```shell
 chronoctl consumption-budgets list
 ```
 
 To filter for a specific budget, use the `chronoctl consumption-budgets read`
 command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl consumption-budgets read SLUG
 ```
 
@@ -181,14 +181,14 @@ Use one of the following methods to create budgets for partitions.
 To use [Chronoctl](/tooling/chronoctl) to create a budget, use the
 `chronoctl consumption-budgets create` command:
 
-```shell copy
+```shell
 chronoctl consumption-budgets create
 ```
 
 1. Run the following command to generate a sample budget configuration you can use as
    a template:
 
-   ```shell copy
+   ```shell
    chronoctl consumption-budgets scaffold
    ```
 
@@ -199,7 +199,7 @@ chronoctl consumption-budgets create
 
 1. With a completed definition, submit it with:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl consumption-budgets create -f FILE_NAME
    ```
 
@@ -227,7 +227,7 @@ To create a budget with [Terraform](/tooling/infrastructure/terraform):
 1. Define a `threshold` condition to drop data.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -295,7 +295,7 @@ dropped last:
 - The query `"env = 'staging'"` has a priority of `5`, so it's dropped next.
 - The query `"env = 'prod'"` has a priority of `1`, so it's dropped last.
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: ConsumptionBudget
 spec:
@@ -361,7 +361,7 @@ dropped last:
 - The query `"env = 'staging'"` has a priority of `5`, so it's dropped next.
 - The query `"env = 'prod'"` has a priority of `1`, so it's dropped last.
 
-```ruby copy
+```ruby
 resource "chronosphere_consumption_budget" "ordering_service_budget" {
   consumption_config_id = chronosphere_consumption_config.example.id
   name                  = "Ordering Service Logs"
@@ -452,7 +452,7 @@ partitions.
 To update budgets with [Chronoctl](/tooling/chronoctl), use the
 `consumption-budgets update` command:
 
-```shell copy
+```shell
 consumption-budgets update
 ```
 
@@ -465,7 +465,7 @@ To edit a budget using [Terraform](/tooling/infrastructure/terraform):
 1. Create or edit a Terraform file that updates the resource's existing properties.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -494,7 +494,7 @@ Select from one of the following methods to delete budgets for log partitions.
 To delete budgets with [Chronoctl](/tooling/chronoctl), use the
 `consumption-budgets delete` command:
 
-```shell copy
+```shell
 consumption-budgets delete
 ```
 

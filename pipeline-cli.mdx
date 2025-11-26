@@ -23,7 +23,7 @@ with Chronosphere.
 
 To view a full list of available commands and flags, run:
 
-```shell copy
+```shell
 calyptia help
 ```
 
@@ -55,7 +55,7 @@ Telemetry Pipeline resources:
 
 Create resources such as Core Instances and pipelines.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 calyptia create RESOURCE
 ```
 
@@ -68,7 +68,7 @@ see the command line help.
 
 Delete resources such as Core Instances, pipelines, and agents.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 calyptia delete RESOURCE
 ```
 
@@ -81,7 +81,7 @@ see the command line help.
 
 Lists all resources of the given type.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 calyptia get RESOURCE
 ```
 
@@ -90,7 +90,7 @@ Replace _`RESOURCE`_ with the resource you want to take action on.
 For more information about the subcommand, including its usage and accepted flags,
 see the command line help.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 calyptia RESOURCE get --help
 ```
 
@@ -103,7 +103,7 @@ see the command line help.
 
 Update Core Instances, pipelines, and other resources.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 calyptia update RESOURCE
 ```
 
@@ -115,7 +115,7 @@ Replace _`RESOURCE`_ with the resource you want to take action on.
 
 Configure the Pipeline CLI.
 
-```shell copy /COMMAND/
+```shell /COMMAND/
 calyptia config COMMAND
 ```
 
@@ -128,7 +128,7 @@ see the command line help.
 
 Install Telemetry Pipeline components.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 calyptia install RESOURCE
 ```
 
@@ -138,7 +138,7 @@ Replace _`RESOURCE`_ with the component you want to install.
 
 Rollout configurations to previously configured resources.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 calyptia rollout RESOURCE
 ```
 
@@ -148,7 +148,7 @@ Replace _`RESOURCE`_ with the resource you want to take action on.
 
 Uninstall Telemetry Pipeline components.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 calyptia uninstall RESOURCE
 ```
 
@@ -160,7 +160,7 @@ Replace _`RESOURCE`_ with the resource you want to take action on.
 
 Generate an autocompletion script for the specified shell.
 
-```shell copy /SHELL/
+```shell /SHELL/
 calyptia completion SHELL
 ```
 
@@ -179,7 +179,7 @@ see the command line help.
 Converts Fluent Bit configuration files from one format to another. This command
 accepts a given file or uses `stdin`.
 
-```shell copy /FILE_NAME/ /FLAGS/
+```shell /FILE_NAME/ /FLAGS/
   calyptia convert FILE_NAME FLAGS
 ```
 
@@ -193,7 +193,7 @@ Replace the following:
 
 Generate Calyptia documentation.
 
-```shell copy /FLAGS/
+```shell /FLAGS/
 calyptia docs FLAGS
 ```
 
@@ -204,7 +204,7 @@ flags, see the command line help.
 
 Returns the current Pipeline CLI version.
 
-```shell copy
+```shell
 calyptia version
 ```
 
@@ -212,7 +212,7 @@ calyptia version
 
 Watch for events or logs.
 
-```shell copy /COMMAND/
+```shell /COMMAND/
 calyptia watch COMMAND
 ```
 
@@ -232,13 +232,13 @@ details and instructions for Fish and PowerShell, see the output of
 
 1. Update or install `bash-completion`:
 
-   ```shell copy
+   ```shell
    brew install bash-completion
    ```
 
 1. In a shell initialization script, such as `~/.bashrc`, add the following:
 
-   ```shell copy
+   ```shell
    source "$(brew --prefix bash-completion)/etc/bash_completion"
    eval "$(calyptia completion bash)"
    ```
@@ -257,7 +257,7 @@ details and instructions for Fish and PowerShell, see the output of
 
 1. Run the following command:
 
-   ```shell copy
+   ```shell
    calyptia completion zsh > _calyptia
    ```
 

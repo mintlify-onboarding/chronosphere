@@ -66,7 +66,7 @@ To view available notifiers with Chronoctl, use one of the following commands:
 - To return a complete list of notifier resource definitions as YAML documents, use
   this command:
 
-  ```shell copy
+  ```shell
   chronoctl notifiers list
   ```
 
@@ -74,7 +74,7 @@ To view available notifiers with Chronoctl, use one of the following commands:
   comma-delimited list to the `--names` or `--slugs` options respectively. For
   example:
 
-  ```shell copy /LIST/
+  ```shell /LIST/
   chronoctl notifiers list --names LIST
   ```
 
@@ -84,7 +84,7 @@ To view available notifiers with Chronoctl, use one of the following commands:
 
 - To return a single resource definition by slug, use the `notifiers read` command:
 
-  ```shell copy /SLUG/
+  ```shell /SLUG/
   chronoctl notifiers read SLUG
   ```
 
@@ -155,13 +155,13 @@ Refer to each notifier type for a full example of a definition. You can also gen
 an example that contains multiple notifier types with Chronoctl by using this
 command:
 
-```shell copy
+```shell
 chronoctl notifiers scaffold
 ```
 
 To apply a definition, use this command:
 
-```shell copy /FILE_NAME/
+```shell /FILE_NAME/
 chronoctl apply -f FILE_NAME.yaml
 ```
 
@@ -222,13 +222,13 @@ To edit a notifier with [Chronoctl](/tooling/chronoctl):
    - To return a complete list of notifier resource definitions as YAML documents, use
      the `notifiers list` command:
 
-     ```shell copy
+     ```shell
      chronoctl notifiers list
      ```
 
    - To return a single resource definition by slug, use this command:
 
-     ```shell copy /SLUG/
+     ```shell /SLUG/
      chronoctl notifiers read SLUG
      ```
 
@@ -237,7 +237,7 @@ To edit a notifier with [Chronoctl](/tooling/chronoctl):
 1. Modify the YAML file for the notifier you want to update.
 1. Apply your changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -253,7 +253,7 @@ To edit a notifier using [Terraform](/tooling/infrastructure/terraform):
 1. Modify the notifier resource's existing properties.
 1. Run `terraform apply` to apply the changes.
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -296,7 +296,7 @@ To delete a notifier:
 
 To delete a notifier with [Chronoctl](/tooling/chronoctl), run this command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl notifiers delete SLUG
 ```
 
@@ -344,7 +344,7 @@ To skip notifications when alerts for a monitor resolve, set the value of the
 For example, the following definition skips sending notifications for resolved alerts
 for an Opsgenie notifier:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Notifier
 spec:
@@ -367,7 +367,7 @@ Observability Platform sends notifications for resolved alerts by default. The
 For example, the following resource skips sending notifications for resolved alerts
 for an Opsgenie notifier:
 
-```ruby copy
+```ruby
 resource "chronosphere_opsgenie_alert_notifier" "opsgenie_notifier" {
   name = "Opsgenie Notifier"
   …
@@ -418,7 +418,7 @@ post a notification to a channel based on a triggering metric's label:
 <Tabs>
 <Tab title="Chronoctl" id="variable-usage-examples-1-chronoctl">
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Notifier
 spec:
@@ -434,7 +434,7 @@ spec:
 </Tab>
 <Tab title="Terraform" id="variable-usage-examples-1-terraform">
 
-```ruby copy
+```ruby
 resource "chronosphere_slack_alert_notifier" "slack_notifier" {
   name = "Slack Notifier"
   …
@@ -451,7 +451,7 @@ You can also reference annotations defined in the monitor:
 <Tabs>
 <Tab title="Chronoctl" id="variable-usage-examples-2-chronoctl">
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Notifier
 spec:
@@ -467,7 +467,7 @@ spec:
 </Tab>
 <Tab title="Terraform" id="variable-usage-examples-2-terraform">
 
-```ruby copy
+```ruby
 resource "chronosphere_slack_alert_notifier" "slack_notifier" {
   name = "Slack Notifier"
   …
@@ -485,7 +485,7 @@ labels for an OpsGenie notifier:
 <Tabs>
 <Tab title="Chronoctl">
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Notifier
 spec:

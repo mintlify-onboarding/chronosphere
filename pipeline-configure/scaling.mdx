@@ -47,13 +47,13 @@ For replica counts with a volume over 100&nbsp;TB a day, contact
 
 Use the `update` command to scale an existing pipeline:
 
-```shell copy
+```shell
 calyptia update pipeline PIPELINE_NAME_OR_ID --replicas NUM_OF_REPLICAS
 ```
 
 To examine the number of replicas for a given pipeline, run:
 
-```shell copy
+```shell
 calyptia get pipelines --core-instance CORE_INSTANCE
 ```
 
@@ -131,7 +131,7 @@ to pause a pipeline:
 
 In [Pipeline CLI](/pipeline-cli), run the following command:
 
-```shell copy /PIPELINE/
+```shell /PIPELINE/
 calyptia update pipeline PIPELINE --replicas 0
 ```
 
@@ -165,7 +165,7 @@ If a pipeline is paused, use one of these methods to unpause it:
 
 In [Pipeline CLI](/pipeline-cli), run the following command:
 
-```shell copy /PIPELINE/ /REPLICAS/
+```shell /PIPELINE/ /REPLICAS/
 calyptia update pipeline PIPELINE --replicas REPLICAS
 ```
 

@@ -91,7 +91,7 @@ In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then se
 
 Use the command:
 
-```shell copy
+```shell
 chronoctl teams list
 ```
 
@@ -283,7 +283,7 @@ spec:
 To apply the changes, use the Chronoctl `chronoctl teams update` command, which
 updates teams but doesn't create them if they don't already exist:
 
-```shell copy /FILE_NAME/
+```shell /FILE_NAME/
 chronoctl teams update -f FILE_NAME.yaml
 ```
 
@@ -291,14 +291,14 @@ Replace _`FILE_NAME`_ with the path to the YAML definition file.
 
 You can test the changes without applying them by including the `--dry-run` flag:
 
-```shell copy /FILE_NAME/
+```shell /FILE_NAME/
 chronoctl teams update -f FILE_NAME.yaml --dry-run
 ```
 
 To force `teams update` to create a defined team if it doesn't exist, include the
 `--create-if-missing` flag:
 
-```shell copy /FILE_NAME/
+```shell /FILE_NAME/
 chronoctl teams update -f FILE_NAME.yaml --create-if-missing
 ```
 
@@ -485,7 +485,7 @@ To delete a team:
 To delete teams with [Chronoctl](/tooling/chronoctl), use the `chronoctl teams delete`
 command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl teams delete SLUG
 ```
 
@@ -493,7 +493,7 @@ Replace _`SLUG`_ with the unique slug of the team you want to delete.
 
 For example, to delete the team with the slug `dbas`, run:
 
-```shell copy
+```shell
 chronoctl teams delete dbas
 ```
 

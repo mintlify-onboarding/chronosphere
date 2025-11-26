@@ -130,7 +130,7 @@ The following fields display:
 To list your existing recording rules using [Chronoctl](/tooling/chronoctl), use the
 `chronoctl recording-rules list` command:
 
-```shell copy
+```shell
 chronoctl recording-rules list
 ```
 
@@ -161,7 +161,7 @@ YAML file and apply it.
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
-```shell copy
+```shell
 chronoctl recording-rules scaffold
 ```
 
@@ -174,7 +174,7 @@ editing.
 
 1. Apply the recording rule:
 
-   ```shell copy
+   ```shell
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -212,7 +212,7 @@ series, and the `name` field to display the human readable name. For backwards
 compatibility, the example uses the `name` field for the time series if `metric_name`
 isn't specified, like in the third rule.
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: RecordingRule
 spec:
@@ -258,7 +258,7 @@ The following code creates a recording rule that Terraform refers to as
 `scrape_duration_recording_rule` with the name `60s rule`, and defines the other
 data needed to create a recording rule.
 
-```ruby copy
+```ruby
 resource "chronosphere_recording_rule" "scrape_duration_recording_rule" {
   # Name for the rule
   # Value forms the metric name output if metric_name is not specified.
@@ -292,7 +292,7 @@ Select from the following methods to delete a recording rule.
 To delete a recording rule using [Chronoctl](/tooling/chronoctl), use the
 `chronoctl recording-rules delete` command:
 
-```shell copy
+```shell
 chronoctl recording-rules delete SLUG
 ```
 

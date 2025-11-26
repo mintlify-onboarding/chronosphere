@@ -28,7 +28,7 @@ reasons, including:
 This graphic shows the graphing behavior using a null value. This behavior
 is consistent with the expected behavior of Prometheus.
 
-![Graph with dip](/doc-assets/after-null-value.png)
+![Graph with dip](/public/doc-assets/after-null-value.png)
 
 ## Sparse time series
 
@@ -90,7 +90,7 @@ This example, which implements all of the previous PromQL functions, examines me
 emitted by the endpoint device and pushed to the Collector push endpoint. The time
 test series metric that's used is `node_load1`.
 
-```text copy
+```text
 timestamp(sum by (instance) (rate(node_load1{instance=~".+"}[5m]))) unless(timestamp(sum by
 (instance) (rate(node_load1{instance=~".+"}[5m] offset 5m))))
 ```
@@ -105,7 +105,7 @@ plotted.
 
 ### Example query pattern
 
-```text copy
+```text
 (
    timestamp(someMetric{})
    unless
@@ -125,7 +125,7 @@ in case we need to update it in the future:
 timestamp(sum by (instance) (rate(node_load1{instance=~".+"}[5m]))) unless(timestamp(sum by (instance) (rate(node_load1{instance=~".+"}[5m] offset 5m))))
  */}
 
-![Graph](/doc-assets/offset_graph.png)
+![Graph](/public/doc-assets/offset_graph.png)
 
 ### Alert
 
@@ -158,7 +158,7 @@ review information about dropped data:
 You can also run the following query in [Metrics Explorer](/investigate/querying/metrics/explorer)
 to return invalid time series metrics.
 
-```sql copy
+```sql
 sum by (source, reason) (rate(metrics_api_data_points_rejected{}[5m]))
 ```
 

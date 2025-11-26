@@ -15,7 +15,7 @@ flag to `true` under the `kubeletMonitoring` YAML collection.
 
 For example:
 
-```yaml copy
+```yaml
 discovery:
   kubernetes:
     ...
@@ -66,7 +66,7 @@ For example, to add the `app` label to the container level metrics for a `node-e
 DaemonSet deployment, use the following configuration under the `kubeletMonitoring`
 key:
 
-```yaml copy
+```yaml
 discovery:
   kubernetes:
     ...
@@ -78,7 +78,7 @@ discovery:
 This adds `app="node-exporter"` to these metrics, based on the following example
 `node-exporter` manifest:
 
-```yaml copy
+```yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -100,7 +100,7 @@ For example, to add the `app_kubernetes_io_component` label to the container-lev
 metrics for a `node-exporter` DaemonSet deployment, use the following configuration
 under the `kubeletMonitoring` key:
 
-```yaml copy
+```yaml
 discovery:
   kubernetes:
     ...
@@ -112,7 +112,7 @@ discovery:
 This adds `app_kubernetes_io_component="infrastructure"` to these metrics, assuming
 the following example `node-exporter` manifest:
 
-```yaml copy
+```yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -135,7 +135,7 @@ pod annotations called `my.pod.annotation` into Prometheus labels for the metric
 scraped from discovered pods. This is equivalent to a Prometheus `labelmap` rule, but
 sanitizes the label names and values:
 
-```yaml copy
+```yaml
 discovery:
   kubernetes:
     enabled: true
@@ -194,7 +194,7 @@ After installing the `ServiceMonitors` CRD, complete the following steps to disc
 1. In the `data` section, replace the values for `address` and `api-token` with
    your Base64-encoded API token:
 
-   ```yaml copy
+   ```yaml
    ---
    apiVersion: v1
    data:
@@ -204,7 +204,7 @@ After installing the `ServiceMonitors` CRD, complete the following steps to disc
 
 1. Apply the manifest:
 
-   ```shell copy
+   ```shell
    kubectl apply -f path/to/ksm-chronocollector.yaml
    ```
 
@@ -212,7 +212,7 @@ After installing the `ServiceMonitors` CRD, complete the following steps to disc
 
    1. Use `kubectl get pods` to list the pods:
 
-      ```shell copy
+      ```shell
       kubectl get pods
       ```
    1. In the output, identify the pod to examine by its `NAME` column value. For example,
@@ -225,7 +225,7 @@ After installing the `ServiceMonitors` CRD, complete the following steps to disc
       ```
    1. Use `kubectl logs` to review the pod's logs:
 
-      ```shell copy
+      ```shell
       kubectl logs chronocollector-jtgfw
       ```
 
@@ -251,7 +251,7 @@ both the `allowSkipPodInfo` flag under the top level `serviceMonitor` key and th
 `endpointsDiscoveryEnabled` flag under the `discovery.kubernetes` YAML collection
 in the Collector configuration.
 
-```yaml copy
+```yaml
 serviceMonitor:
   allowSkipPodInfo: true
 …
@@ -276,7 +276,7 @@ and scrape API server metrics from a self-managed Kubernetes cluster, such as k0
 enable the `endpointsDiscoveryEnabled` flag under the `discovery.kubernetes` YAML
 collection in the Collector configuration:
 
-```yaml copy
+```yaml
 discovery:
   kubernetes:
     endpointsDiscoveryEnabled: true
@@ -304,7 +304,7 @@ The following is an example that discovers the API Server based on the value of 
 `__meta_kubernetes_pod_label_k8s_app` label equal to `kube-apiserver` (found in the
 API Server Service object).
 
-```yaml copy
+```yaml
 jobs:
   - name: kube-apiserver
     selector:

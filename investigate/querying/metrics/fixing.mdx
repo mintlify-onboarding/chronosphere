@@ -33,7 +33,7 @@ to find slow queries.
   `http_requests_total`, you can split either `endpoint` or `status_code` into
   separate graphs.
 
-  ```shell copy
+  ```shell
   http_requests_total{status_code="2xx"}
   http_requests_total{status_code=~"3xx|4xx|5xx"}
   ```

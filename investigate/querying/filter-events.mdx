@@ -315,21 +315,21 @@ This syntax supports nesting using parentheses so you can create complex queries
 example, the following filter matches on two different types, or where the source is
 not `deployer` and the `cluster` label starts with `production-cluster`.
 
-```text copy
+```text
 type =~ "build_started|build_running" OR (source != "deployer" AND labels.cluster =~ "^production-cluster.*")
 ```
 
 The following filter matches on two different types where the `title` begins with
 `usagestats`.
 
-```text copy
+```text
 type =~ "monitor_triggered|monitor_triggered_notification_failed_to_send" AND title =~ "^usagestats.*"
 ```
 
 The following filter matches on `deploys` from the `deployer` source where the
 `deployment_id` equals a particular value.
 
-```text copy
+```text
 category = "deploys" AND source = "deployer" AND labels.deployment_id = "36z9aaebqcc4oosuwr3v97qrgp"
 ```
 
@@ -338,6 +338,6 @@ You can filter specifically on
 `lens_service` and the name of the service you want to display. For example, the
 following filter displays all `deploy` events for the `auth` service:
 
-```text copy
+```text
 lens_service = "auth" AND category = "deploys"
 ```

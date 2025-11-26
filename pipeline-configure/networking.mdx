@@ -17,7 +17,7 @@ receive data. These ports correspond to different components of each pipeline.
 
 To view a list of open ports for a pipeline, use the following command:
 
-```shell copy
+```shell
 calyptia get endpoints --pipeline PIPELINE
 ```
 
@@ -93,7 +93,7 @@ frontend port number would be `2201` and its backend port number would still be 
 You can use an HTTP proxy to route traffic between a Core Instance and any connected
 services. To do so, use the following command:
 
-```shell copy /INSTANCE/ /PROXY/
+```shell /INSTANCE/ /PROXY/
 calyptia update core_instance operator INSTANCE --http-proxy=PROXY
 ```
 
@@ -119,7 +119,7 @@ types. The Service types supported by Telemetry Pipeline are:
 When [creating a pipeline](/pipeline-data/create-modify#create-a-pipeline),
 use the `--service-type` flag to specify its Service type:
 
-```shell copy
+```shell
 calyptia create pipeline --name PIPELINE --core-instance INSTANCE --service-type TYPE
 ```
 
@@ -139,7 +139,7 @@ by default.
 
 To modify the Service type of an existing pipeline, use the following command:
 
-```shell copy
+```shell
 calyptia update pipeline PIPELINE --service-type TYPE
 ```
 

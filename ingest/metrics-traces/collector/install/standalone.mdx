@@ -38,7 +38,7 @@ a new service account.
 1. Modify the permissions on the binary to make it executable. For example,
    to change permissions on the `linux-amd64` version of the binary:
 
-   ```shell copy
+   ```shell
    chmod +x chronocollector-linux-amd64
    ```
 
@@ -117,13 +117,13 @@ Replace the following values before running the startup commands:
 
 ### Run standalone with a binary
 
-```shell copy
+```shell
 GATEWAY_ADDRESS=MY_COMPANY.chronosphere.io:443 API_TOKEN=API_TOKEN PATH_TO_FILE/COLLECTOR_BINARY -f PATH_TO_FILE/config.yml
 ```
 
 ### Run standalone with Docker
 
-```shell copy
+```shell
 docker run -v $(pwd)/PATH_TO_FILE/config.yml:/etc/chronocollector/config.yml -e "GATEWAY_ADDRESS=MY_COMPANY.chronosphere.io:443" -e "API_TOKEN=API_TOKEN" gcr.io/chronosphereio/chronocollector:vVERSION
 ```
 
@@ -133,7 +133,7 @@ You can install the Collector as a Systemd service on Linux systems:
 
 1. Create a `chronocollector` user and group:
 
-   ```shell copy
+   ```shell
    sudo groupadd -f chronocollector
    sudo useradd -g chronocollector --no-create-home --shell /bin/false chronocollector
    ```
@@ -142,13 +142,13 @@ You can install the Collector as a Systemd service on Linux systems:
    The following command expects the Collector `config.yml` file in the
    `/etc/chronocollector` directory:
 
-   ```shell copy
+   ```shell
    sudo chown -R chronocollector:chronocollector /etc/chronocollector
    ```
 
 1. Copy the Collector binary to the `/usr/bin` directory and modify the permissions:
 
-   ```shell copy
+   ```shell
    sudo cp ./chronocollector /usr/bin/
    sudo chown chronocollector:chronocollector /usr/bin/chronocollector
    ```
@@ -156,7 +156,7 @@ You can install the Collector as a Systemd service on Linux systems:
 1. In the `/usr/lib/systemd/system` directory, create and define a script such as
    `chronocollector.service` for the Collector service:
 
-   ```text copy
+   ```text
    [Unit]
    Description=Chronocollector
    Documentation=https://docs.chronosphere.io/ingest/metrics-traces/collector
@@ -180,13 +180,13 @@ You can install the Collector as a Systemd service on Linux systems:
 
 1. Change the permissions of the `chronocollector.service` script you created:
 
-   ```shell copy
+   ```shell
    sudo chmod 664 /usr/lib/systemd/system/chronocollector.service
    ```
 
 1. Enable and verify the `chronocollector` service:
 
-   ```shell copy
+   ```shell
    sudo systemctl daemon-reload
    sudo systemctl start chronocollector
    sudo systemctl status chronocollector

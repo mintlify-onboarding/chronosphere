@@ -69,7 +69,7 @@ To view tail sampling rules:
 To display a list of all available tail sampling rules
 with [Chronoctl](/tooling/chronoctl), use this command:
 
-```shell copy
+```shell
 chronoctl trace-tail-sampling-rules read
 ```
 
@@ -123,7 +123,7 @@ For a complete list of supported fields for tail sampling rules, see the
 You can use the `trace-tail-sampling-rules scaffold` command to generate an example
 tail sampling rule, and then copy the resource definition:
 
-```shell copy
+```shell
 chronoctl trace-tail-sampling-rules scaffold
 ```
 
@@ -138,7 +138,7 @@ To define your tail sampling strategy:
 
    {/* vale Chronosphere.WordList = YES */}
 
-   ```yaml copy
+   ```yaml
    api_version: v1/config
    kind: TraceTailSamplingRules
    spec:
@@ -159,7 +159,7 @@ To define your tail sampling strategy:
 
 1. Apply your tail sampling strategy and send it to Observability Platform:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -174,7 +174,7 @@ Use Terraform to create a rule definition for tail sampling:
    declaration by using the `chronosphere_trace_tail_sampling_rules` type, followed
    by a `default_sample_rate` and your `rules` definition.
 
-   ```ruby copy
+   ```ruby
    resource "chronosphere_trace_tail_sampling_rules" "default-sampling-rules" {
      default_sample_rate {
        enabled     = true
@@ -190,7 +190,7 @@ Use Terraform to create a rule definition for tail sampling:
 1. Apply the changes:
 
 
-   ```ruby copy
+   ```ruby
    terraform apply
    ```
 
@@ -225,7 +225,7 @@ You can also use the following process if you already have a definition file:
 1. Update the tail sampling rules definition file.
 1. Run the following command to submit the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl trace-tail-sampling-rules update -f FILE_NAME.yaml
    ```
 
@@ -239,7 +239,7 @@ To edit tail sampling rules using [Terraform](/tooling/infrastructure/terraform)
 1. Create or edit a Terraform file that updates the resource's existing properties.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -265,7 +265,7 @@ Select from the following methods to delete tail sampling rules.
 To delete a tail sampling rule with [Chronoctl](/tooling/chronoctl), use this
 command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl trace-tail-sampling-rules delete SLUG
 ```
 
@@ -273,7 +273,7 @@ Replace _`SLUG`_ with the slug of the tail sampling rule you want to delete.
 
 For example, to delete a tail sampling rule with the slug `tail-sampling-prod`:
 
-```shell copy
+```shell
 chronoctl trace-tail-sampling-rules delete tail-sampling-prod
 ```
 
@@ -305,7 +305,7 @@ Terraform file, such as rules that always drop or always keep specific traces.
 The following example defines a default sample rate of `1`, which keeps all traces. A
 sample rate of `0` drops all traces that don't match any other rule.
 
-```ruby copy
+```ruby
 resource "chronosphere_trace_tail_sampling_rules" "default-sampling-rules" {
   default_sample_rate {
     enabled     = true
@@ -327,7 +327,7 @@ traces matching the defined rule.
 
 {/* vale Chronosphere.WordList = YES */}
 
-```ruby copy
+```ruby
 resource "chronosphere_trace_tail_sampling_rules" "drop-node-health-checks" {
   default_sample_rate {
     enabled     = true
@@ -364,7 +364,7 @@ The following example keeps any trace with a span where the operation is `"/hail
 and the overall duration of the trace is greater than five seconds. This rule lets
 you store long-running traces and investigate what's causing higher latency.
 
-```ruby copy
+```ruby
 resource "chronosphere_trace_tail_sampling_rules" "keep-longer-traces" {
   default_sample_rate {
     enabled     = true
@@ -399,7 +399,7 @@ that fail. The following rule matches any trace with at least one call to the
 spans. Observability Platform then keeps any traces from the `"/hail-ride"` operation
 where the error value is `true`.
 
-```ruby copy
+```ruby
 resource "chronosphere_trace_tail_sampling_rules" "keep-error-traces" {
   default_sample_rate {
     enabled     = true
@@ -450,7 +450,7 @@ Observability Platform applies the `sample_rate` of `0.6` to any traces matching
 key/value pair and the additional specified criteria, such as `duration`, `error`,
 `operation`, and `service`.
 
-```ruby copy
+```ruby
 resource "chronosphere_trace_tail_sampling_rules" "my-tail-sampling-rules" {
   default_sample_rate {
     enabled     = true
@@ -549,7 +549,7 @@ following example includes individual rules that match on different tags:
 If traces match neither of these rules, Observability Platform applies the default
 rule, which is to keep all traces.
 
-```ruby copy
+```ruby
 resource "chronosphere_trace_tail_sampling_rules" "two-tail-sampling-rules" {
   default_sample_rate {
     enabled     = true

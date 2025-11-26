@@ -75,7 +75,7 @@ To create quota pools, you must have administrative privileges:
 1. Add the definition to a Terraform file, or create a new Terraform file.
 1. Run this command to apply the resource:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -87,7 +87,7 @@ To create a pool using [Chronoctl](/tooling/chronoctl):
 1. Run the following command to generate a sample pool configuration you can use as a
    template:
 
-   ```shell copy
+   ```shell
    chronoctl resource-pools scaffold
    ```
 
@@ -95,7 +95,7 @@ To create a pool using [Chronoctl](/tooling/chronoctl):
 
 1. With a completed definition, submit it with:
 
-   ```shell copy
+   ```shell
    chronoctl resource-pools create -f FILE_NAME.yaml
    ```
 
@@ -114,7 +114,7 @@ To create a pool with [Terraform](/tooling/infrastructure/terraform):
 
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -206,7 +206,7 @@ following variables in place of a specific name:
 - _`MY_RESOURCE`_ is a resource in your system.
 - _`MY_SERVICE`_ is the name of a service in your system.
 
-```ruby copy
+```ruby
 resource "MY_RESOURCE_resource_pools_config" "resource_pools" {
   default_pool {
 
@@ -343,7 +343,7 @@ To edit an existing pool:
 1. Add the definition to a Terraform file, or create a new Terraform file.
 1. Run this command to apply the resource:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -355,7 +355,7 @@ To edit a pool using [Chronoctl](/tooling/chronoctl):
 1. View your existing metrics pools YAML definition with the
    `chronoctl resource-pools read` command:
 
-   ```shell copy
+   ```shell
    chronoctl resource-pools read
    ```
 
@@ -363,7 +363,7 @@ To edit a pool using [Chronoctl](/tooling/chronoctl):
 
 1. Modify the YAML definition properties and apply the changes:
 
-   ```shell copy
+   ```shell
    chronoctl resource-pools update -f FILE_NAME.yaml
    ```
 
@@ -377,7 +377,7 @@ To edit a pool using [Terraform](/tooling/infrastructure/terraform):
 1. Create or edit a Terraform file that updates the resource's existing properties.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -491,7 +491,7 @@ To delete a pool using [Chronoctl](/tooling/chronoctl):
 1. View your existing metrics pools YAML definition with the
    `chronoctl resource-pools read` command:
 
-   ```shell copy
+   ```shell
    chronoctl resource-pools read
    ```
 
@@ -502,7 +502,7 @@ To delete a pool using [Chronoctl](/tooling/chronoctl):
 
 1. Apply the changes:
 
-   ```shell copy
+   ```shell
    chronoctl resource-pools update -f FILE_NAME.yaml
    ```
 
@@ -511,7 +511,7 @@ To delete a pool using [Chronoctl](/tooling/chronoctl):
 To delete the _entire_ `ResourcePools` definition, use the
 `chronoctl resource-pools delete` command:
 
-```shell copy
+```shell
 chronoctl resource-pools delete
 ```
 
@@ -582,7 +582,7 @@ data loss, create a [monitor](/investigate/alerts/monitors) to alert on pool usa
    metric. A query that returns each pool's percent utilization of its quota might
    look like this:
 
-   ```text copy
+   ```text
    (sum by (metrics_class) (rate(chrono_poolstats_count{type="persisted", dropped="no"}[2m]))) /
    ((sum by(metrics_class) (coordinator_scheduler_metrics_class_weight{})) * on() group_left() limit_service_licensed_persist_limit{})
    ```

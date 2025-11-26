@@ -44,7 +44,7 @@ In Observability Platform, view rollup rules in the
 To list only rollup rules on the command line with [Chronoctl](/tooling/chronoctl),
 use this command:
 
-```shell copy
+```shell
 chronoctl rollup-rules list
 ```
 
@@ -98,7 +98,7 @@ To create a rule configuration:
      `__m3_prom_type__` as the label to match on, and `gauge` as the value. The
      resulting filter looks like:
 
-     ```text copy
+     ```text
      __m3_prom_type__ = gauge
      ```
 
@@ -126,7 +126,7 @@ To create a rule configuration:
          series named `agg_write_latency` that's a cumulative exponential histogram,
          define two series that look like:
 
-         ```text copy
+         ```text
          __name__ = agg_write_latency AND __metric_type__ = cumulative_exponential_histogram
          ```
 
@@ -149,7 +149,7 @@ YAML file and apply it.
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
-```shell copy
+```shell
 chronoctl rollup-rules scaffold
 ```
 
@@ -160,7 +160,7 @@ editing.
 
 1. Apply the rollup rule:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -240,7 +240,7 @@ Here's an example of a rollup rule that matches time series with the value
 `permits_blocked`, while discarding any labels matching `instance` and `job`. It uses
 a counter type metric, and aggregates as a sum using a 30-second interval.
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: RollupRule
 spec:
@@ -266,7 +266,7 @@ Here's an example of a rollup rule that matches time series with the value
 `permits_blocked`, while discarding any labels matching `instance` and `job`.
 It uses a counter type metric, and aggregates as a sum using a 30-second interval.
 
-```ruby copy
+```ruby
 resource "chronosphere_rollup_rule" "permits_blocked_without_instance" {
   name      = "permits blocked without instance"
   slug      = "permits_blocked_without_instance"
@@ -288,7 +288,7 @@ resource "chronosphere_rollup_rule" "permits_blocked_without_instance" {
 
 To delete rollup rules with [Chronoctl](/tooling/chronoctl), use this command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl rollup-rules delete SLUG
 ```
 
@@ -297,14 +297,14 @@ Replace _`SLUG`_ with the rule's slug.
 For example, to delete the `http_request_duration_by_service_and_status` rule,
 use this command:
 
-```shell copy
+```shell
 chronoctl rollup-rules delete http_request_duration_by_service_and_status
 ```
 
 If your slug starts with a dash (`-`), use double quotes (`"`) around the slug
 name.
 
-```shell copy
+```shell
 chronoctl rollup-rules delete "/-my-rollup-rule"
 ```
 

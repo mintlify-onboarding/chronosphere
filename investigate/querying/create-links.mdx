@@ -16,7 +16,7 @@ must construct a log URL. You then copy the query, decode it, and replace values
 variables in the encoded URL. The following URL is an example of the decoded base
 URL:
 
-```copy /TENANT/ /TIME/ /QUERY/ /FUNCTION/
+``` /TENANT/ /TIME/ /QUERY/ /FUNCTION/
 https://TENANT.chronosphere.io/logs/explorer?start=TIME&query=QUERY|+FUNCTION
 ```
 
@@ -34,7 +34,7 @@ Replace the following:
 - `FUNCTION`: Queries in Logs Explorer separate query operators and functions with a
   pipe (`|`), as shown in the following example:
 
-  ```sql copy
+  ```sql
   httpRequest.requestMethod = "POST"
   AND httpRequest.status =~ "40*"
   AND service = "nginx"
@@ -64,7 +64,7 @@ To create the URL for your query:
    For example, the decoded URL might contain the name of a service like
    `nginx`:
 
-   ```text copy
+   ```text
    service+=+"nginx"
    ```
 
@@ -72,13 +72,13 @@ To create the URL for your query:
    to use variables. For example, the encoded URL might contain the `service`
    parameter with a value of `nginx`:
 
-   ```text copy /nginx/
+   ```text /nginx/
    service+%3D+%22nginx%22%
    ```
 
    Replace `nginx` with the `{{ service }}` variable:
 
-   ```text copy /{{ service }}/
+   ```text /{{ service }}/
    service+%3D+%22{{ service }}%22%
    ```
 
@@ -120,7 +120,7 @@ These links persist across all traces in Observability Platform.
    replaces the `{{ service }}` variable with the name of the service from the
    selected span.
 
-   ```text copy
+   ```text
    https://example.chronosphere.io/dashboards/services-overview/services-overview?orgId=1&var-svc={{ service }}&var-root_svc={{ service }}
    ```
 
@@ -164,7 +164,7 @@ To link to logs from trace span details:
    selected span. When you click the link, Observability Platform replaces the
    `{{ service }}` variable with the name of the service from the selected span:
 
-   ```text copy /{{ service }}/
+   ```text /{{ service }}/
    https://TENANT.chronosphere.io/logs/explorer/?orgId=1&var-svc={{ service }}&var-root_svc={{ service }}
    ```
 
@@ -200,14 +200,14 @@ the variable in your data link as `d_metricname=${metric}`.
 - **Traces**: Use the following URL as the basis for creating a data link to trace
   data from a dashboard:
 
-  ```shell copy
+  ```shell
   /traces/?d_closeto=${__series.timestamp}&d_metricname=${metric}
   ```
 
 - **Logs**: Use the following URL as the basis for creating a data link to log data
   from a dashboard:
 
-   ```shell copy
+   ```shell
    /logs/explorer?start=1h&query=service+%3D+%22${service}%22&visualization=list
    ```
 
@@ -229,7 +229,7 @@ To create a data link from a dashboard:
    and `service` variables as inputs, based on the specific series in the chart (if
    the chart shows multiple series) and the name of the service in the query.
 
-   ```text copy
+   ```text
    /traces/explorer?d_closeto=${__series.timestamp}& d_service=${service}
    ```
 
@@ -306,7 +306,7 @@ the following parameters:
 - A `severity` equal to `ERROR`
 - An `environment` named `production`
 
-```text copy showLineNumbers /operation/ /service/ /environment/ /severity/ /payment_gateway_service/ /authorize-card-payment/ /production/ /ERROR/
+```text showLineNumbers /operation/ /service/ /environment/ /severity/ /payment_gateway_service/ /authorize-card-payment/ /production/ /ERROR/
 https://TENANT.chronosphere.io/logs/explorer?start=1h&visualization=list
 &query=operation+%3D+%22/authorize-card-payment%22%0A
 AND+service+%3D+%22payment_gateway_service%22%0A
@@ -316,7 +316,7 @@ AND+environment+%3D+%22production%22
 
 Without URL encoding, the URL looks like this:
 
-```text copy showLineNumbers /operation/ /service/ /environment/ /severity/ /payment_gateway_service/ /authorize-card-payment/ /production/ /ERROR/
+```text showLineNumbers /operation/ /service/ /environment/ /severity/ /payment_gateway_service/ /authorize-card-payment/ /production/ /ERROR/
 https://TENANT.chronosphere.io/logs/explorer?start=1h&visualization=list
 &query=operation+=+"/authorize-card-payment"
 AND+service+=+"payment_gateway_service"
@@ -331,7 +331,7 @@ You can then replace these values for `service` and `operation` with the
 `{{ service }}` and `{{ operation }}` templated variables. The resulting URL with
 variables should be similar to the following:
 
-```text copy showLineNumbers /{{ service }}/ /{{ operation }}/
+```text showLineNumbers /{{ service }}/ /{{ operation }}/
 https://TENANT.chronosphere.io/logs/explorer?start=1h&visualization=list
 &query=operation+%3D+%22{{ operation }}%22%0A
 AND+service+%3D+%22{{ service }}%22%0A
@@ -347,7 +347,7 @@ link, Observability Platform replaces the templated `{{ service }}` and `{{ oper
 Similarly, you can use the `{{ span_id }}` and `{{ trace_id }}` variables in your
 templated link.
 
-```text copy showLineNumbers /{{ trace_id }}/ /{{ span_id }}/
+```text showLineNumbers /{{ trace_id }}/ /{{ span_id }}/
 https://TENANT.chronosphere.io/logs/explorer?start=1h
 &query=operation+%3D+%22{{ operation }}%22%0A
 AND+service+%3D+%22{{ service }}%22%0A

@@ -47,7 +47,7 @@ If a Core Operator has multiple replicas, those replicas will conflict with one 
 
 1. Run the following command to install a Core Operator:
 
-   ```shell copy
+   ```shell
    calyptia install operator
    ```
 
@@ -71,14 +71,14 @@ If a Core Operator has multiple replicas, those replicas will conflict with one 
 
 1. Run the following command to add the Telemetry Pipeline chart repository:
 
-   ```shell copy
+   ```shell
    helm repo add calyptia https://helm.calyptia.com/
    ```
 
 1. Run the following command to install the custom resource definitions (CRDs)
    that Telemetry Pipeline relies on:
 
-   ```shell copy
+   ```shell
    helm install core-crd calyptia/core-crd
    ```
 
@@ -88,7 +88,7 @@ If a Core Operator has multiple replicas, those replicas will conflict with one 
 
 1. Run the following command to install Core Operator:
 
-   ```shell copy
+   ```shell
    helm install core-operator calyptia/core-operator
    ```
 
@@ -103,7 +103,7 @@ If a Core Operator has multiple replicas, those replicas will conflict with one 
 After you install a Core Operator in a Kubernetes cluster, use the
 following kubectl command to view logs from the installation process:
 
-```shell copy
+```shell
 kubectl logs deploy/calyptia-core-controller-manager
 ```
 

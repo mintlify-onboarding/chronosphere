@@ -57,7 +57,7 @@ To configure the OpenTelemetry Collector to ingest metric and trace data:
 1. Pull the [OpenTelemetry Docker image](https://opentelemetry.io/docs/collector/getting-started/#docker)
    to run the OpenTelemetry Collector in a Docker container:
 
-   ```shell copy
+   ```shell
    docker pull otel/opentelemetry-collector-contrib:VERSION
    docker run otel/opentelemetry-collector-contrib:VERSION
    ```
@@ -76,7 +76,7 @@ To configure the OpenTelemetry Collector to ingest metric and trace data:
    want to change the defaults. For example, you can reference a `config.yaml` in a
    different location, such as a Kubernetes ConfigMap.
 
-   ```yaml copy
+   ```yaml
    exporters:
      otlp/chronosphere:
        endpoint: <ADDRESS>
@@ -127,7 +127,7 @@ To configure the OpenTelemetry Collector to ingest metric and trace data:
    For example, the following configuration enforces a maximum batch size limit of
    `2000` spans without introducing any artificial delays:
 
-   ```yaml copy
+   ```yaml
    processors:
      batch:
        timeout: 1s
@@ -142,7 +142,7 @@ To configure the OpenTelemetry Collector to ingest metric and trace data:
 1. Add the OTLP exporter and the batch processor to the metrics and traces exporters
    definition.
 
-   ```yaml copy
+   ```yaml
     service:
       pipelines:
         metrics:
@@ -163,7 +163,7 @@ To configure the OpenTelemetry Collector to ingest metric and trace data:
       tools like SOPs to securely store this information.
     </Warning>
 
-   ```yaml copy
+   ```yaml
       # In the OpenTelemetry Collector Deployment:
         - name: ${env:API_TOKEN}
           valueFrom:
@@ -215,7 +215,7 @@ To define a default `service.instance.id` resource attribute:
    deployed on a host, the system processor is the best option to gather information
    about the host.
 
-   ```yaml copy
+   ```yaml
       processors:
         resourcedetection:
           detectors: [env, system]
@@ -230,7 +230,7 @@ To define a default `service.instance.id` resource attribute:
    configured, your environment might have other resource attributes available, such
    as `k8s.node.uid`, which can serve as the instance identifier.
 
-   ```yaml copy
+   ```yaml
       resource/service-instance:
         attributes:
           - key: service.instance.id
@@ -242,7 +242,7 @@ To define a default `service.instance.id` resource attribute:
    processors pipeline. In the `service.pipelines.metrics.processors` ConfigMap, add
    the resource attribute processor defined in the previous step:
 
-   ```yaml copy
+   ```yaml
    processors: [transform, batch, resourcedetection, resource/service-instance]
    ```
 
@@ -257,7 +257,7 @@ Platform:
 
 1. Define a Prometheus receiver to scrape the endpoint receiver:
 
-   ```yaml copy
+   ```yaml
       prometheus/otel-collector-self-scrape:
       config:
         scrape_configs:
@@ -269,14 +269,14 @@ Platform:
 
 1. Add the Prometheus receiver to the metrics pipeline:
 
-   ```yaml copy
+   ```yaml
      metrics:
        receivers: [prometheus/otel-collector-self-scrape, otlp/chronosphere]
    ```
 
 1. Add the metrics service to the Service ConfigMap:
 
-   ```yaml copy
+   ```yaml
       service:
         telemetry:
           metrics:

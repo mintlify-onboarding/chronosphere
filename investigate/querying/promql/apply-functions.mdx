@@ -26,7 +26,7 @@ The following query calculates the per-second average rate of increase over the 
 10 minutes for the matching metric name with a `device` label whose value is equal
 to `eth0`:
 
-```text copy
+```text
 rate(node_network_receive_bytes_total{device="eth0"}[10m])
 ```
 
@@ -42,7 +42,7 @@ The following query returns the total values of all time series with an offset o
 five minutes ago that match the metric name with a value for the `device` label
 that matches the value `eth0`:
 
-```text copy
+```text
 sum(node_network_receive_bytes_total{device="eth0"} offset 5m)
 ```
 
@@ -59,7 +59,7 @@ The following query returns the average values of all time series that match the
 metric name with a value for the `device` label equal to `eth0` grouped by unique
 values for the `k8s_cluster` label:
 
-```text copy
+```text
 avg(node_network_receive_bytes_total{device="eth0"}) by (k8s_cluster)
 ```
 
@@ -95,7 +95,7 @@ step value equals the sliding time window's value. For more information, see
 
 Use the `histogram_count()` function to calculate the rate of HTTP requests:
 
-```copy
+```
 histogram_count(sum(rate(http_request_duration_seconds{}[5m])))
 ```
 
@@ -103,7 +103,7 @@ histogram_count(sum(rate(http_request_duration_seconds{}[5m])))
 
 Use the `histogram_avg()` function to query the average HTTP request duration:
 
-```copy
+```
 histogram_avg(sum(rate(http_request_duration_seconds[5m])))
 ```
 
@@ -112,7 +112,7 @@ histogram_avg(sum(rate(http_request_duration_seconds[5m])))
 Use the `histogram_quantile()` function to query the 90th percentile HTTP request
 duration by HTTP method and request path:
 
-```copy
+```
 histogram_quantile(0.9, sum(rate(http_request_duration_seconds[5m])))
 ```
 
@@ -123,7 +123,7 @@ as delivering 90% of requests in less than 200 ms and 99% of requests in less th
 500 ms. Use the `histogram_fraction()` function to calculate the percentage of requests
 with responses in 200 ms or less:
 
-```copy
+```
 histogram_fraction(0, 0.2, sum(rate(http_request_duration_seconds[5m])))
 ```
 
@@ -164,7 +164,7 @@ PromQL queries:
 Use the `rate()` function and the `_count` time series to calculate the rate of HTTP
 requests:
 
-```copy
+```
 sum(rate(http_request_duration_seconds_count[5m]))
 ```
 
@@ -173,7 +173,7 @@ sum(rate(http_request_duration_seconds_count[5m]))
 Query the average HTTP request duration by diving the sum of observations by the
 count of observations:
 
-```copy
+```
 sum(rate(http_request_duration_seconds_sum[5m])) / sum(rate(http_request_duration_seconds_count[5m]))
 ```
 
@@ -182,6 +182,6 @@ sum(rate(http_request_duration_seconds_sum[5m])) / sum(rate(http_request_duratio
 Use the histogram_quantile() function to get the 90th percentile HTTP request duration
 by HTTP method and request path:
 
-```copy
+```
 histogram_quantile(0.9, sum by(le)(rate(http_request_duration_seconds_bucket[5m])))
 ```

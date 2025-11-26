@@ -75,14 +75,14 @@ experience, see [Workflows](#workflows).
 To use [Chronoctl](/tooling/chronoctl) to return metric usage by label name, use the
 `chronoctl metric-usages-by-label-name list` command:
 
-```shell copy
+```shell
 chronoctl metric-usages-by-label-name list
 ```
 
 To return metric usage by metric name, use the `chronoctl metric-usages-by-metric-name list`
 command:
 
-```shell copy
+```shell
 chronoctl metric-usages-by-metric-name list
 ```
 
@@ -98,7 +98,7 @@ endpoints.
 For example, the following command returns metrics by name that match the glob
 pattern `workqueue_work*` over the past 60 days (`5184000` seconds).
 
-```shell copy
+```shell
 curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/api/v1/state/metric-usages-by-metric-name?order.ascending=true&&lookback_secs=5184000&metric_name_glob=workqueue_work*&include_counts_by_type=true" \
 --header 'Accept: application/json' | jq
 ```
@@ -288,7 +288,7 @@ which can have multiple references in its group.
     metric with a wildcard in the name like in the following example, and include that
     metric name in a dashboard, that metric won't be calculated in the utility score:
 
-    ```text copy
+    ```text
     __name__=~"cache_atm_server_redis_grpc_.*request_time_count"
     ```
 
@@ -377,7 +377,7 @@ any queries or references and therefore might not be very valuable. Consider usi
 Use the [Aggregation Rules UI](/control/shaping/reduce-cardinality/review-aggregation-rules)
 to review the impact of rollup rules.
 
-![A high volume](/doc-assets/usage-profiler-high-unique-values.png)
+![A high volume](/public/doc-assets/usage-profiler-high-unique-values.png)
 
 ### Metrics to add
 

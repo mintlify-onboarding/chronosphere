@@ -72,7 +72,7 @@ To create a PagerDuty notifier:
 1. In the **URL** field, enter a URL, which is called as a `POST` request. For
    example:
 
-   ```text copy
+   ```text
    https://events.pagerduty.com/generic/2010-04-15/create_event.json
    ```
 
@@ -93,7 +93,7 @@ To create a PagerDuty notifier:
 1. Define the resource definition for your PagerDuty notifier by adding the following
    information to a YAML file:
 
-   ```yaml copy /NAME/ /SLUG/ /ROUTING_KEY/ /SEVERITY/
+   ```yaml /NAME/ /SLUG/ /ROUTING_KEY/ /SEVERITY/
    api_version: v1/config
    kind: Notifier
    spec:
@@ -114,7 +114,7 @@ To create a PagerDuty notifier:
 
 1. Apply the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -130,7 +130,7 @@ To create a PagerDuty notifier:
    `chronosphere_pagerduty_alert_notifier` type followed by a name in a resource
    declaration:
 
-   ```ruby copy
+   ```ruby
    resource "chronosphere_pagerduty_alert_notifier" "pagerduty_notifier" {
      name = "PagerDuty Notifier"
 
@@ -189,13 +189,13 @@ To create a PagerDuty notifier:
 
 1. Add the following URL, called as a `POST` request, to the `url` key:
 
-   ```text copy
+   ```text
    https://events.pagerduty.com/v2/enqueue
    ```
 
 1. Run `terraform apply` to create the notifier resource.
 
-   ```ruby copy
+   ```ruby
    terraform apply
    ```
 

@@ -72,7 +72,7 @@ resource profiles.
 
 Set the resource profile for a new pipeline by using the following command:
 
-```shell copy /INSTANCE/ /PIPELINE/ /PROFILE/
+```shell /INSTANCE/ /PIPELINE/ /PROFILE/
 calyptia create pipeline --core-instance INSTANCE --name PIPELINE --resource-profile PROFILE
 ```
 
@@ -86,7 +86,7 @@ Replace the following:
 
 Use the following command to view the active resource profile of an existing pipeline:
 
-```shell copy /PIPELINE/
+```shell /PIPELINE/
 calyptia get pipeline PIPELINE --output-format yaml
 ```
 
@@ -99,7 +99,7 @@ pipeline's active resource profile, including its name and settings.
 
 Update the resource profile for an existing pipeline by using the following command:
 
-```shell copy /PIPELINE/ /PROFILE/
+```shell /PIPELINE/ /PROFILE/
 calyptia update pipeline PIPELINE --resource-profile PROFILE
 ```
 
@@ -113,7 +113,7 @@ Replace the following:
 
 Use the following command to define your own resource profiles in Telemetry Pipeline:
 
-```shell copy /INSTANCE/ /PROFILE/ /FILE_NAME/
+```shell /INSTANCE/ /PROFILE/ /FILE_NAME/
 calyptia create resource_profile --core-instance INSTANCE --name PROFILE --spec FILE_NAME
 ```
 
@@ -125,7 +125,7 @@ Replace the following:
 
 This is an example of a resource profile with a valid JSON structure:
 
-```json copy
+```json
 {
  "resources": {
   "storage": {
@@ -153,7 +153,7 @@ This is an example of a resource profile with a valid JSON structure:
 
 Use the following command to change the settings of an existing resource profile:
 
-```shell copy /PROFILE/ /FILE_NAME/
+```shell /PROFILE/ /FILE_NAME/
 calyptia update resource_profile --name PROFILE --spec FILE_NAME
 ```
 
@@ -171,7 +171,7 @@ profile are applied to those pipelines accordingly.
 Use the following command to list the resource profiles associated with a
 specified Core Instance:
 
-```shell copy /INSTANCE/
+```shell /INSTANCE/
 calyptia get resource_profiles --core-instance INSTANCE
 ```
 
@@ -184,7 +184,7 @@ each resource profile.
 
 Use the following command to get details about a specific resource profile:
 
-```shell copy /ID/
+```shell /ID/
 calyptia get resource_profile ID
 ```
 
@@ -194,7 +194,7 @@ Replace _`ID`_ with the unique ID of that resource profile.
 
 Use the following command to delete a specific resource profile:
 
-```shell copy /ID/
+```shell /ID/
 calyptia delete resource_profile ID
 ```
 

@@ -379,7 +379,7 @@ The following examples explain how to create alerts for particular situations:
   minutes, [create a monitor](/investigate/alerts/monitors#creating-a-monitor)
   with the following query:
 
-  ```text copy
+  ```text
   sum by (identifier) (rate(prometheus_rule_eval_failures_total[1m]))
   ```
 
@@ -387,20 +387,20 @@ The following examples explain how to create alerts for particular situations:
 
   You can also create an alert for monitoring individual rule failures:
 
-  ```text copy
+  ```text
   sum by (identifier) (rate(prometheus_rule_eval_failures_total{type="<alerting|recording>"}[1m])
   ```
 
 - Create alerts by rule type
   If you want to alert on certain types of rules, you can do something like:
 
-  ```text copy
+  ```text
   sum by (identifier) (rate(prometheus_rule_eval_failures_total{identifier=~"<your-regex-here>"}[1m]))
   ```
 
   For example, to create an alert for only a specific category of rules, you can do
   something like:
 
-  ```text copy
+  ```text
   sum by (identifier) (rate(prometheus_rule_eval_failures_total{type="<alerting|recording>"}[1m])
   ```

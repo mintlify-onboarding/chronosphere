@@ -54,7 +54,7 @@ Select from the following methods to view your mapping rules.
 To list your existing mapping rules using [Chronoctl](/tooling/chronoctl), use the
 `chronoctl mapping-rules list` command:
 
-```shell copy
+```shell
 chronoctl mapping-rules list
 ```
 
@@ -84,7 +84,7 @@ YAML file and apply it.
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
-```shell copy
+```shell
 chronoctl mapping-rules scaffold
 ```
 
@@ -96,7 +96,7 @@ editing.
 
 1. Apply the mapping rule:
 
-   ```shell copy
+   ```shell
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -113,7 +113,7 @@ followed by a name in a resource declaration.
 
 The following mapping rule defines a metric retention interval for a Kubernetes pod:
 
-```ruby copy
+```ruby
 resource "chronosphere_mapping_rule" "http_request_duration" {
   name      = "http request duration"
   filter    = "__name__:http_request_duration k8s_pod:*"
@@ -183,7 +183,7 @@ The following example uses these keys:
 <Tabs>
 <Tab title="Chronoctl" id="mapping-rule-metric-retention-chronoctl">
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: MappingRule
 spec:
@@ -203,7 +203,7 @@ spec:
 
 <Tab title="Terraform" id="mapping-rule-metric-retention-chronoctl">
 
-```ruby copy
+```ruby
 resource "chronosphere_mapping_rule" "http_request_duration" {
   name      = "http request duration"
   filter    = "__name__:http_request_duration k8s_pod:*"
@@ -231,7 +231,7 @@ You don't need to specify an aggregation operation or interval to drop a metric.
 <Tabs>
 <Tab title="Chronoctl" id="mapping-rule-drop-metric-chronoctl">
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: MappingRule
 spec:
@@ -255,7 +255,7 @@ spec:
 
 <Tab title="Terraform" id="mapping-rule-drop-metric-terraform">
 
-```ruby copy
+```ruby
 resource "chronosphere_mapping_rule" "http_request_bucket" {
   name      = "drop raw http_request_bucket"
   filter    = "__name__:http_request_bucket k8s_pod:* le:* git_sha:* route:*"
@@ -283,7 +283,7 @@ Select from the following methods to delete a mapping rule.
 To delete a mapping rule using [Chronoctl](/tooling/chronoctl), use the
 `chronoctl mapping-rules delete` command:
 
-```shell copy
+```shell
 chronoctl mapping-rules delete SLUG
 ```
 

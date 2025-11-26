@@ -13,7 +13,7 @@ To enable the Prometheus and OpenMetrics ingestion for the Collector, add
 `importPrometheus` and `importOpenMetrics` under the `push` YAML collection in the
 Collector configuration:
 
-```yaml copy
+```yaml
 push:
   importPrometheus:
     enabled: true
@@ -24,7 +24,7 @@ push:
 Traffic is served from `/import/openmetrics` and `/import/prometheus` from the
 `listenAddress`, which defaults to `0.0.0.0:3030`.
 
-```shell copy
+```shell
 # Importing an untyped metric in OpenMetrics format.
 curl -d $'test_metric_import 100\n# EOF' -X POST http://localhost:3030/import/openmetrics
 # Same import, but in Prometheus format.
@@ -41,7 +41,7 @@ Additional query parameters:
 
 The following command includes both of these additional query parameters:
 
-```shell copy
+```shell
 curl -d 'test_metric_import 100' -X POST \
     http://localhost:3030/import/prometheus?extra_label=svc%3Dauth&extra_label=team%3Dbar&default_timestamp=1669701600
 ```

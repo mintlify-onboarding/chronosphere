@@ -27,7 +27,7 @@ To create a webhook notifier:
 1. In the **URL** field, enter a URL, which is called as a `POST` request. For
    example:
 
-   ```text copy
+   ```text
    https://webhook.site/3723e8cb-b1b4-4399-86b0-e37f36a2acc5
    ```
 
@@ -41,7 +41,7 @@ To create a webhook notifier:
 
 1. Define the resource definition for your webhook notifier:
 
-   ```yaml copy
+   ```yaml
    api_version: v1/config
    kind: Notifier
    spec:
@@ -60,7 +60,7 @@ To create a webhook notifier:
 1. Add a URL, called as a `POST` request, to the `url` key.
 1. Apply the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -75,7 +75,7 @@ To create a webhook notifier:
    `chronosphere_webhook_alert_notifier` type followed by a name in a resource
    declaration:
 
-   ```ruby copy
+   ```ruby
    resource "chronosphere_webhook_alert_notifier" "webhook_notifier" {
      name = "Webhook Notifier"
 
@@ -101,7 +101,7 @@ To create a webhook notifier:
 1. Add a URL, called as a `POST` request, to the `url` key.
 1. Run `terraform apply` to create the notifier resource.
 
-   ```ruby copy
+   ```ruby
    terraform apply
    ```
 

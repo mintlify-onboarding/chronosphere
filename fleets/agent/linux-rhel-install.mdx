@@ -41,7 +41,7 @@ For RHEL-based installations, Core Agent has the following general dependencies:
 
 To retrieve a list of specific dependencies for your environment, run the following command:
 
-```shell copy
+```shell
 yum -q deplist PACKAGE
 ```
 
@@ -52,7 +52,7 @@ Replace _`PACKAGE`_ with the name of the Core Agent package.
 Chronosphere provides a basic installation script that's compatible with most Linux
 environment. This script always installs the most recent version of Core Agent.
 
-```shell copy
+```shell
 curl -L https://github.com/calyptia/lts-notifications/releases/latest/download/install-package.sh| bash
 ```
 
@@ -65,7 +65,7 @@ Because CentOS 6, CentOS 7, and CentOS 8 have reached end-of-life, their
 default yum repositories are unavailable. To install Core Agent on any of these
 distributions, you must configure an appropriate mirror. For example:
 
-```shell copy
+```shell
 $ sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
   sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 ```
@@ -75,7 +75,7 @@ $ sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
 Core Agent packages are signed with `calyptia.key`. You can use rpm to verify these
 signatures.
 
-```shell copy
+```shell
 rpm --import calyptia.key && \
 rpm -K PACKAGE
 ```
@@ -88,7 +88,7 @@ Chronosphere provides the `calyptia-fluent-bit` package through a yum repository
 To add the repository reference to your environment, add a new file in
 `/etc/yum.repos.d/` with the following content:
 
-```shell copy /DISTRO/ /VERSION/
+```shell /DISTRO/ /VERSION/
 [calyptia-fluent-bit]
 name = Calyptia Fluent Bit
 baseurl = https://calyptia-lts-release-standard.s3.amazonaws.com/linux/25.1.5/DISTRO-VERSION
@@ -112,13 +112,13 @@ After you've configured your repository, follow these steps.
 
 1. Run the following command to install Core Agent:
 
-   ```shell copy
+   ```shell
    sudo yum install calyptia-fluent-bit
    ```
 
 1. Run the following command to instruct systemd to enable the Core Agent service:
 
-   ```shell copy
+   ```shell
    sudo service calyptia-fluent-bit start
    ```
 

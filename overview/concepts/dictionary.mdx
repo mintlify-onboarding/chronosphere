@@ -47,7 +47,7 @@ writes that Observability Platform stores, seen over the last 2.5 hours only.
 
 Query the following metric to understand if data is actively being dropped:
 
-```text copy
+```text
 chrono_metrics_persisted_license_dpps_dropped{limit="persisted_cardinality"}
 ```
 
@@ -70,20 +70,20 @@ For example, the following query returns the consumption rate in DPPS of your
 persisted write license for `histogram` data points on the `Auth Services` pool.
 Because `priority` isn't specified, the query returns a series for each priority:
 
-```text copy
+```text
 chrono_metrics_persisted_writes_license_dpps_consumed{datapoint_type="histogram", pool_name="Auth Services"}
 ```
 
 If you wanted to return only high priority histogram data points for the
 `Auth Services` pool, specify `priority = "high"` in your query:
 
-```text copy
+```text
 chrono_metrics_persisted_writes_license_dpps_consumed{datapoint_type="histogram", pool_name="Auth Services", priority="high"}
 ```
 
 Query the following metric to understand if data is actively being dropped:
 
-```text copy
+```text
 chrono_metrics_persisted_license_dpps_dropped{limit="persisted_writes"}
 ```
 
@@ -101,7 +101,7 @@ reshaping by the Observability Platform aggregation tier.
 
 Query the following metric to understand if data is actively being dropped:
 
-```text copy
+```text
 chrono_metrics_matched_license_dpps_dropped
 ```
 

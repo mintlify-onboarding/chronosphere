@@ -92,7 +92,7 @@ for that pipeline.
 1. In [Pipeline CLI](/pipeline-cli), run the following command to return the contents of your pipeline's
    current parsers file:
 
-   ```shell copy
+   ```shell
    calyptia get pipeline_file --pipeline PIPELINE --name parsers --only-contents > parsers.conf
    ```
 
@@ -104,7 +104,7 @@ for that pipeline.
 1. Run the following command to replace the original parsers file with your newly
    modified version:
 
-   ```shell copy
+   ```shell
    calyptia update pipeline_file --pipeline PIPELINE --file ./parsers.conf
    ```
 

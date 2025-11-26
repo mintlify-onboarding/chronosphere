@@ -70,7 +70,7 @@ To view head sampling rules:
 To display a list of all available head sampling rules
 with [Chronoctl](/tooling/chronoctl), use this command:
 
-```shell copy
+```shell
 chronoctl trace-jaeger-remote-sampling-strategies list
 ```
 
@@ -124,7 +124,7 @@ Collector to export tracing data to Chronosphere.
    This interval reduces the number of backend API calls the OpenTelemetry Collector
    makes for your instrumented agents, which helps reduce egress costs.
 
-   ```yaml copy /ADDRESS/ /API_TOKEN/
+   ```yaml /ADDRESS/ /API_TOKEN/
    extensions:
      zpages:
        endpoint: 0.0.0.0:55679
@@ -181,7 +181,7 @@ the following code from the Go implementation of OpenTelemetry,
 [OpenTelemetry-Go](https://github.com/open-telemetry/opentelemetry-go-contrib/blob/main/samplers/jaegerremote/README.md),
 defines how to implement the JaegerRemoteSampler in Go:
 
-```go copy /SERVICE_NAME/ /HOST_NAME/
+```go /SERVICE_NAME/ /HOST_NAME/
 jaegerRemoteSampler := jaegerremote.New(
     "SERVICE_NAME",
     jaegerremote.WithSamplingServerURL("http://HOST_NAME:5778/sampling"),
@@ -259,7 +259,7 @@ To define your head sampling strategy with [Chronoctl](/tooling/chronoctl):
    The following head sampling strategy defines a probabilistic strategy that sets a
    default sampling rate for the `inventory-operation`, plus an upper and lower bound:
 
-   ```yaml copy
+   ```yaml
    api_version: v1/config
    kind: TraceJaegerRemoteSamplingStrategy
    spec:
@@ -279,7 +279,7 @@ To define your head sampling strategy with [Chronoctl](/tooling/chronoctl):
 
 1. Apply your head sampling strategy and send it to Observability Platform:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yml
    ```
 
@@ -324,7 +324,7 @@ To define your head sampling strategy:
 
 1. Apply the changes:
 
-   ```ruby copy
+   ```ruby
    terraform apply
    ```
 
@@ -429,7 +429,7 @@ You can also use the following process if you already have a definition file:
 1. Update the head sampling rules definition file.
 1. Run the following command to submit the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl trace-jaeger-remote-sampling-strategies update -f FILE_NAME.yaml
    ```
 
@@ -443,7 +443,7 @@ To edit head sampling rules using [Terraform](/tooling/infrastructure/terraform)
 1. Create or edit a Terraform file that updates the resource's existing properties.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -469,7 +469,7 @@ Select from the following methods to delete head sampling rules.
 To delete a head sampling rule with [Chronoctl](/tooling/chronoctl), use this
 command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl trace-jaeger-remote-sampling-strategies delete SLUG
 ```
 
@@ -477,7 +477,7 @@ Replace _`SLUG`_ with the slug of the head sampling rule you want to delete.
 
 For example, to delete a head sampling rule with the slug `head-sampling-prod`:
 
-```shell copy
+```shell
 chronoctl trace-jaeger-remote-sampling-strategies delete head-sampling-prod
 ```
 

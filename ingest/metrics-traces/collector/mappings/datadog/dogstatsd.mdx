@@ -12,7 +12,7 @@ which requires you to build queries differently.
 The following example illustrates the structure of a Datadog query. Other queries might
 be in a different order:
 
-```text copy
+```text
 avg(last_1d):avg:count_nonzero(uptime{app:shopist} by {host}.as_rate()).rollup(avg,3600)<2
 ```
 
@@ -62,7 +62,7 @@ The query syntax is slightly different for each `mode`.
 
 Here's an example of a DogStatsD query:
 
-```text copy
+```text
 users.online:2\|c\|#country:france
 ```
 
@@ -256,16 +256,16 @@ differences:
 
 DataDog displaying 2-hour deltas for the past 7 days:
 
-<img src="/doc-assets/2-hour-increase-7-days.png" alt="DataDog displaying 2-hour deltas for the past 7 days" />
+<img src="/public/doc-assets/2-hour-increase-7-days.png" alt="DataDog displaying 2-hour deltas for the past 7 days" />
 
 Observability Platform displaying 10-min counter increases for the past 7 days (values are smaller):
 
-<img src="/doc-assets/OP-10-min-counter-7-days.png" alt="Observability Platform
+<img src="/public/doc-assets/OP-10-min-counter-7-days.png" alt="Observability Platform
 displaying 10-min counter increases for the past 7 days" />
 
 Same metric with a 2-hour counter increase for the past 7 days:
 
-<img src="/doc-assets/2-hour-increase-7-days.png" alt="Same metric with a 2-hour
+<img src="/public/doc-assets/2-hour-increase-7-days.png" alt="Same metric with a 2-hour
 counter increase for the past 7 days" />
 
 ### Set the Min step

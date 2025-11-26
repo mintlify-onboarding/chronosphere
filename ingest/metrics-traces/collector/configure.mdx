@@ -28,7 +28,7 @@ manifest to the cluster and then restart the Collector:
 
 1. Apply the updated manifest to the cluster:
 
-   ```shell copy
+   ```shell
    kubectl apply -f path/to/manifest.yml
    ```
 
@@ -36,12 +36,12 @@ manifest to the cluster and then restart the Collector:
 
    **DaemonSet**
 
-   ```shell copy
+   ```shell
    kubectl rollout restart daemonset/chronocollector
    ```
 
    **Deployment**
 
-   ```shell copy
+   ```shell
    kubectl rollout restart deployment/chronocollector
    ```

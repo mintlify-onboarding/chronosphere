@@ -86,7 +86,7 @@ To create a new SLO:
    to your clipboard or **<Icon icon="download" /> Download** it.
 1. Apply the YAML resource file by using the `chronoctl apply` command:
 
-   ```shell copy
+   ```shell
    chronoctl apply -f <FILENAME.YML>
    ```
 
@@ -185,7 +185,7 @@ the resource in the **Code Config** tab as you make changes in the form.
 
 To apply the YAML file containing the resource, use the `chronoctl apply` command:
 
-```shell copy
+```shell
 chronoctl apply -f <FILENAME.YML>
 ```
 
@@ -355,20 +355,20 @@ Create the **SLO definition**, which defines the core criteria the SLO measures.
 
    For example:
 
-   ```text copy
+   ```text
    sum by ({{.GroupBy}})(rate(metric[{{.Window}}]))
    ```
 
    When `cluster` and `namespace` are used as dimensions, the effective query is:
 
-   ```text copy
+   ```text
    sum by (cluster, namespace)(rate(metric[5m]))
    ```
 
    In a time slice SLO, use `{{.TimeSlice}}` instead of `{{.Window}}` to return
    successful or failed slices:
 
-   ```text copy
+   ```text
    sum by ({{.GroupBy}})(rate(metric[{{.TimeSlice}}]))
    ```
 1. In time slice SLOs, complete the fields within the sentence that defines the

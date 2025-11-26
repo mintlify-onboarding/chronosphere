@@ -268,7 +268,7 @@ If you're forced to revert these policy changes, you need Terraform to apply rev
 
     Apply it with `chronoctl`:
 
-    ```shell copy
+    ```shell
     chronoctl bucket update -f bucket.yaml
     ```
 
@@ -288,7 +288,7 @@ If you're forced to revert these policy changes, you need Terraform to apply rev
 
     Apply it with `chronoctl`:
 
-    ```shell copy
+    ```shell
     chronoctl notification-policies update -f np.yaml
     ```
 
@@ -454,13 +454,13 @@ Directly modifying your Terraform state is an advanced operation that might requ
 
     Delete the bucket from your Terraform project state by running:
 
-    ```shell copy
+    ```shell
     terraform state rm chronosphere_bucket.b
     ```
 
     Import the revised collection into your Terraform project state by running:
 
-    ```shell copy
+    ```shell
     chronotf import-state
     ```
 
@@ -531,7 +531,7 @@ Directly modifying your Terraform state is an advanced operation that might requ
 
     Apply the change by running `chronoctl collections update`:
 
-    ```shell copy
+    ```shell
     chronoctl collections update -f collection.yaml
     ```
 
@@ -558,7 +558,7 @@ Directly modifying your Terraform state is an advanced operation that might requ
 
     Apply the changes by running `chronoctl monitors update`:
 
-    ```shell copy
+    ```shell
     chronoctl monitors update -f monitor.yaml
     ```
 

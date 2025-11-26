@@ -35,7 +35,7 @@ notifiers.
 
 1. Define the resource definition for your email notifier:
 
-   ```yaml copy /NAME/ /SLUG/ /ADDRESS/
+   ```yaml /NAME/ /SLUG/ /ADDRESS/
    api_version: v1/config
    kind: Notifier
    spec:
@@ -57,7 +57,7 @@ notifiers.
    content.
 1. Apply the changes:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -72,7 +72,7 @@ To create an email notifier:
    `chronosphere_email_alert_notifier` type followed by a name in a resource
    declaration:
 
-   ```ruby copy
+   ```ruby
    resource "chronosphere_email_alert_notifier" "email_notifier" {
      name = "Email Notifier"
 
@@ -95,7 +95,7 @@ To create an email notifier:
    content.
 1. Run `terraform apply` to create the notifier resource.
 
-   ```ruby copy
+   ```ruby
    terraform apply
    ```
 

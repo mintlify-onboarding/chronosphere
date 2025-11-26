@@ -17,7 +17,7 @@ proxy servers, run support services, and implement service meshes.
 Each pipeline sidecar is governed by a JSON specification file. The following example
 shows the format and sample content of a basic specification file:
 
-```json copy filename="sidecar.json"
+```json filename="sidecar.json"
 {
     "name": "my-sidecar",
     "image": "nginx:latest",
@@ -40,7 +40,7 @@ a sidecar for a pipeline that doesn't exist, the operation will fail.
 
 To create a pipeline sidecar, run the following command:
 
-```shell copy
+```shell
 calyptia create sidecar --pipeline NAME --spec FILE_NAME.json
 ```
 
@@ -59,7 +59,7 @@ independently and can have its own [specification file](#sidecar-specification-f
 The following example shows the process of adding multiple sidecars to a pipeline
 named `myPipeline`:
 
-```shell copy
+```shell
 calyptia create sidecar --pipeline myPipeline --spec sidecar1.json
 calyptia create sidecar --pipeline myPipeline --spec sidecar2.json
 calyptia create sidecar --pipeline myPipeline --spec sidecar3.json
@@ -85,7 +85,7 @@ The ConfigMap must also exist in the same namespace as your pipeline.
 The following example shows a [sidecar specification file](#sidecar-specification-files)
 that includes mounted volumes:
 
-```json copy filename="sidecarWithVolumes.json"
+```json filename="sidecarWithVolumes.json"
 {
   "name": "envoy-sidecar",
   "image": "envoyproxy/envoy:v1.28-latest",
@@ -141,7 +141,7 @@ Additionally, the port specifications for each probe must be valid numbers.
 The following example shows a [sidecar specification file](#sidecar-specification-files)
 that includes all three types of probes:
 
-```json copy filename="sidecarWithProbes.json"
+```json filename="sidecarWithProbes.json"
 {
   "name": "probe-sidecar",
   "image": "nginx:latest",
@@ -198,7 +198,7 @@ Use these commands to manage existing pipeline sidecars.
 
 To list all sidecars associated with a pipeline, run the following command:
 
-```shell copy
+```shell
 calyptia get sidecar --pipeline NAME
 ```
 
@@ -211,7 +211,7 @@ These changes can include updates to its image, [volumes](#volumes), and [probes
 
 To update a sidecar, run the following command:
 
-```shell copy
+```shell
 calyptia update sidecar --sidecar ID --spec FILE_NAME.json
 ```
 
@@ -226,7 +226,7 @@ Replace the following:
 Deleting a sidecar removes that sidecar container from all pipeline replicas.
 To delete a sidecar, run the following command:
 
-```shell copy
+```shell
 calyptia delete sidecar --sidecar ID --yes
 ```
 

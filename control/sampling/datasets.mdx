@@ -95,13 +95,13 @@ To view trace datasets:
 To use [Chronoctl](/tooling/chronoctl) to return all trace datasets, use the
 `chronoctl datasets list` command:
 
-```shell copy
+```shell
 chronoctl datasets list
 ```
 
 To filter for a specific trace dataset, add the `slugs` argument to the command:
 
-```shell copy
+```shell
 chronoctl datasets list --slugs SLUG
 ```
 
@@ -176,7 +176,7 @@ Observability Platform creates your dataset and displays its definition. Next,
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
-```shell copy
+```shell
 chronoctl datasets scaffold
 ```
 
@@ -192,7 +192,7 @@ To create a dataset with [Chronoctl](/tooling/chronoctl):
    query returns all traces where at least one span includes a service called
    `payment-svc`, an operation that starts with `checkout`, and a tag named `env=prod`:
 
-   ```text copy
+   ```text
    service="payment-svc" operation=~"^payment*." tag:env=prod*"
    ```
 
@@ -202,7 +202,7 @@ To create a dataset with [Chronoctl](/tooling/chronoctl):
    Use the following command to generate a sample dataset configuration you can use
    as a template:
 
-   ```shell copy
+   ```shell
    chronoctl datasets scaffold
    ```
 
@@ -210,7 +210,7 @@ To create a dataset with [Chronoctl](/tooling/chronoctl):
 
 1. With a completed definition, submit it with:
 
-   ```shell copy
+   ```shell
    chronoctl datasets create -f FILE_NAME
    ```
 
@@ -237,7 +237,7 @@ To create a dataset with [Terraform](/tooling/infrastructure/terraform):
    query returns all traces where at least one span includes a service called
    `payment-svc`, an operation that starts with `checkout`, and a tag named `env=prod`:
 
-   ```text copy
+   ```text
    service="payment-svc" operation=~"^payment*." tag:env=prod*"
    ```
 
@@ -249,7 +249,7 @@ To create a dataset with [Terraform](/tooling/infrastructure/terraform):
 
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -290,7 +290,7 @@ traces.
 
 <Tab title="Chronoctl" id="incomplete-dataset-chronoctl">
 
-```yaml copy
+```yaml
 name: Partial Traces
   slug: partial-traces
   description: Track data volume for incomplete traces.
@@ -311,7 +311,7 @@ name: Partial Traces
 
 <Tab title="Terraform" id="incomplete-dataset-terraform">
 
-```ruby copy
+```ruby
 resource "chronosphere_dataset" "incomplete_traces" {
   name = "Incomplete traces"
   description = "Track data volume for incomplete traces."
@@ -352,7 +352,7 @@ If you want to specify criteria at the trace level rather than the span level,
 define `trace` instead of `span` in your YAML definition.
 </Info>
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: Dataset
 spec:
@@ -412,7 +412,7 @@ If you want to specify criteria at the trace level rather than the span level,
 define `trace` instead of `span` in your YAML definition.
 </Info>
 
-```ruby copy
+```ruby
 resource "chronosphere_dataset" "prod_payment_us" {
   # Required name of the dataset. Can be modified after the dataset is created.
   name        = "Traces payment service US prod"
@@ -550,7 +550,7 @@ from the **Behaviors** tab of Trace Control Plane.
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
-```shell copy
+```shell
 chronoctl trace-behavior-config scaffold
 ```
 
@@ -563,7 +563,7 @@ To assign a behavior with [Chronoctl](/tooling/chronoctl):
 1. Run the following command to generate a sample behavior configuration you can use
    as a template:
 
-   ```shell copy
+   ```shell
    chronoctl trace-behavior-config scaffold
    ```
 
@@ -571,7 +571,7 @@ To assign a behavior with [Chronoctl](/tooling/chronoctl):
 
 1. With a completed definition, submit it with:
 
-   ```shell copy
+   ```shell
    chronoctl trace-behavior-config create -f FILE_NAME
    ```
 
@@ -600,7 +600,7 @@ The following YAML definition consists of one behavior named
 `payment` service, the `payment_store` operation, and have a tag where
 `deployment.environment=production`.
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: TraceBehaviorConfig
 spec:
@@ -703,7 +703,7 @@ You can also use the following process if you already have a definition file:
 1. Update the datasets definition file.
 1. Run the following command to submit the changes:
 
-   ```shell copy
+   ```shell
    chronoctl datasets update -f FILE_NAME.yaml
    ```
 
@@ -721,7 +721,7 @@ To edit datasets using [Terraform](/tooling/infrastructure/terraform):
 1. Create or edit a Terraform file that updates the resource's existing properties.
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -773,7 +773,7 @@ the dataset:
 To delete a dataset with [Chronoctl](/tooling/chronoctl), use the `chronoctl datasets delete`
 command:
 
-```shell copy
+```shell
 chronoctl datasets delete SLUG
 ```
 
@@ -781,7 +781,7 @@ Replace _`SLUG`_ with the slug of the dataset you want to delete.
 
 For example, to delete a dataset with the slug `infra-example-dataset`:
 
-```shell copy
+```shell
 chronoctl datasets delete infra-example-dataset
 ```
 

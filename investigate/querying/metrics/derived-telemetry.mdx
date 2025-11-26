@@ -23,7 +23,7 @@ _Derived metrics_ let you create aliases for queries, effectively giving queries
 user-friendly names. For example, you can map the alias
 `global:http_server_request_by_path` to this query:
 
-```sql copy
+```sql
 sum by (status, path) (irate(http_server_requests_count{service=~".+"}[1m])) > 0
 ```
 
@@ -84,7 +84,7 @@ set interval, it's more performant to query this data only as you need it.
 For example, the following recording rule definition Chronosphere executes the
 expression defined in `expr` every 30 seconds across all services (`.+`):
 
-```yaml copy
+```yaml
 - name: global:http_server_request_by_path:irate1m
   slug: http-server-request-by-path
   interval: 30s

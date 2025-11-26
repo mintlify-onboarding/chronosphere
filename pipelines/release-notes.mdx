@@ -920,7 +920,7 @@ Released: 2024.05.15
   which sets pod tolerations to the Core Instance and propagates that value to
   pipeline replicas. For example:
 
-    ```shell copy
+    ```shell
     calyptia create core_instance operator --name test8900 --tolerations key1=Exists:-:NoSchedule,key2=Equal:val2:PreferNoSchedule
     ```
 
@@ -952,13 +952,13 @@ Released: 2024.05.15
   parameter disables the creation of new Kubernetes services for all pipelines in
   the Core Instance. For example:
 
-    ```shell copy
+    ```shell
     helm install ci calyptia/core-instance --set "skipServiceCreation=true" --set "coreInstance=12l34" --set "cloudToken=1l234"
     ```
 
 - Updated Helm chart to include the `tolerations` parameter. For example:
 
-    ```shell copy
+    ```shell
     helm install ci core-instance/ --set "tolerations=key1=Equal:value1:Execute:3600\,key2=Exists:value2:NoExecute" --set "coreInstance=12l34" --set "cloudToken=1l234"
     ```
 

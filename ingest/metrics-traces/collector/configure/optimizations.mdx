@@ -81,7 +81,7 @@ backend connections to improve overall throughput in the client.
 If you enable self-scraping, you can submit the following query with Metrics Explorer
 to verify the connection pooling setting:
 
-```text copy
+```text
 sum by(instance) (rate(chronocollector_gateway_push_latency_count[1m])) > 100
 ```
 
@@ -188,7 +188,7 @@ your data. For example, the Collector can achieve higher compression with Promet
 data, but each payload contains more data than StatsD.
 </Info>
 
-![Graph showing the compression gains of roughly 2.5 more when using zstd over snappy as the default compression algorithm](/doc-assets/collector-zstd-compression.png)
+![Graph showing the compression gains of roughly 2.5 more when using zstd over snappy as the default compression algorithm](/public/doc-assets/collector-zstd-compression.png)
 
 If this tradeoff doesn't work for your environment, you can modify the Collector
 configuration file to instead use `snappy`:
@@ -270,7 +270,7 @@ The `/set_log_level` endpoint accepts a JSON body with parameters.
 
 The following request sets the logging level to `debug` for a duration of 90 seconds:
 
-```shell copy
+```shell
 curl -X PUT http://localhost:3030/set_log_level -d '{"log_level": "debug", "duration": 90}'
 ```
 
@@ -396,7 +396,7 @@ memory quota under Linux, allowing automatic tuning outside of Kubernetes instal
 You can customize these limits by configuring settings in the `performance` section
 of the Collector configuration.
 
-```yaml copy
+```yaml
 performance:
   # enforceSoftMemoryLimit enables automatic turning of GOMEMLIMIT from environment
   # (Linux cgroups) limits. Enabled by default.

@@ -47,13 +47,13 @@ If a derived label is being used as a [pinned scope](/navigate/pinned-scopes), c
 
 To display all derived labels with [Chronoctl](/tooling/chronoctl), use this command:
 
-```shell copy
+```shell
 chronoctl derived-labels list
 ```
 
 To list specific derived labels using their slugs:
 
-```shell copy
+```shell
 chronoctl derived-labels list --slugs slug_name_1,slug_name_2
 ```
 
@@ -90,14 +90,14 @@ Select from the following methods to create a derived label.
 
 To create a derived label with [Chronoctl](/tooling/chronoctl), use this command:
 
-```shell copy
+```shell
 chronoctl derived-labels create
 ```
 
 1. Run the following command to generate a sample derived label definition you can use
    as a template:
 
-   ```shell copy
+   ```shell
    chronoctl derived-labels scaffold
    ```
 
@@ -105,7 +105,7 @@ chronoctl derived-labels create
 
 1. With a completed definition, submit it with:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl derived-labels create -f FILE_NAME.yaml
    ```
 
@@ -127,7 +127,7 @@ To create a derived label with [Terraform](/tooling/infrastructure/terraform):
 
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -163,7 +163,7 @@ or that only contains derived span tags.
 <Tabs>
 <Tab title="Chronoctl" id="definition-example-chronoctl">
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DerivedLabel
 spec:
@@ -211,7 +211,7 @@ spec:
 </Tab>
 <Tab title="Terraform" id="definition-example-terraform">
 
-```ruby copy
+```ruby
 resource "chronosphere_derived_label" "environment-derived-label" {
   name        = "Environment derived label"
   slug        = "environment-derived-label"
@@ -279,7 +279,7 @@ resource "chronosphere_derived_label" "environment-derived-label" {
 </Tab>
 <Tab title="API" id="definition-example-api">
 
-```json copy
+```json
 {
   "derived_label": {
     "description": "This is my derived label for environments",
@@ -394,7 +394,7 @@ Select from the following methods to delete a derived label.
 
 To delete a derived label with [Chronoctl](/tooling/chronoctl), use this command:
 
-```shell copy /SLUG/
+```shell /SLUG/
 chronoctl derived-labels delete SLUG
 ```
 
@@ -496,7 +496,7 @@ for consistency.
 <Tabs>
 <Tab title="Chronoctl" id="standardize-names-chronoctl">
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DerivedLabel
 spec:
@@ -523,7 +523,7 @@ spec:
 </Tab>
 <Tab title="Terraform" id="standardize-names-terraform">
 
-```ruby copy
+```ruby
 resource "chronosphere_derived_label" "account" {
   name        = "account"
   slug        = "account"
@@ -567,7 +567,7 @@ resource "chronosphere_derived_label" "account" {
 </Tab>
 <Tab title="API" id="standardize-names-api">
 
-```json copy
+```json
 {
   "derived_label": {
     "description": "usernames and IDs are equivalent",
@@ -630,7 +630,7 @@ similar HTTP statuses into a fewer number of values.
 <Tabs>
 <Tab title="Chronoctl" id="standardize-values-chronoctl">
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DerivedLabel
 spec:
@@ -669,7 +669,7 @@ spec:
 </Tab>
 <Tab title="Terraform" id="standardize-values-terraform">
 
-```ruby copy
+```ruby
 resource "chronosphere_derived_label" "http-status-level" {
   name        = "HTTP status level"
   slug        = "http-status-level"
@@ -712,7 +712,7 @@ resource "chronosphere_derived_label" "http-status-level" {
 </Tab>
 <Tab title="API" id="standardize-values-api">
 
-```json copy
+```json
 {
   "derived_label": {
     "description": "groups HTTP status levels",
@@ -788,7 +788,7 @@ label name for consistency and also combines similar foods into a fewer number o
 <Tabs>
 <Tab title="Chronoctl" id="standardize-names-values-chronoctl">
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DerivedLabel
 spec:
@@ -834,7 +834,7 @@ spec:
 </Tab>
 <Tab title="Terraform" id="standardize-names-values-terraform">
 
-```ruby copy
+```ruby
 resource "chronosphere_derived_label" "type" {
   name        = "type"
   slug        = "type"
@@ -893,7 +893,7 @@ resource "chronosphere_derived_label" "type" {
 </Tab>
 <Tab title="API" id="standardize-names-values-api">
 
-```json copy
+```json
 {
   "derived_label": {
     "description": "groups food types",
@@ -999,7 +999,7 @@ and can have unexpected conflicts with other persisted or derived labels.
 All of the previous examples in this guide use mapping labels. The following
 example shows how to format a constructed label definition in Chronoctl:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DerivedLabel
 spec:
@@ -1029,7 +1029,7 @@ spec:
 This constructed label definition is equivalent to the following mapping label
 definition:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DerivedLabel
 spec:
@@ -1085,7 +1085,7 @@ the derived span tag `url`.
 <Tabs>
 <Tab title="Chronoctl" id="use-traces-chronoctl">
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DerivedLabel
 spec:
@@ -1103,7 +1103,7 @@ spec:
 </Tab>
 <Tab title="Terraform" id="use-traces-terraform">
 
-```ruby copy
+```ruby
 resource "chronosphere_derived_label" "url-derived-label" {
   name        = "URL derived label"
   slug        = "url-derived-label"
@@ -1124,7 +1124,7 @@ resource "chronosphere_derived_label" "url-derived-label" {
 </Tab>
 <Tab title="API" id="use-traces-api">
 
-```json copy
+```json
 {
   "derived_label": {
     "description": "This is my derived label for URLs",

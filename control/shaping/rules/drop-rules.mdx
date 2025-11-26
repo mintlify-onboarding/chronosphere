@@ -124,7 +124,7 @@ match. The following drop rule matches any metric containing
 `kubernetes_cluster:dev`, but not metrics that also contain the specified
 `container_name` values:
 {/* vale on */}
-```sql copy
+```sql
 "kubernetes_cluster:dev AND container_name:!{log_service|data_service}"
 ```
 
@@ -193,13 +193,13 @@ To create a drop rule with [Chronoctl](/tooling/chronoctl):
 1. Run the following command to generate a sample drop rule configuration you can use
    as a template:
 
-   ```shell copy
+   ```shell
    chronoctl drop-rules scaffold
    ```
 
    You can redirect this output to a file for editing:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl drop-rules scaffold > FILE_NAME.yaml
    ```
 
@@ -210,7 +210,7 @@ To create a drop rule with [Chronoctl](/tooling/chronoctl):
 
 1. With a completed definition, submit it with:
 
-   ```shell copy /FILE_NAME/
+   ```shell /FILE_NAME/
    chronoctl apply -f FILE_NAME.yaml
    ```
 
@@ -226,7 +226,7 @@ To create a drop rule with [Terraform](/tooling/infrastructure/terraform):
 
 1. Run this command to apply the changes:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -248,7 +248,7 @@ To complete this action with the Chronosphere API, use the
 The following resource defines a drop rule named `Drop node exporter` in `PREVIEW`
 mode, with the slug `drop-node-exporter-metrics`:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: DropRule
 spec:
@@ -274,7 +274,7 @@ The following definition creates a drop rule that Terraform refers to as
 `drop-node-exporter`, with the name `Drop node exporter`. The rule drops all metrics
 from the `node_exporter` job.
 
-```ruby copy
+```ruby
 resource "chronosphere_drop_rule" "drop-node-exporter" {
 
   # Name for the rule
@@ -298,7 +298,7 @@ resource "chronosphere_drop_rule" "drop-node-exporter" {
 
 This rule is an example of a drop rule based on the value of the incoming data point:
 
-```ruby copy
+```ruby
 resource "chronosphere_drop_rule" "value-based-drop-rule" {
 
   # Name for the rule
@@ -332,7 +332,7 @@ rules:
   example, the following rule matches values that start with `envoy_cluster_grpc` for
   the `__name__` metric
 
-  ```json copy
+  ```json
   filters:
     - name: __name__
       value_glob: envoy_cluster_grpc*
@@ -342,7 +342,7 @@ rules:
   the `name` field. For example, the following rules match any metrics that don't
   have a `container` label with a value of `database-backup` or `database-restore`:
 
-  ```json copy
+  ```json
   filters:
     - name: container!
       value_glob: database-{backup,restore}
@@ -366,7 +366,7 @@ that include matching on any value (`*`) and negation syntax (`!`):
 - Drops any metric that includes the `pod` key, with any value.
 - Drops any metric that doesn't have the `container` field, with any value.
 
-```json copy
+```json
 {
   "drop_rule": {
     "slug": "cAdvisor-pause-containers",
@@ -399,7 +399,7 @@ The following drop rule for the
 metric containing the `service` label with a value of `api` that also has a `cluster`
 label that begins with `dev`.
 
-```json copy
+```json
 {
   "drop_rule": {
     "slug": "api-drop-rule",
@@ -428,7 +428,7 @@ For example, the following drop rule drops any metric containing the
 value of `production`. This drop rule also applies if the `env` label isn't set.
 {/* vale on */}
 
-```json copy
+```json
 {
   "drop_rule": {
     "slug": "api-drop-rule",
@@ -462,7 +462,7 @@ not equal" match, in conjunction with an asterisk `*` to match all values.
 For example, the following drop rule drops any metric containing the `service` label
 with a value of `api` that doesn't also have an `env` label.
 
-```json copy
+```json
 {
   "drop_rule": {
     "slug": "api-drop-rule",
@@ -532,7 +532,7 @@ To understand the impact of a drop rule:
 1. In the **Metrics Explorer** page, click **Builder** and then in the **Metric**
    field, enter the following metric name:
 
-   ```sql copy
+   ```sql
    chrono_metrics_drop_rule_dpps_matched
    ```
 
@@ -555,7 +555,7 @@ Explorer to answer each question:
 {/* vale off */}
 - **How can I preview how much data a given drop rule will drop?**
 
-  ```sql copy /SLUG/
+  ```sql /SLUG/
   sum(chrono_metrics_drop_rule_dpps_matched{mode="preview", slug="SLUG"})
   ```
 
@@ -565,7 +565,7 @@ Explorer to answer each question:
 
 - **How much data does an existing, enabled rule drop?**
 
-  ```sql copy /SLUG/
+  ```sql /SLUG/
   sum(chrono_metrics_drop_rule_dpps_matched{mode="enabled", applied="true", slug="SLUG"})
   ```
 
@@ -573,19 +573,19 @@ Explorer to answer each question:
 
 - **How much data am I actually dropping across my existing drop rules?**
 
-  ```sql copy /SLUG/
+  ```sql /SLUG/
   sum by (slug) (chrono_metrics_drop_rule_dpps_matched{mode="enabled", applied="true"})
   ```
 
 - **What's the overall combined number of data points dropped as a result of my enabled and preview rules?**
 
-  ```sql copy /SLUG
+  ```sql /SLUG
   sum(chrono_metrics_drop_rule_dpps_matched{applied="true"})
   ```
 
 - **Which rules aren't effective because they're duplicates of existing rules that are dropping data?**
 
-  ```sql copy /SLUG/
+  ```sql /SLUG/
   sum by (slug) (chrono_metrics_drop_rule_dpps_matched{mode="enabled", applied="false"})
   ```
 {/* vale on */}
@@ -618,7 +618,7 @@ To disable a drop rule with [Chronoctl](/tooling/chronoctl):
 
 1. In the drop rule specification, set `mode` to `DISABLED`.
 
-   ```yaml copy
+   ```yaml
    api_version: v1/config
    kind: DropRule
    spec:
@@ -635,7 +635,7 @@ To disable a drop rule with [Chronoctl](/tooling/chronoctl):
 
 1. Submit the disabled drop rule definition to Observability Platform:
 
-   ```shell copy
+   ```shell
    chronoctl apply -f FILE.yaml
    ```
 
@@ -647,7 +647,7 @@ To disable a drop rule with [Terraform](/tooling/infrastructure/terraform):
 1. Edit the drop rule's definition in a Terraform file to set `active` to `false`.
 1. Run the following command:
 
-   ```shell copy
+   ```shell
    terraform apply
    ```
 
@@ -655,7 +655,7 @@ For example, the following definition disables an always active drop rule that
 Terraform refers to as `drop-node-exporter`, with a human-readable name
 of `Drop node exporter`.
 
-```ruby copy
+```ruby
 source "chronosphere_drop_rule" "drop-node-exporter" {
 
   # Name for the rule
@@ -703,7 +703,7 @@ Select from the following methods to delete a drop rule.
 To delete a drop rule using [Chronoctl](/tooling/chronoctl), pass the rule's
 slug to the `drop-rules delete` command:
 
-```shell copy
+```shell
 chronoctl drop-rules delete SLUG
 ```
 

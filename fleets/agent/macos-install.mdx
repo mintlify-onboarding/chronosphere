@@ -31,7 +31,7 @@ Use these steps to install Core Agent:
    [Core Agent downloads page](https://calyptia-lts-release-standard.s3.amazonaws.com/index.html),
    or run the following command:
 
-   ```shell copy /VERSION/
+   ```shell /VERSION/
    wget https://calyptia-lts-release-standard.s3.amazonaws.com/macos/VERSION/calyptia-fluent-bit-VERSION-apple.pkg
    ```
 
@@ -40,7 +40,7 @@ Use these steps to install Core Agent:
 
 1. Run the following command to install Core Agent:
 
-   ```shell copy /VERSION/
+   ```shell /VERSION/
    sudo installer -pkg calyptia-fluent-bit-VERSION-apple.pkg -target /usr/local/bin/
    ```
 
@@ -49,6 +49,6 @@ Use these steps to install Core Agent:
 
 1. Run the following command to test whether your installation was successful:
 
-   ```shell copy
+   ```shell
    calyptia-fluent-bit -i dummy -o stdout -f 1
    ```

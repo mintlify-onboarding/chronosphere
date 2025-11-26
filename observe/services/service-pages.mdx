@@ -243,9 +243,9 @@ with a triple arrow indicates a larger trend than an edge with a single arrow:
 
 | Arrow type | Icon                                                    | Indication                        |
 |:-----------|:--------------------------------------------------------|:----------------------------------|
-| Single     | ![Single arrow icon](/doc-assets/request-up-low.svg)    | Change of 0% up to 5%             |
-| Double     | ![Double arrow icon](/doc-assets/request-up-medium.svg) | Change greater than 5%, up to 15% |
-| Triple     | ![Triple arrow icon](/doc-assets/request-up-high.svg)   | Change greater than 15%           |
+| Single     | ![Single arrow icon](/public/doc-assets/request-up-low.svg)    | Change of 0% up to 5%             |
+| Double     | ![Double arrow icon](/public/doc-assets/request-up-medium.svg) | Change greater than 5%, up to 15% |
+| Triple     | ![Triple arrow icon](/public/doc-assets/request-up-high.svg)   | Change greater than 15%           |
 
 The thickness of edges correlate with request volume. The thicker the edge, the
 higher the request volume.
@@ -396,7 +396,7 @@ which sets a collection `type` and `slug`. When adding a monitor or dashboard to
 a service using Chronoctl, set the `type` to `SERVICE` and the `slug` to the
 service's slug.
 
-```yaml copy
+```yaml
 collection:
   type: SERVICE
   slug: my-service-slug
@@ -414,7 +414,7 @@ the service:
     monitor using the following code, changing the variables to match your
     environment's needs.
 
-    ```ruby copy
+    ```ruby
     # Services are created automatically by the system, this references an existing service
     data "chronosphere_service" "gateway" {
       slug = "gateway"
@@ -443,7 +443,7 @@ the service:
     update the dashboard using the following code, changing the variables to match
     your environment's needs.
 
-    ```ruby copy
+    ```ruby
     data "chronosphere_service" "gateway" {
       slug = "gateway"
     }
@@ -465,7 +465,7 @@ the service:
     or update the classic dashboard using the following code, changing the
     variables to match your environment's needs.
 
-    ```ruby copy
+    ```ruby
     # This assumes the service is created out-of-band (see create-service.sh)
     data "chronosphere_service" "gateway" {
       slug = "gateway"

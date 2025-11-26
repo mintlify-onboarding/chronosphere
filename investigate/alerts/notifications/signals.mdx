@@ -83,7 +83,7 @@ argument.
 
 To return a monitor with the slug `default-monitor`:
 
-```shell copy
+```shell
 chronoctl monitors list --slugs default-monitor
 ```
 
@@ -143,7 +143,7 @@ series.
 1. Enter the following query in the **Query** field, and select **15s** as the check
    interval:
 
-   ```text copy
+   ```text
    count by (namespace, job, instance) ({instance!="", namespace~=""})
    ```
 
@@ -190,7 +190,7 @@ To define the signals for this data:
 1. Enter the following query in the **Query** field to alert your teams when a
    resource isn't working as expected, and select **15s** as the check interval:
 
-   ```text copy
+   ```text
    resource_status == 0
    ```
 
@@ -200,7 +200,7 @@ To define the signals for this data:
    following labels in the **Label key** field to send the `component` and
    `resource_type` information when an alert triggers:
 
-   ```text copy
+   ```text
    component,resource_type
    ```
 
@@ -241,7 +241,7 @@ example. The difference is that in the **Signals** field, select
 1. Enter the following query in the **Query** field, and select **15s** as the check
    interval:
 
-   ```text copy
+   ```text
    count by (namespace, job, instance) ({instance!="", namespace~=""})
    ```
 
@@ -249,7 +249,7 @@ example. The difference is that in the **Signals** field, select
    enter the following labels in the **Label key** field to send the `component` and
    `resource_type` information when an alert triggers:
 
-   ```text copy
+   ```text
    component,resource_type
    ```
 

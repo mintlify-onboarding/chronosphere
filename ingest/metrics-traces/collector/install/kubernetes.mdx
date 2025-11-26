@@ -75,7 +75,7 @@ plus a custom domain address.
 
 1. Add `base64` encoding to your domain name and API token:
 
-   ```shell copy
+   ```shell
    echo -n "ADDRESS" | base64
    echo -n "API_TOKEN" | base64
    ```
@@ -111,7 +111,7 @@ plus a custom domain address.
    Another option is to add the _`ADDRESS`_ and _`API_TOKEN`_ directly to the
    Kubernetes cluster using `kubectl`:
 
-   ```shell copy
+   ```shell
    kubectl create secret generic chronosphere-secret \
      --from-literal=api-token=API_TOKEN \
      --from-literal=address=ADDRESS
@@ -136,13 +136,13 @@ it.
 
 1. Apply the manifest.
 
-   ```shell copy
+   ```shell
    kubectl apply -f path/to/chronocollector.yaml
    ```
 
 2. Confirm that the `DaemonSet` is up and running, and view the logs of the pod:
 
-   ```shell copy
+   ```shell
    kubectl get pods
 
    NAME                    READY   STATUS    RESTARTS   AGE
@@ -151,7 +151,7 @@ it.
 
 3. View the pod logs to ensure there are no errors:
 
-   ```shell copy
+   ```shell
    kubectl logs chronocollector-POD_NAME
    ...
    ```
@@ -169,7 +169,7 @@ Platform tenant:
 
 1. Enter the following query in the query field.
 
-   ```text copy
+   ```text
    count(chronocollector_jobs) by (instance)
    ```
 
@@ -268,4 +268,4 @@ different input data volume (4k and 3k metrics per second, respectively). The me
 usage doesn't change significantly after enabling the buffering feature or increasing
 the failure rate from 0% to 50%.
 
-![Graph showing effect of buffering on memory usage](/doc-assets/buffering-collector.png)
+![Graph showing effect of buffering on memory usage](/public/doc-assets/buffering-collector.png)

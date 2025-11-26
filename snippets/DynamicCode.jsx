@@ -1,5 +1,3 @@
-import { useEffect, useRef } from 'react';
-
 /**
  * Component with limited capacity for generating dynamic code blocks within
  * Nextra following the guidance in the documentation.
@@ -14,15 +12,13 @@ import { useEffect, useRef } from 'react';
 // nextra to make sure it still works as intended. For example, the "copy" behavior
 // still works because it does a "querySelector('code')?.textContent." If that ever
 // changed, this code could break.
-export function DynamicCode({ children, find, replace }) {
+export const DynamicCode = ({ children, find, replace }) => {
   const ref = useRef(null);
 
   useEffect(() => {
     if (ref.current) {
       // Find the first code span that matches.
-      const token = [
-        ...ref.current.querySelectorAll('code span'),
-      ].find((el) => el.innerText === find);
+      const token = [...ref.current.querySelectorAll("code span")].find((el) => el.innerText === find);
 
       if (token) {
         // If found, replace the text.
@@ -38,4 +34,4 @@ export function DynamicCode({ children, find, replace }) {
       <div ref={ref}>{children}</div>
     </>
   );
-}
+};

@@ -289,13 +289,13 @@ To list or view Azure metrics integrations, use one of the following options:
 To list your Azure metrics integrations using [Chronoctl](/tooling/chronoctl), use
 this command:
 
-```shell copy
+```shell
 chronoctl azure-metrics-integrations list
 ```
 
 To view a Azure metrics integration, use this command:
 
-```shell copy
+```shell
 chronoctl azure-metrics-integrations read SLUG
 ```
 
@@ -329,7 +329,7 @@ account principal to an Observability Platform team with
 To create a Azure metrics integration using [Chronoctl](/tooling/chronoctl), use
 this command:
 
-```shell copy
+```shell
 chronoctl azure-metrics-integrations create --filename FILENAME
 ```
 
@@ -337,7 +337,7 @@ Replace _`FILENAME`_ with the name of your Chronoctl configuration file.
 
 To update a Azure metrics integration, use this command:
 
-```shell copy
+```shell
 chronoctl azure-metrics-integrations update --filename FILENAME
 ```
 
@@ -345,7 +345,7 @@ Replace _`FILENAME`_ with the name of your Chronoctl configuration file.
 
 The input file uses the following structure:
 
-```yaml copy
+```yaml
 api_version: v1/config
 kind: AzureMetricsIntegration
 spec:
@@ -374,7 +374,7 @@ spec:
 To create a Azure integration with Terraform, use the
 `chronosphere_azure_metrics_integration` resource:
 
-```ruby copy
+```ruby
 resource "chronosphere_azure_metrics_integration" "chronosphere_azure_metrics" {
   name = "Azure Metrics"
   slug = "azure-metrics"
@@ -448,7 +448,7 @@ this command:
 
 Use the command:
 
-```shell copy
+```shell
 chronoctl azure-metrics-integrations delete SLUG
 ```
 

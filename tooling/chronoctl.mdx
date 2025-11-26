@@ -12,7 +12,7 @@ Chronosphere Observability Platform resources from the command line.
 
 For example, to list your team's monitor definitions:
 
-```shell copy
+```shell
 chronoctl monitors list
 ```
 
@@ -42,7 +42,7 @@ Use Chronoctl commands to take actions on Observability Platform _resources_, su
 as dashboards, teams, or collections. To display a list of the resources supported by
 your installed version of Chronoctl, view the Chronoctl help:
 
-```shell copy
+```shell
 chronoctl --help
 ```
 
@@ -108,7 +108,7 @@ have the same following subcommands:
 
 Creates one resource of the given type. For example:
 
-```shell copy /RESOURCE/ /FILE_NAME/
+```shell /RESOURCE/ /FILE_NAME/
 chronoctl RESOURCE create -f FILE_NAME.yaml
 ```
 
@@ -129,7 +129,7 @@ must use either of these processes:
 For more information about the subcommand, including its usage and accepted flags,
 see the Chronoctl command line help.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 chronoctl RESOURCE create --help
 ```
 
@@ -139,7 +139,7 @@ Replace _`RESOURCE`_ with the resource you want to take action on.
 
 Deletes one resource of the given type. For example:
 
-```shell copy /RESOURCE/ /SLUG/
+```shell /RESOURCE/ /SLUG/
 chronoctl RESOURCE delete SLUG
 ```
 
@@ -160,7 +160,7 @@ must use either of these processes:
 For more information about the subcommand, including its usage and accepted flags,
 see the Chronoctl command line help.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 chronoctl RESOURCE delete --help
 ```
 
@@ -170,7 +170,7 @@ Replace _`RESOURCE`_ with the resource you want to take action on.
 
 Lists all resources of the given type. For example:
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 chronoctl RESOURCE list
 ```
 
@@ -179,7 +179,7 @@ Replace _`RESOURCE`_ with the resource you want to take action on.
 For more information about the subcommand, including its usage and accepted flags,
 see the Chronoctl command line help.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 chronoctl RESOURCE list --help
 ```
 
@@ -189,7 +189,7 @@ Replace _`RESOURCE`_ with the resource you want to take action on.
 
 Outputs one resource of the given type. For example:
 
-```shell copy /RESOURCE/ /SLUG/
+```shell /RESOURCE/ /SLUG/
 chronoctl RESOURCE read SLUG
 ```
 
@@ -201,7 +201,7 @@ Replace the following:
 For more information about the subcommand, including its usage and accepted flags,
 see the Chronoctl command line help.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 chronoctl RESOURCE read --help
 ```
 
@@ -212,7 +212,7 @@ Replace _`RESOURCE`_ with the resource you want to take action on.
 Outputs an example resource definition of the given type, including inline comments
 documenting its properties. For example:
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 chronoctl RESOURCE scaffold
 ```
 
@@ -222,7 +222,7 @@ Replace _`RESOURCE`_ with the resource you want to take action on.
 
 Updates a resource of the given type. For example:
 
-```shell copy /RESOURCE/ /FILE_NAME/
+```shell /RESOURCE/ /FILE_NAME/
 chronoctl RESOURCE update -f FILE_NAME.yaml
 ```
 
@@ -243,7 +243,7 @@ must use either of these processes:
 For more information about the subcommand, including its usage and accepted flags,
 see the Chronoctl command line help.
 
-```shell copy /RESOURCE/
+```shell /RESOURCE/
 chronoctl RESOURCE update --help
 ```
 
@@ -264,13 +264,13 @@ of the `-f` (`--filename`) flag.
 
 For example, to apply a file containing a resource's YAML manifest:
 
-```shell copy
+```shell
 chronoctl apply -f resources.yml
 ```
 
 To apply a resource passed from standard input, use the `-` value of the `-f` flag:
 
-```shell copy
+```shell
 chronoctl apply -f -
 ```
 
@@ -279,7 +279,7 @@ Upon success, the command returns the list of changes applied.
 The `apply` command accepts the dry run (`-d`, `--dry-run`) flag, which displays
 the changes without applying them.
 
-```shell copy
+```shell
 chronoctl apply -f resources.yml -d
 ```
 
@@ -314,7 +314,7 @@ This command uses a `session_ID` rather than an API token.
 
 To sign in, use this command:
 
-```shell copy /YOUR-ORG-NAME/
+```shell /YOUR-ORG-NAME/
 chronoctl auth login --org-name YOUR-ORG-NAME
 ```
 
@@ -356,7 +356,7 @@ v0.x.x version if you require this command. However, Chronosphere doesn't suppor
 continued use of Chronoctl v0.x.x.
 </Warning>
 
-```shell copy
+```shell
 chronoctl sync prometheus
 ```
 
@@ -365,7 +365,7 @@ To sync Prometheus rules into Chronosphere format:
 1. Define a `chronoconfig.yaml` file to assign the converted rules to a team, and
    specify a team to own the related notification policy:
 
-   ```yaml copy /OWNER_TEAM/ /POLICY_TEAM/
+   ```yaml /OWNER_TEAM/ /POLICY_TEAM/
    use_collections: "TRUE"
    group_teams:
      - group_regex: ".*"
@@ -383,7 +383,7 @@ To sync Prometheus rules into Chronosphere format:
 1. Run the `sync prometheus` command and pass in your Prometheus rules file,
    Prometheus Alertmanager configuration file, and `chronoconfig.yaml` file:
 
-   ```shell copy /ALERTMANAGER_CONFIG/ /PROM_RULES/ /FLAGS/
+   ```shell /ALERTMANAGER_CONFIG/ /PROM_RULES/ /FLAGS/
    chronoctl sync prometheus -a [ALERTMANAGER_CONFIG] -p [PROM_RULES] -c chronoconfig.yaml [FLAGS]
    ```
 
@@ -403,7 +403,7 @@ These commands provide additional information as you use Chronoctl.
 
 Displays help text for the tool and any specified subcommand.
 
-```shell copy
+```shell
 chronoctl help
 ```
 
@@ -412,7 +412,7 @@ chronoctl help
 Displays the version, revision, build date, and Go version for Chronoctl. Provide
 this information when reporting an issue with Chronoctl to Chronosphere Support.
 
-```shell copy
+```shell
 chronoctl version
 ```
 
@@ -431,13 +431,13 @@ details and instructions for Fish and PowerShell, see the output of
 
 1. Update or install `bash-completion`:
 
-   ```shell copy
+   ```shell
    brew install bash-completion
    ```
 
 1. In a shell initialization script, such as `~/.bashrc`, add the following:
 
-   ```shell copy
+   ```shell
    source "$(brew --prefix bash-completion)/etc/bash_completion"
    eval "$(chronoctl completion bash)"
    ```
@@ -457,7 +457,7 @@ details and instructions for Fish and PowerShell, see the output of
 
 1. Run the following command:
 
-   ```shell copy
+   ```shell
    chronoctl completion zsh > _chronoctl
    ```
 

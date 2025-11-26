@@ -80,7 +80,7 @@ destination plugin. This file must be an
 that includes an `aws_access_key_id` parameter and an `aws_secret_access_key`
 parameter. For example:
 
-```shell copy filename="Credentials"
+```shell filename="Credentials"
 [default]
 aws_access_key_id=ASIAIOSFODNN7EXAMPLE
 aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
@@ -88,7 +88,7 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
 To reference this file in your plugin configuration, use the following syntax:
 
-```yaml copy
+```yaml
 {{ files.NAME }}
 ```
 
@@ -104,7 +104,7 @@ are managed within Amazon S3, not within the plugin's own configuration.
 For example, the following bucket policy lets the Amazon S3 destination plugin
 send data to a bucket named `my-bucket`:
 
-```json copy filename="Bucket policy"
+```json filename="Bucket policy"
 {
     "Version": "2012-10-17",
     "Statement": [{

@@ -13,7 +13,7 @@ instrumented with a Wavefront client library, such as the
 To enable Wavefront ingestion for the Collector, add the `wavefront` configuration
 block under the `push` key in the Collector configuration:
 
-```yaml copy
+```yaml
 push:
   wavefront:
     enabled: true
@@ -43,7 +43,7 @@ name and store them as tags for the time series. For example, a metric name like
     sanitizing and storage in Chronosphere. Similar to the DogStatsD configuration,
     Wavefront configuration also supports this field and exhibits similar behavior.
 
-    ```yaml copy
+    ```yaml
     push:
     wavefront:
       enabled: true

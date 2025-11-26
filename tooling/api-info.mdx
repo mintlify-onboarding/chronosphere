@@ -34,7 +34,7 @@ your Chronosphere API token in an `API-Token` HTTP header.
 For example, you can pass the token and domain using environment variables to the
 `curl` command:
 
-```shell copy /"TOKEN"/ /INSTANCE/ /METHOD/ /ENDPOINT_PATH/
+```shell /"TOKEN"/ /INSTANCE/ /METHOD/ /ENDPOINT_PATH/
 export CHRONOSPHERE_API_TOKEN="TOKEN"
 export CHRONOSPHERE_DOMAIN="INSTANCE.chronosphere.io"
 curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" \
@@ -56,7 +56,7 @@ Replace the following:
 
 For example, to list all collections:
 
-```shell copy
+```shell
 curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" \
      -X GET \
      "https://${CHRONOSPHERE_DOMAIN}/api/v1/config/collections"
@@ -64,7 +64,7 @@ curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" \
 
 To create a collection, send a POST request with JSON body:
 
-```shell copy
+```shell
 curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" \
      -X POST \
      --data '{"collection": {"name": "My Test Collection"}}' \
@@ -80,7 +80,7 @@ scheme.
 
 For example, to use the API token to call the Query API with `curl`, run:
 
-```shell copy
+```shell
 curl -H "Authorization: Bearer ${CHRONOSPHERE_API_TOKEN}" "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics/api/v1/query?query=up"
 ```
 

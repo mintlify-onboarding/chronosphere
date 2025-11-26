@@ -27,7 +27,7 @@ The following configuration defines an OpenTelemetry receiver and a
 [StatsD receiver](https://github.com/statsd/statsd/blob/master/README.md) to accept
 DogStatsD metrics from Datadog clients.
 
-```yaml copy
+```yaml
 receivers:
   otlp:
     protocols:
@@ -81,7 +81,7 @@ The following configuration defines these OpenTelemetry protocol (OTLP) exporter
   apply Datadog normalization. Use this exporter only to send metrics that were
   sent by Datadog clients.
 
-```yaml copy
+```yaml
 exporters:
   # Exporter configured without normalization
   otlp/chronosphere:
@@ -133,7 +133,7 @@ To receive metrics, connect the receivers and exporters with two separate pipeli
 The following service configuration enables the StatsD receiver for the appropriate
 pipeline:
 
-```yaml copy
+```yaml
 service:
   pipelines:
     # Defines the default metrics pipeline.
