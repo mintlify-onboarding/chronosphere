@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-11-26T16:59:45.962538",
+  "instance": "1/1",
+  "total_pages_checked": 502,
+  "total_errors": 3,
+  "errors": [
+    {
+      "file": "/home/raeder/mintlify/chronosphere/observe/dashboards/panels/time-series-chart.mdx",
+      "url": "http://localhost:3000/observe/dashboards/panels/time-series-chart",
+      "error": "HTTP Error: 500",
+      "checked_at": "2025-11-26T16:59:12.047959"
+    },
+    {
+      "file": "/home/raeder/mintlify/chronosphere/observe/dashboards/panels/table.mdx",
+      "url": "http://localhost:3000/observe/dashboards/panels/table",
+      "error": "HTTP Error: 500",
+      "checked_at": "2025-11-26T16:59:13.119230"
+    },
+    {
+      "file": "/home/raeder/mintlify/chronosphere/investigate/querying/metrics/metrics-catalog.mdx",
+      "url": "http://localhost:3000/investigate/querying/metrics/metrics-catalog",
+      "error": "HTTP Error: 500",
+      "checked_at": "2025-11-26T16:59:34.300166"
+    }
+  ]
+}
