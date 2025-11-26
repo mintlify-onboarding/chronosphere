@@ -43,7 +43,7 @@ to open the **Service Configuration** page.
 ### Review changes
 
 If there are unsaved changes, the **Review & apply changes** button indicates the
-number of unsaved changes. An <Icon path={ mdiAlertCircle} /> alert icon indicates
+number of unsaved changes. An <Icon icon="circle-exclamation" /> alert icon indicates
 modified jobs that haven't yet been saved.
 
 ### Global mappings
@@ -72,7 +72,7 @@ ignored by discovery jobs.
   as a key to map to the service name. These are created during
   [metrics discovery jobs](#use-discovery-jobs-to-identify-and-add-services).
 
-Click the <Icon path={ mdiDotsVertical } /> three vertical dots icon and then
+Click the <Icon icon="ellipsis-vertical" /> three vertical dots icon and then
 **Open in Metrics Explorer** to open the query for that service instance in
 [Metrics Explorer](/investigate/querying/metrics/explorer).
 
@@ -172,7 +172,7 @@ To create a discovery job:
       - **Service label**: A label containing the service name. This label must be
         found on the previously specified **Metric name**. This is the preferred
         option when you already have a good service name label on your metrics.
-        Click the Click the <Icon path={ mdiOpenInNew } /> icon to draft a
+        Click the Click the <Icon icon="arrow-up-right-from-square" /> icon to draft a
         `cardinality_estimate by (<SERVICE LABEL>) ()` query in
         [Metrics Explorer](/investigate/querying/metrics/explorer).
       - **Pod mapping**: Pod mappings are an advanced option. Use if you don't have
@@ -251,7 +251,7 @@ To complete discovery job completion:
 You can edit or disable existing user-created jobs to ensure your configurations
 match your services when those services change.
 
-1. Click the <Icon path={ mdiDotsVertical } /> three vertical dots and then select
+1. Click the <Icon icon="ellipsis-vertical" /> three vertical dots and then select
    **Edit config** to change or **Delete** to remove the job.
 1. Available edits to job details include:
    - Clear the **Enabled** checkbox to disable the job.
@@ -263,7 +263,7 @@ match your services when those services change.
 
 When editing a metrics discovery job, you can review the **Service discovery query**,
 which is the query used to generate the discovery job. Click the
-<Icon path={ mdiOpenInNew } /> icon to open the query in
+<Icon icon="arrow-up-right-from-square" /> icon to open the query in
 [Metrics Explorer](/investigate/querying/metrics/explorer).
 
 ## Use merge rules to correct or remove services
@@ -383,7 +383,7 @@ page of an inactive service also displays a banner indicating its inactive state
 
 To edit or delete a service rule:
 
-1. Click the <Icon path={ mdiDotsVertical } /> three vertical dots icon.
+1. Click the <Icon icon="ellipsis-vertical" /> three vertical dots icon.
 1. Click **Edit rule** to change the rule, or **Delete** to remove the rule.
 1. Edit the fields, per their descriptions in the [create rules](#create-a-merge-rule)
    section.
@@ -463,7 +463,7 @@ If you select **Start a new view**, the dashboard editor opens in a new tab.
 
 To change an existing presentation:
 
-1. On the **Service Configuration** page, click the <Icon path={ mdiDotsVertical } />
+1. On the **Service Configuration** page, click the <Icon icon="ellipsis-vertical" />
    three vertical dots and then select **Edit presentation**, or on the
    **Presentations** page, click the card for the service.
 1. Make changes to your presentation. You can modify the presentation's **Name**

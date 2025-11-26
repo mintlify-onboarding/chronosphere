@@ -85,7 +85,7 @@ To use basic querying:
        or value.
      - **Copy field name**: Copy the selected key or value.
 
-1. To submit your query, either click **<Icon path={ mdiRefresh } />Run** or press
+1. To submit your query, either click **<Icon icon="arrows-rotate" />Run** or press
    `Control+Enter` (`Command+Return` on macOS).
 
 1. Expand your query by either adding additional key/value pairs or entering a
@@ -130,14 +130,14 @@ To use advanced filtering:
 
    The results include 8,700 logs.
 
-1. To submit your query, click **<Icon path={ mdiRefresh } />Run** or press
+1. To submit your query, click **<Icon icon="arrows-rotate" />Run** or press
    `Control+Enter` (`Command+Return` on macOS).
 
    You notice that several logs in the results contain `"Failed to query user by token"`
    in the **Summary** column.
 
 1. Add a full-text string to your search to narrow the scope of your query, and then
-   click **<Icon path={ mdiRefresh } />Run**:
+   click **<Icon icon="arrows-rotate" />Run**:
 
    ```sql copy
    service = "gateway" AND severity = "ERROR" AND "failed to query user by token"
@@ -276,7 +276,7 @@ To save a query:
    **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
 1. In the query box, [construct your query](#basic-querying)). The **Save query**
    button is unavailable until you run your query.
-1. Click **<Icon path={ mdiRefresh } />Run** to run your query.
+1. Click **<Icon icon="arrows-rotate" />Run** to run your query.
 1. Optional: To include summary fields and columns in your saved query, click the
    <Icon icon="ellipsis-vertical" /> three vertical dots icon and select from the
    following options:

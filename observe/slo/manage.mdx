@@ -58,8 +58,8 @@ To create a new SLO:
    of the configured SLO by default. Observability Platform also reports any errors
    related to missing or invalid values, which you can resolve by clicking the **Visual Editor**
    tab and filling or changing the affected values.
-1. **<Icon path={ mdiContentCopy } /> Copy** the generated resource definition
-   to your clipboard or **<Icon path={ mdiDownload } /> Download** it.
+1. **<Icon icon="copy" /> Copy** the generated resource definition
+   to your clipboard or **<Icon icon="download" /> Download** it.
 1. Apply the Terraform file containing the resource by running `terraform apply`.
 
 </Tab>
@@ -82,8 +82,8 @@ To create a new SLO:
    of the configured SLO. Observability Platform also reports any errors related
    to missing or invalid values, which you can resolve by clicking the **Visual Editor**
    tab and filling or changing the affected values.
-1. **<Icon path={ mdiContentCopy } /> Copy** the generated resource definition
-   to your clipboard or **<Icon path={ mdiDownload } /> Download** it.
+1. **<Icon icon="copy" /> Copy** the generated resource definition
+   to your clipboard or **<Icon icon="download" /> Download** it.
 1. Apply the YAML resource file by using the `chronoctl apply` command:
 
    ```shell copy
@@ -110,8 +110,8 @@ To create a new SLO:
    SLO. Observability Platform also reports any errors related to missing or invalid
    values, which you can resolve by clicking the **Visual Editor** tab and filling
    or changing the affected values.
-1. **<Icon path={ mdiContentCopy } /> Copy** the generated resource definition
-   to your clipboard or **<Icon path={ mdiDownload } /> Download** it.
+1. **<Icon icon="copy" /> Copy** the generated resource definition
+   to your clipboard or **<Icon icon="download" /> Download** it.
 1. Include the modified `slo` object JSON in the request to the
    [`CreateSLO`](/tooling/api-info/definition/operations/CreateSLO) endpoint
    of the Config API.
@@ -131,10 +131,10 @@ To edit an existing SLO from the list of all SLOs:
 1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**.
 1. Select **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> SLOs**.
 1. In the list, hold the pointer over the row of the SLO you want to edit.
-1. Click the <Icon path={ mdiDotsVertical }/> three vertical dots that appear
+1. Click the <Icon icon="ellipsis-vertical" /> three vertical dots that appear
    in the SLO's row, and then click **Edit**.
 
-To edit an SLO from its page, click the <Icon path={ mdiDotsVertical }/> three vertical dots
+To edit an SLO from its page, click the <Icon icon="ellipsis-vertical" /> three vertical dots
 in the SLO's navigation menu, and then click **Edit**.
 
 Both methods open the **Visual Editor** tab of the **SLO Definition** drawer, which
@@ -156,8 +156,8 @@ resource:
 1. Click the **Code Config** tab.
 
 The **Code Config** tab displays a Terraform resource by default. You can also
-**<Icon path={ mdiContentCopy } /> Copy** the resource definition to your clipboard
-or **<Icon path={ mdiDownload } /> Download** it.
+**<Icon icon="copy" /> Copy** the resource definition to your clipboard
+or **<Icon icon="download" /> Download** it.
 
 To modify the resource, use the **Visual Editor** tab, which immediately updates
 the resource in the **Code Config** tab as you make changes in the form.
@@ -177,8 +177,8 @@ To view a representation of the SLO as a [Chronoctl](/tooling/chronoctl) YAML re
 1. Click the resource type dropdown, which defaults to **Terraform**, and select
    **Chronoctl**.
 
-You can also **<Icon path={ mdiContentCopy } /> Copy** the resource definition
-to your clipboard or **<Icon path={ mdiDownload } /> Download** it.
+You can also **<Icon icon="copy" /> Copy** the resource definition
+to your clipboard or **<Icon icon="download" /> Download** it.
 
 To modify the resource, use the **Visual Editor** tab, which immediately updates
 the resource in the **Code Config** tab as you make changes in the form.
@@ -459,7 +459,7 @@ align with your expectations.
   Use the **Show alert durations** toggle to display the time range over which the
   alert would have been active.
 
-  When you make changes to the SLO, click the **<Icon path={ mdiRefresh } /> refresh
+  When you make changes to the SLO, click the **<Icon icon="arrows-rotate" /> refresh
   button in the time range selector to run the alerts simulation again.
 
 The preview drawer also indicates the number of new time series that Observability
@@ -477,12 +477,12 @@ To delete an existing SLO from the list of all SLOs:
 1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**.
 1. Select **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> SLOs**.
 1. In the list, hold the pointer over the row of the SLO you want to edit.
-1. Click the <Icon path={ mdiDotsVertical }/> three vertical dots that appear
+1. Click the <Icon icon="ellipsis-vertical" /> three vertical dots that appear
    in the SLO's row, and then click **Delete**.
 
 To delete an SLO from its page:
 
-1. Click the <Icon path={ mdiDotsVertical }/> three vertical dots in the SLO's
+1. Click the <Icon icon="ellipsis-vertical" /> three vertical dots in the SLO's
    navigation menu, and then click **Edit**.
 1. Scroll to the end of the **SLO Definition** drawer and click **Delete SLO**.
 1. In the confirmation dialog, click **Delete SLO** to confirm.
