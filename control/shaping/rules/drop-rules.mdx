@@ -75,7 +75,7 @@ For information about viewing, copying, or downloading rule configurations, see
 <Tab title="API" id="view-drop-rule-api">
 
 To complete this action with the Chronosphere API, use the
-[`ListDropRules`](/tooling/api-info/definition/operations/ListDropRules) endpoint.
+[`ListDropRules`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ListDropRules) endpoint.
 
 <ApiAuthReq />
 
@@ -115,7 +115,7 @@ Wait at least one minute after creating a drop rule before making updates to it.
 A metric that matches any drop rule is dropped, regardless of overlap with drop rules
 created using other methods. For example, if a metric matches a drop rule created
 with Terraform that also matches a subset of a drop rule created with the
-[`CreateDropRule`](/tooling/api-info/definition/operations/CreateDropRule) endpoint,
+[`CreateDropRule`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateDropRule) endpoint,
 the metric is dropped.
 {/* vale off */}
 A drop rule containing `kubernetes_cluster:dev` matches and drops lower value metrics
@@ -237,7 +237,7 @@ See the [Terraform example](#terraform-example) for a completed drop rule resour
 <Tab title="API" id="create-drop-rule-api">
 
 To complete this action with the Chronosphere API, use the
-[`CreateDropRule`](/tooling/api-info/definition/operations/CreateDropRule) endpoint.
+[`CreateDropRule`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateDropRule) endpoint.
 
 <ApiAuthReq />
 
@@ -396,7 +396,7 @@ that include matching on any value (`*`) and negation syntax (`!`):
 ```
 
 The following drop rule for the
-[CreateDropRule API](/tooling/api-info/definition/operations/CreateDropRule) drops any
+[CreateDropRule API](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateDropRule) drops any
 metric containing the `service` label with a value of `api` that also has a `cluster`
 label that begins with `dev`.
 
@@ -679,7 +679,7 @@ source "chronosphere_drop_rule" "drop-node-exporter" {
 <Tab title="API" id="disable-a-drop-rule-api">
 
 To complete this action with the Chronosphere API, use the
-[`UpdateDropRule`](/tooling/api-info/definition/operations/UpdateDropRule) endpoint and update
+[`UpdateDropRule`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateDropRule) endpoint and update
 the `mode` key to `DISABLED`.
 
 <ApiAuthReq />
@@ -719,7 +719,7 @@ Replace _`SLUG`_ with the slug of the rule you want to delete.
 <Tab title="API" id="api-delete-drop-rule">
 
 To complete this action with the Chronosphere API, use the
-[`DeleteDropRule`](/tooling/api-info/definition/operations/DeleteDropRule) endpoint.
+[`DeleteDropRule`](https://docs.chronosphere.io/tooling/api-info/definition/operations/DeleteDropRule) endpoint.
 
 <ApiAuthReq />
 

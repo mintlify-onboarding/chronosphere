@@ -55,7 +55,7 @@ cardinality, and matched writes. When specifying `priority_thresholds`, you can
 specify only persisted cardinality license dimensions, defined by
 `PERSISTED_CARDINALITY_STANDARD` and `PERSISTED_CARDINALITY_HISTOGRAM`.
 See the
-[CreateResourcePools endpoint](/tooling/api-info/definition/operations/CreateResourcePools)
+[CreateResourcePools endpoint](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateResourcePools)
 for more information.
 
 ## Pool allocations
@@ -97,7 +97,7 @@ pools must use fixed value for persisted writes.
   If you set any `fixed_values`, you can specify allocations for both matched writes
   license and persisted writes. These allocations are available for both standard and
   histogram metrics. See the
-  [CreateResourcePools endpoint](/tooling/api-info/definition/operations/CreateResourcePools)
+  [CreateResourcePools endpoint](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateResourcePools)
   for more information.
 
   <Warning>
@@ -269,7 +269,7 @@ medium-priority series that exceed the threshold.
 
 <Info>
 Configuring pool thresholds is supported only in Terraform and the
-[`CreateResourcePools`](/tooling/api-info/definition/operations/CreateResourcePools)
+[`CreateResourcePools`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateResourcePools)
 endpoint of the [Chronosphere API](/tooling/api-info).
 </Info>
 
@@ -293,7 +293,7 @@ Complete the following steps to set pool thresholds. See the
 
 1. Add the `priority_thresholds` object to your existing metric pools definition with
    either Terraform or the
-   [`CreateResourcePools`](/tooling/api-info/definition/operations/CreateResourcePools)
+   [`CreateResourcePools`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateResourcePools)
    endpoint.
 
 1. Define the license you want the threshold to operate on. Thresholds support these

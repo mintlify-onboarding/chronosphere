@@ -815,9 +815,9 @@
                     "pages": [
                       "tooling/api-info",
                       "tooling/api-info/pagination",
-                      "tooling/api-info/config-endpoint-reference",
-                      "tooling/api-info/state-endpoint-reference",
-                      "tooling/api-info/data-endpoint-reference"
+                      "tooling/api-info/definition",
+                      "tooling/api-info/state_definition",
+                      "tooling/api-info/data_definition"
                     ]
                   },
                   {

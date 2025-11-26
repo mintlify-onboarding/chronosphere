@@ -53,7 +53,7 @@ chronoctl rollup-rules list
 <Tab title="API" id="view-a-rollup-rule-api">
 
 To complete this action with the Chronosphere API, use the
-[`ListRollupRules`](/tooling/api-info/definition/operations/ListRollupRules) endpoint.
+[`ListRollupRules`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ListRollupRules) endpoint.
 
 <ApiAuthReq />
 
@@ -91,7 +91,7 @@ To create a rule configuration:
    - **Matching Time Series:** Time series the rule applies to. You must include a
      **Label**, operator (`=` or `!=`), and a **Value**. The value you enter maps to
      the `filters` section of the
-     [CreateRollupRule](/tooling/api-info/definition/operations/CreateRollupRule#filters)
+     [CreateRollupRule](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateRollupRule#filters)
      endpoint.
 
      For example, if you want the rollup rule to match on
@@ -186,7 +186,7 @@ type, followed by a name in a resource declaration. See the
 <Tab title="API" id="create-a-rollup-rule-api">
 
 To complete this action with the Chronosphere API, use the
-[`CreateRollupRule`](/tooling/api-info/definition/operations/CreateRollupRule) endpoint.
+[`CreateRollupRule`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateRollupRule) endpoint.
 
 <ApiAuthReq />
 
@@ -320,7 +320,7 @@ chronoctl rollup-rules delete "/-my-rollup-rule"
 <Tab title="API" id="delete-a-rollup-rule-chronoctl">
 
 To complete this action with the Chronosphere API, use the
-[`DeleteRollupRule`](/tooling/api-info/definition/operations/DeleteRollupRule) endpoint.
+[`DeleteRollupRule`](https://docs.chronosphere.io/tooling/api-info/definition/operations/DeleteRollupRule) endpoint.
 
 <ApiAuthReq />
 
@@ -334,7 +334,7 @@ To accurately aggregate your data, rollup rules require you to both
 configure multiple fields and to have an understanding of
 [aggregation operations](#aggregation-operations).
 
-See the [CreateRollupRule API](/tooling/api-info/definition/operations/CreateRollupRule)
+See the [CreateRollupRule API](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateRollupRule)
 documentation for the complete list of fields that are part of the `rollup_rule`
 object that you define when [creating a rollup rule](#create-a-rollup-rule) with any
 of the supported methods.
