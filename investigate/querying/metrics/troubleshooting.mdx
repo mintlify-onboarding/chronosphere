@@ -28,7 +28,9 @@ reasons, including:
 This graphic shows the graphing behavior using a null value. This behavior
 is consistent with the expected behavior of Prometheus.
 
+<Frame>
 ![Graph with dip](/public/doc-assets/after-null-value.png)
+</Frame>
 
 ## Sparse time series
 
@@ -125,7 +127,9 @@ in case we need to update it in the future:
 timestamp(sum by (instance) (rate(node_load1{instance=~".+"}[5m]))) unless(timestamp(sum by (instance) (rate(node_load1{instance=~".+"}[5m] offset 5m))))
  */}
 
+<Frame>
 ![Graph](/public/doc-assets/offset_graph.png)
+</Frame>
 
 ### Alert
 

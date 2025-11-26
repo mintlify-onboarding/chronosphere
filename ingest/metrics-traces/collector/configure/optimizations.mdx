@@ -188,7 +188,9 @@ your data. For example, the Collector can achieve higher compression with Promet
 data, but each payload contains more data than StatsD.
 </Info>
 
+<Frame>
 ![Graph showing the compression gains of roughly 2.5 more when using zstd over snappy as the default compression algorithm](/public/doc-assets/collector-zstd-compression.png)
+</Frame>
 
 If this tradeoff doesn't work for your environment, you can modify the Collector
 configuration file to instead use `snappy`:
