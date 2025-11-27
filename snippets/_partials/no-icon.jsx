@@ -1,7 +1,3 @@
-
-
 export const NoIcon = () => {
-  return (
-    <Icon icon="circle-xmark" style={{ color: 'rgb(234, 71, 71)' }} aria-label={ "No" }/>
-  )
-}
+  return <Icon icon="ban" iconType="solid" color="#ea4747ff" aria-label={"No"} />;
+};

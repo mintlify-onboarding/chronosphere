@@ -389,9 +389,9 @@ bucket status:
 
 | Data point | Status                               | Description                          |
 |------------| ------------------------------------ | ------------------------------------ |
-| A3         | <Icon icon="circle-check" color="#59cc8dff" alt="Accepted"/> | Time series A is in the bucket, so data point A3 is accepted. |
-| E1         | <Icon icon="circle-check" color="#59cc8dff" alt="Accepted"/> | Time series E isn't in the bucket, but the bucket has space for one more time series, so data point E1 is accepted in time series E. |
-| F1         | <Icon icon="hexagon-exclamation" color="#ee6c6cff" alt="Rejected"/> | Time series F isn't in the bucket, and the bucket is at capacity, so data point F1 is rejected. |
+| A3         | <Icon iconType="solid" icon="circle-check" color="#59cc8dff" alt="Accepted"/> | Time series A is in the bucket, so data point A3 is accepted. |
+| E1         | <Icon iconType="solid" icon="circle-check" color="#59cc8dff" alt="Accepted"/> | Time series E isn't in the bucket, but the bucket has space for one more time series, so data point E1 is accepted in time series E. |
+| F1         | <Icon iconType="solid" icon="hexagon-exclamation" color="#ee6c6cff" alt="Rejected"/> | Time series F isn't in the bucket, and the bucket is at capacity, so data point F1 is rejected. |
 
 Over time, data points expire based on when they entered the bucket. When data points
 exceed the 2.5 hour window, they're excluded from the persisted cardinality bucket.
@@ -403,9 +403,9 @@ time series in the bucket.
 
 | Data point | Status                               | Description                          |
 |------------| ------------------------------------ | ------------------------------------ |
-| A1         | <Icon icon="hexagon-exclamation" color="#ffb249ff" alt="Expired"/> | Data point A1 expired, so it's excluded from the bucket. |
-| D1         | <Icon icon="hexagon-exclamation" color="#ffb249ff"  alt="Expired"/> | Data point A1 expired, so it's excluded from the bucket. |
-| C1         | <Icon icon="hexagon-exclamation" color="#ffb249ff"  alt="Expired"/> | Data point C1 is expiring, so it's excluded from the bucket. |
+| A1         | <Icon iconType="solid" icon="hexagon-exclamation" color="#ffb249ff" alt="Expired"/> | Data point A1 expired, so it's excluded from the bucket. |
+| D1         | <Icon iconType="solid" icon="hexagon-exclamation" color="#ffb249ff"  alt="Expired"/> | Data point A1 expired, so it's excluded from the bucket. |
+| C1         | <Icon iconType="solid" icon="hexagon-exclamation" color="#ffb249ff"  alt="Expired"/> | Data point C1 is expiring, so it's excluded from the bucket. |
 
 ### Manage persisted cardinality limits
 

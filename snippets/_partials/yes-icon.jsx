@@ -1,5 +1,3 @@
 export const YesIcon = () => {
-  return (
-    <Icon icon="circle-check" style={{ color: 'rgb(89, 204, 141)' }} aria-label={ "Yes" }/>
-  )
-}
+  return <Icon icon="circle-check" iconType="solid" color="#59cc8dff" aria-label={"Yes"} />;
+};

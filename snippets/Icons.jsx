@@ -1,6 +1,6 @@
 export const AddToDashboardIcon = (props) => {
   return (
-    <svg viewBox="0 0 20 20" className="inline-block h-6 w-6 fill-current" {...props}>
+    <svg viewBox="0 0 20 20" className="inline-block h-5 w-5 fill-current" {...props}>
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -19,7 +19,7 @@ export const CollectionIcon = (props) => {
       data-testid="CollectionIcon"
       aria-label="CollectionIcon"
       {...props}
-      className="inline-block h-6 w-6 fill-current"
+      className="inline-block h-5 w-5 fill-current"
     >
       <path d={drawPath} />
     </svg>
@@ -35,7 +35,7 @@ export const CollectionNavIcon = (props) => {
       data-testid="Collections"
       aria-label="Collections"
       {...props}
-      className="inline-block h-6 w-6 fill-current"
+      className="inline-block h-5 w-5 fill-current"
     >
       <path d={drawPath} />
     </svg>
@@ -44,7 +44,7 @@ export const CollectionNavIcon = (props) => {
 
 export const ServiceIcon = (props) => {
   return (
-    <svg viewBox="0 0 22 20" {...props} className="inline-block h-6 w-6 fill-current" aria-label="ServiceIcon">
+    <svg viewBox="0 0 22 20" {...props} className="inline-block h-5 w-5 fill-current" aria-label="ServiceIcon">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -66,7 +66,7 @@ export const ServiceIcon = (props) => {
 
 export const ServiceNavIcon = (props) => {
   return (
-    <svg viewBox="0 0 20 20" {...props} className="inline-block h-6 w-6 fill-current" aria-label="Services">
+    <svg viewBox="0 0 20 20" {...props} className="inline-block h-5 w-5 fill-current" aria-label="Services">
       <path d="M0 13.5463C0 13.3708 0.157997 13.2607 0.284979 13.3478L4.18974 16.0263C4.24909 16.067 4.28571 16.1427 4.28571 16.2248V19.7709C4.28571 19.9465 4.12772 20.0566 4.00074 19.9695L0.0959735 17.291C0.0366259 17.2503 0 17.1745 0 17.0925V13.5463Z" />
       <path d="M5.2381 16.2248C5.2381 16.1427 5.27472 16.067 5.33407 16.0263L9.23883 13.3478C9.36581 13.2607 9.52381 13.3708 9.52381 13.5463V17.0925C9.52381 17.1745 9.48718 17.2503 9.42784 17.291L5.52307 19.9695C5.39609 20.0566 5.2381 19.9465 5.2381 19.7709V16.2248Z" />
       <path d="M4.85641 15.0372L8.75079 12.3658C8.87876 12.2781 8.87876 12.0566 8.75079 11.9688L4.85641 9.29746C4.79785 9.25729 4.72596 9.25729 4.6674 9.29746L0.773017 11.9688C0.645052 12.0566 0.645052 12.2781 0.773016 12.3658L4.6674 15.0372C4.72596 15.0774 4.79785 15.0774 4.85641 15.0372Z" />
@@ -79,3 +79,22 @@ export const ServiceNavIcon = (props) => {
     </svg>
   );
 };
+
+export const CSharpIcon = (props) => (
+  <svg
+    style={{
+      display: "inline-block",
+      width: "1.5rem",
+      height: "1.5rem",
+    }}
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path
+      d="m11.5 15.97.41 2.44c-.26.14-.68.27-1.24.39-.57.13-1.24.2-2.01.2-2.21-.04-3.87-.7-4.98-1.96C2.56 15.77 2 14.16 2 12.21c.05-2.31.72-4.08 2-5.32C5.32 5.64 6.96 5 8.94 5c.75 0 1.4.07 1.94.19s.94.25 1.2.4l-.58 2.49-1.06-.34c-.4-.1-.86-.15-1.39-.15-1.16-.01-2.12.36-2.87 1.1-.76.73-1.15 1.85-1.18 3.34 0 1.36.37 2.42 1.08 3.2.71.77 1.71 1.17 2.99 1.18l1.33-.12c.43-.08.79-.19 1.1-.32M13.89 19l.61-4H13l.34-2h1.5l.32-2h-1.5L14 9h1.5l.61-4h2l-.61 4h1l.61-4h2l-.61 4H22l-.34 2h-1.5l-.32 2h1.5L21 15h-1.5l-.61 4h-2l.61-4h-1l-.61 4h-2m2.95-6h1l.32-2h-1l-.32 2Z"
+      style={{
+        fill: "#28a561",
+      }}
+    />
+  </svg>
+);
