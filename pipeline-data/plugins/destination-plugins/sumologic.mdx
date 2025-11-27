@@ -1,0 +1,66 @@
+---
+title: Sumo Logic destination plugin
+sidebarTitle: Sumo Logic
+'og:description': Send pipeline data to Sumo Logic.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import BasicAuthentication from '/snippets/_partials/pipeline-basic-auth.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Sumo Logic [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `http`, alias: `Sumologic`) lets you configure your telemetry pipeline to
+send your data to Sumo Logic through HTTP, allowing you to control the format
+and structure of your data.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name              | Key | Description | Default |
+| ----------------- | --- | ----------- | ------- |
+| **Collector URL** | `host` | Required. Sumo Logic collector URL. | `collectors.au.sumologic.com` |
+| **URI**           | `uri` | Required. Replace `[PrivateKey]` with the key for your Sumo Logic collector. | `/receiver/v1/http/[PrivateKey]` |
+
+### Advanced
+
+| Name                 | Key | Description | Default |
+| -------------------- | --- | ----------- | ------- |
+| **Headers**          | `header` | Adds an HTTP header key/value pair. You can set multiple headers. | _none_ |
+| **Compress**         | `compress` | Sets the payload compression mechanism. Accepted values: `gzip`, _none_. | _none_ |
+| **HTTP Proxy**       | `proxy` | Specifies an HTTP Proxy. The expected format of this value is `http://host:port`. | _none_ |
+| **Format**           | `format` | Required. Specifies the data format to be used in the HTTP request body. Accepted values: `json`, `json_lines`, `json_stream`. | `json_lines` |
+| **JSON Date Format** | `json_date_format` | Specifies the format of the date. Accepted values: `double`, `epoch`, `iso8601` (for example, `2018-05-30T09:39:52.000681Z`), `java_sql_timestamp` (for example, `2018-05-30 09:39:52.000681`, which can be used with AWS Athena). | `iso8601` |
+| **JSON Date Key**    | `json_date_key` | Specifies the name of the date field in output. | `timestamp` |
+| **Body Key**         | `body_key` | Specifies the key that contains the body. | _none_ |
+| **Header Tag**       | `header_tag` | Sets an HTTP header whose value is the tag of the record. | _none_ |
+| **Header Key**       | `headers_key` | Specifies the key that contains the headers. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />
+
+### Basic Authentication
+
+<BasicAuthentication />

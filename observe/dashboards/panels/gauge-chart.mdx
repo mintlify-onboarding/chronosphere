@@ -1,0 +1,138 @@
+---
+title: Visualize values in ranges with gauge charts
+'og:description': Create and customize gauge chart data visualization panels for Chronosphere dashboards.
+sidebarTitle: Gauge
+---
+import ChronoctlDashboard from '/snippets/_partials/chronoctl-dashboard.mdx';
+import ClassicPanel from '/snippets/_partials/classic-panels.mdx';
+import DashboardDownsampleTruncate from'/snippets/_partials/dashboard-downsample-truncate.mdx';
+import DashboardSeriesNaming from '/snippets/_partials/dashboard-series-naming.mdx';
+import DashboardUnits from '/snippets/_partials/dashboard-units.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<ClassicPanel />
+
+A _gauge chart_ visualizes numeric data returned by a [query](/investigate/querying).
+The chart depicts a specified value, such as the last numeric value in a time series
+or the result's sum, average, or minimum or maximum value, within a radial gauge
+representing a specified range.
+
+Each gauge displays its series name or alias, the configured numeric value representing
+that series, and an indicator pointing to where that value falls within its range.
+
+Two bars on the gauge indicate the gauge's thresholds by their colors:
+
+- A thick bar indicates in which threshold the value falls.
+- A thin bar indicates the thresholds' ranges on the gauge.
+
+You can visualize the results of multiple queries in a single gauge chart panel
+to visually compare them. This can help you quickly identify whether values from
+related queries, such as resource usage of different services or cumulative failure
+and error counts, are within expected thresholds.
+
+To create a gauge chart or learn more about the configuration options common
+to all panels, see [Panels](/observe/dashboards/panels).
+
+## Gauge chart queries
+
+Gauge charts use one or more
+[queries](/observe/dashboards/panels#change-a-panels-query) to retrieve data to
+visualize. Gauge charts use the following query **Options** to refine the
+displayed information, depending on your **Datasource**:
+
+<Tabs>
+<Tab title="Metrics (Prometheus)">
+
+- <DashboardSeriesNaming />
+- **Type**: The [PromQL query](/investigate/querying/promql#basic-querying)
+  type: **Instant**, or **Range**.
+<DashboardDownsampleTruncate />
+
+</Tab>
+<Tab title="Logs">
+
+<DashboardSeriesNaming />
+
+</Tab>
+</Tabs>
+
+## Configure a gauge chart
+
+You can configure a gauge chart by [modifying its **Settings**](/observe/dashboards/panels#edit-a-panel).
+
+Any changes you make in the panel's Settings tab are immediately reflected in the
+**Preview** pane, but take effect only when you click **Apply** in the **Edit panel**
+interface and then **Save** the dashboard.
+
+Observability Platform doesn't fully support directly editing a panel's JSON
+representation and recommends configuring panels in the user interface. Use the JSON
+representation only for managing your configuration as code with tools such as
+[Chronoctl](/tooling/chronoctl) and [Terraform](/tooling/infrastructure/terraform).
+
+### Modify a gauge chart's visual representation
+
+The **Visual** section in a gauge chart's **Settings** tab controls how Observability
+Platform visualizes data in the gauge chart.
+
+- **Mode**: Select a display mode: **Gauge** or **Bar**.
+- **Sort**: Determines how the gauge chart sorts the rendered bars.
+  - **Default** sorts in the original data order.
+  - **Ascending** sorts from the lowest value at the top, to the highest
+    value at the bottom. **Descending** sorts in the opposite direction.
+
+### Modify a gauge chart's units and formatting
+
+The **Unit and formatting** section in a table's **Settings** tab defines how the
+gauge interprets and displays the panel's query units.
+
+<DashboardUnits />
+
+### Modify a gauge chart's thresholds
+
+The **Thresholds** section in a gauge chart's **Settings** tab defines values where
+Observability Platform renders each threshold range. You can define threshold values
+as either absolute numeric values or percentiles.
+
+The threshold's **Mode** defines whether all thresholds use **Absolute** numeric
+values, which is the default mode, or **Percent** values. Percent values are relative
+to the Y axis' minimum and maximum.
+
+Observability Platform assumes that the **Default** threshold always starts at the
+left-most beginning of the gauge's range and end at the first threshold value. Each
+subsequent threshold value defines the end of the previous threshold's range.
+Observability Platform also assumes the last threshold range begins at the last
+threshold value and ends at the right-most ending of the gauge's range.
+
+To create a new threshold value:
+
+1. Click the plus sign (+) in the **Thresholds** section header.
+1. In the field that displays, enter a value where you want Observability Platform to
+   end the previous threshold range and begin the next range.
+1. Click either **Absolute** or **Percent** to select the mode you want the panel to
+   display.
+
+   <Warning>
+   If you choose **Absolute** as the **Mode** and select any unit other than
+      **Percent**, you must enter a maximum value in the **Max** field for the gauge
+      chart to correctly display data. Otherwise, the chart has no upper limit and will
+      display data incorrectly.
+   </Warning>
+
+1. Optional: Click the color indicator, depicted as a colored circle, to open a
+   color selector and choose a color for the threshold line.
+1. Optional: Click the caret (>) to expand the threshold definition, and enter text
+   in the **Message** field to display on the chart if the threshold is met.
+
+   To display only the text from the **Message** field, click the
+   **Show only message** toggle.
+
+1. In the **Edit panel** dialog, click **Apply** to save your changes.
+1. After you've finished editing the panel, click **Save** on the dashboard to save
+   your changes.
+
+To delete a threshold value, click the caret (>) to expand the threshold definition,
+and then click the
+**<Icon icon="trash" alt="Delete icon"/> Delete** icon on its corresponding
+row of the Thresholds section.

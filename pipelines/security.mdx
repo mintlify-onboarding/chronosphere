@@ -1,25 +1,37 @@
 ---
 title: Supply chain security
+'og:description': Reference the Chronosphere Telemetry Pipeline public keys.
 sidebarTitle: Security
 ---
+{/* -- dri: Alexa Kreizinger -- */}
 
-Part of security is ensuring that the software supply chain is as secure as possible. As part of secure development practices, Chronosphere provides the following keys you can use to verify the signatures of Chronosphere Telemetry Pipeline software.
+
+Part of security is ensuring that the software supply chain is as secure as possible.
+As part of secure development practices, Chronosphere provides the following keys you
+can use to verify the signatures of Chronosphere Telemetry Pipeline software.
 
 ## Cosign keys
 
-[Cosign](https://edu.chainguard.dev/open-source/sigstore/cosign/an-introduction-to-cosign/) is a tool to sign, verify, and store software artifacts in an OCI (Open Container Initiative) registry. You can use a tool like the [Kubernetes Policy Controller](https://docs.sigstore.dev/policy-controller/overview/) to verify supply chain metadata from Cosign.
+[Cosign](https://edu.chainguard.dev/open-source/sigstore/cosign/an-introduction-to-cosign/)
+is a tool to sign, verify, and store software artifacts in an OCI (Open Container
+Initiative) registry. You can use a tool like the
+[Kubernetes Policy Controller](https://docs.sigstore.dev/policy-controller/overview/)
+to verify supply chain metadata from Cosign.
 
-The Chronosphere Telemetry Pipeline public Cosign key is available [here](https://storage.googleapis.com/calyptia_public_resources_bucket/cosign.pub).
+The Chronosphere Telemetry Pipeline public Cosign key is available
+[here](https://storage.googleapis.com/calyptia_public_resources_bucket/cosign.pub).
 
 ## GPG keys
 
-GPG (GNU privacy guard) is an open-source implementation of the OpenPGP protocol. You can verify the signature of Telemetry Pipeline packages to ensure that the signature is valid.
+GPG (GNU privacy guard) is an open-source implementation of the OpenPGP protocol.
+You can verify the signature of Telemetry Pipeline packages to ensure that the
+signature is valid.
 
 Use the following GPG key to verify Telemetry Pipeline software packages:
 
-```sh
+```shell
 -----BEGIN PGP PUBLIC KEY BLOCK-----
- 
+
 mQINBGI8PcIBEADZ0fizLscKGjhrg0tC5IZUTasN3uJIqNtAIRl48Zr26UYPsnjE
 TIXiANnruf0OzEm2f9KsfVETubawAV/b1gMGcv7vYVm6IxDvWQpUb01ooPvzqH6d
 Gn2Gq7LTq5t2+/1MZii0ZNkaoKsB6GiGO1gJE0flGvCASE3m0wPbZv+Q5sJ8wNcu
@@ -72,9 +84,10 @@ nnZ6mGB2zREpsL/HoaG4no46tHvWfhanTEGEoA==
 -----END PGP PUBLIC KEY BLOCK-----
 ```
 
-When you verify the Telemetry Pipeline public GPG key, the information output to your terminal should match this key fingerprint:
+When you verify the Telemetry Pipeline public GPG key, the information output to your
+terminal should match this key fingerprint:
 
-```sh
+```shell
 pub   rsa4096 2022-03-24 [SC] [expires: 2026-03-24]
       08AA 7700 DE57 E4FD 6243  DC51 B8E5 A606 D67A 7952
 uid                      Calyptia Releases <enterprise-releases@calyptia.com>
@@ -82,4 +95,10 @@ sub   rsa4096 2022-03-24 [E] [expires: 2026-03-24]
 ```
 
 ## SBOM and other reports
-Software bill of materials (SBOMs) are generated for each release, along with Common Vulnerabilities and Exposures (CVE) reports at the time of release. See the Telemetry Pipeline [releases page](https://github.com/chronosphereio/calyptia-core-product-release/releases) for a list of assets, which contain the SBOM and CVE reports (at time of release) for all components.
+
+Software bill of materials (SBOMs) are generated for each release, along with Common
+Vulnerabilities and Exposures (CVE) reports at the time of release. See the Telemetry
+Pipeline
+[releases page](https://github.com/chronosphereio/calyptia-core-product-release/releases)
+for a list of assets, which contain the SBOM and CVE reports (at time of release) for
+all components.

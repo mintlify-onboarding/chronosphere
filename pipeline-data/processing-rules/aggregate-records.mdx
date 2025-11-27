@@ -1,0 +1,114 @@
+---
+title: Aggregate records
+'og:description': Learn about the aggregate records processing rule in Chronosphere Telemetry Pipeline.
+sidebarTitle: Aggregate records
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The aggregate records [processing rule](/pipeline-data/processing-rules)
+transforms incoming logs into computed metrics at periodic intervals, and then
+deletes the original logs.
+
+<Warning>
+When the aggregate records rule waits for data to accumulate during the
+specified time window, the pipeline [buffers](/pipeline-configure/backpressure)
+that data. Increasing the value of the **Time window** parameter also increases
+the memory load on your pipeline. For example, if 100,000 records pass through
+your pipeline during the specified time period, and those records are 1&nbsp;kB
+each, the aggregate records rule will add approximately 100&nbsp;MB of memory
+load.
+</Warning>
+
+## Configuration parameters
+
+<Params />
+
+| Name             | Key | Description | Default |
+| ---------------- | --- | ----------- | ------- |
+| **Time window**  | `window` | Required. How long to wait (in seconds) for data to accumulate in your pipeline before computing metrics from that data. For each interval that elapses, a new set of metrics is computed. | _none_ |
+| **Select keys**  | `keys` | Required. Any logs that contain matching values for all of the specified keys will be grouped together during compute operations. This parameter must be formatted as a JSON array of strings, like `["keyName1","keyName2"]`. | _none_ |
+| **Compute keys** | `compute` | Required. The keys and computed metrics to include in your output data. This parameter must be formatted as a JSON object. For more information, see [Compute syntax](#compute-syntax). | _none_ |
+| **Comment**      | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Compute syntax
+
+The aggregate records processing rule offers three compute functions:
+`sum`, `average`, and `count`. To use these functions, the **Compute keys**
+configuration parameter expects a JSON object with the following syntax:
+
+```json
+{"newKey1":["count"],"newKey2":["average","KEY_TO_COMPUTE"],"newKey3":["sum","KEY_TO_COMPUTE"]}
+```
+
+The resulting computed metrics are formatted as a JSON object with the following
+characteristics:
+
+```json
+{
+  "selectKey": "value",
+  "newKey1": "countMetric",
+  "newKey2": "averageMetric",
+  "newKey3": "sumMetric",
+}
+```
+
+- `"selectKey": "value"`: This key and value match the **Select keys**
+  parameter, and together represent the log groups for which metrics are computed.
+  If **Select keys** includes multiple keys, all keys and their corresponding values
+  are included.
+- `countMetric`: The number of times that `"selectKey": "value"` occurred within
+  the specified time window.
+- `averageMetric`: The mean value of _`KEY_TO_COMPUTE`_ within the specified time
+  window and group.
+- `sumMetric`: The sum of all _`KEY_TO_COMPUTE`_ values within the specified time
+  window and group.
+
+## Example
+
+Using the aggregate records rule lets you retain information about the logs that
+pass through your pipeline without needing to retain each individual log.
+For example, given this sample JSON data:
+
+```json
+{"name": "Sophia", "profession": "designer", "age": 29,"projects": 2}
+{"name": "William", "profession": "programmer", "age": 45,"projects": 0}
+{"name": "Mia", "profession": "chef", "age": 32,"projects": 5}
+{"name": "Benjamin", "profession": "architect", "age": 51,"projects": 1}
+{"name": "Ava", "profession": "designer", "age": 27,"projects": 1}
+{"name": "Michael", "profession": "programmer", "age": 38,"projects": 3}
+{"name": "Abigail", "profession": "designer", "age": 42,"projects": 0}
+{"name": "Daniel", "profession": "architect", "age": 35,"projects": 4}
+{"name": "Emma", "profession": "programmer", "age": 48,"projects": 1}
+{"name": "Jacob", "profession": "chef", "age": 31,"projects": 2}
+{"name": "Olivia", "profession": "designer", "age": 24,"projects": 2}
+{"name": "Matthew", "profession": "chef", "age": 39,"projects": 0}
+{"name": "Isabella", "profession": "programmer", "age": 28,"projects": 3}
+{"name": "Ethan", "profession": "architect", "age": 46,"projects": 1}
+{"name": "Avery", "profession": "designer", "age": 33,"projects": 1}
+```
+
+A processing rule with the **Time window** value `60`, the **Select keys** value
+`["profession"]`, and the **Compute keys** value
+`{"headcount":["count"],"averageAge":["average","age"],"totalProjects":["sum","projects"]}`
+returns the following result:
+
+```json
+{"headcount":5,"averageAge":31,"totalProjects":6,"profession":"designer"}
+{"headcount":4,"averageAge":39.75,"totalProjects":7,"profession":"programmer"}
+{"headcount":3,"averageAge":34,"totalProjects":7,"profession":"chef"}
+{"headcount":3,"averageAge":44,"totalProjects":6,"profession":"architect"}
+```
+
+Because the original data set's `profession` key had four possible values, this
+rule created four groups (`designer`, `programmer`, `chef`, and `architect`), and
+then computed the following metrics for each group:
+
+- `averageAge`: The mean `age` value of every person within that group.
+- `headcount`: The number of people within that group.
+- `totalProjects`: The combined number of projects completed by the people within
+  that group.
+
+After computing these metrics, this rule deleted the original logs.

@@ -1,0 +1,50 @@
+---
+title: Create dashboards from queries
+'og:description': Learn how to create dashboards that include telemetry data queries in Chronosphere Observability Platform.
+sidebarTitle: Dashboard queries
+---
+import { AddToDashboardIcon} from '/snippets/Icons.jsx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere Observability Platform supports creating dashboards from queries for
+certain telemetry data types. You can add queries to a new dashboard or an existing
+dashboard to visualize the query results.
+
+Complete the following steps to create a [dashboard](/observe/dashboards) with a
+query:
+
+1. In the navigation menu select one of the Explorers that support adding queries to
+   a dashboard:
+
+   - **Logs**: **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs
+     Explorer**.
+   - **Metrics**: **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Metrics
+     Explorer**.
+
+1. Construct a query that returns the data you want to view:
+
+   - **Logs**: Construct a query for [log data](/investigate/querying/query-logs).
+   - **Metrics**: Construct a query for [metric data](/investigate/querying/metrics/explorer#enter-and-run-a-query).
+     Use the [Query Builder](/investigate/querying/metrics/builder) to help build and
+     optimize your query.
+
+1. In the main navigation bar, click **<AddToDashboardIcon /> Add to Dashboard**.
+1. In the **Add to dashboard** dialog, enter a name for your query. The query you
+   defined is entered in the **Name** field by default.
+1. Click **Select dashboard** to add the panel to an existing dashboard, or click
+   **create a new dashboard** to create a new dashboard containing the panel.
+
+   Observability Platform previews the addition of the panel to the dashboard.
+   - For an existing dashboard, click the **Panel group** dropdown to add the panel
+     to an existing panel group, or select **New Panel Group** from the dropdown to
+     add it to a new group.
+   - For a new dashboard, click the **Dashboard name** field to name the dashboard,
+     and click the **Owner** dropdown to choose which Collection owns the dashboard.
+1. Click **Add to dashboard** to add the panel to your dashboard.
+
+Observability Platform creates the dashboard with the query you defined or adds the
+query to the specified dashboard. You can
+[change the panel's type](/observe/dashboards/panels#change-a-panels-type) if you
+want the query to display as a different visualization.

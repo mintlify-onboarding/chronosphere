@@ -1,0 +1,215 @@
+---
+title: Derived telemetry
+'og:description': Learn about derived telemetry and how you can
+sidebarTitle: Overview
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Metrics emission isn't standardized. Users employ different forms of naming for
+metrics, or use different label names to convey the same information, or emit metrics
+in specific ways expecting to compute complex expressions. Use derived metrics and
+derived labels to use query aliasing and map labels to simplify their complexity.
+
+## Derived metrics
+
+Although [rollup rules](/control/shaping/rules/rollup) reduce cardinality, they don't
+solve the problem of computing repeated and complex expressions.
+[Recording rules](/control/shaping/rules/recording) solve this problem by executing
+complex expressions repeatedly and then saving them as their own time series values.
+However, recording rules require both computation resources and storage space. To
+address this, Chronosphere provides derived metrics.
+
+_Derived metrics_ let you create aliases for queries, effectively giving queries
+user-friendly names. For example, you can map the alias
+`global:http_server_request_by_path` to this query:
+
+```sql
+sum by (status, path) (irate(http_server_requests_count{service=~".+"}[1m])) > 0
+```
+
+Derived metrics execute at query time, which means they incur computing overhead only
+at query time, during execution. Your query might be complex and time-consuming, but
+when you're viewing the results, you're almost always working with a subset of data.
+
+For example, consider a review of CPU usage for one or a few services out of
+thousands. By filtering the results to a small number of services, the query
+finishes much sooner.
+
+<Note>
+When exploring metrics data with differential diagnosis (DDx), you can use
+[X-Ray](/investigate/analyze/differential-diagnosis/metrics#use-x-ray-to-expand-queries)
+to expand queries that use derived metrics.
+</Note>
+
+### Uses for derived metrics
+
+[Derived metrics](/investigate/querying/metrics/derived-telemetry/derived-metrics)
+help reduce overhead because they can:
+
+- [Reduce alert and dashboard complexity](#reducing-alert-and-dashboard-complexity)
+- [Replace recording rules](#replacing-recording-rules)
+- [Provide frequently used aliases for queries](#provide-frequently-used-aliases-for-queries)
+
+#### Reducing alert and dashboard complexity
+
+You can create canonical queries to standardize dashboards and alerts. For example,
+if there is a common error rate query that several dashboards share, you can create a
+derived metric for use with all dashboards.
+
+If you have complex queries you use only in dashboards and alerts with significant
+filtering, use derived metrics to remove the need to create and store new time series.
+Derived metrics are executed at query time and don't require extra storage.
+
+Most recording rules can be implemented using derived metrics, but it's important
+that the results are properly filtered. For example, a query might natively return
+hundreds of thousands of time series. However, the query context also matters. It's likely
+that the query is being filtered by cluster, service, or namespace, which can
+significantly reduce the number of time series. If the filtering doesn't sufficiently
+reduce the number of resultant time series, keeping the recording rule can improve
+performance.
+
+#### Replacing recording rules
+
+A query outage or failure to execute the recording rule due to a timeout creates a gap in
+the recording rule's results, because the query must execute to generate the recorded
+metric.
+
+With derived metrics, Chronosphere reads the underlying data at query time,
+preventing gaps.
+
+Typically, users query recording rules with specified filters, such as
+`some:recording:rule{label_1="value_1"`. Instead of executing the recording rule at a
+set interval, it's more performant to query this data only as you need it.
+
+For example, the following recording rule definition Chronosphere executes the
+expression defined in `expr` every 30 seconds across all services (`.+`):
+
+```yaml
+- name: global:http_server_request_by_path:irate1m
+  slug: http-server-request-by-path
+  interval: 30s
+  expr: sum by (status, path) (irate(http_server_requests_count{service=~".+"}[1m])) > 0
+```
+
+There's little value in a query against all services, especially when plotted on a
+graph. Instead, scope the query to a specific service with filters such as
+`global:http_server_request_by_path:irate1m{service="myservice"}` to return a smaller
+and more focused result.
+
+Using derived metrics, you can remove the need for this expensive recording rule
+and instead map the query:
+
+```sql
+global:http_server_request_by_path:irate1m{service="$my_service"}
+```
+
+To this query, which respects all filters:
+
+```sql
+sum by (status, path) (irate(http_server_requests_count{service="$my_service"}[1m])) > 0
+```
+
+#### Provide frequently used aliases for queries
+
+If you have frequently accessed queries, derived metrics can simplify the creation
+of dashboards, alerts, and manual queries.
+
+Additionally, many recording rules generated by third-party tools, such as Sloth,
+generate metrics that don't warrant persisting a new time series. Although
+these time series are negligible in storage and compute capacity, creating a derived
+metric is more efficient if you need such a metric.
+
+## Derived labels
+
+Metrics from different sources might use different label names to describe the
+same or similar things. You can use
+[_derived labels_](/investigate/querying/metrics/derived-telemetry/derived-labels),
+a construct specifically designed for Chronosphere Observability Platform, to
+standardize these names across Observability Platform without overwriting the
+original label data.
+
+For example, if Source A uses the `service-name` label, but Source B uses the
+`grpc_service` label, you can create a derived label named `service` as
+shorthand for both. Then, when you query either of these sources, you don't need
+to remember which source used which original label name. Instead, you can use
+the label name `service` in queries for both Source A and Source B.
+
+Additionally, metrics from a single source might have a large number of values
+associated with the same label name. You can use derived labels to standardize
+these values across Observability Platform. Standardizing values is also
+non-destructive and doesn't overwrite the original label values.
+
+For example, if Source C uses the label `pet` with possible values `cat`, `dog`,
+and `bird`, you can create a derived label named `animal`. As part of that
+derived label, set the original values `cat` and `dog` to map to the new value
+`mammal`. Then, when you query Source C, you can use `animal="mammal"` as
+shorthand for `pet=~"cat|dog"`.
+
+### Differences between relabeling and deriving
+
+Relabel rules are the language that Prometheus provides to tune scraping, determine
+which time series to persist, and modify a time series before persisting it. To
+modify a time series, you can use relabel rules to update a metric's `target_label`
+or to update multiple labels. Relabel rules overwrite existing labels, removing
+labels previously associated with a metric.
+
+[Derived labels](/investigate/querying/metrics/derived-telemetry/derived-labels)
+augment a time series after it's persisted. Unlike
+[Prometheus relabel rules](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config),
+which overwrite existing data, derived labels standardize your label names without
+overwriting them permanently. If you remove a derived label, the underlying time
+series remain. A relabel rule permanently changes the labels applied to a time
+series, and can't be undone.
+
+Chronosphere exposes relabel rules directly in the Collector. Relabel rules are, by
+design, metric-centric. To make a change to a particular label for all metrics, edit
+the relabel rules for every scrape job.
+
+Instead of using regular expressions for matching the time series to operate on,
+derived labels use the same glob syntax used by drop rules, aggregation rules, and
+traffic shaping pools.
+
+| Relabel rules | Derived labels |
+| ------------- | -------------- |
+| Uses [regular expressions](/investigate/querying/regular-expressions), which are flexible and allows more transformations than derived labels. | Uses [glob syntax](/investigate/querying/glob-syntax), which is more efficient, and matches what other Chronosphere entities use. |
+| Drops metrics based on keep and drop rules. | Not supported, but backend drop rules support the same. |
+| Distributed across many Collector and service monitor configurations. | One single configuration applying to all metrics. |
+| Driven by transformation and not the result. | Centered around what the user wants to define. |
+| Allows extracting values from label values. | Doesn't support extracting values. |
+| Overwrites existing labels. | Adds to existing labels. |
+
+### When to use relabel versus derived
+
+If you're not sure whether to use relabel rules or to use a derived label, use the
+following guidelines to help decide.
+
+<Note>
+Derived labels won't apply to certain Chronosphere generated metrics to ensure the
+system performs as expected.
+</Note>
+
+#### Uses for derived labels
+
+Use derived labels when you want to:
+
+- Retroactively change the labels for a previously emitted time series in a
+  non-destructive way.
+- Fix the source or scrape location in difficult circumstances. For instance, if the
+  data source is in a customer environment, or changing scrape configuration is
+  prohibitively expensive in your environment.
+- Manage the label configuration in a label-centric way. For example, if you want to
+  add a label to all of your metrics with some value based on the source labels, you
+  have to change the scrape configuration for every service.
+
+#### Uses for relabel rules
+
+Use relabel rules when you want to:
+
+- Remove existing labels and replace them with one or more new labels.
+- Drop time series and scrape targets.
+- Control configuration at the Collector. For example, you want to edit the
+  configuration for a single service using a service monitor.
+- Control data sent to Chronosphere. For example, dropping data to save network cost.
+- Run a complex label modification operation, like using arbitrary regular
+  expressions with capture groups.

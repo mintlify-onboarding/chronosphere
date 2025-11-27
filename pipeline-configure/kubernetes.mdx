@@ -1,0 +1,26 @@
+---
+title: Kubernetes deployment settings
+'og:description': Configure your Kubernetes deployment settings in Chronosphere Telemetry Pipeline.
+sidebarTitle: Overview
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Because all Telemetry Pipeline installations are
+[deployed on top of Kubernetes](/pipelines/concepts#core-operators-and-core-instances), you
+can use [Pipeline CLI](/pipeline-cli) to manage different Kubernetes deployment
+settings.
+
+{/* markdownlint-disable MD013 */}
+{/* vale Chronosphere.SentenceLengthLong = NO */}
+ <Columns cols={1}>
+  <Card horizontal icon="brackets-curly" title="Annotations" href="/pipeline-configure/kubernetes/annotations" />
+  <Card horizontal icon="brackets-curly" title="Namespaces" href="/pipeline-configure/kubernetes/namespaces" />
+  <Card horizontal icon="train" title="Pods and containers" href="/pipeline-configure/kubernetes/pods-containers" />
+  <Card horizontal icon="tag" title="Resource labels" href="/pipeline-configure/kubernetes/resource-labels" />
+  <Card horizontal icon="squares-plus" title="Sidecars" href="/pipeline-configure/kubernetes/sidecars" />
+  <Card horizontal icon="bullseye" title="Tolerations" href="/pipeline-configure/kubernetes/tolerations" />
+  <Card horizontal icon="database-clock" title="Workloads" href="/pipeline-configure/kubernetes/workloads" />
+</Columns>
+{/* vale Chronosphere.SentenceLengthLong = YES */}
+{/* markdownlint-enable MD013 */}

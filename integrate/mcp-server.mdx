@@ -1,0 +1,40 @@
+---
+title: Chronosphere MCP server
+'og:description': Learn how to connect large language models to the Chronosphere MCP server.
+sidebarTitle: Overview
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere provides a Model Context Protocol (MCP) server that lets you connect
+your large language models (LLMs) to interact with Chronosphere Observability Platform. After
+connecting with the MCP server, you can:
+
+- Query [telemetry data](/overview/types) like change events, metrics, logs, and
+  traces.
+- Read [Chronosphere resources](/integrate/mcp-server/resources), such as dashboards
+  and monitors.
+
+<Note>
+You can't use the Chronosphere MCP server to complete mutation actions, such as
+updating dashboards, writing metrics and logs, or deleting monitors.
+</Note>
+
+Use AI-enabled developer tools such as [Claude Code](https://www.claude.com/product/claude-code),
+[Cursor](https://cursor.com/home?from=agents),
+[Codex](https://developers.openai.com/codex/mcp/),
+and [Gemini](https://github.com/google-gemini/gemini-cli/tree/main) to submit
+read-only queries to Observability Platform. The following are some queries you can
+make to the Chronosphere MCP server:
+
+- Find error logs in your service with stack traces, and review your code to explain
+  what's causing the error.
+- Fetch a monitor and explain how it's configured, or what's causing it to trigger.
+- Help write PromQL queries to find metrics for a specific service.
+- List active shaping rules, such as drop rules, to determine why data is or isn't
+  being dropped.
+
+## Get started
+
+To get started with the Chronosphere MCP server,
+[configure authentication](/integrate/mcp-server/authenticate).

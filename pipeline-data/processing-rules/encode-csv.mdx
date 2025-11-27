@@ -1,0 +1,104 @@
+---
+title: Encode CSV
+'og:description': Learn about the encode CSV processing rule in Chronosphere Telemetry Pipeline.
+sidebarTitle: Encode CSV
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The encode CSV [processing rule](/pipeline-data/processing-rules) transforms log data
+from JSON to CSV format. The resulting output includes both the original JSON data
+and a string of comma-separated values assigned to a key you specify.
+
+## Configuration parameters
+
+<Params />
+
+| Name | Key | Description | Default |
+|---|---|---|---|
+| **Source key** | `src` | Required. The key of the JSON data to transform. This JSON data must be either an array of strings or an object that contains key/value pairs. | _none_ |
+| **Destination key** | `dist` | Required. The key to store your string of comma-separated values. If a key with this name already exists, the encode CSV rule will overwrite it. | `encoded_csv` |
+| **Header** | `header` | The header row for your comma-separated values. If **Source key** is a JSON object that contains key/value pairs, set this value to a list of the names of each key. Items in this list must be separated by commas and should match the name and order that the keys appear within their original JSON object. | _none_ |
+| **Comment** | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Examples
+
+Using the encode CSV rule lets you turn JSON data into comma-separated values that
+can be fed into databases and spreadsheet software.
+
+### Array of strings
+
+If your JSON data is an array of strings, don't use the **Header** parameter.
+For example, given this sample JSON data:
+
+```json
+{"ingredients":["pasta","tomato","basil","olive oil","parmesan"]}
+{"ingredients":["potatoes","butter","salt","chives","sour cream","bacon bits","shredded cheese"]}
+{"ingredients":["cereal","milk"]}
+{"ingredients":["bread","mayo","mustard","lettuce","tomato","deli meat","pickle"]}
+```
+
+A processing rule with the **Source key** value `ingredients` and the **Destination key**
+value `encoded_csv` returns the following result:
+
+{/* markdownlint-disable MD013 */}
+
+```json
+{"encoded_csv":"pasta,tomato,basil,olive oil,parmesan\n","ingredients":["pasta","tomato","basil","olive oil","parmesan"]}
+{"encoded_csv":"potatoes,butter,salt,chives,sour cream,bacon bits,shredded cheese\n","ingredients":["potatoes","butter","salt","chives","sour cream","bacon bits","shredded cheese"]}
+{"encoded_csv":"cereal,milk\n","ingredients":["cereal","milk"]}
+{"encoded_csv":"bread,mayo,mustard,lettuce,tomato,deli meat,pickle\n","ingredients":["bread","mayo","mustard","lettuce","tomato","deli meat","pickle"]}
+```
+
+{/* markdownlint-enable MD013 */}
+
+This rule retained the original `ingredients` array and created a new key called
+`encoded_csv` to store the converted comma-separated values.
+
+### Key/value pairs
+
+If your JSON data is an object that contains key/value pairs, you must use the
+**Header** parameter. For example, given this sample website log data:
+
+```json
+{"log":{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":"3","action":"purchase","page_id":"30"}}
+{"log":{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":"4","action":"purchase","page_id":"10"}}
+{"log":{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":"1","action":"click","page_id":"50"}}
+{"log":{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":"5","action":"purchase","page_id":"40"}}
+{"log":{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":"1","action":"purchase","page_id":"30"}}
+{"log":{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":"2","action":"click","page_id":"40"}}
+{"log":{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":"3","action":"click","page_id":"30"}}
+{"log":{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":"1","action":"view","page_id":"20"}}
+{"log":{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":"2","action":"purchase","page_id":"50"}}
+{"log":{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":"2","action":"view","page_id":"10"}}
+{"log":{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":"1","action":"view","page_id":"50"}}
+```
+
+A processing rule with the **Source key** value `log`, the **Destination key**
+value `encoded_csv`, and the **Header** value `timestamp,user_id,action,page_id`
+returns the following result:
+
+```json
+{"log":{"page_id":"30","action":"purchase","timestamp":"2023-03-28T09:08:41.64283645Z","user_id":"3"},"encoded_csv":"timestamp,user_id,action,page_id\n2023-03-28T09:08:41.64283645Z,3,purchase,30\n"}
+{"log":{"page_id":"10","action":"purchase","timestamp":"2023-03-28T09:08:42.643343109Z","user_id":"4"},"encoded_csv":"2023-03-28T09:08:42.643343109Z,4,purchase,10\n"}
+{"log":{"page_id":"50","action":"click","timestamp":"2023-03-28T09:08:48.643600498Z","user_id":"1"},"encoded_csv":"2023-03-28T09:08:48.643600498Z,1,click,50\n"}
+{"log":{"page_id":"40","action":"purchase","timestamp":"2023-03-28T09:08:50.643773688Z","user_id":"5"},"encoded_csv":"2023-03-28T09:08:50.643773688Z,5,purchase,40\n"}
+{"log":{"page_id":"30","action":"purchase","timestamp":"2023-03-28T09:08:51.643932272Z","user_id":"1"},"encoded_csv":"2023-03-28T09:08:51.643932272Z,1,purchase,30\n"}
+{"log":{"page_id":"40","action":"click","timestamp":"2023-03-28T09:08:56.644080944Z","user_id":"2"},"encoded_csv":"2023-03-28T09:08:56.644080944Z,2,click,40\n"}
+{"log":{"page_id":"30","action":"click","timestamp":"2023-03-28T09:09:03.64425954Z","user_id":"3"},"encoded_csv":"2023-03-28T09:09:03.64425954Z,3,click,30\n"}
+{"log":{"page_id":"20","action":"view","timestamp":"2023-03-28T09:09:03.644317046Z","user_id":"1"},"encoded_csv":"2023-03-28T09:09:03.644317046Z,1,view,20\n"}
+{"log":{"page_id":"50","action":"purchase","timestamp":"2023-03-28T09:09:10.64447719Z","user_id":"2"},"encoded_csv":"2023-03-28T09:09:10.64447719Z,2,purchase,50\n"}
+{"log":{"page_id":"10","action":"view","timestamp":"2023-03-28T09:09:17.644810963Z","user_id":"2"},"encoded_csv":"2023-03-28T09:09:17.644810963Z,2,view,10\n"}
+{"log":{"page_id":"50","action":"view","timestamp":"2023-03-28T09:09:20.644994805Z","user_id":"1"},"encoded_csv":"2023-03-28T09:09:20.644994805Z,1,view,50\n"}
+```
+
+This rule retained the original `log` object and created a new key called `encoded_csv`
+to store the converted comma-separated values. Additionally, the first instance
+of `encoded_csv` contains a header row, which is also separated by commas.
+
+## Related rules
+
+For a processing rule with the opposite effect, see
+[decode CSV](/pipeline-data/processing-rules/decode-csv).

@@ -1,0 +1,48 @@
+---
+title: Configure your Chronosphere Collector
+sidebarTitle: Overview
+---
+import RelabelExpansion from '/snippets/_partials/relabel-expansion.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+To install and use the Chronosphere Collector, you define a manifest that describes
+how the Collector operates. Manifests are static YAML files that include details such
+as the installation method for the Collector and what endpoints the Collector scrapes
+to ingest data.
+
+You can base your manifest on
+[this example](https://storage.googleapis.com/chronosphere-release/latest/kubernetes/chronocollector.yaml),
+which contains details about common configuration options when installing the
+Collector with Kubernetes to retrieve metric data.
+
+You can modify the default Collector manifest to:
+
+- [Apply recommended optimizations](/ingest/metrics-traces/collector/configure/optimizations).
+- [Monitor Kubernetes resources](/ingest/metrics-traces/collector/discover/monitor-kubernetes).
+
+## Modify the Collector manifest
+
+If you modify the Collector configuration manifest, you must send the updated
+manifest to the cluster and then restart the Collector:
+
+1. Apply the updated manifest to the cluster:
+
+   ```shell
+   kubectl apply -f path/to/manifest.yml
+   ```
+
+1. Restart the Collector to propagate the changes:
+
+   **DaemonSet**
+
+   ```shell
+   kubectl rollout restart daemonset/chronocollector
+   ```
+
+   **Deployment**
+
+   ```shell
+   kubectl rollout restart deployment/chronocollector
+   ```

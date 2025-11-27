@@ -1,0 +1,114 @@
+---
+title: Chronosphere Logs destination plugin
+sidebarTitle: Chronosphere
+'og:description': Send pipeline data to Chronosphere.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import BasicAuthentication from '/snippets/_partials/pipeline-basic-auth.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Chronosphere Logs [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `http`, alias: `Chronosphere`) lets you configure your telemetry pipeline
+to output log data to Chronosphere Observability Platform.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name      | Key | Description | Default |
+| --------- | --- | ------------------------ | ------- |
+| **Host**  | `host` | Required. Your Observability Platform tenant. | _`TENANT`_`.chronosphere.io` |
+| **Port**  | `port` | Required. The port to communicate with Observability Platform. | `443` |
+| **Key**   | `header` | Required. The header type to include with your request. | `API-Token` |
+| **Value** | `header` | Required. Your ingest API token to authenticate with Chronosphere. | _none_ |
+
+- Replace _`TENANT`_ with the name of your Observability Platform tenant.
+- Replace _`API_TOKEN`_ with your
+  [service account token](/administer/accounts-teams/service-accounts).
+
+### Advanced
+
+| Name                 | Key | Description | Default |
+| -------------------- | --- | ----------- | ------- |
+| **URI**              | `uri` | Required. HTTP URI for the web server. For example, `/api/v1/data/logs/ingest` for JSON format. | `/api/v1/data/logs/ingest` |
+| **Format**           | `format` | The data format to use in the HTTP request. | `json` |
+| **Compress**         | `compress` | Sets payload compression. Accepted values: `gzip`, _none_. | _none_ |
+| **HTTP Proxy**       | `proxy` | Specifies an HTTP proxy. The expected format is `http://host:port`. | _none_ |
+| **JSON Date Format** | `json_date_format` | Specifies the date format. Accepted values: `double`, `epoch`, `iso8601` (such as `2018-05-30T09:39:52.000681Z`), `java_sql_timestamp` (such as `2018-05-30 09:39:52.000681`). | `iso8601` |
+| **JSON Date Key**    | `json_date_key` | Specifies the name of the date field in output. | `_time` |
+| **Body Key**         | `body_key` | Specifies the key that contains the body. | _none_ |
+| **Header Tag**       | `header_tag` | Sets an HTTP header whose value is the tag of the record. | _none_ |
+| **Header Key**       | `headers_key` | Specifies the key that contains the headers. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />
+
+### Basic Authentication
+
+<BasicAuthentication />
+
+## Example
+
+The following YAML configuration defines a Fluent Bit input and a Chronosphere Logs
+output.
+
+```yaml
+pipeline:
+  inputs:
+    - name: forward
+      alias: Fluent_Bit
+      port: "5170"
+      tls.verify: on
+      tls.debug: "1"
+      tag: forward.cb3bae48-0000-4a51-0000-f6ccd3f0ed0c
+  filters:
+    - name: lua
+      match: forward.cb3bae48-0000-4a51-0000-f6ccd3f0ed0c
+      active: "false"
+  outputs:
+    - name: http
+      alias: Chronosphere
+      host: TENANT.chronosphere.io
+      port: "443"
+      header:
+        - API-Token f31b...ed7t292
+      uri: /api/v1/data/logs/ingest
+      format: json
+      compress: gzip
+      json_date_format: iso8601
+      json_date_key: _time
+      tls: true
+      tls.verify: on
+      tls.debug: "1"
+      net.keepalive: true
+      net.keepalive_idle_timeout: 30s
+      net.connect_timeout: 10s
+      net.connect_timeout_log_error: true
+      net.keepalive_max_recycle: "2000"
+      core.metadata:
+        name: Chronosphere Logs ingest
+      Match_Regex: .{0,}
+```

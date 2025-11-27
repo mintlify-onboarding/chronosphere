@@ -1,0 +1,47 @@
+---
+title: Carbon ingestion
+sidebarTitle: Carbon
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Carbon is an approach to sending Graphite data to the Collector. With this method,
+Chronosphere Observability Platform treats any Carbon data as pre-aggregated before
+it arrives at the Collector. Downsampling rules apply only for long-term retention
+with all metrics assumed to be gauges, while the short-term retention data is
+persisted as-is.
+
+Only use this when you are certain about the resolution of the data sent, with any
+change in resolution causing Observability Platform to persist more metrics. In general,
+Chronosphere doesn't recommend this approach of sending Graphite metrics, as the
+resolution and control of metrics ingestion is defined by the Carbon clients sending
+the data, and not the Collector or backend.
+
+You can enable
+[client-side aggregations](/ingest/metrics-traces/collector/addl-metrics#enable-aggregations)
+for Carbon. These aggregations reduce network egress and processed writes to
+Observability Platform.
+
+To ingest Carbon metrics with the Collector, add the following to the configuration
+file under the `push` YAML collection:
+
+```yaml
+push:
+  carbon:
+    enabled: true
+    listenAddress: 0.0.0.0:3032
+    listenProtocol: udp
+```
+You can configure the following options in the Collector manifest for Carbon.
+
+- `listenAddress`: The address the server listens on. Point clients
+  sending Carbon metrics to this address and port. Default: `0.0.0.0:3032`.
+  
+  When changing the default port, also update the container ports in the DaemonSet
+  manifest to match.
+- `listenProtocol`: The protocol the server listens on. The Chronosphere Collector supports
+  `udp`, `tcp,` or `tcp/udp` (both protocols on the same port). Default: `udp`.
+
+<Note>
+The Carbon server runs as a UDP server at the provided listen address.
+</Note>

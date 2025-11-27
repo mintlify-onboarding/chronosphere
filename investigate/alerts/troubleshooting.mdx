@@ -1,0 +1,126 @@
+---
+title: Troubleshoot monitors and alerts
+sidebarTitle: Troubleshooting
+'og:description': Learn about troubleshooting monitors and alerts in Chronosphere Observability Platform.
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Use this information to help troubleshoot monitors and alerts.
+
+## Notifier doesn't trigger after a change, but alert is firing
+
+Notifications send to the notifier after an alert triggers. Therefore, any change to
+the notifier takes effect _after_ the next time that the alert triggers. To
+resolve this issue, either:
+
+- Wait until the alert fires again. The default repeat interval is one hour.
+- Recreate the alert.
+
+## Resolve unexpected alerting behavior
+
+Use monitors to alert individuals or teams when data from a metric meets certain
+conditions. If monitors aren't configured correctly, they might send unexpected
+alerts, or might not send alerts when they should. Use the following methods to
+investigate and resolve unexpected behavior.
+
+### Check alerting thresholds
+
+When creating a monitor, you define a
+[condition](/investigate/alerts/monitors/data-model#conditions) and sustain period. If a time
+series triggers that condition for the sustain period, Observability Platform
+generates an alert.
+
+To investigate an alert that's not notifying as intended, review the alerting
+threshold:
+
+1. Open the monitor you want to investigate.
+
+1. In the **Query Results** section, click the **Show Thresholds** toggle on the
+   selected monitor to display the alerting thresholds for the monitor.
+
+   A threshold line displays on the line graph for you to visualize whether your
+   query broke the threshold, and for how long.
+
+If your monitor is consistently breaking the defined threshold, consider modifying
+the defined conditions.
+
+### Review monitor alert metrics
+
+After examining alerting thresholds, view the `ALERTS` and `ALERTS_VALUE` metrics:
+
+- `ALERTS` is a metric that shows the status of all monitors in Observability
+  Platform. An `ALERTS` metric exists with a value of `1` for a monitor when it's
+  status is pending or firing, and doesn't exist when the alert threshold isn't met.
+- `ALERTS_VALUE` is a metric that shows the results of a monitor's evaluation. This
+  metric can help determine whether the value of the monitor's evaluations exceeded
+  the threshold.
+
+1. Open the monitor you want to investigate.
+
+1. Copy the name of the monitor from the monitor header.
+
+1. Click **Open in Explorer** to open the monitor query in Metrics Explorer.
+
+1. In the **Metrics** field, enter the following query:
+
+   ```text
+   ALERTS{alertname="ALERT-NAME"}
+   ```
+
+   Replace `ALERT-NAME` with the name of the alert you copied previously.
+
+1. Click **<Icon icon="arrows-rotate" />Run**.
+
+1. In the table, the `alertstate` is either `pending` or `firing`:
+
+   - `pending` indicates that the monitor met the defined criteria, but not the
+     `sustain` period.
+   - `firing` indicates that the monitor met both the defined criteria and the
+     `sustain` period.
+
+1. In the **Metrics** field, enter the following query:
+
+   ```text
+   ALERTS_VALUE{alertname="ALERT-NAME"}
+   ```
+
+1. Click **<Icon icon="arrows-rotate" />Run**.
+
+1. Review the line graph to determine when the monitor starts alerting, and to
+   identify any gaps in the data.
+
+Pairing the `ALERTS{alertname="ALERT-NAME"}` query with your monitor query in the
+same graph can help determine the exact time when a monitor begins to alert.
+
+The `ALERTS_VALUE{alertname="ALERT-NAME"}` query can identify gaps that can occur
+from latent data that's not included in the evaluation set.
+
+### Add offsets to your query
+
+Not all metric data is ingested and available near real-time when evaluating a
+monitor query. This latency can affect the outcome of your monitor's results, which
+can cause false positive or negative alerts if not handled properly.
+
+When querying for different metric data types, it's important to understand where
+Observability Platform ingests the data from. Some exporters that rely on third-party
+APIs experience throttling and polling delays, which impacts the data you want to
+alert on in your monitor query.
+
+For example, Prometheus CloudWatch has an average polling delay of 10 minutes, which
+results in metric ingestion that lags the current time by that amount. Read the
+[Prometheus CloudWatch Exporter](https://github.com/prometheus/cloudwatch_exporter#timestamps)
+documentation for an example.
+
+To address this behavior in your monitors, add an offset modifier to your monitor
+query that's equal to or exceeds any metric polling delays. This setting forces the
+monitor to poll older data, but ensures that all delayed data is available when
+evaluating the query. Based on the Prometheus CloudWatch Exporter example, set
+`offset 10m` in your monitor query to account for the polling delay.
+
+The following query uses an `offset` of one minute to look back and ensure that the
+rollup results are fully calculated:
+
+```text
+histogram_quantile(0.99, sum(rate(graphql_request_duration_seconds_bucket{namespace=~"consumer-client-api-gateway",operationType!="unknown",sub_environment=~"production",operationName=~"setStorefrontUserLocalePreference"}[2m] offset 1m)) by (le,operationName,operationType))
+```

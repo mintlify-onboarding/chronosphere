@@ -1,0 +1,370 @@
+---
+title: Search and filter log data
+'og:description': Learn how to search and filter logs in Chronosphere Observability Platform.
+sidebarTitle: Overview
+---
+
+{/* -- dri: Adam Locke -- */}
+
+
+Logs Explorer lets you query log data to focus your search. Begin by querying on one
+of the predefined [keys](/investigate/querying/query-logs/query-syntax#keys),
+such as `service` or `severity`, and then use the
+[query syntax](/investigate/querying/query-logs/query-syntax) to incorporate
+additional attributes.
+
+<Note>
+Chronosphere recommends always including a filter with a primary key in your query
+for optimal performance.
+</Note>
+
+## Basic querying
+
+Use this method of selecting individual keys or values to query logs from a broad
+scope to a narrow focus. The following steps are recommended methods of querying. You
+can choose to start with a different key or value based on what you're searching for.
+
+To use basic querying:
+{/* vale off */}
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
+
+1. On the **Logs Explorer** page, select a time window to display logs for. The
+   default time window is the last hour.
+
+1. Define your query. You can use the sidebar, query box, or a combination of both to
+   specify your query criteria. You can also click individual keys or values within
+   a selected log.
+
+   - **Sidebar**: Expand the key you want to query on. Hold the pointer over the
+     value you want to include or exclude from your filter. Click the equals operator
+     (`=`) to include the value, or the does not equal operator (`!=`) to exclude the
+     value.
+
+     For example, expand the `severity` key and click the equals operator next to
+     **ERROR**, which adds that expression to your filter.
+
+     ```sql
+     severity = "ERROR"
+     ```
+
+     For additional options, click the <Icon icon="ellipsis-vertical" /> three
+     vertical dots icon next to a field name. For example, click
+     **Pin this field to top of field list** to pin the selected field to the top of
+     the list of fields, which makes the field always visible.
+
+     You can also pin entire logs to the top of the query results. See
+     [group and visualize queries](#group-and-visualize-queries) for information about
+     how to pin logs.
+
+   - **Query box**: Use the [query syntax](/investigate/querying/query-logs/query-syntax)
+     to enter the key you want to query on. The autocomplete syntax suggests
+     operators and matching values for keys you enter as you type to help you
+     construct your query.
+
+     ```sql
+     severity = "ERROR AND service = "nginx"
+     ```
+
+     <Note>
+      If you're unsure what syntax to use, click in the query box and press
+         `Control+Space` to display values for a key or available operators.
+      </Note>
+
+   - **Attributes**: After expanding an individual log, click any key or value to
+     display a menu with the following options:
+
+     - **Add field to summary**: Include the selected key or value in the **Summary**
+       column of the individual log results.
+     - **Add field as column**: Adds the selected field as a column in the query
+       results.
+     - **Add to group and visualize**: Adds the selected key or value to the query
+       box as a [`summarize`](/investigate/querying/query-logs/query-syntax#summarize)
+       query, and selects a visualization that best matches the data type.
+     - **Show matching logs**: Return logs containing only the selected key or value.
+     - **Hide matching logs**: Return logs that don't contain the selected key
+       or value.
+     - **Copy field name**: Copy the selected key or value.
+
+1. To submit your query, either click **<Icon icon="arrows-rotate" />Run** or press
+   `Control+Enter` (`Command+Return` on macOS).
+
+1. Expand your query by either adding additional key/value pairs or entering a
+   full-text string such as `"failed query token"` to find logs that contain the
+   expression anywhere in the log. For example:
+
+   ```sql
+   severity = "ERROR" and service = "gateway" AND "failed query token"
+   ```
+
+   <Note>
+   The operators `AND` plus `OR` are case insensitive, so you can use `AND`,
+      `and`, `OR`, and `or` interchangeably.
+   </Note>
+
+1. As you refine your filter, click and select a portion of the time chart to zoom in
+   to view a smaller time window.
+{/* vale on */}
+The results update to include only logs that contain the key/value pairs you enter.
+
+## Advanced querying
+
+If you know details about the log you're searching for, or are carrying context to
+Logs Explorer from a [services page](/observe/services/service-pages), use the
+[query syntax](/investigate/querying/query-logs/query-syntax) to construct your query.
+
+For example, if you know there's an issue with the `gateway` service in your
+production environment, create a query to help you locate which Kubernetes cluster is
+experiencing issues.
+
+To use advanced filtering:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
+
+1. In the query box, construct a query to include any logs with `ERROR` as the
+   `severity` for the `gateway` service:
+
+   ```sql
+   service = "gateway" AND severity = "ERROR"
+   ```
+
+   The results include 8,700 logs.
+
+1. To submit your query, click **<Icon icon="arrows-rotate" />Run** or press
+   `Control+Enter` (`Command+Return` on macOS).
+
+   You notice that several logs in the results contain `"Failed to query user by token"`
+   in the **Summary** column.
+
+1. Add a full-text string to your search to narrow the scope of your query, and then
+   click **<Icon icon="arrows-rotate" />Run**:
+
+   ```sql
+   service = "gateway" AND severity = "ERROR" AND "failed to query user by token"
+   ```
+
+   The results include 5,400 logs, which is fewer, but still too many.
+
+   In the sidebar, you notice that 75% of the results are for the
+   `production-east` Kubernetes cluster.
+
+1. In the sidebar, click `production-east` and then click **Show matching logs**.
+   Observability Platform adds the selected key/value to your query:
+
+   ```sql
+   service = "gateway" AND severity = "ERROR" AND "failed to query user by token"
+   AND kubernetes.cluster = "production-east"
+   ```
+
+   The results include 4,000 logs. To reduce scope, begin drilling in to individual logs.
+
+1. Expand individual logs to find commonalities across the data. You realize that the
+   same Kubernetes pod is included in many of the logs, so you add that key/value
+   pair to your filter:
+
+   ```sql
+   service = "gateway" AND severity = "ERROR" AND "failed to query user by token"
+   AND kubernetes.cluster = "production-east"
+   AND kubernetes.pod_name = "gateway-6agg9df321-o89ef"
+   ```
+
+   The results include less than 700 logs, which is 8,000 fewer than your initial
+   query.
+
+You identified the individual Kubernetes pod containing the majority of errors for
+the `gateway` service so you can inform your team and begin fixing the issue.
+
+## Group and visualize queries
+{/* vale off */}
+When exploring log data, you might want to group logs by one or more fields. This
+capability helps to answer questions such as,
+_What are the error rates across environments for my service?_.
+{/* vale on */}
+Observability Platform lets you group logs and visualize the results within Logs
+Explorer. You can explicitly use the
+[`summarize`](/investigate/querying/query-logs/query-syntax) operator in a query,
+select a key or value in the sidebar, or choose attributes in an individual log to
+group your query results by.
+
+To group and visualize query results:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
+
+1. Select a field or value to group by, or create a query with the `summarize`
+   operator:
+
+   - **Sidebar**: In the sidebar list of fields, expand the key you want to group by,
+     hover the pointer over a value, click the <Icon icon="ellipsis-vertical" /> three
+     vertical dots icon, and then click **Add to group and visualize**.
+
+   - **Attributes**: Expand an individual log, click any key or value, and then click
+     **Add to group and visualize**.
+
+   - **Query box**: Use the [query syntax](/investigate/querying/query-logs/query-syntax)
+     to create a query that includes the `summarize` operator. For example, the
+     following query searches for logs in a Kubernetes cluster in
+     `production-us-west` that contain errors, and then groups the results by
+     `service` and `environment`:
+
+     ```sql
+     severity = "ERROR"
+     AND kubernetes.cluster_name = "production-us-west"
+     | summarize by service, environment
+     ```
+
+    Logs Explorer inserts the key or value you selected into a `summarize`
+    query and visualizes the results.
+
+1. To display the results with a different visualization, select one of the available
+   options. For example, select **Bar** to visualize the results as a bar chart.
+
+   When using a chart, see [common panel elements](/observe/dashboards/panels#common-panel-elements)
+   for an explanation of the available tools in the <Icon icon="ellipsis-vertical" />
+   three vertical dots menu.
+1. To use [log usage patterns](/investigate/analyze/logs-usage) in your query, click
+   **Patterns**.
+
+   The displayed patterns are based on available results from the current query in
+   Logs Explorer. To use the pattern in a query, click a pattern and then choose one
+   of these options:
+
+   - **Show matching logs** returns all logs that match the pattern.
+   - **Hide matching logs** returns all logs that don't match the pattern.
+
+If the results include interesting logs that you want to keep, you can pin those logs
+to the top of the query results. Hover the pointer over the log you're interested in
+and click the **<Icon icon="thumbtack" /> pin icon**. The log is pinned to the top of
+the query results and persists across queries. You can change the time range and
+modify your query without losing pinned query results.
+
+## Save and share queries
+
+You can save queries that you run frequently, share queries, and share links to
+individual logs to help focus results when investigating issues.
+
+### Access recent and saved queries
+
+When investigating issues, you might use the same query frequently. Rather than
+redefining the query, use recent and saved queries to access previously defined
+queries in Observability Platform. You can apply a fully defined query from a
+previous time period by clicking a query from the **Examples** tab.
+
+Recent query are available globally to all users in Observability Platform and
+persist for 14 days.
+
+To access recent and saved queries:
+{/* vale off */}
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
+1. Click **<Icon icon="font" /> View queries** to display all available queries.
+1. Click either the **My recent queries** tab or the **Saved queries** tab to display
+   the queries you want to view.
+1. Locate the query you want to apply and click it.
+{/* vale on */}
+The parameters in the query override any parameters in the query box.
+
+### Save a query
+
+You can save queries that you access frequently so they're always available in
+Observability Platform. Saved queries are like bookmarks you can reference when you
+need them.
+
+To save a query:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
+1. In the query box, [construct your query](#basic-querying)). The **Save query**
+   button is unavailable until you run your query.
+1. Click **<Icon icon="arrows-rotate" />Run** to run your query.
+1. Optional: To include summary fields and columns in your saved query, click the
+   <Icon icon="ellipsis-vertical" /> three vertical dots icon and select from the
+   following options:
+
+   - **Add field to summary**: Include the selected key or value in the **Summary**
+     column of the individual log results.
+   - **Add field as column**: Adds the selected field as a column in the query
+     results.
+
+1. Click **Save query** to save your query.
+1. In the **Queries** window, enter a name for your query.
+1. If you added fields to the **Summary** column or added a field as a column in the
+   query results, enable the **Include summary fields and columns** toggle to include
+   those selections in the saved query.
+1. Click **Save** to save your query.
+
+Your query displays in the **Saved queries** tab of the **Queries** window. You can
+[access your saved queries](#access-recent-and-saved-queries) and apply them at any
+time.
+
+### Share a URL to a query
+
+When investigating issues, you might want to share a defined query with other users,
+or include a URL to a defined query in monitor annotations, runbooks, or other
+on-call tools. Logs Explorer lets you copy a short URL to a defined query using
+either a relative or absolute time range.
+
+Relative time is useful for understanding the results of a query in a past period of
+time relative to the current time, such as in the past 30 minutes. Absolute time is
+better suited for comparing results across a fixed point in time, such as the results
+of a query from last Monday at 8:00 AM versus that same query run today.
+
+To copy a URL to a defined query:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
+1. [Construct a query](#basic-querying) that returns the log data you want to
+   view.
+1. In the main header next to **Logs Explorer**, click
+   <Icon icon="link-simple" /> **Copy URL** and choose type of time range to use for the URL:
+
+   - **Copy with absolute time range**: Create a link that runs a query against the
+     date and time interval from when you copied the link. For example, if your query
+     uses `1h` as the time interval, the time range is exactly one hour ago, based on
+     the date and time you ran the query.
+
+   - **Copy with relative time range**: Create a link that runs a query against the
+     current time. For example, if your query uses `1h` as the time interval, the
+     time range is exactly one hour ago from the current time.
+
+The URL is copied to your clipboard based on your selection.
+
+### Share a URL to a specific log
+
+When troubleshooting issues, you might want to share a link to a specific log with
+other users, rather than to a [defined query](#share-a-url-to-a-query).
+
+To copy a URL to a specific log:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
+1. [Construct a query](#basic-querying) that returns the log data you want to view.
+1. Expand an individual log you want to share, and then click <Icon icon="link-simple" />
+   **Copy URL** to copy a URL to the selected log.
+
+The URL is compressed to a short URL and copied to your clipboard. When another user
+opens this URL, the results in Logs Explorer focus on the selected log only.
+
+### Download logs
+
+You can download logs from Logs Explorer with or without defining a
+[search query](#basic-querying). Each download includes up to 10,000 logs, and each log
+includes the `timestamp` and `_payload` fields.
+
+To customize columns and rows in the downloaded data, use the
+[`project`](/investigate/querying/query-logs/query-syntax#project) operator in a
+query to display results in tabular format. To customize the tabular data and
+complete aggregations in your query, use the
+[`summarize`](/investigate/querying/query-logs/query-syntax#summarize) operator. Make
+changes as needed, and then download the data.
+
+To download logs:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
+1. Optional: [Construct a query](#basic-querying) that returns the log data you want
+   to view.
+1. In the logs **Summary**, click the <Icon icon="ellipsis-vertical" /> three
+   vertical dots icon, and then click **Download logs**.
+1. Select the format for the data you want to download, then click **Download logs**.

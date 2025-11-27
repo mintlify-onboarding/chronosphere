@@ -1,0 +1,69 @@
+---
+title: Encode JSON
+'og:description': Learn about the encode JSON processing rule in Chronosphere Telemetry Pipeline.
+sidebarTitle: Encode JSON
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The encode JSON [processing rule](/pipeline-data/processing-rules) transforms a JSON
+object into an escaped string. The resulting output includes both the original JSON
+object and a new string assigned to a key you specify.
+
+## Configuration parameters
+
+<Params />
+
+| Name                | Key | Description | Default |
+| ------------------- | --- | ----------- | ------- |
+| **Source key**      | `src` | Required. The key that contains the JSON object to transform. | _none_ |
+| **Destination key** | `dst` | Required. The key to store your escaped JSON string. If a key with this name already exists, the encode JSON rule will overwrite it. | `encoded_json` |
+| **Comment**         | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Example
+
+Using the encode JSON rule lets you condense a structured object into a single,
+condensed value.
+
+For example, given the following sample website log data:
+
+```json
+{"event":{"timestamp":"2023-03-28T09:08:41.64283645Z","page_id":30,"user_id":3,"action":"purchase"}}
+{"event":{"timestamp":"2023-03-28T09:08:42.643343109Z","page_id":10,"user_id":4,"action":"purchase"}}
+{"event":{"timestamp":"2023-03-28T09:08:48.643600498Z","page_id":50,"user_id":1,"action":"click"}}
+{"event":{"timestamp":"2023-03-28T09:08:50.643773688Z","page_id":40,"user_id":5,"action":"purchase"}}
+{"event":{"timestamp":"2023-03-28T09:08:51.643932272Z","page_id":30,"user_id":1,"action":"purchase"}}
+{"event":{"timestamp":"2023-03-28T09:08:56.644080944Z","page_id":40,"user_id":2,"action":"click"}}
+{"event":{"timestamp":"2023-03-28T09:09:03.64425954Z","page_id":30,"user_id":3,"action":"click"}}
+{"event":{"timestamp":"2023-03-28T09:09:03.644317046Z","page_id":20,"user_id":1,"action":"view"}}
+{"event":{"timestamp":"2023-03-28T09:09:10.64447719Z","page_id":50,"user_id":2,"action":"purchase"}}
+{"event":{"timestamp":"2023-03-28T09:09:17.644810963Z","page_id":10,"user_id":2,"action":"view"}}
+{"event":{"timestamp":"2023-03-28T09:09:20.644994805Z","page_id":50,"user_id":1,"action":"view"}}
+```
+
+A processing rule with the **Source key** value `event` and the **Destination key**
+value `stored_string` returns the following result:
+
+```json
+{"stored_string":"{\"action\":\"purchase\",\"page_id\":30,\"timestamp\":\"2023-03-28T09:08:41.64283645Z\",\"user_id\":3}","event":{"page_id":30,"user_id":3,"action":"purchase","timestamp":"2023-03-28T09:08:41.64283645Z"}}
+{"stored_string":"{\"action\":\"purchase\",\"page_id\":10,\"timestamp\":\"2023-03-28T09:08:42.643343109Z\",\"user_id\":4}","event":{"page_id":10,"user_id":4,"action":"purchase","timestamp":"2023-03-28T09:08:42.643343109Z"}}
+{"stored_string":"{\"action\":\"click\",\"page_id\":50,\"timestamp\":\"2023-03-28T09:08:48.643600498Z\",\"user_id\":1}","event":{"page_id":50,"user_id":1,"action":"click","timestamp":"2023-03-28T09:08:48.643600498Z"}}
+{"stored_string":"{\"action\":\"purchase\",\"page_id\":40,\"timestamp\":\"2023-03-28T09:08:50.643773688Z\",\"user_id\":5}","event":{"page_id":40,"user_id":5,"action":"purchase","timestamp":"2023-03-28T09:08:50.643773688Z"}}
+{"stored_string":"{\"action\":\"purchase\",\"page_id\":30,\"timestamp\":\"2023-03-28T09:08:51.643932272Z\",\"user_id\":1}","event":{"page_id":30,"user_id":1,"action":"purchase","timestamp":"2023-03-28T09:08:51.643932272Z"}}
+{"stored_string":"{\"action\":\"click\",\"page_id\":40,\"timestamp\":\"2023-03-28T09:08:56.644080944Z\",\"user_id\":2}","event":{"page_id":40,"user_id":2,"action":"click","timestamp":"2023-03-28T09:08:56.644080944Z"}}
+{"stored_string":"{\"action\":\"click\",\"page_id\":30,\"timestamp\":\"2023-03-28T09:09:03.64425954Z\",\"user_id\":3}","event":{"page_id":30,"user_id":3,"action":"click","timestamp":"2023-03-28T09:09:03.64425954Z"}}
+{"stored_string":"{\"action\":\"view\",\"page_id\":20,\"timestamp\":\"2023-03-28T09:09:03.644317046Z\",\"user_id\":1}","event":{"page_id":20,"user_id":1,"action":"view","timestamp":"2023-03-28T09:09:03.644317046Z"}}
+{"stored_string":"{\"action\":\"purchase\",\"page_id\":50,\"timestamp\":\"2023-03-28T09:09:10.64447719Z\",\"user_id\":2}","event":{"page_id":50,"user_id":2,"action":"purchase","timestamp":"2023-03-28T09:09:10.64447719Z"}}
+{"stored_string":"{\"action\":\"view\",\"page_id\":10,\"timestamp\":\"2023-03-28T09:09:17.644810963Z\",\"user_id\":2}","event":{"page_id":10,"user_id":2,"action":"view","timestamp":"2023-03-28T09:09:17.644810963Z"}}
+{"stored_string":"{\"action\":\"view\",\"page_id\":50,\"timestamp\":\"2023-03-28T09:09:20.644994805Z\",\"user_id\":1}","event":{"page_id":50,"user_id":1,"action":"view","timestamp":"2023-03-28T09:09:20.644994805Z"}}
+```
+
+This rule retained the original `event` object and created a new key called
+`stored_string` to store the same key/value pairs as an embedded string.
+
+## Related rules
+
+For a processing rule with the opposite effect, see
+[decode JSON](/pipeline-data/processing-rules/decode-json).

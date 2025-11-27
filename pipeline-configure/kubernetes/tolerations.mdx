@@ -1,0 +1,187 @@
+---
+title: Tolerations
+'og:description': Configure Kubernetes tolerations in Chronosphere Telemetry Pipeline.
+sidebarTitle: Tolerations
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+[Tolerations and taints](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+are Kubernetes features that lets you control which nodes your pipelines run on.
+You can use tolerations to schedule your pipelines on Kubernetes nodes with matching
+taints.
+
+In Chronosphere Telemetry Pipeline, you can set tolerations for Core Instances
+and for individual pipelines. Any tolerations set for a Core Instance apply to
+all pipelines associated with that Core Instance, but tolerations set for an individual
+pipeline override any tolerations set for its corresponding Core Instance.
+
+<Note>
+To set corresponding taints on nodes, use the
+[`kubectl taint`](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_taint/)
+command.
+</Note>
+
+## Toleration parameters
+
+Tolerations in Chronosphere Telemetry Pipeline use the following parameters:
+
+{/* markdownlint-disable MD033 */}
+
+| Parameter | Description |
+|---|---|
+| `key` | Required for tolerations with the `Equal` operator. The key to evaluate against matching taints. If a toleration with the `Equal` operator omits this parameter, that toleration will match all keys and values. |
+| `operator` | Required. The operator that determines whether a toleration matches a taint. Possible values are `Equal` and `Exists`. <br/>`Equal`: The toleration matches a taint if the taint has a key/value pair identical to the toleration's `key` and `value` parameters. <br/>`Exists`: The toleration matches a taint if the taint has a key with the same name as the toleration's `key` parameter. |
+| `value` | Required for tolerations with the `Exists` operator, but must be omitted for tolerations with the `Equal` operator. The value to evaluate against matching taints. |
+| `effect` | Required. The effect to evaluate against matching taints. Possible values are `NoSchedule`, `PreferNoSchedule`, and `NoExecute`. <br/>`NoSchedule`: Except for pods with a matching toleration, no new pods will be scheduled onto nodes with this taint. <br/>`PreferNoSchedule`: The scheduler will try to avoid placing new non-matching pods on nodes with this taint. <br/>`NoExecute`: Pods that are already running on a node will be evicted if they don't have a matching toleration, and pods with a matching toleration will be evicted after the duration of `tolerationSeconds`, if set. |
+| `tolerationSeconds` | For tolerations with the `NoExecute` effect, defines how long (in seconds) pods with a matching toleration will remain bound before being evicted. If this parameter is omitted, pods with a matching toleration will remain bound indefinitely. |
+
+{/* markdownlint-enable MD033 */}
+
+## Pipeline tolerations
+
+Use the following information to modify tolerations for individual pipelines.
+
+### Set tolerations for a pipeline
+
+To set tolerations for a new pipeline:
+
+1. Create a [JSON file](#toleration-json-syntax) with your toleration specifications.
+
+1. Use Pipeline CLI to either [create a pipeline](/pipeline-data/create-modify#create-a-pipeline)
+   or [modify a pipeline](/pipeline-data/create-modify#modify-a-pipeline), and add
+   the following flag to the associated command:
+
+   ```shell /FILE/
+    --tolerations-spec FILE
+   ```
+
+   Replace _`FILE`_ with the path to your tolerations JSON file.
+
+### Remove tolerations from a pipeline
+
+To remove tolerations from a pipeline:
+
+1. Create a JSON file with an empty array (`[]`).
+
+1. Use Pipeline CLI to [modify a pipeline](/pipeline-data/create-modify#modify-a-pipeline),
+   and add the following flag to that command:
+
+   ```shell /EMPTY-ARRAY/
+    --tolerations-spec EMPTY-ARRAY
+   ```
+
+   Replace _`EMPTY-ARRAY`_ with the path to your JSON file with an empty array.
+
+## Core Instance tolerations
+
+Use one of these methods to set tolerations for a Core Instance.
+
+<Tabs>
+<Tab title="Pipeline CLI" id="tolerations-cli">
+
+[Pipeline CLI](/pipeline-cli) lets you specify tolerations for new Core Instances.
+However, you can't use Pipeline CLI to add or modify tolerations for an existing Core
+Instance.
+
+To specify tolerations for a new Core Instance, use the `--tolerations` flag:
+
+```shell
+calyptia create core_instance operator --name INSTANCE --tolerations STRING
+```
+
+Replace the following values:
+
+- _`INSTANCE`_: The name for your new Core Instance.
+- _`STRING`_: The string that specifies your tolerations.
+
+</Tab>
+<Tab title="Helm" id="tolerations-helm">
+
+Helm lets you specify tolerations for new Core Instances, and add or modify tolerations
+for an existing Core Instance.
+
+To do so, add the following key/value pair to your Helm chart:
+
+```shell
+calyptiaTolerations: "STRING"
+```
+
+Replace _`STRING`_ with the string that specifies your tolerations.
+
+</Tab>
+</Tabs>
+
+### Toleration string syntax
+
+The string that specifies your tolerations must follow this syntax:
+
+```shell
+key1=operator:value1:effect:tolerationSeconds,key2=operator:value2:effect:tolerationSeconds
+```
+
+You can also leave certain sections of this string blank to omit certain toleration
+parameters as permitted. For example, `foo=Exists::PreferNoSchedule` is a valid
+toleration string.
+
+Because `tolerationSeconds` isn't a required parameter and only applies to the
+`NoExecute` effect, you can omit the `:tolerationSeconds` portion of this syntax
+as necessary. [info about tolerations with an empty key? or with an empty effect?]
+Additionally, tolerations with the `Exists` operator must omit the
+`value` portion of this syntax but retain its preceding colon.
+
+For example, this is a valid toleration string:
+
+```shell
+foo=Equal:bar:NoExecute:3600,baz=Exists::PreferNoSchedule
+```
+
+### Toleration JSON syntax
+
+<Note>
+Per-pipeline tolerations require Chronosphere Telemetry Pipeline v2.34.0 or later.
+</Note>
+
+The JSON file that specifies your tolerations must follow this syntax:
+
+```json
+[
+  {
+    "key": "abc",
+    "operator": "abc",
+    "value": "abc",
+    "effect": "abc",
+    "tolerationSeconds": 123
+  },
+  {
+    "key": "xyz",
+    "operator": "xyz",
+    "value": "xyz",
+    "effect": "xyz",
+    "tolerationSeconds": 456
+  }
+]
+```
+
+Each toleration must be a structured object, and multiple tolerations must be
+stored as items within an array of structured objects. If a specific toleration
+doesn't need a particular parameter, omit that parameter entirely.
+
+For example, this is a valid toleration JSON file:
+
+```json filename="tolerations.json"
+[
+  {
+    "key": "foo",
+    "operator": "Equal",
+    "value": "bar",
+    "effect": "NoExecute",
+    "tolerationSeconds": 3600,
+  },
+  {
+    "key": "baz",
+    "operator": "Exists",
+    "effect": "PreferNoSchedule"
+  }
+]
+```

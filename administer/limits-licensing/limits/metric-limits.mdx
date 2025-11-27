@@ -1,0 +1,48 @@
+---
+title: Metric limits
+'og:description': Learn about the limits on metrics data within Chronosphere Observability Platform.
+sidebarTitle: Metrics
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere metrics have a variety of limits, depending on where your data is in the
+processing cycle.
+
+Your [license](/administer/limits-licensing/licensing) limits the amount of data you
+can write to and store within Chronosphere.
+
+Metrics have the following size limits, which help ensure consistency and prevent
+issues with queries:
+
+- Label names: 512 characters
+- Label values: 1,024 characters
+- Max number of labels: 64 labels
+- Total time series bytes: 4,096 characters
+
+[Metrics quotas](/control/shaping/quotas) assign specific percentages of your total
+persisted writes limit to pools of metrics. Use quotas to limit groups of metrics and
+ensure Chronosphere retains the highest value metrics.
+
+See [Managing invalid metrics](/investigate/querying/metrics/troubleshooting#managing-invalid-metrics)
+for information about debugging invalid metrics.
+
+## Late-arriving metrics
+
+Prometheus, OpenTelemetry, and other metric formats include one or more timestamp
+values for each data point. These values indicate when a sample was observed, or
+represent the time range of the data point. Chronosphere Observability Platform can
+accept late-arriving data points within a time frame, depending whether the data
+point matches an aggregation rule or is ingested without aggregation:
+
+- Aggregation rules accept data points from two minutes to eight minutes past the
+  current ingestion time.
+- Raw data points can be written to the database up to two hours before the ingestion
+  timestamp.
+
+## Future-arriving metrics
+
+Observability Platform accepts incoming metrics one minute ahead of the current
+timestamp. If metrics arrive outside of this one-minute buffer, Observability
+Platform rejects those metrics and returns an error indicating that metrics arrived
+too far into the future.

@@ -1,0 +1,86 @@
+---
+title: Ingest metrics and traces using the OpenTelemetry Collector
+'og:description': Use the OpenTelemetry Collector to collect metrics and traces and transfer them to Chronosphere for analysis.
+sidebarTitle: Overview
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+The [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/) is
+vendor agnostic, open source, and supports popular backends and the OpenTelemetry
+Protocol. You can use the OpenTelemetry Collector to ingest metric data, and configure
+dynamic, remotely configurable
+[head sampling](/control/sampling/head-sampling#configure-the-opentelemetry-collector)
+for your trace data.
+
+## Get started
+
+To get started with the OpenTelemetry Collector:
+
+1. [Instrument your app](https://opentelemetry.io/docs/instrumentation/) with an
+   [OpenTelemetry SDK](https://opentelemetry.io/docs/instrumentation/).
+1. Create an API token to authenticate with Chronosphere Observability Platform. You must
+   [create a service account](/administer/accounts-teams/service-accounts#create-a-restricted-service-account).
+   Chronosphere recommends creating a restricted service account with a write-only
+   scope. Use the generated API token in the OpenTelemetry Collector file
+   `config.yml` to authenticate with Observability Platform.
+
+    <Warning>
+    Store your API token in a secure location. If you lose your token, you must create
+      a new service account.
+    </Warning>
+
+1. Configure your OpenTelemetry Collector to
+   [ingest metrics or traces](/ingest/metrics-traces/otel/otel-ingest).
+
+## Conversion from OpenTelemetry to Prometheus-compatible metrics
+
+Observability Platform follows the
+[OpenTelemetry to Prometheus Specification](https://opentelemetry.io/docs/specs/otel/compatibility/prometheus_and_openmetrics/#otlp-metric-points-to-prometheus)
+to convert OpenTelemetry metrics to Prometheus-compatible metrics and adds delta
+temporality aggregation support to provide a more seamless experience for delta
+metrics.
+
+Observability Platform implements the following data conversions as defined in the
+[OpenTelemetry to Prometheus Specification](https://opentelemetry.io/docs/specs/otel/compatibility/prometheus_and_openmetrics/#otlp-metric-points-to-prometheus):
+
+- Sanitize metric and label names to conform to
+  [Prometheus naming conventions](/ingest/metrics-traces/collector/mappings/prometheus/prometheus-recommendations).
+  For example, an OpenTelemetry metric named `http.duration` becomes `http_duration`.
+- Collapse multiple consecutive underscore (`_`) characters to a single underscore
+  character.
+- Metric names for OpenTelemetry explicit bucket boundary histograms follow the
+  OpenMetrics specification to correctly name the time series for each histogram
+  bucket. For example, a histogram has one `_bucket` series for each bucket, and
+  a series for the `_sum` and `_count`.
+- Observability Platform supports staleness markers and writes them whenever any OpenTelemetry
+  data point presents a `NoRecordedValue` flag for the associated scope.
+- Observability Platform **requires** `service.instance.id` for all metric time series to
+  ensure
+  [metric writer uniqueness](https://opentelemetry.io/docs/specs/otel/metrics/data-model/#single-writer),
+  and **rejects** metrics without a `service.instance.id` resource attribute. To
+  configure a value for `service.instance.id`, follow the recommendations in
+  [Map resource attributes to Prometheus job and instance](/ingest/metrics-traces/otel/otel-ingest#map-resource-attributes-to-prometheus-job-and-instance).
+
+  Observability Platform deviates from the
+  [OpenTelemetry to Prometheus Specification](https://opentelemetry.io/docs/specs/otel/compatibility/prometheus_and_openmetrics/#otlp-metric-points-to-prometheus)
+  to reduce operational chores and improve metric usability.
+- Observability Platform preserves metric names and doesn't apply metric type or unit suffixes
+  to metrics as defined in the OpenMetrics specification, with the exception of
+  explicit bucket boundary histograms.
+- Observability Platform drops OpenTelemetry resource and data point attributes
+  that have empty values from the time series. Observability Platform then accepts
+  the resulting time series for processing.
+- Observability Platform merges both OpenTelemetry Protocol resource attributes
+  and individual data point attributes into a single set of Prometheus labels for
+  each time series. Merging resource attributes after ingestion removes the need to
+  [manually configure resource attribute copying](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/prometheusexporter/README.md#setting-resource-attributes-as-metric-labels)
+  in your OpenTelemetry Collector configuration. To configure resource attribute
+  exclusions or turn off resource attribute merging, see
+  [Configure OpenTelemetry ingestion](/ingest/metrics-traces/otel/otel-ingest-config).
+- Observability Platform doesn't create a
+  [`target_info`](https://opentelemetry.io/docs/specs/otel/compatibility/prometheus_and_openmetrics/#resource-attributes-1)
+  metric by default. The `target_info` metric is equivalent to the `up` metric,
+  the presence of which indicates that a resource is available. You can
+  [change your configuration](/ingest/metrics-traces/otel/otel-ingest-config) to
+  enable `target_info` metric creation.

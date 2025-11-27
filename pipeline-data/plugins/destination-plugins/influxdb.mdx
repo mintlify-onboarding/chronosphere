@@ -1,0 +1,67 @@
+---
+title: InfluxDB destination plugin
+sidebarTitle: InfluxDB
+'og:description': Send pipeline data to InfluxDB.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The InfluxDB [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `influxdb`) lets you configure your telemetry pipeline to route data to
+your InfluxDB instances.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics     | Traces     |
+| :---------: | :---------: | :--------: |
+| <YesIcon /> | <YesIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                         | Key | Description | Default |
+| ---------------------------- | --- | ----------- | ------- |
+| **Host**                     | `host` | IP address or hostname of the target HTTP Server. | `127.0.0.1` |
+| **Port**                     | `port` | TCP port of the target HTTP Server. | `80` |
+| **Influx v1 - Database**     | `database` | InfluxDB Database Name where records are inserted. If you're using a newer version of Influx, use Bucket instead. | `calyptiacore` |
+| **Influx v2 - Bucket**       | `bucket` | The amount of time between each API call. | _none_ |
+| **Influx v2 - Org**          | `org` | InfluxDB Organization name where the bucket is (v2 only). | _none_ |
+
+### Advanced
+
+| Name                    | Key | Description | Default |
+| ----------------------- | --- | ----------- | ------- |
+| **Headers**             | `http_header` | Adds an HTTP header key/value pair. Multiple headers can be set. | _none_ |
+| **Sequence Tag**        | `sequence_tag` | The name of the tag whose value is incremented for consecutive simultaneous events. | `_seq` |
+| **Custom URI Endpoint** | `uri` | Custom URI endpoint. | _none_ |
+| **Enable Auto Tags**    | `auto_tags` | Custom URI endpoint. Accepted values: `true`, `false`. | `false` |
+| **Tag Keys**            | `tag_keys` | Space-separated list of keys that need to be tagged. | _none_ |
+
+### Basic Authentication
+
+| Name                       | Key | Description | Default |
+| -------------------------- | --- | ----------- | ------- |
+| **HTTP Username**          | `http_user` | Basic auth username. | _none_ |
+| **HTTP Password**          | `http_passwd` | Basic auth password. Requires `http_user` to be set. | _none_ |
+| **Influx v2 - HTTP Token** | `http_token` | Authentication token used with InfluDB v2. If specified, both `http_user` and `http_passwd` are ignored. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

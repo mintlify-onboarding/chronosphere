@@ -1,0 +1,83 @@
+---
+title: Analyze logs usage
+'og:description': Learn about utility scores and analyzing volume for log data in Observability Platform.
+sidebarTitle: Logs usage
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere Observability Platform provides usage data and utility scores for your
+log data. Usage analysis gives you insight into _patterns_, which are frequent
+combinations of specific `service` and `message` fields in your log data. The
+**Logs Usage** page displays the volume of data each pattern consumes, and where and
+how often each pattern gets queried. The more a pattern is queried, included in
+assets like dashboards, and referenced by unique users, the higher its utility score.
+
+Utility scores are relative, and aren't mapped to any scale. For example, a utility
+score of 18 is more than twice that of a utility score of 8, but isn't scored against
+a maximum. Lower utility scores indicate patterns that are candidates for reducing,
+augmenting, or routing log data to lower costs.
+
+## View log patterns
+
+View log patterns in the **Logs Usage** page to analyze which patterns have greater
+utility, and those patterns you can potentially eliminate.
+
+To view log patterns:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Logs Usage**.
+
+   The **Logs Usage** page displays all patterns found in your log data.
+
+1. Click any pattern to view more detailed information, such as the number of queries
+   that reference the pattern across [Logs Explorer](/investigate/querying/query-logs)
+   and in [dashboards](/investigate/querying/dashboard-query).
+
+   On the **Pattern Details** page, expand the **Executions** column to see which
+   users have executed a query containing this pattern.
+
+1. To view the underlying query for the pattern in Logs Explorer, hold the pointer
+   over any pattern, and then click **View in Logs Explorer**.
+
+## Create control rules
+
+When viewing a log pattern in Observability Platform, you can create a log
+[control rule](/control/consumption/shape-logs/control-logs) for the selected
+pattern. This capability lets you manage log data by transforming, reshaping,
+retaining, or excluding data before it’s stored.
+
+To create control rules:
+
+{/* vale off */}
+{/* regex is in the name of the UI */}
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Logs Usage**.
+
+   The **Logs Usage** page displays all patterns found in your log data.
+
+1. Click the log pattern you want to create a control rule for.
+1. In the **Pattern Details** page, click **Create control rule for this pattern**.
+
+   The **Create control rule page** opens with the filter for the log pattern
+   predefined.
+1. Press `Ctrl+Enter` (`Command+Return` on macOS) to submit the
+   filter. This rule applies to logs that match only this filter at the time the log
+   data was ingested.
+1. Review the returned data from the preview filter, and make changes as necessary.
+1. Enter additional information for the specified action:
+   - **Drop fields**: In the **Parent path** field, enter the level of depth in the
+     log to apply the regular expression to. For example, if you wanted to apply the
+     regular expression to fields under `httpRequest`, such as `httpRequest.status`,
+     enter `httpRequest` in the **Parent path** field.
+
+     In the **Field regex** field, enter the regular expression that determines which
+     fields to match on.
+   - **Sample logs**: In the **Logs to keep** field, enter the percentage of logs you
+     want to keep. For example, `25` for 25%.
+1. Click **Save** to save the control rule definition.
+1. In the **Code Config** tab, [use the Code Config tool](/tooling/gitops) to apply
+   the definition.
+{/* vale on */}

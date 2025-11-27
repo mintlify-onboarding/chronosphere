@@ -1,0 +1,54 @@
+---
+title: Azure Sentinel destination plugin
+sidebarTitle: Azure Sentinel
+'og:description': Send pipeline data to Azure Sentinel.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Azure Sentinel [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `azure`, alias: `Azure_Sentinel`) lets you configure your telemetry
+pipeline to send security-related logs and events to Azure Sentinel.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name                          | Key | Description | Default |
+| ----------------------------- | --- | ----------- | ------- |
+| **Customer / Workspace ID**   | `customer_id` | Required. Customer ID or WorkspaceID string. | _none_ |
+| **Client Authentication Key** | `shared_key` | Required. The primary or the secondary Connected Sources client authentication key. | _none_ |
+
+### Advanced
+
+| Name                      | Key | Description | Default |
+| ------------------------- | --- | ----------- | ------- |
+| **Event Type Name**       | `log_type` | The name of the event type. | `fluentbit` |
+| **Time Key**              | `time_key` | Optional parameter to specify the key name where the timestamp is stored. | `@timestamp` |
+| **Enable Time Generated** | `time_generated` | If `true`, the HTTP request header `time-generated-field` is included so Azure can override the timestamp with the key specified by the `time_key` option. Accepted values: `true`, `false`. | `false` |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

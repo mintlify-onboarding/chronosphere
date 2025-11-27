@@ -1,0 +1,84 @@
+---
+title: Visualize service topology with panels
+sidebarTitle: Service topology
+'og:description': View and customize service topology panels for Chronosphere Observability Platform dashboards.
+---
+import ClassicPanel from '/snippets/_partials/classic-panels.mdx';
+import ChronoctlDashboard from '/snippets/_partials/chronoctl-dashboard.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<ClassicPanel />
+
+A _topology map_ is very similar to the Trace Explorer
+[Topology view](/investigate/querying/traces/features#topology-view). Use this panel to
+visualize how traces from services and operations in the current panel query results
+cascade from each other.
+
+To create a service topology chart or learn more about the configuration options common
+to all panels, see [Panels](/observe/dashboards/panels).
+
+You can filter a service topology chart by **Metric**:
+
+- `Errors`
+- `Requests`
+- `Max Duration P50`
+- `Max Duration P99`
+
+Toggle the selected option to perform the following additional actions:
+
+- **View operations**: See [span details](/investigate/querying/traces/features#span-details).
+- **Only critical path**: Only analyze spans that most impact the total
+  duration of a trace, and display them grouped by the selected property.
+
+## Configure a service topology panel
+
+You can configure a service topology by [modifying its **Settings**](/observe/dashboards/panels#edit-a-panel).
+
+Any changes you make in the panel's **Settings** tab are immediately reflected in the
+**Preview** pane, but take effect only when you click **Apply** in the **Edit panel**
+interface and then **Save** the dashboard.
+
+Observability Platform doesn't fully support directly editing a panel's JSON
+representation and recommends configuring panels in the user interface. Use the JSON
+representation only for managing your configuration as code with tools such as
+[Chronoctl](/tooling/chronoctl) and [Terraform](/tooling/infrastructure/terraform).
+
+To modify a service topology panel's settings using its **Settings** tab:
+
+1. [Edit the service topology panel](/observe/dashboards/panels#edit-a-panel).
+1. In the **Edit panel** interface, click the **Settings** tab.
+
+You can [add links](/observe/dashboards/panels#add-links-to-a-panel) to
+a service topology panel.
+
+### Modify service topology filters
+
+In the **Settings** tab, you can create **Span Filters**.
+
+1. Select an option for the first box: **Variable** or **Static**.
+1. If you select **Variable**, click the **Service** box to select a service.
+   If you choose **Static**, enter a variable of your choosing in the **Service**
+   box.
+1. Select an option for the second box: **Variable** or **Static**.
+1. If you select **Variable**, click the **Operation** box to select an operation.
+   If you choose **Static**, enter an operation of your choosing in the **Service**
+   box.
+1. Click **Add Span Filter** to add additional filters.
+1. Click **Add** when finished.
+
+### Focus on a specific service
+
+You can modify a topology panel in a Dashboard to narrow the focus to a specific
+service. This view shows a single service with one service upstream and downstream,
+rather than showing all connected services.
+
+1. [Edit the service topology panel](/observe/dashboards/panels#edit-a-panel).
+1. In the **Edit panel** interface, click the **Settings** tab.
+1. In the **Target service** field, enter the name of the service you want to focus
+   on.
+
+   The topology map preview updates to show the service you entered.
+1. Click **Apply** to apply your changes, and then click **Save** to save the changes
+   to your dashboard.

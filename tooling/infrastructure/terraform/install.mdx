@@ -1,0 +1,247 @@
+---
+title: Install the Chronosphere Terraform provider
+sidebarTitle: Install
+---
+import {versions} from '/snippets/versions.jsx';
+import { DynamicCode } from '/snippets/DynamicCode.jsx';
+import ServiceAccounts from '/snippets/_partials/service-accounts.mdx';
+
+export const storageLocation = `https://storage.googleapis.com/chronosphere-terraform`;
+export const fileName = `terraform-provider-chronosphere_${versions.terraform}`;
+export const versionNumber = `${versions.terraform}`;
+export const macOSIntelLink = `${storageLocation}/${versions.terraform}/${fileName}_${versions.terraform}_darwin_amd64.zip`;
+export const macOSARMLink = `${storageLocation}/${versions.terraform}/${fileName}_${versions.terraform}_darwin_arm64.zip`;
+export const linuxLink = `${storageLocation}/${versions.terraform}/${fileName}_${versions.terraform}_linux_amd64.zip`;
+
+export const chronotfMacOSIntel = `chronotf_${versions.terraform}_darwin_amd64`;
+export const chronotfMacOSARM = `chronotf_${versions.terraform}_darwin_arm64`;
+export const chronotfLinux = `chronotf_${versions.terraform}_linux_amd64`;
+export const chronotfMacOSIntelLink = `${storageLocation}/${versions.terraform}/${chronotfMacOSIntel}`;
+export const chronotfMacOSARMLink = `${storageLocation}/${versions.terraform}/${chronotfMacOSARM}`;
+export const chronotfLinuxLink = `${storageLocation}/${versions.terraform}/${chronotfLinux}`;
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+<Note>
+To use the Chronosphere Terraform provider, you must first install Terraform. For
+details, see the
+[Terraform documentation](https://developer.hashicorp.com/terraform/downloads).
+</Note>
+
+Use the following steps to install the Chronosphere Terraform provider for your use:
+
+1. [Install the Terraform provider](#install-the-provider).
+1. [Authenticate to Chronosphere](#authenticate-to-chronosphere).
+1. [Bootstrap your Terraform configuration](#bootstrap-your-terraform-configuration).
+
+## Install the provider
+
+As of v1.0.0, the Chronosphere Terraform provider is [open-source](https://github.com/chronosphereio/terraform-provider-chronosphere)
+and available from the [HashiCorp Terraform Registry](https://registry.terraform.io/providers/chronosphereio/chronosphere/latest).
+
+<DynamicCode find={'"{terraformVersion}"'} replace={'"' + versions.terraform + '"'}>
+
+```ruby
+terraform {
+  required_providers {
+    chronosphere = {
+      source  = "chronosphereio/chronosphere"
+      version = "{terraformVersion}"
+    }
+  }
+}
+```
+
+</DynamicCode>
+
+Versions 1.0.0 and newer remove several deprecated and unsupported features from the
+provider. For details about those changes, see the
+[Terraform release notes](/tooling/infrastructure/terraform/release-notes).
+
+### Install versions prior to v1.0.0
+
+Chronosphere hosts older versions of the Terraform provider in a custom registry.
+Chronosphere doesn't support these older versions, which include deprecated features
+removed in v1.0.0.
+
+To install and use these unsupported versions, configure your provider using the following code:
+
+<DynamicCode find={'"{terraformVersion}"'} replace={'"' + versions.terraform + '"'}>
+
+```ruby
+terraform {
+  required_providers {
+    chronosphere = {
+      source  = "tf-registry.chronosphere.io/chronosphere/chronosphere"
+      version = "{terraformVersion}"
+    }
+  }
+}
+```
+
+</DynamicCode>
+
+## Authenticate to Chronosphere
+
+The Terraform provider requires an API token generated from an unrestricted
+[service account](/administer/accounts-teams/service-accounts) with the `SysAdmin`
+role to authenticate with the Chronosphere API. If you need to create a new service
+account, you must use an account that belongs to a team with the SysAdmin role.
+
+<Warning>
+Store the API token in a secure location. If you lose your token, you must create a
+new service account.
+</Warning>
+
+{/* vale Chronosphere.Terms = NO */}
+
+After you have the API token, you can use it to grant Terraform permission to modify
+Chronosphere resources:
+
+1. In the shell environment where you plan to run Terraform, set the
+   `CHRONOSPHERE_API_TOKEN` environment variable:
+
+   ```shell /API_TOKEN_VALUE/
+   export CHRONOSPHERE_API_TOKEN=API_TOKEN_VALUE
+   ```
+
+   Replace _`API_TOKEN_VALUE`_ with the service account's API token.
+
+1. Add your organization to the `provider` configuration in your Terraform file:
+
+   ```ruby
+   provider "chronosphere" {
+     org = "MY_ORG"
+   }
+   ```
+
+   Replace _`MY_ORG`_ with your Chronosphere subdomain name, such as
+   `MY_ORG.chronosphere.io`.
+
+1. Run `terraform init` to set up the local data necessary to run Terraform with a
+   new provider.
+
+{/* vale Chronosphere.Terms = YES */}
+
+## Bootstrap your Terraform configuration
+
+You can use Terraform to manage new or existing supported resources. The `chronotf` tool generates
+Terraform configurations from existing resources and imports them into the Terraform state.
+
+### Install chronotf
+
+Use [`curl`](https://curl.se) to download the latest version of `chronotf`, which is available for
+Linux and macOS.
+
+<Tabs>
+<Tab title="macOS (Intel)" id="install-chronotf-macos-amd64">
+
+1. Download the `darwin_amd64` build of `chronotf`:
+
+   <code>curl -LO {chronotfMacOSIntelLink}</code>
+
+1. Make the `chronotf` binary executable.
+
+   <code>chmod +x {chronotfMacOSIntel}</code>
+
+1. Move the binary into your `PATH`:
+
+   <code>sudo mv {chronotfMacOSIntel} /usr/local/bin/chronotf</code>
+
+   If you don't have permission to install to `/usr/local/bin`, replace it with
+   another directory in your `PATH`.
+
+1. Test the `chronotf` installation by running it:
+
+   ```shell
+   chronotf version
+   ```
+
+</Tab>
+<Tab title="macOS (M-series)" id="install-chronotf-macos-arm64">
+
+1. Download the `darwin_arm64` build of `chronotf`:
+
+   <code>curl -LO {chronotfMacOSARMLink}</code>
+
+1. Make the `chronotf` binary executable:
+
+   <code>chmod +x {chronotfMacOSARM}</code>
+
+1. Move the binary into your `PATH`:
+
+   <code>sudo mv {chronotfMacOSARM} /usr/local/bin/chronotf</code>
+
+   If you don't have permission to install to `/usr/local/bin`, replace it with
+   another directory in your `PATH`.
+
+1. Test the `chronotf` installation by running it:
+
+   ```shell
+   chronotf version
+   ```
+
+</Tab>
+<Tab title="Linux" id="installing-chronotf-linux">
+
+1. Download the `linux_amd64` build of `chronotf`:
+
+   <code>curl -LO {chronotfLinuxLink}</code>
+
+1. Make the `chronotf` binary executable:
+
+   <code>chmod +x {chronotfLinux}</code>
+
+1. Move the binary into your `PATH`:
+
+   <code>mv {chronotfLinux} /usr/local/bin/chronotf</code>
+
+1. Test the `chronotf` installation by running it:
+
+   ```shell
+   chronotf version
+   ```
+
+</Tab>
+</Tabs>
+
+### Run chronotf
+
+Terraform keeps local state to determine how to reconcile Terraform files with real
+resources.
+
+If you created some of your Terraform resources outside of Terraform, import them
+into the Terraform state with the `chronotf import-state` command before running
+`terraform apply`.
+
+1. Create Terraform configuration for existing resources.
+
+   Use the following command to export existing resources to a `main.tf` Terraform
+   file:
+
+   ```shell /API_TOKEN/ /MY_ORG/
+   ./chronotf export-config -o main.tf --api-token API_TOKEN --org MY_ORG
+   ```
+
+   Replace the following:
+
+   - _`API_TOKEN`_: A Chronosphere API token, such as from a
+      [service account](/administer/accounts-teams/service-accounts).
+   - _`MY_ORG`_: Your Chronosphere subdomain name, such as `MY_ORG.chronosphere.io`.
+
+1. Preview what Terraform adds when bootstrapping its state with the `--dry-run` flag.
+
+   From the directory with the Terraform files and state, run:
+
+   ```shell
+   chronotf import-state --dry-run
+   ```
+
+1. Bootstrap the Terraform state.
+
+   From the directory with the Terraform files and state, run:
+
+   ```shell
+   chronotf import-state
+   ```

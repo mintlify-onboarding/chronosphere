@@ -1,0 +1,159 @@
+---
+title: Analyze live traffic traces
+'og:description': Use Trace Analyzer in Chronosphere Observability Platform to view incoming traces.
+sidebarTitle: Incoming traces
+---
+{/* -- dri: Adam Locke -- */}
+
+
+The Trace Analyzer provides a real-time view of incoming traces grouped by tags and
+their relative frequency. Use this information to help understand how often your
+applications emit traces, troubleshoot spikes in ingest rates, and ensure that the
+Collector is aware of particular kinds of traces.
+
+Trace Explorer operates on persisted data only, whereas Trace Analyzer can show data
+at any stage in the ingest pipeline, such as ingested, dropped, and persisted data.
+If you configured [tail sampling](/control/sampling/tail-sampling), which occurs
+after data ingestion, you can use Trace Analyzer to see spans that were dropped based
+on tail sampling rules.
+
+## Prerequisites
+
+To explore tracing data in Chronosphere Observability Platform, you must either
+install and configure the Chronosphere-provided
+[Collector](/ingest/metrics-traces/collector/install/tracing) or the
+[OpenTelemetry Collector](/ingest/metrics-traces/otel/otel-ingest) to receive trace
+data from your services.
+
+## Profile incoming traces
+
+To profile incoming traces:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
+1. Click the **Traces** tab.
+1. Click **Capture live data** to start profiling traces.
+1. To group incoming traces by tags, enter the tag value in the **Group by tags**
+   field.
+1. To filter traces by tag across all incoming traces, enter a tag and value to
+   filter by as a `key:value` pair in the **Filter by tags** field.
+
+   To filter results to only root spans, enter `__root_service__:true`. Root spans are
+   the top-level spans that all other spans are children or ancestors of. You can
+   safely [sample](/control/sampling) these spans without impacting the integrity of
+   a trace.
+
+You can use [glob syntax](/investigate/querying/glob-syntax) in this field to
+filter on specific patterns.
+
+## View incoming traces
+
+Trace Analyzer displays data in one table for tags and one table for spans.
+
+### Tags table
+
+The leftmost table displays available tag values, including the tag name, how often
+it appears, its unique values, and how much space it consumes. This table includes
+these columns:
+
+- **Appears In**: The percentage of spans you're viewing that have the matching label
+  key. Use this column to locate tags to dissect traces. A trace with a high total
+  percentage and low unique values indicates a high-level breakdown of where to
+  attribute traces to.
+- **Unique**: Number of unique values for the respective label key. Use this column
+  to find high cardinality tags.
+- **Total size (bytes)**: The total size, in bytes, of each tag from when you click
+  **Capture live data**.
+- **Avg size (bytes)**: The average size, in bytes, of each tag.
+
+For example, consider the following spans:
+
+```text
+span1: __service__ = "sign_up", location = "loc1", version = "0.100"
+span2: __service__ = "sign_up", location = "loc2", version = "0.98"
+span3: __service__ = "login", version = "0.98"
+```
+
+These traces generate three rows in the leftmost table because there are three tags:
+`__service__`, `location`, and `version`. Every trace has an `__service__` tag, so the total
+percentage is always 100%. Only two traces have the `location` tag, so the total
+percentage is 66%, which is also true for the `version` tag.
+
+There are only two unique values for `__service__`, `sign_up`, and `login`, so the
+**Unique** column displays 2. Only two traces have the `location` tag, which has two
+unique values: `loc1` and `loc2`.
+
+| Tags            | Appears In | Unique | Total size (bytes) | Avg size (bytes) |
+| --------------- | ---------- | ------ | ------------------ | ---------------- |
+| `__service__`   | 100        | 2      | 59,718,131         | 45               |
+| `location`      | 66         | 2      | 59,873,486         | 45               |
+| `version`       | 66         | 2      | 29,982,052         | 22               |
+
+### Spans table
+
+The rightmost table displays the average and current spans per second for the
+selected tags in the **Avg. SPPS** and **Current SPPS** columns. The table groups
+data by the selected tag values, which display in the first columns. For example, if
+you enter `__service__` in the **Group by Tags** field, that tag displays as the first
+column in this table. Like in the tags table, the spans table includes total and
+average span sizes for every tag value.
+
+- **Avg SPPS**: Average rate of spans processed in spans per second.
+- **Current SPPS**: Current rate of spans processed in spans per second.
+- **Total size (bytes)**: The total size, in bytes, of each span from when you click
+  **Live**.
+- **Avg size (bytes)**: The average size, in bytes, of each span associated with the
+  label specified in the **Group by Tags** field.
+
+| `svc`           | Avg SPPS | Current SPPS | Total size (bytes) | Avg size (bytes) |
+| --------------- | -------- | ------------ | ------------------ | ---------------- |
+| `ordering-svc`  | 331      | 296          | 2,218,398          | 445              |
+| `auth-svc`      | 355      | 314          | 1,709,645          | 320              |
+| `inventory-svc` | 331      | 296          | 2,218,398          | 447              |
+
+## Promote tags for differential diagnosis
+
+When viewing a stream of incoming traces, the [tags table](#tags-table) displays all
+tags related to your trace data. If you pause the live stream of traces, you can
+select individual tags and promote them to top tags in the
+[**Differential Diagnosis**](/investigate/analyze/differential-diagnosis/traces)
+tab of Trace Explorer. Promoting tags makes them display in all differential
+diagnosis results for every user in your Observability Platform tenant.
+
+You must have administrative privileges to complete this task.
+
+To promote tags to top tags:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
+1. Click the **Traces** tab.
+1. Click **Capture live data** to start profiling traces.
+1. Click **Capture live data** again to pause the live stream of traces.
+1. Hold the pointer over the tag you want to promote, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon, and then click **Add to top tags**.
+
+   The selected tag moves to the **Top tags** section, and is automatically included
+   in differential diagnosis results in the **Differential Diagnosis** tab of Trace
+   Explorer.
+1. Complete the previous step to promote additional tags.
+
+## Group and filter spans
+
+You can filter or group traces by tag using the **Group by tags** and
+**Filter by tags** fields. If you select multiple tags, the table lists the groups in
+the order you select them.
+
+Trace Analyzer groups traces using the `__service__` tag by default. Select a tag in
+the **Group by tag** field to add it as a column in the rightmost table. To filter
+using a specific tag, enter a tag and value in the **Filter by tag** field as a
+`key:value` pair. For example, you can enter `service.name:traceingester` to filter
+specifically on that `key:value` pair.
+
+Use the **Showing** list to filter incoming traces based on their status:
+
+- **Ingested**: Traces that are still processing for storage.
+- **Dropped**: Traces that dropped based on defined
+  [tail sampling rules](/control/sampling/tail-sampling).
+- **Missing Root**: Traces that are missing their root span.

@@ -1,0 +1,46 @@
+---
+title: Authenticate in Pipeline CLI
+'og:description': Learn how to authenticate with Chronosphere through Pipeline CLI.
+sidebarTitle: Authenticate
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+To use Pipeline CLI, you must [generate an API token](#generate-an-api-token) to
+authenticate with Telemetry Pipeline, and then [set that token](#set-or-switch-an-api-token)
+in Pipeline CLI.
+
+<Note>
+API tokens are tied to specific projects within Telemetry Pipeline, so only
+one API token can be active in your Pipeline CLI session. To switch between projects,
+you must [switch tokens](#set-or-switch-an-api-token) accordingly.
+</Note>
+
+## Generate an API token
+
+Follow these steps to generate an API token in Telemetry Pipeline:
+
+1. Sign in to the [Telemetry Pipeline web interface](https://core.calyptia.com/).
+1. Open the project where you want to create a fleet.
+1. In the navigation menu, select **<Icon icon="gear" /> Settings**.
+1. In the **Generate API key** section, enter a name for your new API key, and then
+   click **Generate**.
+1. If you have multiple projects in Telemetry Pipeline, repeat these steps for each
+   project.
+
+## Set or switch an API token
+
+Only one API token can be active in your Pipeline CLI session. Each API token is tied
+to a specific project, which means that setting an API token determines which project
+is active. If you have multiple Telemetry Pipeline projects, follow these steps to
+switch between them.
+
+1. Copy the value of the API token you [generated](#generate-an-api-token) for that
+   project.
+1. Run the following command in Pipeline CLI:
+
+   ```shell /TOKEN/
+   calyptia config set_token TOKEN
+   ```
+
+   Replace _`TOKEN`_ with the value of the API token you copied in the previous step.

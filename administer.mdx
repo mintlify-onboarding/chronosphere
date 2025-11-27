@@ -1,0 +1,46 @@
+---
+title: Administer your tools and users
+'og:description': Chronosphere Observability Platform offers tools and guidance for managing users, teams, collections, and your infrastructure-as-code settings.
+sidebarTitle: Overview
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Administrative users focus on observability tools so that developers can use those
+tools to monitor and maintain the health of their distributed system. As an
+administrative user, you might focus on one or more of the following tasks.
+
+## Cost control
+
+Manage license consumption by
+[reviewing licensing dashboards](/observe/dashboards/chronosphere-managed-dashboards#licensing-overview)
+to identify usage trends and avoid exceeding your organization's licensing limits.
+Use the Chronosphere Control Plane to
+[shape your metric data](/control/shaping), downsample data, and reduce the
+amount of data you persist. You can also
+[create sampling rules](/control/sampling) to manage the tracing data
+you keep and discard.
+
+## Data collection
+
+[Ingest telemetry data](/ingest) into Chronosphere Observability Platform, which can
+include metrics, traces, and change events. Your Collector selection depends on the
+data you plan to ingest. Chronosphere recommends using the Chronosphere Collector,
+but can also ingest data from the OpenTelemetry Collector.
+
+## Data usability
+
+[Explore your data](/investigate) to understand where you can normalize,
+sanitize, and optimize telemetry data to make it usable for developers and to filter
+out less useful data. [Analyze usage metrics](/overview/types/metrics) and
+implement aggregation rules to improve the quality and reduce the cardinality of
+stored metrics data.
+
+## Platform usability
+
+Create and manage [collections](/administer/collections) to group Observability
+Platform resources associated with a service or feature you want to monitor. You
+create [teams](/administer/accounts-teams/teams) to organize accounts into groups and
+define permissions for sensitive management and administrative operations. A team's
+accounts have shared responsibility for individual services, which Observability
+Platform represents as collections.

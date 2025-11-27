@@ -1,0 +1,161 @@
+---
+title: Backpressure
+'og:description': Learn how to manage data backpressure in Chronosphere Telemetry Pipeline.
+sidebarTitle: Backpressure
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+When a telemetry pipeline ingests data, it's possible for the volume of incoming
+data to exceed that pipeline's throughput. This creates a condition known as
+_backpressure_, where data accumulates faster than the pipeline can process
+and route that data to its intended destination.
+
+<Warning>
+Although some amount of backpressure is normal and expected, unmanaged or excessive
+backpressure can result in data loss.
+</Warning>
+
+## Overview
+
+If a pipeline needs to buffer data, it stores the data in memory until that
+pipeline is ready to process and route the data to its intended destination.
+After it processes and routes the data, the pipeline flushes that data from memory.
+Pipelines with the StatefulSet [workload](/pipeline-configure/kubernetes/workloads)
+type use a [hybrid](#hybrid-buffering-for-statefulsets) buffer by storing a parallel
+copy of buffered data in the file system, which creates a persistent backup that
+mirrors the data written to memory.
+
+If the volume of incoming data exceeds a pipeline's throughput, the amount of
+data in temporary storage will increase accordingly. This is what creates
+backpressure, but pipelines are designed to accommodate a certain amount of
+backpressure without issue. To draw a comparison with pipes that carry water,
+temporary storage is like the basin of a sink: if water flows faster than it drains,
+the basin will fill up and store the extra water until it reaches the drain.
+
+However, if a pipeline continues buffering new data to temporary storage faster
+than it can remove old data, that storage will eventually reach capacity.
+This is the point at which backpressure becomes an urgent problem because
+the buffered data is like a sink that's about to overflow. When a pipeline's temporary
+storage is at capacity, it will stop buffering new data, which prevents an overflow
+but can cause data loss.
+
+### Push-based sources versus pull-based sources
+
+When a pipeline stops buffering new data, the potential for data loss partly
+depends on whether its associated source plugins are
+[push-based or pull-based](/pipeline-data/plugins/source-plugins#push-based-and-pull-based-source-plugins).
+
+For push-based source plugins, which passively receive data, Chronosphere
+has no control over the behavior of that data source. Some sources might pause
+the flow of data if they detect an interruption, but other sources might continue
+attempting to send data to the unavailable pipeline, which can cause data loss.
+
+For pull-based source plugins, which either actively fetch data or generate test
+data, Telemetry Pipeline can control communication between the source and itself.
+If a pipeline is unavailable, Telemetry Pipeline pauses the flow
+of data, then resumes fetching data when the pipeline is ready to ingest it
+again. This behavior can add temporary latency if the source buffers a large
+amount of data during the pipeline's downtime, but avoids major data loss.
+
+### Hybrid buffering for StatefulSets
+
+In a StatefulSet pipeline, each
+[chunk](https://docs.fluentbit.io/manual/administration/buffering-and-storage#chunks)
+of buffered data is always stored in the file system. If the pipeline has enough space
+in memory, an identical chunk of that buffered data is also written to memory. If
+the pipeline doesn't have enough space in memory, the chunk of buffered data
+remains only in the file system until there is enough space to write an identical
+chunk to memory.
+
+Chunks that are stored simultaneously in memory and in the file system are known as `up`
+chunks, and chunks that are stored only in the file system are known as `down`
+chunks. Unlike `down` chunks, pipelines can access data in `up` chunks directly. A
+`down` chunk in the file system becomes an `up` chunk when a copy of the `down` chunk
+is written to memory.
+
+After an `up` chunk is processed and routed, the associated buffered data both
+in memory and in the file system is flushed.
+
+## Manage backpressure
+
+The available methods for managing backpressure vary depending on your pipeline's
+[workload](/pipeline-configure/kubernetes/workloads) type. Because of this,
+choosing the right workload type is also a key part of managing backpressure.
+
+<Note>
+The primary factors that contribute to backpressure are independent of Telemetry
+Pipeline, like the amount of data that your sources emit and your destinations'
+capacity to receive data. To manage these factors, you must configure your sources
+and destinations directly.
+</Note>
+
+### Deployment pipelines
+
+Pipelines with the Deployment workload type store buffered data only in memory.
+
+Use the following methods to manage backpressure for Deployment pipelines:
+
+- Set the `mem_buf_limit` configuration parameter to enforce a limit for how much
+  data a source plugin can buffer to memory. When this limit is reached,
+  the pipeline will stop buffering new data from that source plugin.
+- Configure [resource profiles](/pipeline-configure/resource-profiles) to set
+  thresholds for a pipeline's resource usage.
+- [Scale](/pipeline-configure/scaling) pipelines to increase their throughput.
+  However, keep in mind that adding replicas to a pipeline increases its
+  resource usage, and that scaling won't alleviate destination-level bottlenecks.
+- Monitor the latency added by any active [processing rules](/pipeline-data/processing-rules).
+  Complex processing operations can add delays and reduce throughput.
+
+### StatefulSet pipelines
+
+Pipelines with the StatefulSet workload type use a [hybrid approach](#hybrid-buffering-for-statefulsets)
+that stores buffered data both in memory and in the file system.
+
+Use the following methods to manage backpressure for StatefulSet pipelines:
+
+- Configure [resource profiles](/pipeline-configure/resource-profiles) to set
+  thresholds for a pipeline's resource usage.
+  - Set the `resources.storage.backlogMemLimit` resource profile parameter to
+    increase or decrease the amount of memory allocated for storing buffered data.
+    When this limit is reached, any new data will be buffered solely to the
+    file system, assuming the file system has enough available free space.
+    This parameter sets a per-pipeline limit instead of a per-plugin limit.
+  - Set the `resources.storage.volumeSize` resource profile parameter to increase
+    or decrease the size of the persistent file system for each pipeline Pod.
+  - Set the `resources.storage.maxChunksUp` resource profile parameter to
+    increase or decrease the number of
+    [chunks](https://docs.fluentbit.io/manual/administration/buffering-and-storage#chunks)
+    that the pipeline can buffer to memory. When this limit is reached, any new
+    data is buffered only to the file system, assuming the file system has
+    enough available free space. This parameter sets a per-pipeline limit instead of
+    a per-plugin limit.
+- [Scale](/pipeline-configure/scaling) pipelines to increase their throughput.
+  However, adding replicas to a pipeline increases its resource usage, and scaling
+  won't alleviate bottlenecks caused by destinations.
+- Monitor the latency added by any active [processing rules](/pipeline-data/processing-rules).
+  Complex processing operations can add delays and reduce throughput.
+
+<Note>
+The `mem_buf_limit` configuration parameter has no effect on source plugins in
+StatefulSet pipelines.
+</Note>
+
+### DaemonSet pipelines
+
+Pipelines with the DaemonSet workload type store buffered data only in memory.
+
+Use the following methods to manage backpressure for DaemonSet pipelines:
+
+- Set the `mem_buf_limit` configuration parameter to enforce a limit for how much
+  data a source plugin can buffer to memory. When this limit
+  is reached, the pipeline will stop buffering new data from that source plugin.
+- Configure [resource profiles](/pipeline-configure/resource-profiles) to set
+  thresholds for a pipeline's resource usage.
+- Monitor the latency added by any active [processing rules](/pipeline-data/processing-rules).
+  Complex processing operations can add delays and reduce throughput.
+
+<Note>
+DaemonSet pipelines use a static number of replicas, which means they can't be
+scaled.
+</Note>

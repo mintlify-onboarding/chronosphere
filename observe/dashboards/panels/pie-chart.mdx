@@ -1,0 +1,147 @@
+---
+title: Visualize proportional data with pie charts
+'og:description': Create and customize pie chart data visualization panels for Chronosphere Observability Platform dashboards.
+sidebarTitle: Pie chart
+---
+import ChronoctlDashboard from '/snippets/_partials/chronoctl-dashboard.mdx';
+import ClassicPanel from '/snippets/_partials/classic-panels.mdx';
+import DashboardDownsampleTruncate from'/snippets/_partials/dashboard-downsample-truncate.mdx';
+import DashboardSeriesNaming from '/snippets/_partials/dashboard-series-naming.mdx';
+import PanelQueries from '/snippets/_partials/panel-queries.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<ClassicPanel />
+
+Pie charts help you quickly view and compare a limited number of data segments by
+category. A _pie chart panel_ visualizes data returned by a [query](/investigate/querying)
+as mutually exclusive, relatively proportional segments of a total amount. Each
+segment's size corresponds to the proportion of the result's whole.
+
+To visualize large numbers of categories or categories that aren't mutually
+exclusive, or when you need to compare exact numbers with precision, consider using
+categorical [bar charts](/observe/dashboards/panels/bar-chart) instead.
+
+To create a pie chart or learn more about the configuration options common
+to all panels, see [Panels](/observe/dashboards/panels).
+
+## Use a pie chart's tooltip
+
+When you hold the pointer over a segment in a pie chart, Observability Platform
+displays a tooltip that shows the segment's full label and value. If the segment
+is aggregated, the tooltip lists the top 10 series within the aggregation.
+
+## Pie chart queries
+
+Pie charts use one or more
+[queries](/observe/dashboards/panels#change-a-panels-query) to retrieve data to
+visualize. Pie charts use the following query **Options** to refine the
+displayed information, depending on your **Datasource**:
+
+<Tabs>
+<Tab title="Metrics (Prometheus)">
+
+- <DashboardSeriesNaming />
+- **Type**: The [PromQL query](/investigate/querying/promql#basic-querying)
+  type: **Instant**, or **Range**.
+<DashboardDownsampleTruncate />
+
+</Tab>
+<Tab title="Logs">
+
+<DashboardSeriesNaming />
+
+</Tab>
+</Tabs>
+
+## Configure a pie chart
+
+You can configure a pie chart by [modifying its **Settings**](/observe/dashboards/panels#edit-a-panel).
+
+Any changes you make in the panel's **Settings** tab are immediately reflected in
+the **Preview** pane, but take effect only when you click **Apply** in the **Edit panel**
+interface and then save the dashboard.
+
+Observability Platform doesn't fully support directly editing a panel's JSON representation
+and recommends configuring panels in the user interface. Use the JSON representation
+only for managing your configuration as code with tools such as [Chronoctl](/tooling/chronoctl)
+and [Terraform](/tooling/infrastructure/terraform).
+
+To modify a pie chart's settings using its Settings tab:
+
+1. [Edit the pie chart panel](/observe/dashboards/panels#edit-a-panel).
+1. In the **Edit panel** interface, click the **Settings** tab.
+
+### Modify a pie chart's legend
+
+The **Legend** section in a pie series chart's **Settings** tab controls whether
+to display a legend alongside the chart, and if so it also configures where and
+how the legend is displayed.
+
+- **Show**: Toggles whether to display the legend. Defaults to disabled.
+- **Position**: Selects whether to display the legend at the **Bottom** or to the
+  **Right** of the chart. Defaults to **Bottom**.
+- **Mode**: Selects whether to display the legend as a **List** of categories with
+  a color swatch associating it with a line or bar on the chart, or as a **Table**
+  with a header row. Defaults to **List**.
+- **Size**: Defines the legend's size relative to the chart as either **Small**
+  or **Medium**. Defaults to **Small**.
+
+### Modify a pie chart's visual representation
+
+The **Visual** section in a pie chart's **Settings** tab controls how
+Observability Platform visualizes the query's pie results in the chart.
+
+- **Display**: Toggles whether to visualize the data as a filled (**Default**) or
+  **Donut** chart.
+- **Show series name**: Toggles whether the series name is displayed next to the
+  segment.
+- **Color Palette**: Determines the chart's color palette. The **Classic** palette
+  uses six colors and prioritizes readability. The **Consistent** palette
+  includes more colors and lets you assign a color to a series consistently across
+  multiple panels. The **Status-neutral** palette excludes red, orange, and green
+  to help distinguish between the chart's values and status indicators. Defaults to **Classic**.
+
+### Modify a pie chart's other features
+
+The **Options** section in a pie chart's **Settings** tab controls other features
+related to the chart's labels and units.
+
+- **Label format**: Determines whether a segment's value label should be depicted
+  as a **Percent**, the raw **Value**, or **Both** at once.
+
+  Percent and Value labels each have their own options, listed under the **Percent**
+  and **Value** subsections.
+
+  - For both Value and Percent labels, **Decimals** determines the maximum number
+    of decimal places to render. The resulting decimal places might be fewer than
+    the selected value because Observability Platform doesn't render trailing zeros
+    in decimal places.
+
+    For example, when **Decimals** is set to **2**, the panel renders the value
+    `1.5` as **1.5**, the value `1.55` as **1.55**, and `1.555` as **1.56**.
+
+    You can choose from **0** to **4** maximum decimal places, or **Max**, which
+    displays up to 20 decimal places.
+  - For Value labels, you can configure additional settings:
+    - **Unit**: Defines the value's unit. Defaults to `Decimal`.
+    - **Decimal**: Displays values using base 10 units. For example, Observability Platform
+      renders a decimal value of `1000000` as `1M` when **Abbreviate** is enabled.
+    - **Bytes**: Displays values using decimal multiple-byte units.
+    - **Time**: Determines the [unit of time](/overview/concepts/time-units)
+      that Observability Platform uses to interpret a numeric value.
+    - **Percent**: Interprets the value as a percentile, representing 0% to 100% on
+      a range of either 0.0 to 1.0 (**Percent (0.0-1.0)**) or 0 and 100 (**Percent (0-100)**).
+
+      For example, Observability Platform renders a value of `1.0` in
+      **Percent (0.0-1.0)** as `100%`, and in **Percent (0-100)** as `1%`.
+    - **Abbreviate**: Toggles whether to abbreviate units. For example,
+      if you enable Abbreviate, Observability Platform renders a value of `100000000`
+      as `100M`. You can toggle this setting only if you set the Unit to `Decimal`
+      or `Bytes`; `Time` units are always abbreviated and `Percent` values don't require
+      it. Defaults to `true`.
+    - **Aggregate when % is \<=**: Defines the percentile threshold at which the chart
+      aggregates the smallest categories into a single segment. Categories with a
+      percentile value smaller than this setting are consolidated into a single
+      segment on the chart. Defaults to `3`.

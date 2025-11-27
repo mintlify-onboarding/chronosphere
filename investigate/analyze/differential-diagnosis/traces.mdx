@@ -1,0 +1,168 @@
+---
+title: Identify issues behind suspicious tracing trends
+'og:description': 'Learn how to use differential diagnosis in Trace Explorer to identify tag:value pairs most closely correlated with suspicious behavior.'
+sidebarTitle: Identify tracing issues
+---
+{/* -- dri: Adam Locke -- */}
+
+
+When an incident occurs, you can use Trace Explorer to
+[search and filter](/investigate/querying/traces) trace data to identify
+trends in requests, errors, or latencies in services and related operations. After
+identifying a trend, you want to understand why it's happening.
+
+[_Differential diagnosis_](/investigate/querying/traces/features#differential-diagnosis)
+(DDx) lets you identify trends and immediately scan through all related tags and
+values to pinpoint the exact `tag:value` pairs most closely correlated with
+suspicious behavior.
+
+You can compare `tag:value` pairs to illustrate how data is changing, which helps
+determine whether data is usually correlated, indicating normal operations, or
+unusually correlated, which can indicate underlying causes of errors or latency.
+
+Comparing data over time helps to illustrate how data is changing, and can
+distinguish between data that's always clustered in errors, or slow requests from
+data that's _recently_ clustered in errors or slow requests. This comparison
+indicates a possible source of errors or spikes in latency. For example, a developer
+who's debugging errors can compare current data against data immediately before a
+deploy to determine what's changed.
+
+Administrators can [promote top tags](#promote-top-tags) in your Observability
+Platform tenant so those tags always display in differential diagnosis results.
+
+<Tip>
+Learn more about differential diagnosis, see
+[Troubleshoot microservices issues faster with Differential Diagnosis](https://chronosphere.io/learn/troubleshoot-faster-with-ddx/)
+on the Chronosphere Blog.
+</Tip>
+
+## Access and use differential diagnosis
+
+You can access differential diagnosis insights from different areas of Trace
+Explorer. The method you choose depends on your entry point and what data you're
+investigating:
+
+- **Span statistics**: Use this tab to locate interesting or alarming trends in errors or
+  latencies. After identifying a service or service and operation with increasing
+  trends, use differential diagnosis to understand what issues are causing the trend.
+
+- **Differential Diagnosis**: Use this tab to determine the health of the service or
+  service and operation your team owns. Go directly to this tab to determine whether
+  errors, successes, and latencies are distributed across environments, regions,
+  build versions, or other important contexts.
+
+- **Trace list**: Use this tab to explore a specific trace that you received an alert
+  about, or discovered in a related log. Locate spans with very long durations or
+  that are generating considerable errors, and then use differential diagnosis to
+  complete an aggregate analysis for a larger set of similar spans to elicit a common
+  trend that might explain unexpected or irregular behavior.
+
+<Note>
+You can query traces directly [from a dashboard](/observe/dashboards/query-traces),
+and then complete differential diagnosis on the defined query. Observability Platform
+applies the context from your query to Trace Explorer.
+</Note>
+
+To access and use differential diagnosis:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Trace Explorer**.
+
+1. Choose the time period to display results for, which defaults to the last 15
+   minutes.
+
+1. Use the **Query builder** to
+   [define a search](/investigate/querying/traces#define-a-search), and then
+   click **<Icon icon="arrows-rotate" /> Run**.
+
+   If the time range for your query is broad, such as the last five days, Trace
+   Explorer loads results progressively. As results are available, you can click
+   **Display more results** to view partial results.
+
+   When all results are available, click **Display complete results** to view the
+   complete list of results.
+
+1. Use one of the following options to access differential diagnosis insights:
+
+   - On the **Span statistics** tab, click a service or service and operation, and then
+     click **Differential Diagnosis** in the resulting dialog.
+
+   - Click the **Differential Diagnosis DDx** tab, and then select a service or service
+     and operation.
+
+     <Note>
+      A shortcut to view traces related to your differential diagnosis query is to
+         click **View traces** on the **Differential Diagnosis DDx** tab. The resulting
+         dialog displays individual traces matching your query in the same view presented
+         in the **Trace list** tab.
+
+         Click **Update Trace Explorer query** to apply the differential diagnosis
+         criteria you specified to the **Query builder** in Trace Explorer.
+      </Note>
+
+   - Click the **Trace list** tab. Click the name of a trace in the **Trace** column to
+     open the trace details page. Select a span, and then click **Differential Diagnosis**.
+
+     The **Differential Diagnosis DDx** tab displays insights for the criteria you
+     selected.
+
+1. Select one or more tags to display the distribution of those `tag:value` pairs
+   across [several metrics](/investigate/querying/traces/features#differential-diagnosis-metrics)
+   simultaneously.
+
+1. To compare trends for selected tags against a point in the past, make a selection
+   from the **Compare to past** dropdown. For example, selecting **1 hour prior**
+   updates each of the charts with statistics for the selected tags compared to the
+   values one hour ago.
+
+1. To view trends for your data, click **Over time**. The visualizations change to
+   line graphs, which display errors, successes, and duration over time for each of
+   the selected tags in the chosen time period. Duration for each tag is represented
+   in microseconds (µs).
+
+   Use this feature in conjunction with the **Compare to past** dropdown to identify
+   anomalies, including where and when they started. You can also
+   [overlay change events](/observe/enable-events/traces) on the **Over time**
+   panels to help identify what changed in your environment, and whether those events
+   correlate with changes in errors, successes, or duration.
+
+1. To sync the order of all the bars in other charts to a specific chart, use the
+   **Chart sorting** dropdown. For example, if you choose **Sync to error spans**,
+   each of the charts update to reflect the ordering of the **Error spans** chart.
+   This capability lets you compare the same tag across different heuristics.
+
+## Promote top tags
+
+Administrators can promote tags to display in the **Top tags** section of the
+**Differential Diagnosis DDx** tab. These tags always display in differential diagnosis
+results for all users in your Observability Platform tenant.
+
+You must have administrative privileges to complete this task.
+
+<Note>
+You can also promote top tags from the
+[Live Telemetry Analyzer](/investigate/analyze/trace-analyzer#promote-tags-for-differential-diagnosis).
+</Note>
+
+To promote tags to top tags:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and
+   then select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Trace Explorer**.
+
+1. Click the **Differential Diagnosis DDx** tab.
+
+1. In the **Find tags** field, enter the name of the tag you want to promote to a top
+   tag.
+
+1. Hold the pointer over the tag, click the <Icon icon="ellipsis-vertical" /> three
+   vertical dots icon, and then click **Add to top tags**.
+
+   The selected tag moves to the **Top tags** section, and is automatically included
+   in differential diagnosis results.
+
+1. Complete the previous step to promote additional tags.
+
+To remove a tag from the **Top tags** section, hold the pointer over the tag, click
+the <Icon icon="ellipsis-vertical" /> three vertical dots icon, and then click
+**Remove from top tags**.

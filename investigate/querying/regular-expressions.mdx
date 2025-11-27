@@ -1,0 +1,29 @@
+---
+title: Regular expressions
+'og:description': Learn about which regular expression engine to use when querying data in Chronosphere Observability Platform.
+sidebarTitle: Regular expressions
+---
+import RegexGlob from '/snippets/_partials/regex-glob.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+<RegexGlob />
+
+All regular expressions in Prometheus use [RE2 syntax](https://github.com/google/re2/wiki/Syntax).
+Chronosphere Observability Platform supports RE2 syntax compatibility with Prometheus
+for queries using regular expressions in the following areas:
+
+- [Changes Explorer](/investigate/querying/filter-events)
+- [Dashboards](/observe/dashboards)
+- [Lens configuration](/administer/service-discovery)
+- [Metrics Explorer](/investigate/querying/metrics/explorer)
+- [Monitors](/investigate/alerts/monitors#use-annotations-with-monitors)
+- [Muting rules](/investigate/alerts/muting-rules#match-on-values-using-regular-expressions)
+- [Recording rules](/control/shaping/rules/recording)
+- [Trace Explorer](/investigate/querying/traces)
+
+<Note>
+Because the implementation of this parser is customized, the syntax might vary in
+some instances.
+</Note>

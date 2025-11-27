@@ -1,0 +1,249 @@
+---
+title: Route logs from Google Cloud Platform
+'og:description': Learn how to route logs from Google Cloud Platform into Chronosphere Observability Platform.
+sidebarTitle: Google Cloud Platform
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Google Cloud Platform provides
+[sinks](https://cloud.google.com/logging/docs/routing/overview#sinks), which control
+how you can route log data to supported destinations. Use the
+[Google Cloud Pub/Sub](https://cloud.google.com/pubsub/docs) destination to route log
+data from Google Cloud Platform to Chronosphere Observability Platform.
+
+Complete the following steps to route logs from Google Cloud Platform:
+
+1. [Create a sink for logs](#create-a-sink-for-logs).
+1. [Create a service account](#create-a-service-account).
+1. [Create a pull subscription](#create-a-pull-subscription).
+1. [Contact Chronosphere Support](#contact-chronosphere-support).
+
+If you want to use Terraform to manage routing Google logs to Observability Platform,
+refer to the [Terraform example](#terraform-example). After applying this
+configuration, Terraform generates the information that you supply to
+[Chronosphere Support](#contact-chronosphere-support).
+
+## Create a sink for logs
+
+First, you need to create a sink that defines the service type and destination to
+route your logs.
+
+1. In the Google Cloud Logs Console, in the left navigation, click **Log Router**
+   to open the [Log router](https://console.cloud.google.com/logs/router) page.
+1. Follow the steps in the Google Cloud documentation to
+   [create a sink](https://cloud.google.com/logging/docs/export/configure_export_v2#creating_sink).
+1. Select **Cloud Pub/Sub topic** as the sink service.
+1. Optional: Enter a filter expression that matches the log entries you want to
+   include.
+
+   See the
+   [Logging query language](https://cloud.google.com/logging/docs/view/logging-query-language)
+   in the Google Cloud documentation for information about how to construct queries.
+1. Complete the remaining steps to create the sink.
+
+Next, [create a service account](#create-a-service-account).
+
+## Create a service account
+
+After creating a sink, you create a service account in Google Cloud that
+Observability Platform impersonates.
+
+1. In the Google Cloud console,
+   [create a service account](https://cloud.google.com/iam/docs/service-accounts-create#creating).
+
+1. Add the Observability Platform principal to the Google Cloud service account.
+
+   Each Google Cloud service account must grant access to the Observability Platform
+   principal to impersonate them. The Observability Platform principal format is:
+
+   ```text
+   gcp-logs-ADDRESS@chronosphere-production-a|b|c.iam.gserviceaccount.com
+   ```
+
+    - _`ADDRESS`_: Your company name prefixed to your Observability Platform instance
+     that ends in `.chronosphere.io`. For example, _`MY_COMPANY`_`.chronosphere.io`.
+
+   Your cluster can vary (`a`, `b`, or `c`). Check with your account team to ensure
+   you have the correct format.
+
+   Grant the principal the `iam.serviceAccountTokenCreator` role.
+
+1. Enter information for the remaining fields to finish creating the service account.
+
+Next, [create a pull subscription](#create-a-pull-subscription).
+
+## Create a pull subscription
+
+Add a [pull subscription](https://cloud.google.com/pubsub/docs/subscription-overview)
+to the Pub/Sub destination you previously created. Observability Platform initiates
+requests to the Pub/Sub server to retrieve messages.
+
+1. In the Google Cloud console,
+   [Create a pull subscription](https://cloud.google.com/pubsub/docs/create-subscription#create_a_pull_subscription).
+1. In the **Delivery type** menu, select **Pull**.
+1. Configure the following recommended settings:
+
+   | Setting                    | Value                                 |
+   |----------------------------|---------------------------------------|
+   | Message retention duration | 23 hours<sup>*</sup>                  |
+   | Expiration period          | Never expire                          |
+   | Acknowledgement deadline   | 60 seconds                            |
+   | Exactly once delivery      | No                                    |
+   | Message ordering           | No                                    |
+   | Dead lettering             | No                                    |
+   | Retry policy               | Retry after exponential backoff delay |
+
+   <sup>*</sup>Set **Message retention duration** to less than 24 hours to avoid
+   storage costs.
+
+1. Grant access to the Pub/Sub you created by assigning the following roles to your
+   new internal service account:
+   - `roles/pubsub.subscriber`
+   - `roles/pubsub.viewer`
+
+Lastly, [contact Chronosphere](#contact-chronosphere-support) and provide the details
+about your pull subscription.
+
+## Contact Chronosphere Support
+
+After completing the previous steps, [contact Chronosphere Support](/support) and
+provide the following information:
+
+- The name of your new Google Cloud service account email, such as:
+
+  ```text
+  SERVICE-ACCOUNT@PROJECT-ID.iam.gserviceaccount.com
+  ```
+
+    - _`SERVICE-ACCOUNT`_ is the name of the Google Cloud service account you created
+      in [create a service account](#create-a-service-account).
+    - _`PROJECT-ID`_ is the ID of your Google Cloud project.
+- The name of the logging sink subscription you created, such as
+
+  ```text
+  projects/PROJECT-ID/subscriptions/SUBSCRIPTION
+  ```
+
+    - _`SUBSCRIPTION`_ is the name of the pull subscription you created in
+      [create a pull subscription](#create-a-pull-subscription).
+
+Chronosphere can then enable the logging integration to start routing your Google
+Cloud logs to Observability Platform.
+
+## Terraform example
+
+The following code provides an example for creating a single Google Cloud service
+account in the a Google Cloud project, and enables Observability Platform to
+impersonate and gain access.
+
+```ruby
+locals {
+  // Email address of your Chronosphere Logs tenant-specific principal.
+  chronosphere_sa_email = "gcp-logs-ADDRESS@chronosphere-production-b.iam.gserviceaccount.com"
+
+  // Google Cloud project containing logging data to be ingested into
+  // Observability Platform.
+  logging_project_id = "PROJECT_ID"
+
+  // Organization ID of the Google Cloud organization containing the project.
+  org_id = "ORGANIZATION_ID"
+}
+
+// Creates Pub/Sub topic for logging sink.
+resource "google_pubsub_topic" "main" {
+  name    = "logging_sink"
+  project = local.project_id
+}
+
+// Creates a new logging sink.
+resource "google_logging_organization_sink" "main" {
+  org_id           = local.org_id
+  name             = "all_logs_sink"
+  destination      = "pubsub.googleapis.com/${google_pubsub_topic.main.id}"
+  include_children = true
+}
+
+// Grants sink permission to roles so they can write to the Pub/Sub topic.
+data "google_iam_policy" "topic" {
+  binding {
+    role = "roles/pubsub.publisher"
+    members = [
+      google_logging_organization_sink.main.writer_identity,
+    ]
+  }
+}
+
+// Binds the role to a new topic.
+resource "google_pubsub_topic_iam_policy" "main" {
+  project     = local.project_id
+  topic       = google_pubsub_topic.main.name
+  policy_data = data.google_iam_policy.topic.policy_data
+}
+
+// Creates a new Pub/Sub subscription.
+resource "google_pubsub_subscription" "main" {
+  name    = "all_logs_sink"
+  project = local.project_id
+  topic   = google_pubsub_topic.main.name
+
+  message_retention_duration = "23h"
+  ack_deadline_seconds = 60
+
+  retry_policy {
+    minimum_backoff = "10s"
+  }
+
+  enable_message_ordering    = false
+  enable_exactly_once_delivery = false
+}
+
+// Creates a policy granting the new Chronosphere logs service account access to
+// the subscription.
+data "google_iam_policy" "subscription" {
+  binding {
+    role = "roles/pubsub.viewer"
+    members = [
+      google_service_account.chronosphere_logs.member
+    ]
+  }
+
+  binding {
+    role    = "roles/pubsub.subscriber"
+    members = [
+      google_service_account.chronosphere_logs.member
+    ]
+  }
+}
+
+// Binds the new policy to the subscription.
+resource "google_pubsub_subscription_iam_policy" "main" {
+  project      = local.project_id
+  subscription = google_pubsub_subscription.main.name
+  policy_data  = data.google_iam_policy.subscription.policy_data
+}
+
+// Service account that lets an Observability Platform tenant-specific principal
+// to impersonate it.
+resource "google_service_account" "chronosphere_logs" {
+  project    = local.project_id
+  account_id = "chronosphere-logs"
+}
+
+// The service account provides the Observability Platform tenant-specific principal with
+// roles/iam.serviceAccountTokenCreator access so that it can impersonate it. Only
+// the Observability Platform tenant-specific principal can perform this
+// impersonation.
+data "google_iam_policy" "chronosphere_logs" {
+  binding {
+    role    = "roles/iam.serviceAccountTokenCreator"
+    members = ["serviceAccount:${local.chronosphere_sa_email}"]
+  }
+}
+
+// Assigns the token creator permission to the service account.
+resource "google_service_account_iam_policy" "chronosphere_logs" {
+  service_account_id = google_service_account.chronosphere_logs.name
+  policy_data        = data.google_iam_policy.chronosphere_logs.policy_data
+}
+```

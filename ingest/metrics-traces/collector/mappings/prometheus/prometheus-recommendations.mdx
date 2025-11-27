@@ -1,0 +1,71 @@
+---
+title: Prometheus metric naming recommendations
+sidebarTitle: Prometheus metric naming recommendations
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+When choosing metric names and key/value pairs for labels, it's important to be consistent
+throughout your organization. Consistent labels reduce confusion across teams.
+
+A metric consists of a name and a set of labels, regardless of its
+[metric type](/control/shaping/types).
+
+```text
+node_network_receive_bytes_total{hostname="host1",mode="system"}
+```
+
+The _name_ of a metric is a single word that uniquely identifies the metric. In this
+example, the name is `node_network_receive_bytes_total`.
+
+A _label_ is a key/value pairs that helps differentiate and give meaning to
+metric names. In this example, the labels are `hostname="host1"` and `mode="system"`.
+
+## Metric name
+
+Use these guidelines to name your metrics:
+
+<Note>
+Metric names must follow [Prometheus name and label requirements](https://prometheus.io/docs/concepts/data_model/).
+Metrics that do not meet these requirements can not be queried and are considered
+invalid. Chronosphere rejects metrics that don't meet these definitions.
+</Note>
+
+- Select a metric name that describes a function of the system you're monitoring
+  (for example, `node_memory_usage_bytes`). Be as concise as possible.
+- Include a prefix for the metric name that's relevant to the domain the metric belongs
+  to. For example, adding `http` to `http_request_duration_seconds` lets users know
+  this metric belongs to the HTTP domain.
+- Use suffixes to describe the unit in plural form. For example, the `seconds` in
+  `http_request_duration_seconds`.
+- Metric names can contain letters, numbers, underscores, or colons, based on the
+  regular expression `[a-zA-Z_:][a-zA-Z0-9_:]*`.
+- Reserve colons (`:`) in the name for calculated or aggregated metrics, such
+  as those produced by rollup rules.
+- Don't use underscores at the beginning of a metric name. Leading underscores are
+  reserved for internal use.
+- Periods (`.`) convert to underscores (`_`).
+
+## Label names and values
+
+Labels are a set of comma-separated key/value pairs, contained in curly braces. Labels
+let you query and alert on these different fields.
+
+Use labels to differentiate and give meaning to metric names. For example,
+`http_requests_total` refers to the total number of HTTP requests, but isn't fully
+descriptive. Using labels, you can break down the number of requests by `method`,
+`status_code`, and `endpoint`. Here are some best practices and limitations:
+
+- Label keys
+  - Use label keys to add dimensions to your metric name. For example,
+    `endpoint:/api/create_user` or `method:POST`).
+  - Don't add unbounded, high-cardinality labels, such as UUIDs or timestamps.
+  - Label keys can contain letters, numbers, underscores, or colons, based on the
+    regular expression `[a-zA-Z_:][a-zA-Z0-9_:]*`.
+  - Don't use underscores at the beginning of a label key. Leading underscores are
+    reserved for internal use.
+- Label values
+  - Label values might contain any Unicode characters.
+  - A label with an empty label value is equivalent to a label that doesn't exist.
+  - You can use PromQL to filter and aggregate based on these dimensions. Changing
+    any label value, including adding or removing a label, creates a new time series.

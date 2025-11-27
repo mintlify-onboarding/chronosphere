@@ -1,0 +1,97 @@
+---
+title: Telemetry Pipeline plugins
+'og:description': Learn how to use plugins in Chronosphere Telemetry Pipeline.
+sidebarTitle: Overview
+---
+import PipelineFlow from '/snippets/_partials/pipeline-flow-plugins-x2.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+<PipelineFlow/>
+
+Chronosphere Telemetry Pipeline provides _plugins_ that let you route telemetry
+data from one or more sources to one or more destinations. Plugins
+are customizable and offer support for logs, metrics, and traces, although not
+all plugins support all telemetry types.
+
+[Source plugins](/pipeline-data/plugins/source-plugins) ingest data into your
+pipelines, and [destination plugins](/pipeline-data/plugins/destination-plugins)
+send that data to the storage or analysis platform of your choice.
+
+## Add plugins to a pipeline
+
+The source and destination plugins for each pipeline are listed in the `inputs`
+and `outputs` section of that pipeline's [configuration file](/pipeline-configure/config-files).
+
+To add plugins to a pipeline, you can either edit a pipeline through the
+Telemetry Pipeline web interface, or edit the pipeline's configuration file
+directly. Each plugin includes a number of customizable settings, which are
+represented as key/value pairs within a configuration file. Many of these
+settings have default values.
+
+For example, this snippet shows the default configuration settings for an
+[OpenTelemetry source plugin](/pipeline-data/plugins/source-plugins/opentelemetry):
+
+```yaml
+pipeline:
+  inputs:
+    - Name: opentelemetry
+      port: "8088"
+      tag_from_uri: "false"
+      buffer_chunk_size: 512K
+      buffer_max_size: 4M
+      successful_response_code: "201"
+      tls.verify: on
+      tls.debug: "1"
+<...>
+```
+
+### Descriptive names
+
+To help keep track of your plugins, Telemetry Pipeline lets you add custom metadata
+to each plugin, including descriptive names. These descriptive names don't overwrite
+the default names assigned to each plugin. Instead, they're displayed under the
+plugin's default name in the Telemetry Pipeline web interface.
+
+<Tabs>
+<Tab title="Web interface" id="web">
+
+To add a descriptive name to a plugin through the Telemetry Pipeline web interface:
+
+1. In the **Pipeline Builder**, click the existing plugin to edit it.
+1. Expand the **Metadata** section, and enter a value in the **Name** field.
+1. Click **Save**.
+
+</Tab>
+<Tab title="Configuration file" id="yaml">
+
+To add a descriptive name to a plugin by editing a
+[pipeline configuration file](/pipeline-configure/config-files):
+
+- Add the following lines of YAML to the entry for that plugin:
+
+   ```yaml
+         core.metadata:
+         name: NAME
+   ```
+
+   Replace _`NAME`_ with the descriptive name you want to use for the plugin.
+
+The `core.metadata` key must be nested at the same level as other top-level
+configuration keys, and must _not_ replace the default `Name` key. For example,
+this snippet shows an OpenTelemetry source plugin correctly configured to use
+a descriptive name:
+
+```yaml
+pipeline:
+  inputs:
+    - Name: opentelemetry
+      port: "8088"
+      core.metadata:
+        name: otel-instance-1
+<...>
+```
+
+</Tab>
+</Tabs>

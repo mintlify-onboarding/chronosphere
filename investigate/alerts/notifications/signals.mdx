@@ -1,0 +1,261 @@
+---
+title: Signals
+'og:description': View and create signals with Chronosphere Observability Platform.
+sidebarTitle: Signals
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+_Signals_ use a unique set of labels to create groups of notifications when a monitor
+alert triggers or resolves. The groups display information from your monitor queries
+that aggregation might otherwise remove. Use signals to reduce the number of
+notifications sent, or to improve visibility by showing each time series alert.
+
+Signals use the following defaults:
+
+- Alerts send for the initial and any subsequent triggers for all signal types.
+- All monitors default to `per monitor` when created unless you choose another
+  option.
+- Chronosphere Observability Platform sends an additional notification every five
+  minutes when a new time series alert triggers.
+- If an alert remains active but no new time series trigger, Observability Platform
+  sends a notification every hour.
+- Signals use the [notification policies](/investigate/alerts/notifications/policies) set
+  in Observability Platform.
+
+Use the following options to group alerts, which affects how many notifications
+Observability Platform sends:
+
+- **Per monitor (one alert):** Sends one notification containing all time series that
+  meet the conditions. Use this option if you want only one notification that
+  contains all time series.
+- **Per signal (multiple alerts):** Sends one notification for each group in your
+  monitor. Helpful for logically grouping time series into the same alert.
+- **Per time series (many alerts):** Sends one notification for every time series
+  returned by the monitor query. This option sends the most alerts, but is helpful if
+  you want a notification for every time series that triggers your query.
+
+Signal notifications have the following behaviors:
+
+- Each signal alerts at most once every five minutes.
+- If alerts within a given signal change, Observability Platform renotifies, even
+  if the signal happened within the five minute interval.
+- If alerts within a given signal don't change, the signal renotifies when the
+  repeat interval elapses.
+
+You can configure a signal for an existing monitor or when
+[creating a new monitor](/investigate/alerts/monitors#create-a-monitor).
+
+<Note>
+Observability Platform reserves specific Prometheus labels such as `alertname` and
+`severity`. Observability Platform also uses the `severity` label to group alerts,
+except when a monitor specifies a signal per series.
+</Note>
+
+Refer to the [Prometheus metric naming recommendations](/ingest/metrics-traces/collector/mappings/prometheus/prometheus-recommendations)
+for additional information.
+
+## View signals
+
+Select from the following methods to view and signals on monitors.
+
+<Tabs>
+<Tab title="Web" id="view-available-signals-cloud">
+
+On the **Monitors** page, monitors with defined signals display
+the <Icon icon="folder-tree" /> file tree icon.
+
+To view signals:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Select the monitor to view.
+
+Signals for the monitor display in the **Signals** section of the monitor definition.
+Click a signal to deselect it.
+
+</Tab>
+
+<Tab title="Chronoctl" id="view-available-signals-chronoctl">
+
+Use [Chronoctl](/tooling/chronoctl) to view signals for a specific monitor with the
+`monitors list` command by passing the slug as the `slugs`
+argument.
+
+To return a monitor with the slug `default-monitor`:
+
+```shell
+chronoctl monitors list --slugs default-monitor
+```
+
+The signals for the monitor display in the returned monitor definition.
+
+[Use the Code Config tool](/investigate/alerts/monitors#use-the-code-config-tool) in
+Observability Platform to view the monitor's Chronoctl YAML representation.
+
+</Tab>
+<Tab title="Terraform" id="view-available-signals-terraform">
+
+[Use the Code Config tool](/investigate/alerts/monitors#use-the-code-config-tool) in
+Observability Platform to view a monitor's Terraform representation.
+
+</Tab>
+</Tabs>
+
+## Edit signals
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**
+   and select the monitor to edit.
+1. Click the <Icon icon="ellipsis-vertical" /> three vertical dots icon and select
+   **Edit Monitor**.
+1. Scroll to the **Signals** section and select one of the following options:
+
+   - **Per monitor (one alert):** Observability Platform sends a notification using
+     your selected [notification policy](/investigate/alerts/notifications/policies). It includes
+     all time series triggered by the monitor. This alert can send additional
+     notifications if new time series trigger.
+   - **Per signal (multiple alerts):** In the **Label Key** field, choose the
+     label to group alerts from this monitor. To add more label keys, click the
+     <Icon icon="plus" /> add icon.
+
+     You can use query aggregation to include or exclude specific labels. For
+     example, create a query to group results by only the `namespace` and `instance`
+     labels:
+
+     ```text
+     count by (namespace, instance) (up)
+     ```
+
+   - **Per time series (many alerts):** The monitor sends a notification for every
+     time series as it triggers. You can change the alert behavior or channel by
+     changing the policy for the monitor or editing the
+     [notification policy](/investigate/alerts/notifications/policies).
+
+## Signal examples
+
+Use the following examples to help you use signals, by type.
+
+### Per monitor
+
+This example query generates a single notification that includes all alerting time
+series.
+
+1. Enter the following query in the **Query** field, and select **15s** as the check
+   interval:
+
+   ```text
+   count by (namespace, job, instance) ({instance!="", namespace~=""})
+   ```
+
+1. In the **Signals** section, select **Per monitor (one alert)**.
+
+1. In the **Conditions** section, select **Critical**, choose **is >** as the
+   operator, and enter `5s` in the **Sustain** field.
+
+When the critical condition matches any time series, a single notification sends that
+includes all alerting time series.
+
+### Per signal
+
+In this example, you configure a query to track outages and use signals to track
+multiple time series.
+
+Four teams (`frontend`, `backend`, `database`, and `search`) are working on different
+components of a project. Each component has a set of services and resources its team
+monitors for performance and availability.
+
+Observability Platform ingests these metrics:
+
+```text
+resource_status{component="frontend", resource_type="availability", service_name="web_app"} 0
+resource_status{component="frontend", resource_type="performance", service_name="web_app"} 0
+resource_status{component="backend", resource_type="availability", service_name="api"} 0
+resource_status{component="database", resource_type="availability", service_name="db_cluster_1"} 0
+resource_status{component="database", resource_type="availability", service_name="db_cluster_2"} 0
+resource_status{component="database", resource_type="availability", service_name="db_cluster_3"} 0
+resource_status{component="search", resource_type="performance", service_name="search_engine"} 92
+resource_status{component="search", resource_type="availability", service_name="search_engine"} 100
+```
+
+Each monitored service sends a metric to Observability Platform called
+`resource_status`. This metric has the following labels:
+
+- `component`: The component and team name.
+- `resource_type`: Either `availability` or `performance` for a tracked metric
+   resource.
+- `service_name`: The name of the service.
+
+To define the signals for this data:
+
+1. Enter the following query in the **Query** field to alert your teams when a
+   resource isn't working as expected, and select **15s** as the check interval:
+
+   ```text
+   resource_status == 0
+   ```
+
+   This query looks for a status of `0`, which indicates a service failure.
+
+1. In the **Signals** field, select **Per signal (multiple alerts)** and enter the
+   following labels in the **Label key** field to send the `component` and
+   `resource_type` information when an alert triggers:
+
+   ```text
+   component,resource_type
+   ```
+
+1. In the **Conditions** section, select **Critical**, choose **is >** as the
+   operator, and enter **5s** in the **Sustain** field.
+
+When a matching alert triggers:
+
+- The `frontend` team receives a notification with these metrics:
+
+   ```text
+   resource_status{component="frontend", resource_type="availability", service_name="web_app"} 0
+   resource_status{component="frontend", resource_type="performance", service_name="web_app"} 0
+   ```
+
+- The `backend` team receives a notification with this metric:
+
+   ```text
+   resource_status{component="backend", resource_type="availability", service_name="api"} 0
+   ```
+
+- The `database` team receives a notification with these metrics:
+
+   ```text
+   resource_status{component="database", resource_type="availability", service_name="db_cluster_1"} 0
+   resource_status{component="database", resource_type="availability", service_name="db_cluster_2"} 0
+   resource_status{component="database", resource_type="availability", service_name="db_cluster_3"} 0
+   ```
+
+The search team doesn't receive any alerts because their services are functioning.
+
+### Per time series
+
+This example uses the same query and condition as in the [per signal](#per-signal)
+example. The difference is that in the **Signals** field, select
+**Per time series (many alerts)**.
+
+1. Enter the following query in the **Query** field, and select **15s** as the check
+   interval:
+
+   ```text
+   count by (namespace, job, instance) ({instance!="", namespace~=""})
+   ```
+
+1. In the **Signals** field, select **Per time series (many alerts)** and
+   enter the following labels in the **Label key** field to send the `component` and
+   `resource_type` information when an alert triggers:
+
+   ```text
+   component,resource_type
+   ```
+
+1. In the **Conditions** section, select **Critical**, choose **is >** as the
+   operator, and enter `5s` in the **Sustain** field.
+
+When the critical condition matches, a notification for each time series in the
+monitor query triggers using your notification policy.

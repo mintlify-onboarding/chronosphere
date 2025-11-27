@@ -1,0 +1,198 @@
+---
+title: Uninstall Telemetry Pipeline
+'og:description': Learn how to uninstall Chronosphere Telemetry Pipeline.
+sidebarTitle: Uninstall
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Use the information on this page to uninstall Chronosphere Telemetry Pipeline.
+
+<Note>
+For best results, use the same method to uninstall Telemetry Pipeline that you used
+to install it.
+</Note>
+
+## Uninstall from a Kubernetes cluster
+
+To uninstall Telemetry Pipeline from a Kubernetes cluster, use one of the following
+methods:
+
+<Tabs>
+<Tab title="Pipeline CLI" id="cli-uninstall">
+
+To uninstall Telemetry Pipeline from a Kubernetes cluster using Pipeline CLI:
+
+1. [Delete](/pipeline-data/create-modify#delete-a-pipeline) any active pipelines.
+
+1. In [Pipeline CLI](/pipeline-cli), run the following command to verify you
+   successfully deleted all pipelines:
+
+   ```shell /INSTANCE/
+   calyptia get pipelines --core-instance INSTANCE --show-ids
+   ```
+
+   Replace _`INSTANCE`_ with the name of your Core Instance.
+
+1. Run the following command to delete your Core Instance:
+
+   ```shell /INSTANCE/
+   calyptia delete core_instance operator INSTANCE
+   ```
+
+   Replace _`INSTANCE`_ with the name of your Core Instance.
+
+1. Run the following command to uninstall your Core Operator:
+
+   ```shell
+   calyptia uninstall operator
+   ```
+
+1. Optional: Delete the namespace where you installed Telemetry Pipeline. This
+   ensures no stray Telemetry Pipeline resources persist in your cluster. To do
+   so, run the following `kubectl` command:
+
+   ```shell /NAMESPACE/
+   kubectl delete namespace NAMESPACE
+   ```
+
+   Replace _`NAMESPACE`_ with the namespace where you installed Telemetry Pipeline.
+   If you didn't specify a namespace during your Telemetry Pipeline installation,
+   it was installed in the `calyptia` namespace.
+
+</Tab>
+<Tab title="Helm" id="helm-uninstall">
+
+To uninstall Telemetry Pipeline from a Kubernetes cluster using Helm:
+
+1. [Delete](/pipeline-data/create-modify#delete-a-pipeline) any active pipelines.
+
+1. Run the following command to determine which Helm charts are installed in your
+   cluster:
+
+   ```shell
+   helm list -n NAMESPACE
+   ```
+
+   Replace _`NAMESPACE`_ with the namespace where you installed Telemetry Pipeline.
+
+1. Run the following command to uninstall your Core Instance:
+
+   ```shell /NAME/ /NAMESPACE/
+   helm uninstall NAME -n NAMESPACE
+   ```
+
+   Replace the following:
+
+   - _`NAME`_: The name of your Core Instance, as displayed by
+   the output of the previous step.
+   - _`NAMESPACE`_: The namespace where you installed Telemetry Pipeline. If you
+   didn't specify a namespace during your Telemetry Pipeline installation, it
+   was installed in the `calyptia` namespace.
+
+1. Run the following command to uninstall the CRDs for Telemetry Pipeline:
+
+   ```shell
+   helm uninstall core-crd
+   ```
+
+1. Run the following command to uninstall your Core Operator:
+
+   ```shell /NAMESPACE/
+   helm uninstall core-operator -n NAMESPACE
+   ```
+
+   Replace _`NAMESPACE`_ with the namespace where you installed Telemetry Pipeline.
+
+1. Run the following command to verify that the uninstall commands removed
+   all Helm charts for Telemetry Pipeline:
+
+   ```shell
+   helm list -n NAMESPACE
+   ```
+
+   Replace _`NAMESPACE`_ with the namespace where you installed Telemetry Pipeline.
+
+1. Sign in to the [Telemetry Pipeline web interface](https://core.calyptia.com/).
+
+1. Open the project that contains the Core Instance that you want to delete.
+
+1. Go to **Core Instances**.
+
+1. In the **Manage your Core Instances** section, find the Core Instance that you
+   want to delete, and then click
+   **<Icon icon="ellipsis" />More&nbsp;<span aria-label="and then">></span>
+   <Icon icon="trash" />Delete**.
+
+</Tab>
+</Tabs>
+
+## Uninstall from Linux
+
+To uninstall Telemetry Pipeline from a Linux environment, use one of the following
+methods:
+
+<Tabs>
+<Tab title="Red Hat Enterprise Linux" id="rhel-uninstall">
+
+To uninstall Telemetry Pipeline from Red Hat Enterprise Linux or other Red Hat-based
+distributions:
+
+1. [Delete](/pipeline-data/create-modify#delete-a-pipeline) any active pipelines.
+
+1. In [Pipeline CLI](/pipeline-cli), run the following command to verify you
+   successfully deleted all pipelines:
+
+   ```shell /INSTANCE/
+   calyptia get pipelines --core-instance INSTANCE --show-ids
+   ```
+
+   Replace _`INSTANCE`_ with the name of your Core Instance.
+
+1. Run the following command to delete your Core Instance:
+
+   ```shell /INSTANCE/
+   calyptia delete core_instance operator INSTANCE
+   ```
+
+   Replace _`INSTANCE`_ with the name of your Core Instance.
+
+1. Run the following command:
+
+   ```shell
+   yum remove calyptia-core-operator
+   ```
+
+</Tab>
+<Tab title="Ubuntu Server Linux" id="ubuntu-uninstall">
+
+To uninstall Telemetry Pipeline from Ubuntu Server Linux or other Debian-based
+distributions:
+
+1. [Delete](/pipeline-data/create-modify#delete-a-pipeline) any active pipelines.
+
+1. In [Pipeline CLI](/pipeline-cli), run the following command to verify you
+   successfully deleted all pipelines:
+
+   ```shell /INSTANCE/
+   calyptia get pipelines --core-instance INSTANCE --show-ids
+   ```
+
+   Replace _`INSTANCE`_ with the name of your Core Instance.
+
+1. Run the following command to delete your Core Instance:
+
+   ```shell /INSTANCE/
+   calyptia delete core_instance operator INSTANCE
+   ```
+
+   Replace _`INSTANCE`_ with the name of your Core Instance.
+
+1. Run the following command:
+
+   ```shell
+   apt remove calyptia-core-operator
+   ```
+
+</Tab>
+</Tabs>

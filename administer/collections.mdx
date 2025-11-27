@@ -1,0 +1,341 @@
+---
+title: Collections
+sidebarTitle: Overview
+---
+import { CollectionNavIcon} from '/snippets/Icons.jsx';
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+A _collection_ is a group of Chronosphere Observability Platform resources, such as
+[dashboards](/observe/dashboards) and [monitors](/investigate/alerts/monitors), associated with a
+service or feature you want to monitor.
+
+A [_team_](/administer/accounts-teams/teams), consisting of
+[_user accounts_](/administer/accounts-teams/user-accounts) and
+[_service accounts_](/administer/accounts-teams/service-accounts) that share
+responsibility for the service or feature, is also responsible for each collection.
+
+Collections help service and feature owners manage their services at scale and
+streamline incident response by consolidating all relevant information about a
+service or feature into one place, and sharing access to that information with
+everyone in its responsible team.
+
+For example, to ensure that your team and on-call engineers all have full context for
+a service, you can create a collection for it that provides direct access to its
+monitors, dashboards, and the team members who can respond to incidents.
+Observability Platform then provides a menu of a team's collections to its members
+who can quickly review resources most relevant to their services, and a homepage for
+the collection that the team can share with on-call engineers or other stakeholders.
+
+## View collections
+
+<Tabs>
+<Tab title="Web" id="view-collections-cloud">
+
+To search for a collection:
+
+1. Click the search bar to focus on it, or use the keyboard shortcut
+   `Control+K` (`Command+K` on macOS).
+   1. Begin typing any part of the collection's name.
+   1. Optional: Click the filters for all other listed resource types at the top of
+      the search results to remove them and display only collections.
+   1. Click the search result you're interested in, or use the arrow keys to select
+      it and press `Enter` (`Return` on macOS), to select that
+      collection.
+
+To browse collections by their respective teams, in the navigation menu click
+**<CollectionNavIcon /> Collections**. Collections associated with teams that
+you belong to appear first, followed by lists of **All Teams & Collections**
+and **Unowned Collections**. To expand the latter lists, click the list's
+<Icon icon="chevron-down" /> expand icon.
+
+If you have administative privileges, you can view a filterable list.
+
+1. In the navigation menu, click **<Icon icon="shield" /> Admin** and
+   then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Collections**.
+   Clicking a collection or team in this table takes you to their respective
+   homepages.
+
+   - To filter this table by keyword, click **Search collections** and begin typing.
+     The table automatically updates to display only the matching collections.
+   - To filter this list by teams, select them in the **Select a Team** dropdown.
+   - To display only collections that lack an owner, enable the **Unowned Collections Only**
+     toggle.
+
+You can optionally select collections by checking the checkbox on each collection's
+row, which reveals an **Edit Team Association** button. Clicking this button allows
+you to select a parent team for all selected collections. If you select a team,
+click **Save** to save the edited association. For more Collection editing features,
+see [Edit a Collection](#edit-a-collection).
+
+</Tab>
+
+<Tab title="Chronoctl" id="view-collections-chronoctl">
+
+To view a list of all collections using [Chronoctl](/tooling/chronoctl), use the
+`collections list` command:
+
+```shell
+chronoctl collections list
+```
+
+This returns a list of YAML documents separated by three dashes (`---`), each
+representing a collection:
+
+```yaml
+api_version: v1/config
+kind: Collection
+spec:
+  slug: example-collection
+  name: Example Collection
+  team_slug: example-team
+  description: Example Team - Example Collection
+```
+
+</Tab>
+<Tab title="API">
+
+To complete this action with the Chronosphere API, use the
+[`ListCollections`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ListCollections) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Create a collection
+
+You can use Observability Platform to create Terraform, Chronoctl, or API
+configurations, which you must then apply using the respective application.
+
+Collections use a `slug` as an identifier. [Services](/observe/services) also use a
+`slug`. Collection and service slugs can have the same value.
+
+<Tabs>
+<Tab title="Web" id="create-a-collection-cloud">
+
+To create a collection, you must have administrative privileges.
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then click
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Collections**.
+1. Click **Create collection**.
+1. In the dialog that appears, enter a descriptive name in the **Collection Name**
+   field. Observability Platform displays this name anywhere that it refers to this
+   collection.
+1. Optional: Click the **Parent team** dropdown and select a team to which
+   you're associating this collection. If the dropdown doesn't contain any teams,
+   you can create one.
+1. Optional: Enter a description in the **Collection Description** field.
+   Observability Platform displays this description when you view this collection's
+   homepage.
+1. Click **Save**.
+
+</Tab>
+<Tab title="Chronoctl" id="create-a-collection-chronoctl">
+
+To create a collection using [Chronoctl](/tooling/chronoctl), apply a `Collection` resource.
+The resource contains these fields:
+
+| Field                      | Type   | Description |
+| -------------------------- | ------ | ----------- |
+| `name`                     | String | The collection name as displayed in Observability Platform. |
+| `slug`                     | String | Optional. A unique identifier that Observability Platform uses to identify the collection. If omitted, Observability Platform generates a slug. |
+| `team_slug`                | String | Optional. The slug of the team with which you're associating with this collection. |
+| `description`              | String | A description displayed when viewing this collection. |
+| `notification_policy_slug` | String | The slug of a notification policy that you're associating with this collection. |
+
+For example, this resource creates a new collection named `DBAs` with the slug
+`dbas-collection` and associated with `dbas-team`:
+
+```yaml
+api_version: v1/config
+kind: Collection
+spec:
+  slug: dbas-collection
+  name: DBAs
+  team_slug: dbas-team
+  description: Collection of database-related resources.
+  notification_policy_slug: dbas-policy
+```
+
+To create the collection:
+
+1. Save the `Collection` resource definition to a file, such as `collection.yaml`.
+1. Test the changes with a dry run:
+
+   ```shell
+   chronoctl collections create -f collection.yaml -d
+   ```
+
+1. Apply the changes:
+
+   ```shell
+   chronoctl collections create -f collection.yaml
+   ```
+
+</Tab>
+<Tab title="Terraform" id="create-a-collection-terraform">
+
+To create a collection using [Terraform](/tooling/infrastructure/terraform), use
+the `chronosphere_collection` resource type.
+
+| Field                    | Type   | Description |
+| ------------------------ | ------ | ----------- |
+| `name`                   | String | The collection name as displayed in Observability Platform. |
+| `slug`                   | String | Optional. A unique identifier that Observability Platform uses to identify the collection. If omitted, Observability Platform generates a slug. |
+| `team_id`                | String | Optional. The identifier of the team with which you're associating with this collection. |
+| `description`            | String | A description displayed when viewing this collection. |
+| `notification_policy_id` | String | Optional. The identifier of a notification policy that you're associating with this collection. |
+
+For example, this resource creates a new collection that Terraform refers to as
+`databases`, names it `Databases` in Observability Platform, provides a description, associates
+the collection with a notification policy, and assigns the collection to the team `dbas`:
+
+```ruby
+resource "chronosphere_collection" "infra" {
+  name        = "Databases"
+  team_id     = chronosphere_team.dbas.id
+  description = "Collection of resources related to database services."
+  notification_policy_id = chronosphere_notification_policy.np.id
+}
+```
+
+</Tab>
+<Tab title="API">
+
+To complete this action with the Chronosphere API, use the
+[`CreateCollection`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateCollection) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Edit a collection
+
+<Tabs>
+<Tab title="Web" id="edit-a-collection-cloud">
+
+<InfoTerraformLockout />
+
+To edit a collection, you must have administrative privileges.
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and
+   then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Collections**.
+1. Click the name of the collection you want to modify.
+1. In the **Collection information** section, click
+   **<Icon icon="pencil" /> Edit**.
+1. In the dialog that appears, edit the collection based on your needs.
+1. Click **Save**.
+
+You can optionally select collections by checking the checkbox on each collection's
+row, which reveals an **Edit Team Association** button. Clicking this button allows
+you to select a parent team for all selected collections. If you select a team,
+click **Save** to save the edited association. For more Collection editing features,
+see [Edit a Collection](#edit-a-collection).
+
+</Tab>
+<Tab title="Chronoctl" id="edit-a-collection-chronoctl">
+
+To edit a collection using [Chronoctl](/tooling/chronoctl), modify
+an existing `Collection` resource, then apply the change.
+
+To view `Collection` resources as Chronoctl YAML, see
+[View collections](#view-collections).
+
+1. Copy the `Collection` resource for the collection you want to edit.
+1. Save the collection to a file, such as `collection.yml`.
+1. Modify the collection's fields. For details, see [Create a collection](#create-a-collection).
+1. Test the changes with a dry run:
+
+   ```shell
+   chronoctl collections create -f collection.yaml -d
+   ```
+
+1. Apply the changes:
+
+   ```shell
+   chronoctl collections create -f collection.yaml
+   ```
+
+</Tab>
+<Tab title="Terraform" id="edit-a-collection-terraform">
+
+To edit a collection using [Terraform](/tooling/infrastructure/terraform), modify
+its resource and apply it using Terraform.
+
+</Tab>
+<Tab title="API">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateCollection`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateCollection) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Delete a collection
+
+<Warning>
+Before you delete a collection, you must first remove all of its monitors and dashboards.
+You can do this by either deleting them or moving them to other collections.
+</Warning>
+
+<Tabs>
+<Tab title="Web" id="delete-a-collection-cloud">
+
+<InfoTerraformLockout />
+
+To delete a collection, you must have administrative privileges.
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and
+   then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Collections**.
+1. Click the name of the collection you want to delete.
+1. In the **Collection information** section, click
+   **<Icon icon="pencil" /> Edit**.
+1. In the dialog that appears, click **Delete collection**.
+
+</Tab>
+<Tab title="Chronoctl" id="delete-a-collection-chronoctl">
+
+<InfoTerraformLockout />
+
+To delete a collection using [Chronoctl](/tooling/chronoctl), use
+the `collections delete` command:
+
+```shell /SLUG/
+chronoctl collections delete SLUG
+```
+
+Replace _`SLUG`_ with the slug for the collection you want to delete.
+
+For example, to delete a collection with the slug `dbas-collection`, run:
+
+```shell
+chronoctl collections delete dbas-collection
+```
+
+</Tab>
+<Tab title="Terraform" id="delete-a-collection-terraform">
+
+<TerraformDel />
+
+</Tab>
+<Tab title="API">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteCollection`](https://docs.chronosphere.io/tooling/api-info/definition/operations/DeleteCollection) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

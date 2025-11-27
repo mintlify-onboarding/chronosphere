@@ -1,0 +1,108 @@
+---
+title: Verify the Collector is scraping metrics
+sidebarTitle: Verify metrics
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Use the following methods to ensure the Collector is scraping the intended metrics.
+
+<Note>
+Contact [Chronosphere Support](/support) if there are other Collector statistics you
+want to access. Similarly, contact Chronosphere Support to request having specific
+telemetry data removed from Chronosphere Observability Platform.
+</Note>
+
+## Live Telemetry Analyzer
+
+[Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer) lets you inspect, in real
+time, the stream of metrics that Observability Platform is ingesting. You can use the
+Metrics Profiler to verify the Collector's connection to Observability Platform by
+viewing the metrics that the Collector emits about itself.
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
+1. Click the **Metrics** tab.
+1. Click **Capture live data** to display streaming metrics.
+1. In the **Keys** list, click the **`__name__`** and **instance** label keys.
+1. In the **Values** filter, enter the following key:value pairs:
+
+    ```text
+    __name__:chronocollector_*
+
+    instance:INSTANCE_NAME
+    ```
+
+    Replace _`INSTANCE_NAME`_ with the host and port where the Collector is running.
+    For example, a Collector running locally uses an instance name of
+    `localhost:3030`.
+
+    In the **Values** list, the displayed metrics include your Collector instance in
+    the **instance** column.
+
+## Metrics Explorer
+
+[Metrics Explorer](/investigate/querying/metrics/explorer) lets you validate metrics if
+you know the name of the metric or label you're searching for.
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Metrics Explorer**.
+
+1. Enter the following query in the query field.
+
+   ```text
+   count(chronocollector_jobs) by (instance)
+   ```
+
+1. Click **<Icon icon="arrows-rotate" />Run**.
+
+The name of your Collector instance returned from the `kubectl logs` command
+displays in the table of metrics:
+
+| Time                | Instance                          |
+| ------------------- | --------------------------------- |
+| 2023-02-03 10:56:04 | default/chronocollector-POD\_NAME |
+
+_`POD_NAME`_ is the name of the Kubernetes pod where your Collector instance is
+running.
+
+### Dashboards
+
+Observability Platform includes a **Collectors** dashboard by default that's
+actively maintained and updated. This [dashboard](/observe/dashboards) displays
+information about the metrics the Collector scrapes. When the Collector begins
+receiving metrics, the Collector dashboard panels populate and display statistics
+such as:
+
+- Number of Collectors running on the cluster
+- Number of metrics scraped per second
+- Number of scrape targets per job
+- Memory and CPU consumption
+- Push latency to Chronosphere
+
+Creating monitors based on some of these key metrics can help you detect if a
+Collector is performing poorly.
+
+Refer to the
+[default dashboard metrics](/overview/concepts/dictionary#collectors)
+for the full list of available metrics.
+
+In the navigation menu select **<Icon icon="table-cells" /> Dashboards**
+to access the Collector dashboard.
+
+- If you're using Kubernetes discovery, the Collector configuration includes an
+  annotation for the Collector dashboard by default.
+- If you're using Prometheus discovery and don't see the Collector dashboard, ensure
+  the following structure exists in your Collector configuration file under the
+  `discovery` section:
+
+  ```yaml
+  discovery:
+    prometheus:
+      - job_name: 'Collector'
+        scrape_interval: 15s
+        scrape_timeout: 30s
+        static_configs:
+          - targets: ['0.0.0.0:3030']
+  ```

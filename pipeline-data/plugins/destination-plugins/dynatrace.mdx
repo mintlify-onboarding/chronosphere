@@ -1,0 +1,68 @@
+---
+title: Dynatrace destination plugin
+sidebarTitle: Dynatrace
+'og:description': Send pipeline data to Dynatrace.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Dynatrace Logs [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `http`, alias: `Dynatrace`) lets you configure your telemetry pipeline to
+send your log data to Dynatrace.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                          | Key | Description | Default |
+| ----------------------------- | --- | ----------- | ------- |
+| **Dynatrace Environment URL** | `host` | Required. The URL for your Dynatrace instance. For example, `{YOUR-ENVIRONMENT_ID}.live.dynatrace.com`. | _none_ |
+| **Dynatrace API Token**        | `header` | Adds an HTTP header key/value pair for the API token. You can set multiple headers. | _See the following table._ |
+
+The following headers are to set your Dynatrace API Token:
+
+| Key               | Value |
+| ----------------- | ----- |
+| **Authorization** | `Api-Token [REPLACE WITH DYNATRACE API TOKEN]` |
+| **Content-Type**  | `application/json; charset=utf-8` |
+
+### Advanced
+
+| Name                         | Key | Description | Default |
+| ---------------------------- | --- | ----------- | ------- |
+| **Port for Dynatrace**       | `port` | The port number of the Dynatrace Logs API. | `443` |
+| **URI**                      | `uri` | The URI of the Dynatrace Logs API. | `/api/v2/logs/ingest` |
+| **Allow Duplicated Headers** | `allow_duplicated_headers` | Setting to ensure no duplicate Authorization API-Tokens are present. | `false` |
+| **HTTP Proxy**               | `proxy` | Specifies an HTTP Proxy. The expected format of this value is `http://host:port`. | _none_ |
+| **Format**                   | `format` | Specifies the data format to be used in the HTTP request body. Accepted values: `json`, `json_lines`, `json_stream`. | `json` |
+| **JSON Date Format**         | `json_date_format` | Specifies the format of the date. Accepted values: `double`, `epoch`, `iso8601` (for example, `2018-05-30T09:39:52.000681Z`), `java_sql_timestamp` (for example, `2018-05-30 09:39:52.000681`, which can be used with AWS Athena). | `iso8601` |
+| **JSON Date Key**            | `json_date_key` | Specifies the name of the date field in output. | `timestamp` |
+| **Body Key**                 | `body_key` | Specifies the key that contains the body. | _none_ |
+| **Header Tag**               | `header_tag` | Sets an HTTP header whose value is the tag of the record. | _none_ |
+| **Header Key**               | `headers_key` | Specifies the key that contains the headers. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

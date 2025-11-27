@@ -1,0 +1,275 @@
+---
+title: Pipeline CLI
+'og:description': Learn about the Chronosphere Telemetry Pipeline command-line tool.
+sidebarTitle: Overview
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Pipeline CLI is a Chronosphere-supplied app that lets you manage Chronosphere
+Telemetry Pipeline from the command line. For example, you can use Pipeline CLI to
+[create and modify pipelines](/pipeline-data/create-modify),
+[create fleets](/fleets#create-a-fleet), and
+[install a Core Operator](/pipeline-install/install-operator/) in your Kubernetes
+cluster.
+
+## Get started
+
+To install Pipeline CLI, [Install Pipeline CLI](/pipeline-cli/install).
+
+After you install Pipeline CLI, you'll need to [authenticate](/pipeline-cli/authenticate)
+with Chronosphere.
+
+## View command list
+
+To view a full list of available commands and flags, run:
+
+```shell
+calyptia help
+```
+
+You can also prepend `calyptia help` to a specific command to view more information
+about that command.
+
+### Flags
+
+The following flags are available for Pipeline CLI:
+
+- `--cloud-url string`: The URL of the Telemetry Pipeline backend.
+  Default: `https://cloud-api.calyptia.com`.
+-  `-h`, `--help`: Outputs help text for the given command, or all help text if no
+   command is specified.
+- `--token string`: Your Telemetry Pipeline project [API token](/pipeline-cli/authenticate).
+  Use the `calyptia config current_token` command to output the active API token.
+
+### Configuration commands
+
+The following configuration commands are the recommended way to interact with
+Telemetry Pipeline resources:
+
+- [`create`](#create)
+- [`delete`](#delete)
+- [`get`](#get)
+- [`update`](#update)
+
+#### `create`
+
+Create resources such as Core Instances and pipelines.
+
+```shell /RESOURCE/
+calyptia create RESOURCE
+```
+
+Replace _`RESOURCE`_ with the resource to create.
+
+For more information about the subcommands, including usage and accepted flags,
+see the command line help.
+
+#### `delete`
+
+Delete resources such as Core Instances, pipelines, and agents.
+
+```shell /RESOURCE/
+calyptia delete RESOURCE
+```
+
+Replace _`RESOURCE`_ with the resource to delete.
+
+For more information about the subcommands, including usage and accepted flags,
+see the command line help.
+
+#### `get`
+
+Lists all resources of the given type.
+
+```shell /RESOURCE/
+calyptia get RESOURCE
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+For more information about the subcommand, including its usage and accepted flags,
+see the command line help.
+
+```shell /RESOURCE/
+calyptia RESOURCE get --help
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+For more information about the subcommands, including usage and accepted flags,
+see the command line help.
+
+#### `update`
+
+Update Core Instances, pipelines, and other resources.
+
+```shell /RESOURCE/
+calyptia update RESOURCE
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+### Core commands
+
+#### `config`
+
+Configure the Pipeline CLI.
+
+```shell /COMMAND/
+calyptia config COMMAND
+```
+
+Replace _`COMMAND`_ with the subcommand you want to use.
+
+For more information about the subcommands, including usage and accepted flags,
+see the command line help.
+
+#### `install`
+
+Install Telemetry Pipeline components.
+
+```shell /RESOURCE/
+calyptia install RESOURCE
+```
+
+Replace _`RESOURCE`_ with the component you want to install.
+
+#### `rollout`
+
+Rollout configurations to previously configured resources.
+
+```shell /RESOURCE/
+calyptia rollout RESOURCE
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+#### `uninstall`
+
+Uninstall Telemetry Pipeline components.
+
+```shell /RESOURCE/
+calyptia uninstall RESOURCE
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+### Other commands
+
+#### `completion`
+
+Generate an autocompletion script for the specified shell.
+
+```shell /SHELL/
+calyptia completion SHELL
+```
+
+Replace _`SHELL`_ with the shell. Available options include:
+
+- `bash`
+- `fish`
+- `powershell`
+- `zsh`
+
+For more information about the subcommands, including usage and accepted flags,
+see the command line help.
+
+#### `convert`
+
+Converts Fluent Bit configuration files from one format to another. This command
+accepts a given file or uses `stdin`.
+
+```shell /FILE_NAME/ /FLAGS/
+  calyptia convert FILE_NAME FLAGS
+```
+
+Replace the following:
+
+- _`FILE_NAME`_: Your configuration file.
+- _`FLAGS`_: An accepted flag. For more information about the accepted flags, see the
+  command line help.
+
+#### `docs`
+
+Generate Calyptia documentation.
+
+```shell /FLAGS/
+calyptia docs FLAGS
+```
+
+Replace _`FLAGS`_ with an accepted flag. For more information about the accepted
+flags, see the command line help.
+
+#### `version`
+
+Returns the current Pipeline CLI version.
+
+```shell
+calyptia version
+```
+
+#### `watch`
+
+Watch for events or logs.
+
+```shell /COMMAND/
+calyptia watch COMMAND
+```
+
+Replace _`COMMAND`_ with an available command. See the command line help for more information.
+
+## Command autocompletion
+
+You can add support for shell command autocompletion with Pipeline CLI for the Bash,
+Zsh, Fish, and PowerShell by using the `calyptia completion` command.
+
+This section provides detailed steps for Bash and Zsh on macOS. For Linux-specific
+details and instructions for Fish and PowerShell, see the output of
+`calyptia completion --help`.
+
+<Tabs>
+<Tab title="Bash" id="autocomplete-bash">
+
+1. Update or install `bash-completion`:
+
+   ```shell
+   brew install bash-completion
+   ```
+
+1. In a shell initialization script, such as `~/.bashrc`, add the following:
+
+   ```shell
+   source "$(brew --prefix bash-completion)/etc/bash_completion"
+   eval "$(calyptia completion bash)"
+   ```
+
+1. Restart the shell.
+
+</Tab>
+<Tab title="Zsh" id="autocomplete-zsh">
+
+1. Go to your Zsh `site-functions` folder.
+
+   - If you installed Zsh with Homebrew, the path is
+     `/opt/homebrew/share/zsh/site-functions`.
+   - If you use the default macOS Zsh, the path is
+     `/usr/local/share/zsh/site-functions`.
+
+1. Run the following command:
+
+   ```shell
+   calyptia completion zsh > _calyptia
+   ```
+
+1. Ensure your `~/.zshrc` file has
+   [`compinit`](https://zsh.sourceforge.io/Doc/Release/Completion-System.html) added.
+   If you use `oh-my-zsh`, it adds that for you.
+
+1. Restart the shell.
+
+</Tab>
+</Tabs>
+
+You can now press `Tab` on the command line to automatically complete
+Pipeline CLI commands.

@@ -1,0 +1,282 @@
+---
+title: Configure ingestion and processing of OpenTelemetry Metrics
+'og:description': Learn how to configure Chronosphere Observability Platform's ingestion and processing of OpenTelemetry Metrics data
+sidebarTitle: Configure ingestion
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+For prerequisites to configuring the OpenTelemetry Collector for metrics data ingestion,
+see [Configure your OpenTelemetry Collector](/ingest/metrics-traces/otel/otel-ingest).
+
+## OpenTelemetry ingestion configuration options
+
+The OpenTelemetry Protocol (OTLP)
+[metric data model](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/data-model.md#opentelemetry-protocol-data-model)
+defines separate **Resource** and **Data Point** attribute contexts.
+
+- The [Resource context](https://opentelemetry.io/docs/concepts/resources/) contains
+  attributes, such as `host.name` or `k8s.cluster.name`, that are common to all
+  time series produced by the metric writer.
+- The Data Point context contains attributes unique to the time series, such as `http.route`.
+
+Chronosphere Observability Platform provides a configuration interface to control
+OpenTelemetry Metric Resource attribute processing. The default OpenTelemetry Metrics
+processing configuration in Observability Platform merges all Resource and Data Point
+attributes to the time series as labels. If there are conflicting attribute keys,
+Observability Platform uses the Data Point value.
+
+<Warning>
+Observability Platform excludes some Resource attributes that are likely to exceed
+[attribute value size limits](/investigate/querying/metrics/troubleshooting#managing-invalid-metrics),
+which results in rejected time series. For details, see
+[Observability Platform-defined resource attribute exclusions](#observability-platform-defined-resource-attribute-exclusions).
+</Warning>
+
+You can configure how Observability Platform processes OpenTelemetry Metrics to:
+
+- Prevent Observability Platform from merging resource attributes.
+- Enable the creation and writing of a `target_info` metric using all resource attributes.
+  The `target_info` metric is functionally equivalent to the `up` metric, the presence
+  of which indicates that a resource is available.
+- Change how Observability Platform handles conflicts when merging Resource and
+  Data Point attributes.
+- Define an exclusion list of resource attribute keys to exclude from merging.
+
+## Resource attribute configuration options
+
+The OpenTelemetry Metrics Ingestion configuration has a top-level `resource_attributes`
+field with additional sub-fields that define how Observability Platform processes
+resource attributes.
+
+| Field                  | Type | Description | Default value |
+| ---------------------- | ---- | ----------- | ------------- |
+| `resource_attributes`  | N/A | Top-level configuration field | N/A |
+| `generate_target_info` | Boolean | Determines whether to create a `target_info` metric. | `False` |
+| `flatten_mode`         | Enumeration | Determines how Observability Platform merges resource attributes into the time series. | `MERGE` |
+| `filter_mode`          | Enumeration | Determines which resource attributes Observability Platform processes when generating `target_info` and merging resource attributes into time series as labels. | `APPEND_DEFAULT_EXCLUDE_KEYS` |
+| `exclude_keys`         | String array | Key names to exclude from both `target_info` generation and resource attribute merging. | [Default list](#observability-platform-defined-resource-attribute-exclusions) |
+
+### `flatten_mode`
+
+The `flatten_mode` field determines how Observability Platform merges resource attributes
+into the time series. Its valid values are:
+
+- `MERGE` (default): Observability Platform merges Resource attributes into every
+  data point associated with that resource, so that both sets end up as Prometheus
+  labels on each individual metric time series. **If attribute keys conflict,
+  Observability Platform uses the value from the data point.**
+- `IGNORE`: Observability Platform doesn't copy resource attributes to the resulting
+  time series.
+- `OVERWRITE`: Observability Platform copies resource attributes onto every data
+  point. **If attribute keys conflict, Observability Platform uses the value from the resource.**
+
+### `filter_mode`
+
+The `filter_mode` field determines which resource attributes Observability Platform
+processes when generating `target_info` metrics and merging resource attributes
+into time series as labels. Its valid values are:
+
+- `APPEND_DEFAULT_EXCLUDE_KEYS` (default): Observability Platform includes all attributes
+  unless they're defined in [your `exclude_keys` list](#exclude_keys) or the default
+  [Observability Platform-defined resource attribute exclusions](#observability-platform-defined-resource-attribute-exclusions)
+  list.
+
+  With this setting, Observability Platform appends any `exclude_keys` you define
+  to the default Observability Platform-defined list.
+- `CUSTOM_EXCLUDE_KEYS`: Observability Platform includes all attributes unless they're
+  specifically defined in your `exclude_keys` list.
+
+  With this setting, Observability Platform applies only your defined `exclude_keys`
+  list.
+
+### `exclude_keys`
+
+Use the `exclude_keys` field to list key names that you want Observability Platform
+to exclude from both `target_info` generation and resource attribute merging.
+
+The field's format is an array of strings, such as:
+
+```
+[
+  "example.exclude",
+  "another.example.exclude"
+]
+```
+
+The resource attribute exclusions that Observability Platform applies by default
+aren't returned in this response. See
+[Observability Platform-defined resource attribute exclusions](#observability-platform-defined-resource-attribute-exclusions)
+for the latest list of default key exclusions.
+
+## Observability Platform-defined resource attribute exclusions
+
+Some OpenTelemetry Resource attributes are likely to exceed Observability Platform
+[attribute value size limits](/administer/limits-licensing/limits/metric-limits),
+resulting in
+[rejected time series](/investigate/querying/metrics/troubleshooting#managing-invalid-metrics).
+Observability Platform excludes the following Resource attributes by default:
+
+| Rejected key           | Reason |
+| ---------------------- | ------ |
+| `process.command_args` | Commonly exceeds the maximum attribute value length. |
+| `process.command_line` | Commonly exceeds the maximum attribute value length. |
+
+In cases where the OpenTelemetry Collector truncates these attributes to conform
+with Observability Platform ingestion requirements, you can change the merge behavior
+to include all resource attributes by setting `filter_mode = CUSTOM_EXCLUDE_KEYS`.
+
+## Manage OpenTelemetry metrics ingestion configurations
+
+The Chronosphere API Config Endpoint provides methods to create, read, update, and
+delete the OpenTelemetry Metrics Configuration.
+
+### View the configuration
+
+You can view OTLP ingestion configurations using one of the following methods.
+
+<Tabs>
+<Tab title="Chronoctl" id="chronoctl-view-otel-ingest">
+
+Use the `read` command of [Chronoctl](/tooling/chronoctl):
+
+```shell
+chronoctl otel-metrics-ingestion read
+```
+
+The command returns a YAML definition of the `OtelMetricsIngestion` resource. If
+the command returns an HTTP `404 Not Found` status code, your tenant uses the default configuration.
+
+</Tab>
+<Tab title="API" id="API-view-otel-ingest">
+
+To complete this action with the Chronosphere API, use the
+[`ReadOtelMetricsIngestion`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ReadOtelMetricsIngestion)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Create or update the configuration
+
+You can change the default OpenTelemetry Metrics ingestion configuration using either
+[Chronoctl](/tooling/chronoctl) or the [Terraform provider](/tooling/infrastructure/terraform).
+
+<Tabs>
+<Tab title="Chronoctl" id="create-update-the-configuration-chronoctl">
+
+Use the `scaffold` command to generate an example `OtelMetricsIngestion` resource.
+
+```shell
+chronoctl otel-metrics-ingestion scaffold
+```
+
+The following example enables `target_info` metric generation and defines two additional
+resource attribute key names to exclude.
+
+```yaml
+api_version: v1/config
+kind: OtelMetricsIngestion
+spec:
+  resource_attributes:
+    generate_target_info: true
+    flatten_mode: MERGE
+    filter_mode: APPEND_DEFAULT_EXCLUDE_KEYS
+    exclude_keys:
+      - example.exclude
+      - another.example.exclude
+```
+
+Add the contents to a YAML file and send it to Observability Platform with the
+`apply` command:
+
+```shell
+chronoctl apply -f <FILE_NAME.YML>
+```
+
+You can also use the `otel-metrics-ingest create` subcommand to create the resource,
+or the `otel-metrics-ingest update` subcommand to update an existing resource:
+
+```shell
+chronoctl otel-metrics-ingest create -f <FILE_NAME.YML>
+chronoctl otel-metrics-ingest update -f <FILE_NAME.YML>
+```
+
+Replace `<FILE_NAME.YML>` with the filename of the YAML file containing the resource
+definition.
+
+</Tab>
+<Tab title="Terraform" id="view-the-configuration-terraform">
+
+Use the `chronosphere_otel_metrics_ingestion` resource, followed by a name in the
+resource declaration. The name you provide isn't important because
+Observability Platform allows only one OpenTelemetry Metrics ingestion configuration.
+
+The following example enables `target_info` metric generation and defines two additional
+resource attribute key names to exclude:
+
+```ruby
+resource "chronosphere_otel_metrics_ingestion" "my-otel-metrics-ingestion" {
+  resource_attributes {
+    flatten_mode = "MERGE"
+    filter_mode  = "APPEND_DEFAULT_EXCLUDE_KEYS"
+    exclude_keys = ["example.exclude", "another.example.exclude"]
+    generate_target_info = true
+  }
+}
+```
+
+</Tab>
+<Tab title="API" id="API-create-otel-ingest">
+
+To create an OpenTelemetry ingestion configuration with the Chronosphere API, use the
+[`CreateOtelMetricsIngestion`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateOtelMetricsIngestion)
+endpoint.
+
+To update an OpenTelemetry ingestion configuration with the Chronosphere API, use the
+[`UpdateOtelMetricsIngestion`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateOtelMetricsIngestion)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Delete the configuration
+
+Use one of the following methods to delete an OpenTelemetry configuration.
+
+<Tabs>
+<Tab title="Chronoctl" id="chronoctl-delete-otel-ingest">
+
+You can use [Chronoctl](/tooling/chronoctl) to delete your OpenTelemetry Metrics ingestion
+configuration and restore the default configuration.
+
+Use the `delete` command to delete the configuration.
+
+```shell
+chronoctl otel-metrics-ingestion delete
+```
+
+If the command fails because of a missing slug, use the `read` command to view the
+resource's slug.
+
+```shell
+chronoctl otel-metrics-ingestion read
+```
+
+</Tab>
+<Tab title="API" id="API-delete-otel-ingest">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteOtelMetricsIngestion`](https://docs.chronosphere.io/tooling/api-info/definition/operations/DeletedOtelMetricsIngestion)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

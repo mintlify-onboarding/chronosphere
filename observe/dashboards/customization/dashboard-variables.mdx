@@ -1,0 +1,262 @@
+---
+title: Customize panel queries with dashboard variables
+sidebarTitle: Variables
+'og:description': Create dashboard variables to help dashboard users quickly customize queries with predefined values.
+---
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+_Dashboard variables_ are uniquely named placeholders that you can use in dashboards
+to dynamically replace their values with user-defined values. For instance, you
+can add variables to [panels](/observe/dashboards/panels) to let users customize
+them across all of a dashboard's panels without editing each panel individually.
+
+<Note>
+If you've used other observability tools, you might have encountered dashboard
+variables by the names _template variables_.
+</Note>
+
+After you [create a dashboard variable](#create-a-dashboard-variable), you can add
+it to a panel using the syntax `$<NAME>`, where `<NAME>` is the variable's name.
+Variables are most often used in [queries](/investigate/querying) but also work
+in panel names and descriptions, and also in the content of
+[Markdown panels](/observe/dashboards/panels/markdown). Expressions also support variables.
+
+For example, part of a panel's query might match a `service` named `production`:
+
+```text
+service=~"production"
+```
+
+You can create a dashboard variable named `service` and replace the string value
+with `$service`:
+
+```text
+service=~"$service"
+```
+
+Dashboard viewers can then change all uses of `$service` in each panel by changing
+that dashboard variable in one place, instead of editing each panel manually.
+
+Dashboard variables can accept either user-defined [text values](#configure-a-text-variable)
+or offer a [list of values](#configure-a-list-variable), whether manually defined or
+dynamically generated from labels or a query, for the user to select.
+
+## View dashboard variables
+
+Dashboard variables add a dropdown selector to the dashboard's header for each variable.
+
+To view a list of all of a dashboard's variables:
+
+1. Open the dashboard. You can
+   [view a list of all dashboards](/observe/dashboards#view-dashboards) or select
+   from a [list of dashboards in a collection](/administer/collections/home).
+1. On the dashboard, click **Variables** or click
+   <Icon icon="gear" alt="Settings icon"/>**Settings <span aria-label="and
+   then">></span> Variables**.
+
+The **Dashboard variables** panel lists all dashboard variables defined for this
+dashboard in a table. Columns indicate each variable's
+[visibility](#toggle-dashboard-variable-visibility), name, and type. Each variable
+includes controls to [reorder](#define-the-order-of-dashboard-variables),
+[edit](#configure-a-dashboard-variable), and [delete](#delete-a-dashboard-variable)
+variables.
+
+## Create a dashboard variable
+
+To add a dashboard variable to a dashboard:
+
+1. [View the list of dashboard variables](#view-dashboard-variables).
+1. In the **Dashboard variables** panel, click
+   **<Icon icon="plus" alt="Add variable icon"/> Add variable**. By default,
+   this creates a new [text variable](#configure-a-text-variable).
+1. To create a different variable type, make a selection from the **Type** menu.
+1. Enter the variable's **Name**, which defines the name used to address the variable
+   in a query or text.
+1. Enter a **Display label**.
+1. Enter a **Description**.
+1. Click **Apply**.
+1. Click **Save** to save the dashboard and new variable.
+
+After configuring a variable and saving the dashboard, the dashboard updates with
+a new group of fields for [saved views](#saved-views).
+
+## Configure a dashboard variable
+
+To configure a dashboard variable:
+
+1. [View the list of dashboard variables](#view-dashboard-variables).
+1. In the **Dashboard variables** panel, click
+   **<Icon icon="plus" alt="Add variable icon"/> Add variable**. By default,
+   this creates a new [text variable](#configure-a-text-variable).
+1. On the row of the variable you want to edit, click
+   **<Icon icon="pencil" alt="Edit variable icon"/> Edit variable**.
+1. After configuring the variable, click **Apply** to confirm the changes.
+
+### Configure a text variable
+
+In a _text variable_, the dashboard user can define the variable's value by entering
+it into a text field.
+
+To configure a text variable:
+
+1. [Configure](#configure-a-dashboard-variable) or [create](#create-a-dashboard-variable)
+   a dashboard variable.
+1. If the variable **Type** isn't **Text**, click **Type**, then click **Text**.
+1. Optional: Set a **Display label**, which appears in the variable's field instead of its name.
+1. Optional: Set a **Description**.
+1. Optional: Enter a **Value** for the template variable.
+1. After configuring the variable, click **Apply** to confirm the changes.
+
+### Configure a list variable
+
+In a _list variable_, the dashboard user can define the variable's value by selecting
+it from a list.
+
+To configure a list variable:
+
+1. [Configure](#configure-a-dashboard-variable) or [create](#create-a-dashboard-variable)
+   a dashboard variable.
+1. If the variable **Type** isn't **List**, select **List** from the **Type** dropdown.
+1. Select a **Source**:
+   - **[Static] Custom list**: Define the available options by entering them into the
+     **Values** field.
+   - **[Prometheus] Label values**: Select a label name and Observability Platform adds the
+     values of labels of the matching series to the list. You can filter the values
+     by series by using PromQL
+     [time series selectors](https://prometheus.io/docs/prometheus/latest/querying/basics/#time-series-selectors).
+     If you don't define any series selectors, Observability Platform defaults to using all
+     series. To select from multiple series, click **Add series selector**.
+   - **[Prometheus] Label names**: Observability Platform adds all label names to the
+     list. You can also filter these names by series using PromQL time series
+     selectors.
+   - **[Prometheus] PromQL result values**: Enter a PromQL query and Observability
+     Platform adds values from the result to the list. You can also filter the
+     results by label name.
+   - **[Logs] Logs field values**: Enter the log field name you want to define a
+     variable for.
+1. Optional: Filter the results further by entering a
+    [**Regex**](/investigate/querying/regular-expressions) filter, which
+   includes only the results that match the expression.
+1. Optional: Set the variable's **Refresh** toggle to define whether Observability
+   Platform updates its list values **On dashboard load** or **On time range change**.
+1. Optional: To allow the user to select multiple values from the list, enable
+   **Select multiple values**.
+1. Optional: To add an option to select all values from the list, enable **Include "All" option**.
+   You can also define the regular expression representing all values by setting
+   the **Custom "All" value**.
+1. To confirm and apply the new variable configuration, click **Apply**.
+1. Optional: To cancel any changes to the variable, click **Cancel**.
+
+As you configure the variable, Chronosphere reflects any changes you make to the
+list variable and reports any errors in the **Preview values** list. You can also
+**<Icon icon="arrow-rotate-right" alt="Refresh icon"/> Refresh** the preview to update
+its values and **<Icon icon="clipboard" alt="Copy icon"/> Copy** the
+list of previewed values as a comma-separated list.
+
+### Configure an interval variable
+
+Use an _interval_ variable to set a default time period for a dashboard.
+
+1. [Configure](#configure-a-dashboard-variable) or
+   [create](#create-a-dashboard-variable) a dashboard variable.
+1. Set the **Type** to **Interval**.
+1. In the **Interval options** text box, add a time period. This should be a
+   numerical time amount, followed by a time unit. The following are examples of usable time periods:
+   - `30s`
+   - `5m`
+   - `6h`
+   - `1d`
+1. Toggle **Include "Auto" option** to set a minimum interval when auto is enabled.
+1. Click **Add**.
+1. Click **Apply**.
+
+After you configure the variable, your dashboard displays the interval as a dropdown
+list before your panels.
+
+## Delete a dashboard variable
+
+To delete a dashboard variable:
+
+1. [View the list of dashboard variables](#view-dashboard-variables).
+1. On the row of the variable you want to edit, click
+   **<Icon icon="trash" alt="Delete variable icon"/> Delete variable**.
+
+   This action immediately deletes the variable without confirmation. Ensure that you
+   want to delete the variable before clicking the icon.
+1. To apply the variable deletion and other changes to dashboard variables, click
+   **Apply**.
+1. Optional: To cancel any deletions and other changes to dashboard variables, click
+   **Cancel**.
+
+## Define the order of dashboard variables
+
+Dashboards present dashboard variables from left to right in the same order as
+they appear in the **[Dashboard Variables](#view-dashboard-variables)** list.
+
+To reorder dashboard variables:
+
+1. [View the list of dashboard variables](#view-dashboard-variables).
+1. On the row of the variable you want to reorder, click
+   **<Icon icon="arrow-up" alt="Reorder up icon"/> Reorder variable up** or
+   **<Icon icon="arrow-down" alt="Reorder down icon"/> Reorder variable down**
+   to move the variable within the list to the position you want.
+1. To confirm and apply the new variable order and other changes to dashboard variables,
+   click **Apply**.
+1. Optional: To cancel any changes to dashboard variables, click **Cancel**.
+
+## Toggle dashboard variable visibility
+
+You can define whether a dashboard variable appears on its dashboard. This helps
+you create and test dashboard variables without disrupting other users, and helps
+users curate large lists of dashboard variables to focus on what they want to analyze.
+
+## Saved views
+
+<LimitedAvail />
+
+Saved views let you use defined dashboard variables to change the dashboard view with
+different settings, while using the same panels.
+
+If you have saved custom dashboard variables, the **Saved View** menu displays. The menu
+is a list of all the views available for this dashboard. Select a view from the
+**Saved View** menu to display a different view. The currently selected view has a
+<Icon iconType="solid" icon="check" color="#60E684"/> green checkmark next to the name.
+
+Each available variable displays after the view name, in the order
+[they're defined](/observe/dashboards/customization/dashboard-variables#define-the-order-of-dashboard-variables).
+[Pinned scope](/navigate/pinned-scopes) values override variable values in saved views.
+
+If you hold the pointer over an item in the **Saved View** menu, the view settings
+display. The list includes the view's time period and the variable names and values
+saved for the selected view.
+
+### Update the view
+
+You can save multiple views for a dashboard. To save a view if you add a value to a
+variable's text:
+
+1. Click the **Saved View** menu.
+1. Choose **Create new view** to save a new view, or **Update view** to overwrite
+   the current view's values. A confirmation message with the new values displays.
+1. If you select **Create new view**, add a **Name** and then click **Save**.
+1. If you select **Update view**, decide if you want to **Save current time range a
+   default**, and then click **Save**.
+
+To edit an existing view:
+
+1. Open the **Saved View menu**.
+1. Hold the pointer over the view you want to edit.
+1. Click **<Icon icon="pencil" /> Edit**.
+1. Change the values.
+1. Click **Save**.
+
+### Delete a view
+
+You can't delete the **Default View**. To delete a custom saved view:
+
+1. Open the **Saved View menu**.
+1. Hold the pointer over the view you want to delete.
+1. Click **<Icon icon="trash" /> Delete**.

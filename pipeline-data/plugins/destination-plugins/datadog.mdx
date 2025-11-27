@@ -1,0 +1,61 @@
+---
+title: Datadog Logs destination plugin
+sidebarTitle: Datadog
+'og:description': Send pipeline data to Datadog.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Datadog Logs [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `datadog`) lets you configure your telemetry pipeline to integrate your
+telemetry data with Datadog Logs, letting you store, analyze, and visualize your
+log data using logging tools in Datadog.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name                | Key | Description | Default |
+| ------------------- | --- | ----------- | ------- |
+| **Datadog API Key** | `apikey` | Required. Datadog API Key found within account settings. | _none_ |
+
+### Advanced
+
+| Name                     | Key | Description | Default |
+| ------------------------ | --- | ----------- | ------- |
+| **Datadog Server**       | `host` | The Datadog server where you're sending your logs. | `http-intake.logs.datadoghq.com` |
+| **Datadog Service Name** | `dd_service` | The human-readable name for your service generating the logs. The name of your app or database. | _none_ |
+| **Datadog Source Name**  | `dd_source` | A human readable name for the underlying technology of your service. For example, `postgres` or `nginx`. | _none_ |
+| **Datadog Tags**         | `dd_tags` | The tags you want to assign to your logs in Datadog. | _none_ |
+| **Datadog Message Key**  | `dd_message_key` | By default, the plugin searches for the key 'log' and remap the value to the key `message`. If the property is set, the plugin searches the property name key. | _none_ |
+| **Include Tag Key**      | `include_tag_key` | If `true`, tag is appended to output. The key name is used `tag_key` property. Accepted values: `true`, `false`. | `false` |
+| **Tag Key**              | `tag_key` | The key name of tag. If `include_tag_key` is false, This property is ignored. | `tagkey` |
+| **JSON Date Key**        | `json_date_key` | Date key name for output in log. | `timestamp` |
+| **Compression**          | `commpress` | Compresses the payload in GZIP format, Datadog supports and recommends setting this to 'gzip'. | `gzip` |
+| **Proxy**                | `proxy` | Specifies an HTTP Proxy. The expected format of this value is `http://host:port`. HTTPS isn't supported. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

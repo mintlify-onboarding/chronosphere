@@ -1,0 +1,321 @@
+---
+title: Visualize time series with charts
+sidebarTitle: Time series
+'og:description': Create and customize time series data visualization panels for Chronosphere Observability Platform dashboards.
+---
+
+import ChronoctlDashboard from '/snippets/_partials/chronoctl-dashboard.mdx';
+import ClassicPanel from '/snippets/_partials/classic-panels.mdx';
+import PanelQueries from '/snippets/_partials/panel-queries.mdx';
+import DashboardSeriesNaming from '/snippets/_partials/dashboard-series-naming.mdx';
+import DashboardDownsampleTruncate from'/snippets/_partials/dashboard-downsample-truncate.mdx';
+import DashboardUnits from '/snippets/_partials/dashboard-units.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<ClassicPanel />
+
+A _time series chart_ visualizes time series data returned by a
+[query](/investigate/querying). The chart depicts each returned time series as either
+a line or bar chart representing each data point or interval, with time depicted
+along the X axis and values along the Y axis. Time series charts are the default
+panel type when creating new panels in Chronosphere Observability Platform.
+
+Use time series charts to analyze trends and patterns in data over spans of time.
+For example, you can render time series data about a service's resource consumption
+to identify points in time where unexpected demand exhausted capacity and reduced
+the service's performance or availability.
+
+When combined with other charts in a [dashboard](/observe/dashboards), you can focus
+on that point in time and correlate the event with other time series visualizations.
+Dashboards also support [variables](/observe/dashboards/customization/dashboard-variables)
+that can dynamically replace values in the panel and its query with those defined
+by the dashboard's editor and selected by its viewers.
+
+To create a time series chart or learn more about the configuration options common
+to all panels, see [Panels](/observe/dashboards/panels).
+
+## Use a time series chart's tooltip
+
+When you hold the pointer over a time series's line or bar, Observability Platform
+displays a tooltip that includes the date and time where the cursor is pointing. The
+tooltip also displays the value of that series at that point in time. If multiple
+series are under the cursor, Observability Platform displays the values for each
+series. Moving the cursor along the series updates the values in the tooltip to the
+new point in time.
+
+To configure which series Observability Platform includes in the tooltip, see
+[Modify a time series chart's tooltip](#modify-a-time-series-charts-tooltip).
+
+In time series bar charts, certain data points display a time value such as `2h` to
+indicate the step size.
+
+### Pin a point in time
+
+To pin the tooltip to a specific point in time, click the chart. The tooltip remains
+visible until you click **Unpin <Icon icon="xmark" alt="Close icon"/>** inside
+the tooltip. Next to any time series, click the <Icon icon="up-right-and-down-left-from-center" />
+expand icon to open the graph in an overlay window, filtered to that time series.
+
+#### Add an annotation
+
+You can add an annotation when a specific time is pinned. To do so:
+
+1. [Pin](#pin-a-point-in-time) a data point.
+1. In the tooltip box, click **+ Create annotation event**.
+1. Add **Event Details**.
+
+   - **Title**: The event title.
+   - **Timestamp**: By default, this field is pre-populated with the pinned time.
+     Event creation is limited to either 24 hours in the past or 24 hours into the
+     future from the current time.
+   - **Category**: The event's category. Select from the drop down list.
+   - **Source**: Select an event source from the drop down list.
+   - **Type**: Select the event type from the drop down list.
+1. Add **Event Labels**. Event labels consist of **Key** and **Value** pairs. Select
+   a **Key** from its drop down list and then select a **Value**. For example, a
+   default pair is includes the **Key** `user_email` and the **Value** field
+   populates with the signed in user's email address.
+1. To add additional labels, click **+ Add Label**.
+1. To delete a label, click the <Icon icon="trash" /> trash can.
+1. When finished, click **Add Event**.
+
+## Time series chart queries
+
+Time series charts use one or more
+[queries](/observe/dashboards/panels#change-a-panels-query) to retrieve data to
+visualize.
+
+Time series charts use the following query **Options** to refine the
+displayed information, depending on your **Datasource**:
+
+<Tabs>
+<Tab title="Metrics (Prometheus)">
+
+- <DashboardSeriesNaming />
+- **Min step**: The step parameter of the PromQL query.
+<DashboardDownsampleTruncate />
+
+</Tab>
+<Tab title="Graphite">
+
+Graphite doesn't have additional query options.
+
+</Tab>
+<Tab title="Logs">
+
+<DashboardSeriesNaming />
+
+</Tab>
+</Tabs>
+
+## Configure a time series chart
+
+You can configure a time series chart by
+[modifying its **Settings**](/observe/dashboards/panels#edit-a-panel).
+
+Any changes you make in the panel's **Settings** tab are immediately reflected in
+the **Preview** pane but take effect only when you click **Apply** in the **Edit panel**
+interface and then **Save** the dashboard.
+
+Observability Platform doesn't fully support directly editing a panel's JSON
+representation and recommends configuring panels in the user interface. Use the JSON
+representation only for managing your configuration as code with tools such as
+[Chronoctl](/tooling/chronoctl) and [Terraform](/tooling/infrastructure/terraform).
+
+Several time series chart options use
+[regular expressions](/investigate/querying/regular-expressions).
+
+### Modify a time series chart's colors
+
+The **Advanced** tab in a time series chart's **Edit Panel** interface contains
+an **Overrides** section where you can add, remove, and configure color overrides.
+You can apply color overrides to a specific series or all series that match a regular
+expression.
+
+To add a color override:
+
+1. Click the plus sign (+) in the **Override** section header.
+1. In the field that appears, select whether you want the override to select a series
+   based on the **series name** or a **series name with a matching regex**.
+1. Enter the series name or regular expression to override.
+1. Click **Add property**, then click **Color**.
+1. Optional: Repeat these steps to create additional color overrides.
+
+To delete a color override, click the
+**<Icon icon="trash" alt="Delete icon"/> Delete** icon on its corresponding
+row of the Overrides section.
+
+### Modify a time series line style
+
+You can modify the style of line displayed in a time series chart.
+
+1. Click the plus sign (+) in the **Override** section header.
+1. In the field that appears, select whether you want the override to select a series
+   based on the **series name** or a **series name with a matching regex**.
+1. Enter the series name or regular expression to override.
+1. Click **Add property**, then click **Line style**.
+1. Select **Solid** (default) or **Dashed**.
+1. Optional: Repeat these steps to add line styles to additional time series.
+1. Click **Apply**.
+
+To delete a line style override, click the
+**<Icon icon="trash" alt="Delete icon"/> Delete** icon on its
+corresponding row of the Overrides section.
+
+### Modify a time series chart's legend
+
+The **Legend** section in a time series chart's **Settings** tab controls whether
+to display a legend alongside the chart, and if so it also configures where and
+how it appears.
+
+- **Show**: Toggles whether to display the legend. Defaults to disabled.
+- **Position**: Selects whether to display the legend **Below** or to the **Right**
+  of the chart. Defaults to `Below`.
+- **Mode**: Selects whether to display the legend as a **List** of time series with
+  a color swatch associating it with a line or bar on the chart, or as a **Table**
+  with a header row. Defaults to `List`.
+- **Size**: Defines the legend's size relative to the chart as either **Small**
+  or **Medium**. Defaults to `Small`.
+- **Values**: Toggles whether to display certain values for each time series, such
+  as its average, minimum, maximum, and total values, in the legend. Defaults to
+  showing no values.
+  - **Avg**: The series' mean value, excluding null values.
+  - **First**: The series' first value.
+  - **First \***: The series' first numeric value.
+  - **Last**: The series' last value.
+  - **Last \***: The series' last numeric value.
+  - **Min**: The series' minimum value.
+  - **Max**: The series' maximum value.
+  - **Total**: The sum of all values in the series.
+
+  Units, abbreviations, and decimal places configured in the **Unit and Formatting**
+  settings also apply here.
+
+### Modify a time series chart's visual representation
+
+The **Visual** section in a time series chart's **Settings** tab controls how
+Observability Platform visualizes the query's time series results in the chart.
+
+- **Display**: Toggles whether to visualize the data as a **Line** or **Bar** chart.
+  Defaults to `line`.
+- **Line Width**: Defines the series' width in pixels. In the Settings tab, use
+  the slider to define a value between 0 and 3. Defaults to `1.5`.
+- **Area Opacity**: Defines the opacity of the space beneath each line, from fully
+  transparent (`0`) to fully opaque (`1`). The fill color for each series is the
+  same as its line or bar color. Defaults to `0`.
+- **Stack Series**: Determines how to display the values for a series. Choose one
+  of the following values:
+  - `None`: Display each series' value independently. Default.
+  - `All`: Display series' values stacked cumulatively on top of each other.
+  - `Percent`: Display series' values by relative percentage to help show the
+    proportions of each series change over time.
+- **Color Palette**: Determines the chart's color palette. The **Classic** palette
+  uses six colors and prioritizes readability. The **Consistent** palette
+  includes more colors and lets you assign a color to a series consistently across
+  multiple panels. The **Status-neutral** palette excludes red, orange, and green
+  to help distinguish between the chart's values and status indicators. Defaults to **Classic**.
+- **Show Points**: Determines whether to render data points as dots on the chart.
+  `Auto` renders data points only if doing so doesn't degrade browser performance.
+  `Always` and `Never` respectively render or hide data points regardless of the
+  number of data points. Defaults to `Auto`.
+- **Null Behavior**: Determines how to chart data points with null values. To connect
+  points in a Line chart even if there are null values between data points, select
+  `Connected`. To treat null values as zeroes, select `Null as zero`. Defaults to
+  `Auto`, which disconnects the series in a Line chart if any points are null.
+
+### Modify time series units and formatting
+
+The **Unit and formatting** section changes the display of units on the chart.
+
+<DashboardUnits />
+
+### Modify a time series chart's Y axis
+
+The **Y axis** section in a time series chart's **Settings** tab controls whether
+Observability Platform renders a chart's Y axis, and if so what information it
+includes.
+
+These settings apply to all values on the chart regardless of time series, and
+includes any values you enabled in the chart's legend.
+
+- **Show**: Toggles whether to show the Y axis on the chart. Defaults to `true`.
+- **Label**: Renders the given text vertically next to the Y axis. Defaults to no
+  value.
+- **Min** and **Max**: Define the minimum and maximum values, respectively, to render
+  on the chart. Observability Platform doesn't render values smaller than the minimum
+  or larger than the maximum. Defaults to no value, which dynamically changes the
+  axis's range to display all data.
+
+#### Add a second Y axis
+
+You can create a series override in a time series chart's **Advanced** tab that
+adds a second Y axis for the chart. Use this to indicate the scale and units of
+a second series in a single time series chart.
+
+To create an override that adds a right Y axis:
+
+1. Click the plus sign (+) in the **Override** section header.
+1. In the field that appears, select whether you want the override to select a series
+   based on the **series name** or a **series name with a matching regex**.
+1. Enter the series name or regular expression to override.
+1. Click **Add property**, then click **Right y-axis**.
+1. Configure the right Y axis, which has the same settings available as the primary
+   left Y axis.
+
+To delete a right Y axis, click the
+**<Icon icon="trash" alt="Delete icon"/> Delete** icon on its corresponding
+row of the Overrides section.
+
+### Modify a time series chart's tooltip
+
+The **Tooltip** section in a time series chart's **Settings** tab determines whether
+to render a tooltip when you move the cursor over the chart and which time series
+it displays.
+
+The **Mode** toggle has three available states, which you can toggle by clicking
+them:
+
+| Single | Nearby | Result |
+|--------|--------|--------|
+| On     | Off    | The tooltip appears only when the cursor is near a charted time series, and it contains only the time series closest to the cursor. Enabling Single sets Nearby to Off. |
+| Off    | On     | The tooltip appears only when the cursor is near a charted time series, and the tooltip contains all nearby time series. This is the default state of a new time series chart. Enabling Nearby sets Single to Off. |
+| Off    | Off    | The tooltip appears whenever you move the cursor over the chart and displays all time series with data at the point in time represented under the cursor. |
+
+Regardless of this setting's value, the tooltip and chart always highlight the time
+series directly beneath the cursor.
+
+### Modify a time series chart's thresholds
+
+The **Thresholds** section in a chart's **Settings** tab defines values
+where Observability Platform renders threshold lines over the chart. You can define
+threshold values as either absolute numeric values or percentiles. Observability
+Platform renders threshold lines as dashed lines.
+
+The threshold's **Mode** defines whether all thresholds use **Absolute** numeric
+values, which is the default mode, or **Percent** values. Percent values are relative
+to the Y axis' minimum and maximum.
+
+To create a new threshold:
+
+1. Click the plus sign (+) in the **Thresholds** section header.
+1. In the field that appears, enter a value where you want Observability Platform to
+   render the threshold line.
+1. Optional: Click the color indicator, depicted as a colored circle, to open a
+   color selector and choose a color for the threshold line.
+1. Optional: Click the caret (>) to expand the threshold definition, and enter text
+   in the **Label** field to display on the chart if the threshold is met. This
+   text displays when you hold the pointer over the area of the chart exceeding the
+   threshold.
+
+   Drag the **Area opacity** slider to highlight the background of the area exceeding
+   the threshold.
+
+1. In the **Edit panel** dialog, click **Apply** to save your changes.
+1. After you've finished editing the panel, click **Save** on the dashboard to save
+   your changes.
+
+To delete a threshold line, click the caret (>) to expand the threshold definition,
+and then click the **<Icon icon="trash" alt="Delete icon"/> Delete** icon
+on its corresponding row of the Thresholds section.

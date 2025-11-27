@@ -1,0 +1,96 @@
+---
+title: Long-term downsampling
+sidebarTitle: Long-term downsampling
+---
+{/* -- dri: Adam Locke -- */}
+
+
+After approximately five days, each persisted metric, including both raw and
+aggregated metrics, undergoes a process called _long-term downsampling_ (LTD). This
+process temporally downsamples data into a more compact form, and then deletes the
+non-downsampled data permanently.
+
+To maintain an accurate representation of the data, Chronosphere Observability
+Platform utilizes different downsampling methodologies, depending on the metric type
+and, if it's an aggregated metric, the method of aggregation used to produce its
+value.
+
+<Note>
+These behaviors are important to note beforehand, since any unexpected results of LTD
+will be noticed only approximately five days after ingestion.
+</Note>
+
+By default, Observability Platform downsamples long term data at a five-minute
+granularity, where all data points within each five-minute window compress into a
+single data point. This five-minute window is termed the _downsample window_.
+
+## Effects on metric types
+
+Downsampling effects differ based on the [metric type](/control/shaping/types).
+
+- Cumulative counter:
+  [Cumulative counters](/control/shaping/types#cumulative-counter) downsample by
+  preserving the overall increase (respecting resets) between the start and end of
+  the downsample window. This reduces the temporal granularity by observing only
+  one increase every five minutes, while keeping the running count accurate.
+
+- Gauge: Downsampling of [gauges](/control/shaping/types#gauge) differs, depending
+  on how the gauge was ingested.
+
+  By default, gauges downsample by preserving only the last data point in every
+  downsample window. Any changes to the gauge prior to the end of the downsample window
+  aren't retained.
+
+  If the gauge is an output of a
+  [`MIN/MAX` aggregation](/control/shaping/rules/rollup#gauge), the gauge is
+  downsampled by preserving the `MIN/MAX` data point in every downsample window,
+  respectively.
+
+  Gauges ingested with StatsD downsample using a Largest-Triangle-Three-Buckets
+  (LTTB) downsampling algorithm for consistency with the Graphite query engine.
+  Graphite statistics use a sum downsampling for counters, and LTTB for timers and gauges.
+
+- Histograms: Cumulative exponential histograms are downsampled by preserving the
+  overall increase (respecting resets) of each bucket count between the start and
+  end of the downsample window. Delta exponential histograms are downsampled by
+  summing the data points in the downsampling window.
+
+  Due to the reduced temporal granularity, you'll see changes no more frequently
+  than every 5 minutes, while the running bucket counts remain accurate.
+
+  If the histogram exceeds the 160-bucket limit, Observability Platform decreases
+  its scale until the bucket count is within the limit. Downscaling reduces the
+  histogram's resolution.
+
+  Classic Prometheus histograms are cumulative counters and have the same downsampling
+  effects.
+
+## Querying downsampled data
+
+Users can have issues querying downsampled data, in particular the switch from higher
+resolution data to lower. Some queries can be sensitive to data resolution.
+Although a query might work well with raw data, it could return no data or data that
+doesn't make sense after downsampling.
+
+For example, `query rate(some_metric[2m])` with a raw resolution of `30s` returns
+results. If the user increases the query time range, the query requests downsampled
+data. The results are empty, because the query requested multiple data points in the
+`2m` window, but downsampling reduces available data to one data point every
+[five minutes](/administer/limits-licensing/licensing#ingestion-limits-and-retention-policies).
+
+To prevent empty graphs when changing the query time range, Observability Platform
+modifies the user query. If a query uses downsampled data at a `5m` resolution, but
+it contains range selectors that are lower than that (for example, `[2m]`),
+Observability Platform rewrites the range selectors to be three times the resolution
+of the data.
+
+Based on the previous example, Observability Platform executes the modified query
+rate `(some_metric[15m]) (15m = 3 x 5m)` when querying downsampled data.
+
+Querying lower resolution data might additionally affect some of the function
+output, including:
+
+- The `increase()` function can return very different numbers after switching to
+  downsampled data.
+- The `rate()` function smooths out peaks for graphs with many peaks with raw data.
+- Any `resets()` are dropped when downsampling data.

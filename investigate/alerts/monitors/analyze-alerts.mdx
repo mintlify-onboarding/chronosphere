@@ -1,0 +1,159 @@
+---
+title: Analyze related alerts
+sidebarTitle: Analyze
+'og:description': Learn about analyzing related alerts for a monitor.
+---
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+<LimitedAvail />
+
+Understanding patterns across alerts is challenging, especially during an alert
+storm when many alerts are triggered simultaneously.
+
+When viewing an individual monitor, the top of the page includes an alert analysis
+section to provide insight into data patterns. These patterns can apply to only the
+alerts from that monitor, or across multiple alerts that share similar signal
+patterns. This summary includes the number of new alerts that triggered, which labels
+were impacted, and the number of related alerts across other monitors and
+[service level objectives (SLOs)](/observe/slo). For example, this section might
+include a summary like this:
+
+>In the **last 1 hour**, this monitor had **12 alerts** across **7 labels**. In that
+>same time window, there were **410 alerts** with similar labels.
+
+This information can help determine whether alerts for a single monitor indicate an
+issue with a narrow or broad impact. For example, does this issue impact one or two
+labels or alerts, or are many alerts firing simultaneously across many monitors with a
+single label in common?
+
+To further understand the impact across other alerts, you can
+[analyze alert patterns](#analyze-alert-patterns).
+
+## Analyze alert patterns
+
+Monitors, when configured correctly, watch for common patterns in your system and
+alert teams when thresholds are exceeded or unhealthy trends emerge. When
+misconfigured, monitors can send alerts without context about the breadth of the
+issue, or trigger based on a superficial condition that distracts from the real
+issue. Alert storms, when many alerts trigger at one time for what might be the same
+incident (but might not be), are especially confusing.
+
+Analyzing alert patterns provides additional context about whether the alert you're
+viewing is an isolated incident, or part of a broader cross-company incident that
+other people might already be solving. View alerts
+[for an individual monitor](#alerts-for-this-monitor) to identify patterns across
+labels connected to this monitor. You can also view [related alerts](#related-alerts)
+to understand where alerts overlap, and help understand root causes such as which
+services are unhealthy, which services became unhealthy first, and whether related
+services are also unhealthy.
+
+In large alert storms, you might choose a smaller time period, like five minutes. In
+smaller, continuous alert storms, choose a larger time period, such as 30 minutes, to
+zoom out and see where the alerts began triggering.
+
+### Alerts for this monitor
+
+When viewing alerts for this monitor, you want to know where to direct your
+investigation. The filters contain all labels associated with this monitor, which are
+key/value pairs that map to telemetry data in your system. For example, looking at
+the query graph in the monitor might show that two production clusters are alerting.
+Which one should you investigate? By analyzing alerts, you discover that
+`production-c` is the cluster where the related monitor keeps triggering, so you can
+direct your investigation there.
+
+Analyzing alerts can help identify alerts that are false alarms, known as _flapping_.
+For example, a single monitor that's triggered several new alerts in the last hour
+for the same label set likely indicates that an alert is triggering or resolving in
+rapid succession. This alert is likely flapping, and can be muted with a
+[muting rule](/investigate/alerts/muting-rules), or the monitor might need
+reconfigured. If the related alerts view includes many unique labels or signal
+values, the issue might be escalating and require more attention.
+
+To analyze alerts for an individual monitor:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Select an individual monitor you want to view alerts for.
+1. In the selected monitor page, click **Analyze alert patterns**.
+
+   The **Analyze alert patterns** drawer displays a heatmap of the labels associated
+   with this monitor.
+1. In the heatmap, click any of the tiles to view the associated alerts at the
+   selected time.
+1. To filter for different alert severities, such as only critical or only warnings,
+   make a selection from the **Severity** menu. All alerts, including critical and
+   warning severities, are included by default.
+1. To broaden or narrow the time window, use the
+   **<Icon icon="clock" /> [time range selector](/navigate/time-ranges)**.
+
+   In large alert storms, you might choose a smaller time period, like five minutes.
+   In smaller, continuous alert storms, choose a larger time period, such as 30
+   minutes, to zoom out and see where the alerts began triggering.
+1. To filter for alerts that triggered for specific durations, change the time period
+   in the **Min duration** and **Max duration** fields.
+
+### Related alerts
+
+Viewing related alerts can help discover overlap of
+[signals](/investigate/alerts/notifications/signals) and labels that apply to
+multiple alerts. The heatmap displays patterns in other alerts that share at least
+one of the same labels. This visual shows the density and intensity of overlap, which
+can help direct your focus when investigating issues. Use the grouping and filtering
+options to pivot on different facets, such as grouping by label or monitor, to change
+the perspective of your investigation.
+
+Use the maximum and minimum duration filters to filter out flapping alerts. For
+example, during alert storms, set the minimum duration to five minutes to filter out
+alerts that might be flapping, or noise. Alternatively, after an alert storm ends,
+you can set the maximum duration to five minutes to find patterns of flapping alerts
+for cleanup as part of a post-mortem action item.
+
+If the related alerts view includes many unique labels or signal values, the issue
+might be escalating and require more attention.
+
+To analyze related alerts for a monitor:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Select an individual monitor you want to view alerts for.
+1. In the selected monitor page, click **Analyze alert patterns**.
+
+   The **Analyze alert patterns** drawer displays a heatmap of the labels associated
+   with this monitor.
+
+1. Click the **Related alerts** tab to view other labels related to this alert. This
+   view displays all `key/value` label pairs related to the selected monitor and other
+   monitors exhibiting similar alerting behavior.
+1. In the heatmap, click any of the tiles to view the associated alert at the
+   selected time.
+1. To display different alert severities, such as only critical or only warnings, make
+   a selection from the **Severity** menu. Both critical and warning severities are
+   selected by default.
+1. To broaden or narrow the time window, use the
+   **<Icon icon="clock" /> [time range selector](/navigate/time-ranges)**.
+1. Make selections in the **Group by** menu to pivot on different facets and change
+   the angle of your investigation. You can then select individual or multiple values
+   within each of those facets to add or remove them from the heatmap.
+1. Add more key/value pairs to include alerts matching any of the identified
+   criteria. Key/value pairs are added to each other as `OR` filters on matching
+   alerts. Adding more criteria updates the results in the heatmap.
+
+After identifying overlap and highlighting the root cause of an issue, you can
+[take action on related alerts](#take-action-on-related-alerts).
+
+#### Take action on related alerts
+
+If the related alerts summary seems noisy, such as indicating too many alerts,
+Chronosphere suggests the following actions:
+
+- [Configure signals](/investigate/alerts/notifications/signals) to create groups of
+  notifications for similar alerts when a monitor alert triggers or resolves, which
+  can reduce the cardinality of alerts to a smaller set of dimensions.
+- [Create derived labels](/investigate/querying/metrics/derived-telemetry/derived-labels)
+  to standardize on one name for the same service or component, and reduce the
+  number of alerts that alerts generate per label.
+- [Shape your metric data](/control/shaping) to reduce the metrics you persist,
+  identify problematic metrics and labels, downsample data, and reduce cardinality.

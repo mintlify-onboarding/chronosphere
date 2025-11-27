@@ -1,0 +1,231 @@
+---
+title: Find and fix rule and monitor evaluation failures
+sidebarTitle: Evaluation failures
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+[Recording rules](/control/shaping/rules/recording) and [monitors](/investigate/alerts/monitors)
+might not evaluate properly, leaving you with missing data or errors that weren't
+caught.
+
+## View recording rules and monitor failures
+
+Select from the following methods to view your recording rule or monitor failures.
+
+<Tabs>
+<Tab title="Web" id="view-rule-failures-cloud">
+
+In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+and then select
+**<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Rule Status**.
+
+The **Rule Status** page displays. Select **Monitors** or **Recording Rules** to
+focus on a set of errors. Each type's display includes the:
+
+- **Time Frame**: The amount of time data aggregated. Permanently set to
+  **last 5 minutes**.
+- **Total Monitors** or **Total Recording Rules**: The number of this type of
+  definition.
+- **Failing Monitors** or **Failing Recording Rules**: The number of monitors or
+  rules currently failing to execute.
+- **Go To Recording Rules**: On the **Recording Rules** tab, this link goes to the
+  recording rules page.
+
+The page provides a table with the following information:
+
+- **Execution Status** of the rule in the **Time Frame**.
+- **Monitor** or **Recording Rule** name.
+- **Interval** the rule evaluates at.
+- **#Errors** shows the number of failed evaluations in the **Time Frame**.
+- **Error** text explaining the failure.
+
+At the end of the line, click the <Icon icon="ellipsis-vertical" /> three vertical dots
+icon and then a menu option to:
+
+- **View Full Error Text**: Review the error text in a dialog box.
+- **Copy Error Text**: Copy the text of the error message.
+- **Go to Monitor**: For monitor failures, go to the failed monitor.
+
+</Tab>
+<Tab title="Chronoctl" id="view-rule-failures-chronoctl">
+
+To view rule evaluation failures with [Chronoctl](/tooling/chronoctl), use the
+`rule-evaluations list` command:
+
+```shell
+chronoctl rule-evaluations list
+```
+
+The output contains all the rule evaluation failures that occurred within the last
+five minutes, including the following information:
+
+- `rule_slug`
+- `rule_type`: What type of rule (or monitor) this error is for.
+- `detected_at`: Rule evaluation issues aggregated over the last five minutes,
+  leading up to this timestamp.
+- `count`: How many failures occurred in the time period.
+- `message`: The error message, as explained in
+  [common failures and solutions](#common-failures-and-solutions).
+
+For example:
+
+```shell
+$ chronoctl rule-evaluations list
+rule_slug: bad-rule
+rule_type: MONITOR
+detected_at: 2023-02-27T22:44:39.884Z
+count: 20
+message: vector contains metrics with the same labelset after applying alert labels
+---
+rule_slug: bad-rule-2
+rule_type: RECORDING
+detected_at: 2023-02-27T22:44:39.884Z
+count: 5
+message: An internal error occurred.
+```
+
+See the [List Rule Evaluation](https://docs.chronosphere.io/tooling/api-info/state_definition/operations/ListRuleEvaluations)
+API documentation to learn more about these individual fields.
+
+</Tab>
+<Tab title="API" id="list-rule-eval-API">
+
+To complete this action with the Chronosphere API, use the
+[`ListRuleEvaluations`](https://docs.chronosphere.io/tooling/api-info/state_definition/operations/ListRuleEvaluations)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Delete low value rules
+
+Use the [Telemetry Usage Analyzer](/investigate/analyze/usage) to review metrics used in
+failing rules or monitors. If the metric is low value, deleting the failing rule or
+monitor might make more sense than fixing it.
+
+## Common failures and solutions
+
+The following list provides some common errors and solutions to help you fix failing
+rules and monitors.
+
+### Vector contains metrics with the same label set after applying labels
+
+Prometheus requires all time series returned from a monitor query or a reporting rule
+be fully unique, meaning the entire set of `label:value` pairs must differ across a
+time series. If metrics have the same labels after applying alert or rule labels, a
+collision occurs.
+
+Similar to Prometheus, Observability Platform takes monitor or recording rule labels
+and overrides the label pairs from all returned time series.
+
+The following error message indicates a monitor or recording rule `label:value`
+collision:
+
+```text
+Vector contains metrics with the same label set after applying alert (or rule) labels`
+```
+
+For example:
+
+- Monitor or Recording Rule labels: `{"service": "gateway"}`
+- Fetched time series labels: `{"action": "http_get", "service": "ui-console"}`
+- Resulting time series: `{"action": "http_get", "service": "gateway"}`
+
+In this instance, the `ui-console` label is overridden to `gateway` after the
+monitor or recording rule labels apply. The error occurs in a situation where
+collected values look like:
+
+- Monitor or Recording Rule labels: `{"service": "gateway"}`
+- Fetched time series 1: `{"action": "http_get", "service": "ui-console"}`
+- Fetched time series 2: `{"action": "http_get", "service": "backend-server"}`
+
+Processing rewrites these time series to:
+
+- Resulting time series 1: `{"action": "http_get", "service": "gateway"}`
+- Resulting time series 2: `{"action": "http_get", "service": "gateway"}`
+
+After applying the monitor or recording rule override `{"service": "gateway"}`, the
+resulting time series are an exact match, which causes an error.
+
+Use one of the following methods to resolve the error:
+
+- Use the Prometheus [`label_replace`](https://prometheus.io/docs/prometheus/latest/querying/functions/#label_replace)
+  operator to change the underlying label name being overwritten.
+- Remove the monitor or recording rule label.
+
+### Found duplicate time series
+
+The error message `Found duplicate series for the match group` indicates two
+time series being joined together, but the series don't have the same labels. For
+example, one time series might have a
+[host or instance label](/ingest/metrics-traces/collector/mappings/prometheus/prometheus-recommendations#label-names-and-values),
+while the other doesn't.
+
+Review the error message and identify the problematic labels.
+
+Use one of the following methods to address this issue:
+
+- Remove the labels from the offending metric. If the labels aren't used in
+  dashboards, monitors, recording rules, or queries, you can create a rollup rule to
+  remove the labels from the metric.
+- Update the query to exclude the problematic labels. If other resources use the
+  label, or you want to keep the labels for any other reason, update the query using
+  PromQL functions, such as `group`, `sum`, or `max`, and use the `without` option
+  to exclude the labels. For example, `group(test1) without (host, instance)`. Refer
+  to the
+  [PromQL documentation](https://prometheus.io/docs/prometheus/latest/querying/operators/#aggregation-operators)
+  for the behavior of each function.
+
+### Template errors
+
+Invalid Prometheus query templates display errors like `undefined variable
+`"$labels"`.
+
+Observability Platform attempts to parse your queries using
+[go template syntax](https://pkg.go.dev/text/template). This error
+typically means you have a block that looks like `{{ <your text here> }}` somewhere
+in the raw query. Remove those blocks to fix this issue.
+
+### The query exceeded the allowable resource limit
+
+Resource exhaustion occurs when a query has requested more time series than system
+resources can support. For example, a query that returns millions of results exceeds
+the [query scale protections](/administer/limits-licensing/limits/query-limits#query-scale-protections)
+defined by limits the system can process.
+
+Use one of the following methods to address this issue:
+
+- Reduce the number of time series returned by the query by adding more label
+  filters. This might not return all of the results you need, so you might need to write
+  multiple recording rules and then update your dashboards and monitors to use the
+  appropriate metric.
+- Observability Platform provides [rollup rules](/control/shaping/rules/rollup) you
+  can use to remove labels from metrics and aggregate values together, reducing
+  cardinality. Rollup rules can dramatically reduce the number of time series for a
+  particular metric, which might let your query complete.
+
+### Context deadline exceeded
+
+This error is functionally similar to
+[queries exceeding the allowable resource limit](#the-query-exceeded-the-allowable-resource-limit).
+Correct these errors with the same solutions.
+
+### Internal error occurred
+
+It's possible that when [viewing recording rules](#view-recording-rules-and-monitor-failures)
+in Observability Platform, the following error could display:
+
+```text
+An internal error occurred.
+```
+
+This error can indicate that a metric that's impacted by a recording rule can't be
+written to the database. A likely cause is that a tenant is experiencing license
+penalization. Review the [License Overview](/administer/limits-licensing/licensing)
+to track your telemetry usage against license quotas and determine which license is
+exceeding its capacity.

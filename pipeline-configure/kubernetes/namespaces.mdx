@@ -1,0 +1,15 @@
+---
+title: Namespaces
+'og:description': Configure Kubernetes namespaces in Chronosphere Telemetry Pipeline.
+sidebarTitle: Namespaces
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+By default, Telemetry Pipeline creates its resources in the `calyptia`
+[namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/).
+
+You can use the `--kube-namespace` flag to set a different namespace when you
+[install](/pipeline-install/install-operator) or [upgrade](/pipeline-install/upgrade)
+Telemetry Pipeline. However, like other types of Kubernetes CRDs,
+[Core Operator](/pipelines/concepts#core-operator) CRDs don't support namespace scoping.

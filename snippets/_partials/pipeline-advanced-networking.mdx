@@ -1,0 +1,12 @@
+
+| Name                          | Key | Description | Default |
+| ----------------------------- | --- | ----------- | ------- |
+| **DNS Mode**                  | `net.dns.mode` | Selects the primary DNS connection type, which can be `TCP` or `UDP`. | _none_ |
+| **DNS Resolver**              | `net.dns.resolver` | Selects the primary DNS connection type, which can be `LEGACY` or `ASYNC`. | _none_ |
+| **Prefer IPv4**               | `net.dns.prefer_ipv4` | Prioritizes IPv4 DNS results when trying to establish a connection. Accepted values: `true`, `false`. | `false` |
+| **Keepalive**                 | `net.keepalive` | Enables or disables Keepalive support. Accepted values: `true`, `false`. | `true` |
+| **Keepalive Idle Timeout**    | `net.keepalive_idle_timeout` | Sets the maximum time allowed for an idle Keepalive connection. | `30s` |
+| **Max Connect Timeout**       | `net.connect_timeout` | Sets the maximum time allowed to establish a connection, which includes the TLS handshake. | `10s` |
+| **Max Connect Timeout Log Error** | `net.connect_timeout_log_error` | Specifies whether to log an error on connection timeout. When disabled, the timeout is logged as a debug message. Accepted values: `true`, `false`. | `true` |
+| **Max Keepalive Recycle**         | `net.keepalive_max_recycle` | Sets the maximum number of times a keepalive connection can be used before it's retired. | `2000` |
+| **Source Address**                | `net.source_address` | Specifies the network address to bind for data traffic. | _none_ |

@@ -1,0 +1,53 @@
+---
+title: Route logs through Telemetry Pipeline
+'og:description': Learn how to route log data through Chronosphere Telemetry Pipeline to Chronosphere Observability Platform.
+sidebarTitle: Pipeline
+---
+{/* -- dri: Adam Locke -- */}
+
+
+You can use Chronosphere Telemetry Pipeline to ingest logs from various sources such
+as Fluent Bit, Open Telemetry, and HTTP, apply parsers and processing rules, and send
+the output to Chronosphere Observability Platform. You create and define a pipeline
+in Telemetry Pipeline and set Observability Platform as a destination.
+
+After deploying your pipeline, processed log data streams to Observability Platform
+and is available for [exploring and querying](/investigate/querying/query-logs) in Logs
+Explorer.
+
+## Prerequisites
+
+Before creating a pipeline, you must [install Telemetry Pipeline](/pipeline-install),
+which includes installing a Core Operator and Core Instance.
+
+## Create a pipeline
+
+Specify a source and destination, and apply parsers and processing rules.
+
+To route logs through Telemetry Pipeline to Observability Platform:
+
+1. [Create a pipeline](/pipeline-data/create-modify#create-a-pipeline). Follow the
+   steps outlined in the Telemetry Pipeline documentation.
+1. Add a source, such as Fluent Bit, Elasticsearch, or OpenTelemetry.
+1. Add the [Chronosphere Logs](/pipeline-data/plugins/destination-plugins/chronosphere)
+   destination.
+1. Click the **Chronosphere Logs** destination to edit its configuration:
+   1. In the **General** section, in the **Host** field, enter:
+
+      ```text /TENANT/
+      TENANT.chronosphere.io
+      ```
+
+      Replace _`TENANT`_ with the name of your Observability Platform tenant.
+
+   1. Expand the **Advanced** section, and in the **URI** field, enter:
+
+      ```text
+      /api/v1/data/logs/ingest
+      ```
+
+1. Complete the remaining steps to deploy your pipeline.
+
+After deploying your pipeline,
+[verify that Observability Platform is receiving your logs](/ingest/logs/verify-logs)
+as anticipated.

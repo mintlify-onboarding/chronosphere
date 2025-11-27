@@ -1,0 +1,58 @@
+---
+title: Graylog DataSet destination plugin
+sidebarTitle: Graylog
+'og:description': Use the Graylog destination plugin.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Graylog [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `gelf`) lets you send your telemetry pipeline data to Graylog.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name    | Key | Description | Default |
+| ------- | --- | ----------- | ------- |
+| **Host**| `Host` | IP address or hostname of the target Graylog server. | `127.0.0.1` |
+| **Port**| `Port` | The port that your Graylog GELF input is listening on. | `12201` |
+| **Mode**| `Mode` | The protocol to use (`tls`, `tcp` or `udp`). | `udp` |
+| **Packet Size**| `Packet_Size` | If `mode` is `udp`, sets the size of packets to be sent. | `1420` |
+| **Compress** | `Compress` | If `true`, and `mode` is `udp`, compresses your UDP packets. Accepted values: `true`, `false`. | `true` |
+
+### GELF settings
+
+| Name                       | Key | Description | Default |
+| -------------------------- | --- | ----------- | ------- |
+| **GELF Short Message Key** | `Gelf_Short_Message_Key` | A short descriptive message (must be set in GELF). | `short_message` |
+| **GELF Timestamp Key**     | `Gelf_Timestamp_Key` | Your log timestamp (should be set in GELF). | `timestamp` |
+| **GELF Host Key**          | `Gelf_Host_Key` | This key value is used as the name of the host, source, or application that sent this message. (must be set in GELF). | `host` |
+| **GELF Full Message Key**  | `Gelf_Full_Message_Key` | Key to use as the long message. (Optional in GELF). | _none_ |
+| **GELF Level Key**         | `Gelf_Level_Key` | Key to be used as the log level. Its value must be in standard syslog levels between 0 and 7. (Optional in GELF). | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

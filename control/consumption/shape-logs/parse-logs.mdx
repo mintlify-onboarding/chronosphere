@@ -1,0 +1,524 @@
+---
+title: Parse your log data
+'og:description': Learn how to use parsers in Chronosphere Observability Platform to shape your log data at ingest time.
+sidebarTitle: Parse logs
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import TerraformPlan from '/snippets/_partials/terraformplan.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Your log data can be formatted differently depending on which service generates that
+data. Some data is structured, such as valid JSON. Other data might be somewhat
+structured, or not have any structure at all. In these instances, you can create
+parsers to create structured logs from plain text logs, and parse individual fields to
+extract meaningful data without changing your instrumentation.
+
+For example, if your instrumentation emits unstructured plain-text logs, create a
+[plain text parser](#create-plain-text-parsers) to provide structure by separating the
+individual fields.
+
+If your logs contain JSON or key/value pairs buried contained in a single string field,
+create a [field parser](#create-field-parsers) to extract the values. The extracted
+fields can then be queried in [Logs Explorer](/investigate/querying/query-logs)
+and used in aggregations and transformations.
+
+## View parsers
+
+Select from the following methods to view and order available parsers. Parsers
+display in match order.
+
+<Tabs>
+<Tab title="Web" id="view-parsers-web">
+
+To view parsers:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Parsing and Mapping**.
+
+   All parsers display, including plain-text and field parsers.
+
+1. To view the code definition for all configured parsers, click the **Code Config**
+   tab.
+
+</Tab>
+
+<Tab title="Chronoctl" id="view-parsers-chronoctl">
+
+To use [Chronoctl](/tooling/chronoctl) to return all parsers, use the
+`chronoctl log-ingest-config read` command:
+
+```shell
+chronoctl log-ingest-config read
+```
+
+</Tab>
+
+<Tab title="Terraform" id="view-parsers-terraform">
+
+[Use the Code Config tool](/tooling/gitops) in Observability Platform to view a
+parser's Terraform representation.
+
+</Tab>
+
+<Tab title="API" id="view-parsers-api">
+
+To complete this action with the Chronosphere API, use the
+[`ReadLogIngestConfig`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ReadLogIngestConfig)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Create parsers
+
+Parsers operate on both [plain-text logs](#create-plain-text-parsers) and
+[individual fields](#create-field-parsers). All configured parsers are included in a
+single definition, and evaluated in match order. Observability Platform applies the
+first parser in the definition that matches a log, and ignores any subsequent
+parsers.
+
+Although you can define parsers in the Observability Platform web interface, you must
+[use the Code Config tool](/tooling/gitops) to apply the definition.
+
+### Create plain-text parsers
+
+Plain text parsers run against all ingested logs with the `plaintext` mimetype, and
+apply parsing logic to modify the original record. These parsers affect the entire
+log. Use field parsers to operate on individual fields within a log.
+
+Select either a regular expression or a key/value matching pattern to parse logs.
+When using a key/value pattern, you can extract any number of key value pairs from a
+plain text log. Plain text parsers also have an option to keep the original log after
+applying parsing logic.
+
+Plain text parsers apply only when the media type is set to `plaintext` for logs.
+Regular expressions for the matching type use
+[RE2 syntax](https://github.com/google/re2/wiki/Syntax) and named capture
+groups. Each named capture group becomes the key name in the structured log.
+Observability Platform requires at least one named capture group in the regular
+expression.
+
+Use one of the following methods to create plain text parsers.
+
+<Tabs>
+<Tab title="Web" id="create-parsers-web">
+
+Define the plain text parser definition in Observability Platform, and then
+[use the Code Config tool](/tooling/gitops) to apply the definition.
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Parsing and Mapping**.
+1. In the **Plaintext Parsers** section, click **Create plaintext parser**.
+1. Enter a name for the parser.
+1. Select the matching type for the parser:
+   - **REGEX**: Use a regular expression to match logs. In the **Template** field,
+     select the regular expression template to apply to your logs. Use a predefined
+     template such as **Nginx**, or specify a **Custom** template.
+   - **Key/value**: Use a specified pattern to separate key/value pairs in log data.
+     Enter the following values:
+     - **Pair separator**: Specifies the character used to split matching pairs into
+       its key and value. For example, a colon (`:`) if your data is in the format
+       `key: value`.
+     - **Delimiter**: Specifies the character used to split the input log data into
+       key/value pairs. For example, a comma (`,`) if your data is in the format
+       `key: value, key: value`.
+     - **Trim set**: Identifies the leading and trailing characters to trim from the
+       key/value pairs. For example, a space (`" "`) between key/value pairs if your
+       data is in the format `key: value, key: value`.
+1. If you want to keep the original log after parsing, select the corresponding
+   checkbox.
+1. Click **Save** to save the parser definition.
+1. On the **Logs Parsing and Mapping** page, click **View code config**.
+1. In the **Code Config** tab, [use the Code Config tool](/tooling/gitops) to apply
+   the definition.
+
+</Tab>
+
+<Tab title="Chronoctl" id="create-parsers-chronoctl">
+
+To use [Chronoctl](/tooling/chronoctl) to create plain text parsers, use the
+`chronoctl log-ingest-config create` command:
+
+```shell
+chronoctl log-ingest-config create
+```
+
+1. Run the following command to generate a sample parser configuration you can use as
+   a template:
+
+   ```shell
+   chronoctl log-ingest-config scaffold
+   ```
+
+   In the template, `kind: LogIngestConfig` defines an individual parser configuration.
+
+1. Use the `plaintext_parsers` object to define the plain text parser to run on your
+   log data.
+1. With a completed definition, submit it with:
+
+   ```shell /FILE_NAME/
+   chronoctl log-ingest-config create -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+</Tab>
+
+<Tab title="Terraform" id="create-parsers-terraform">
+
+<TerraformPlan />
+
+To create a plain text parser with [Terraform](/tooling/infrastructure/terraform):
+
+1. Create a Terraform resource with the `chronosphere_log_ingest_config` resource
+   type, followed by a resource name.
+1. Use the `plaintext_parser` object to define the plain text parser to run on your
+   log data.
+1. Add the definition to a Terraform file.
+1. Run this command to create the resource:
+
+   ```shell
+   terraform apply
+   ```
+
+</Tab>
+
+<Tab title="API" id="create-parsers-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateLogIngestConfig`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateLogIngestConfig)
+endpoint.
+
+Use the `plaintext_parsers` object to define the plain text parser to run against your log
+data.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Create field parsers
+
+Field parsers operate on an individual field within a log, and run on all ingested
+logs, including JSON and plain text logs. Field parsers run after plain text parsers.
+When defining a field parser, choose which matching pattern to apply and specify the
+destination of the parsed field.
+
+<Tabs>
+<Tab title="Web" id="create-field-parsers-web">
+
+Define the field parser definition in Observability Platform, and then
+[use the Code Config tool](/tooling/gitops) to apply the definition.
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Parsing and Mapping**.
+1. In the **Field Parsers** section, click **Create field parser**.
+1. Enter a source field for the parser to operate on, such as `message`.
+1. Enter a destination for the parsed data, which can be one of these locations:
+
+   - Use the same field name, which overwrites the existing field data with the
+     parsed data.
+   - Specify a new field name to contain the parsed data.
+   - Leave the destination field empty, which populates the parsed data to the top
+     level of your logs.
+
+1. Select the matching type for the parser.
+   - **JSON** matches on valid JSON logs.
+   - **REGEX** uses a regular expression to match logs. In the **Template** field,
+     select the regular expression template to apply to your logs. Use a predefined
+     template such as **Nginx**, or specify a **Custom** template.
+   - **Key/value** uses a specified pattern to separate key/value pairs in log data.
+     Enter the following values:
+     - **Pair separator** is the character used to split matching pairs into its key
+       and value. For example, a colon (`:`) if your data is in the format `key:value`.
+     - **Delimiter** is the character used to split the input log data into key/value
+       pairs. For example, a comma (`,`) if your data is in the format
+       `key: value, key: value`.
+     - **Trim set** identifies the leading and trailing characters to trim from the
+       key/value pairs. For example, a space (`" "`) between key/value pairs if your
+       data is in the format `key: value, key: value`.
+
+1. Click **Save** to save the parser definition.
+1. On the **Logs Parsing and Mapping** page, click **View code config**.
+1. In the **Code Config** tab, [use the Code Config tool](/tooling/gitops) to apply
+   the definition.
+
+</Tab>
+
+<Tab title="Chronoctl" id="create-field-parsers-chronoctl">
+
+To use [Chronoctl](/tooling/chronoctl) to create field parsers, use the
+`chronoctl log-ingest-config create` command:
+
+```shell
+chronoctl log-ingest-config create
+```
+
+1. Run the following command to generate a sample parser configuration you can use as
+   a template:
+
+   ```shell
+   chronoctl log-ingest-config scaffold
+   ```
+
+   In the template, `kind: LogIngestConfig` defines an individual parser configuration.
+
+1. Use the `field_parsers` object to define the plain text parser to run on your
+   log data.
+1. With a completed definition, submit it with:
+
+   ```shell /FILE_NAME/
+   chronoctl log-ingest-config create -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+</Tab>
+
+<Tab title="Terraform" id="create-field-parsers-terraform">
+
+<TerraformPlan />
+
+To create a plain text parser with [Terraform](/tooling/infrastructure/terraform):
+
+1. Create a Terraform resource with the `chronosphere_log_ingest_config` resource
+   type, followed by a resource name.
+1. Use the `field_parser` object to define the field parser to run on your log data.
+1. Add the definition to a Terraform file.
+1. Run this command to create the resource:
+
+   ```shell
+   terraform apply
+   ```
+
+</Tab>
+
+<Tab title="API" id="create-field-parsers-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateLogIngestConfig`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateLogIngestConfig)
+endpoint.
+
+Use the `field_parsers` object to define the field parser to run against your log data.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Edit parsers
+
+When creating or editing a parser, you can [use the Code Config tool](/tooling/gitops)
+to view code representations of a parser. The displayed code also responds to
+changes you make in the **Visual editor** tab.
+
+Select from the following methods to edit parsers.
+
+<Tabs>
+<Tab title="Web" id="edit-parsers-web">
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Parsing and Mapping**.
+1. In the row of the parser you want to edit, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and then click **Edit parser**.
+1. In the **Edit parser** drawer, make changes to your parser, and then click
+   **Save**.
+
+Observability Platform saves changes to your parser.
+
+</Tab>
+
+<Tab title="Chronoctl" id="edit-parsers-chronoctl">
+
+To update parsers with [Chronoctl](/tooling/chronoctl), use the
+`log-ingest-config update` command:
+
+```shell
+chronoctl log-ingest-config update
+```
+
+1. Update the parser definition file.
+1. Run the following command to submit the changes:
+
+   ```shell /FILE_NAME/
+   chronoctl log-ingest-config update -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+</Tab>
+
+<Tab title="Terraform" id="edit-parser-Terraform">
+
+<InfoTerraformLockout />
+
+To edit parsers using [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file that updates the resource's existing properties.
+1. Run this command to apply the changes:
+
+   ```shell
+   terraform apply
+   ```
+
+You can also [use the Code Config tool](/tooling/gitops) to view the parser's
+Terraform representation.
+
+</Tab>
+
+<Tab title="API" id="edit-parsers-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateLogIngestConfig`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateLogIngestConfig)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Delete parsers
+
+Select from the following methods to delete parsers.
+
+<Tabs>
+<Tab title="Web" id="delete-parsers-web">
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Parsing and Mapping**.
+1. In the row of the parser you want to edit, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and then click **Delete parser**.
+
+Observability Platform deletes your parser.
+
+</Tab>
+
+<Tab title="Chronoctl" id="delete-parsers-chronoctl">
+
+To delete a parser with [Chronoctl](/tooling/chronoctl), use the
+`chronoctl log-ingest-config delete` command:
+
+```shell
+chronoctl log-ingest-config delete
+```
+
+</Tab>
+
+<Tab title="Terraform" id="delete-parsers-terraform">
+
+<InfoTerraformLockout />
+
+<TerraformDel />
+
+</Tab>
+
+<Tab title="API" id="delete-parsers-api">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteLogIngestConfig`](https://docs.chronosphere.io/tooling/api-info/definition/operations/DeleteLogIngestConfig)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Examples
+
+The following example shows how to apply both plain text and field parsers to create
+structured output from an unstructured log record.
+
+Consider the following input log data. The record is a single string that contains multiple
+key/value pairs in a single `message` field. In this state, querying the data is
+difficult, and you can't complete aggregations or transformations.
+
+```sql
+2025-09-22 09:15:45.101 2025/09/22 13:15:45 [info] 34567#34567: *9876543210 a new
+user session was started, client: 203.0.113.55, service: app.example.net, activity:
+"GET /data/dashboard/overview?appVersion=1.2.3 HTTP/1.1", host: "app.example.net",
+source: "https://app.example.net/home"
+```
+
+By applying a plain text parser and a field parser, you can separate the fixed fields
+and extract the key/value pairs into a new field that you can operate on in Logs
+Explorer.
+
+First, create a [plain text parser](#create-plain-text-parsers) that uses a regular
+expression to extract the key/value pairs. Next, add a [field parser](#create-field-parsers)
+to parse out the values. The following Terraform definition includes both parsers and
+their definitions:
+
+```ruby
+resource "chronosphere_log_ingest_config" "log_ingest_config" {
+
+  plain text_parser {
+    name = "metadata"
+    mode = "ENABLED"
+
+    parser {
+      parser_type = "REGEX"
+
+      regex_parser {
+        regex = "^(?P<timestamp>\\S+ \\S+)\\s+(?P<log_time>\\S+ \\S+) \\[(?P<log_level>\\w+)\\] (?P<pid>\\d+)#(?P<tid>\\d+): \\*(?P<connection_id>\\d+) (?P<message>.*?), (?P<metadata>.+)$"
+      }
+    }
+  }
+
+  field_parser {
+    destination {
+      selector = "metadata"
+    }
+
+    mode = "ENABLED"
+
+    parser {
+      parser_type = "KEY_VALUE"
+
+      key_value_parser {
+        delimiter      = ","
+        pair_separator = ":"
+        trim_set       = " "
+      }
+    }
+
+    source {
+      selector = "metadata"
+    }
+  }
+}
+```
+
+After applying both parsers, the generated data is output to a new `metadata` field, and
+is structured as shown in the following example. The new field includes key/value
+pairs that can be queried in [Logs Explorer](/investigate/querying/query-logs) and
+used in aggregations and transformations.
+
+```json
+{
+      "timestamp": "2025-08-22 13:36:18.648",
+      "log_time": "2025/08/22 17:36:18",
+      "log_level": "info",
+      "pid": "34567",
+      "tid": "34567",
+      "connection_id": "9876543210",
+      "message": "a new user session was started",
+      "metadata": {
+        "client": " 203.0.113.55",
+        "service": " app.example.net",
+        "activity": " \"GET /data/dashboard/overview?appVersion=1.2.3\"",
+        "host": " \"app.example.net\"",
+        "source": " \"https://app.example.net/home\""
+      }
+    }
+```

@@ -1,0 +1,110 @@
+---
+title: Redact/mask value
+'og:description': Learn about the redact/mask value processing rule in Chronosphere Telemetry Pipeline.
+sidebarTitle: Redact/mask value
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The redact/mask value [processing rule](/pipeline-data/processing-rules) obscures all
+or part of a specified key's value by replacing the original string with a series of
+repeated characters.
+
+## Configuration parameters
+
+<Params />
+
+| Name                    | Key | Description | Default |
+| ----------------------- | --- | ----------- | ------- |
+| **Key**                 | `key` | Required. The key whose value to redact. The value of this key must be a string and not a number, Boolean, array, or object. You can also use [record accessor syntax](/pipeline-data/processing-rules#record-accessor-syntax) to reference keys nested within an object. | _none_ |
+| **Regex**               | `regex` | Required. The regular expression that determines which strings to redact. You can use this parameter to selectively redact certain strings while other parts of **Key** intact. To redact the entire value of **Key**, use the regular expression `^.+$`. | _none_ |
+| **Replacement**         | `replaceChar` | Required. The string that replaces any redacted characters in the value of **Key**. | `*` |
+| **Regex engine**        | `regexEngine` | Required. The [engine](/pipeline-data/processing-rules#regex-engines) to parse your regular expression. Accepted values: `GNU`, `Oniguruma`, `PCRE2`, `POSIX`, `TRE`. | `PCRE2` |
+| **Match case** checkbox   | `matchCase` | Indicates whether the regular expression is case-sensitive. | Not selected |
+| **Comment**             | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Examples
+
+Using the redact/mask value rule lets you remove private or sensitive information
+from your telemetry data.
+
+### Full redaction
+
+You can obscure the entire value of a specified key. For example, given
+this sample log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user":{"device":"mobile","ip":"149.206.93.24"},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user":{"device":"desktop","ip":"107.30.35.78"},"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user":{"device":"desktop","ip":"255.255.239.8"},"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user":{"device":"mobile","ip":"166.128.199.193"},"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user":{"device":"other","ip":"212.96.55.27"},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user":{"device":"mobile","ip":"18.87.158.235"},"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user":{"device":"desktop","ip":"200.101.159.250"},"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user":{"device":"desktop","ip":"95.208.154.180"},"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user":{"device":"desktop","ip":"227.14.218.76"},"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user":{"device":"other","ip":"158.229.53.77"},"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user":{"device":"mobile","ip":"48.30.70.51"},"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Key** value `$user.ip`, the **Regex** value `^.+$`,
+and the **Replacement** value `0` returns the following result:
+
+```json
+{"user":{"ip":"0000000000000","device":"mobile"},"timestamp":"2023-03-28T09:08:41.64283645Z","action":"purchase","page_id":30}
+{"user":{"ip":"000000000000","device":"desktop"},"timestamp":"2023-03-28T09:08:42.643343109Z","action":"purchase","page_id":10}
+{"user":{"ip":"0000000000000","device":"desktop"},"timestamp":"2023-03-28T09:08:48.643600498Z","action":"click","page_id":50}
+{"user":{"ip":"000000000000000","device":"mobile"},"timestamp":"2023-03-28T09:08:50.643773688Z","action":"purchase","page_id":40}
+{"user":{"ip":"000000000000","device":"other"},"timestamp":"2023-03-28T09:08:51.643932272Z","action":"purchase","page_id":30}
+{"user":{"ip":"0000000000000","device":"mobile"},"timestamp":"2023-03-28T09:08:56.644080944Z","action":"click","page_id":40}
+{"user":{"ip":"000000000000000","device":"desktop"},"timestamp":"2023-03-28T09:09:03.64425954Z","action":"click","page_id":30}
+{"user":{"ip":"00000000000000","device":"desktop"},"timestamp":"2023-03-28T09:09:03.644317046Z","action":"view","page_id":20}
+{"user":{"ip":"0000000000000","device":"desktop"},"timestamp":"2023-03-28T09:09:10.64447719Z","action":"purchase","page_id":50}
+{"user":{"ip":"0000000000000","device":"other"},"timestamp":"2023-03-28T09:09:17.644810963Z","action":"view","page_id":10}
+{"user":{"ip":"00000000000","device":"mobile"},"timestamp":"2023-03-28T09:09:20.644994805Z","action":"view","page_id":50}
+```
+
+This rule redacted each user's IP address by replacing the value of `ip` with a
+string of zeroes.
+
+### Selective redaction
+
+You can also redact specific strings while leaving other strings intact. For example,
+given this sample log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Key** value `action`, the **Regex** value `purchase`,
+and the **Replacement** value `*` returns the following result:
+
+```json
+{"action":"********","timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"page_id":30}
+{"action":"********","timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"page_id":10}
+{"action":"click","timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"page_id":50}
+{"action":"********","timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"page_id":40}
+{"action":"********","timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"page_id":30}
+{"action":"click","timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"page_id":40}
+{"action":"click","timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"page_id":30}
+{"action":"view","timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"page_id":20}
+{"action":"********","timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"page_id":50}
+{"action":"view","timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"page_id":10}
+{"action":"view","timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"page_id":50}
+```
+
+This rule redacted certain strings within the `action` key by replacing any instances
+of `purchase` with a string of asterisks. However, other strings within the value
+of `action` were unaffected.

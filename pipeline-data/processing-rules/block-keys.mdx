@@ -1,0 +1,112 @@
+---
+title: Block keys
+'og:description': Learn about the block keys processing rule in Chronosphere Telemetry Pipeline.
+sidebarTitle: Block keys
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The block keys [processing rule](/pipeline-data/processing-rules) removes any keys
+that match a specified regular expression, and then preserves all other keys in
+each record.
+
+## Configuration parameters
+
+<Params />
+
+| Name                      | Key | Description | Default |
+| ------------------------- | --- | ----------- | ------- |
+| **Regex**                 | `regex` | Required. The regular expression that determines which keys to remove. | _none_ |
+| **Match case** checkbox   | `matchCase` | Indicates whether the regular expression is case-sensitive. | Not selected |
+| **Regex engine**          | `regexEngine` | Required. The [engine](/pipeline-data/processing-rules#regex-engines) to parse your regular expression. Accepted values: `GNU`, `Oniguruma`, `PCRE2`, `POSIX`, `TRE`. | `PCRE2` |
+| **Nested access pattern** | `nestedPath` | The key of the highest object level to evaluate. If specified, the block keys rule ignores any keys not contained within the specified object. If unspecified, this rule evaluates all top-level keys, but no keys nested within top-level keys. You can also use [record accessor syntax](/pipeline-data/processing-rules#record-accessor-syntax) to reference keys nested within another nested object. | _none_ |
+| **Comment**               | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Examples
+
+Using the block keys rule lets you pare down telemetry data by eliminating data
+you don't want to keep.
+
+### Flat example
+
+For example, given this sample log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Regex** value `page_id` returns the following result:
+
+```json
+{"action":"purchase","user_id":3,"timestamp":"2023-03-28T09:08:41.64283645Z"}
+{"action":"purchase","user_id":4,"timestamp":"2023-03-28T09:08:42.643343109Z"}
+{"action":"click","user_id":1,"timestamp":"2023-03-28T09:08:48.643600498Z"}
+{"action":"purchase","user_id":5,"timestamp":"2023-03-28T09:08:50.643773688Z"}
+{"action":"purchase","user_id":1,"timestamp":"2023-03-28T09:08:51.643932272Z"}
+{"action":"click","user_id":2,"timestamp":"2023-03-28T09:08:56.644080944Z"}
+{"action":"click","user_id":3,"timestamp":"2023-03-28T09:09:03.64425954Z"}
+{"action":"view","user_id":1,"timestamp":"2023-03-28T09:09:03.644317046Z"}
+{"action":"purchase","user_id":2,"timestamp":"2023-03-28T09:09:10.64447719Z"}
+{"action":"view","user_id":2,"timestamp":"2023-03-28T09:09:17.644810963Z"}
+{"action":"view","user_id":1,"timestamp":"2023-03-28T09:09:20.644994805Z"}
+```
+
+This rule removed the `page_id` key from each log and retained all other keys.
+
+### Nested example
+
+You can also use the allow keys rule to selectively remove information within a
+nested object. For example, given this sample log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user":{"vip":"no","id":3},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user":{"vip":"yes","id":4},"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user":{"vip":"no","id":1},"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user":{"vip":"yes","id":5},"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user":{"vip":"no","id":1},"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user":{"vip":"yes","id":2},"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user":{"vip":"no","id":3},"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user":{"vip":"no","id":1},"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user":{"vip":"yes","id":2},"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user":{"vip":"yes","id":2},"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user":{"vip":"no","id":1},"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Regex** value `vip` and the **Nested access pattern**
+value `user` returns the following result:
+
+```json
+{"user":{"id":3},"action":"purchase","page_id":30,"timestamp":"2023-03-28T09:08:41.64283645Z"}
+{"user":{"id":4},"action":"purchase","page_id":10,"timestamp":"2023-03-28T09:08:42.643343109Z"}
+{"user":{"id":1},"action":"click","page_id":50,"timestamp":"2023-03-28T09:08:48.643600498Z"}
+{"user":{"id":5},"action":"purchase","page_id":40,"timestamp":"2023-03-28T09:08:50.643773688Z"}
+{"user":{"id":1},"action":"purchase","page_id":30,"timestamp":"2023-03-28T09:08:51.643932272Z"}
+{"user":{"id":2},"action":"click","page_id":40,"timestamp":"2023-03-28T09:08:56.644080944Z"}
+{"user":{"id":3},"action":"click","page_id":30,"timestamp":"2023-03-28T09:09:03.64425954Z"}
+{"user":{"id":1},"action":"view","page_id":20,"timestamp":"2023-03-28T09:09:03.644317046Z"}
+{"user":{"id":2},"action":"purchase","page_id":50,"timestamp":"2023-03-28T09:09:10.64447719Z"}
+{"user":{"id":2},"action":"view","page_id":10,"timestamp":"2023-03-28T09:09:17.644810963Z"}
+{"user":{"id":1},"action":"view","page_id":50,"timestamp":"2023-03-28T09:09:20.644994805Z"}
+
+```
+
+This rule removed the `vip` key within the `user` object and retained all other
+keys within `user`. However, because the processing rule's scope was limited to
+`user`, the rule didn't affect the `timestamp`, `page_id`, or `action` fields.
+
+## Related rules
+
+For a processing rule with the opposite effect, see
+[allow keys](/pipeline-data/processing-rules/allow-keys).

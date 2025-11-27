@@ -1,0 +1,65 @@
+---
+title: Enable change events on service pages
+'og:description': Learn how to enable and overlay change events on service pages in Observability Platform.
+sidebarTitle: Services
+---
+{/* -- dri: Adam Locke -- */}
+
+
+<Note>
+To enable change events on service pages, contact [Chronosphere Support](/support).
+</Note>
+
+You can enable [change events](/overview/types/change-events) to display them on panels
+for each of your services. This capability lets you visualize changes in your
+environment relative to a specific service.
+
+To display events on service pages, your organization must meet the following
+requirements:
+
+- Your organization must have an active license for the Events product, and the product
+   must be active in your tenant.
+- Events data must have service names provided on a metric label.
+- Service name values for each event must exactly match the service name value used in
+  metrics.
+- Observability Platform service discovery must be configured and actively
+  discovering services.
+
+After enabling change events, you can choose the category of events you want to
+display. You can select a single or multiple categories. Clicking a change event from
+a panel gives you the option to open the event in Changes Explorer to view the full
+summary for that event.
+
+Enabling change events on service panels also adds a **Change Events** table to your
+service page that contains a list of events related to the selected service. Clicking
+a change event from the table opens a panel for the specific event that displays the
+full summary.
+
+To display change events for services:
+
+1. On the [Services](/observe/services) page, click any service's **Name** to open
+   the service's detail page.
+1. On the service's detail page, click the **Change Events** toggle to enable change
+   events for that service.
+1. In the **Category** dropdown, select the change event categories you want to
+   display on your service panels.
+1. In any panel, hold the pointer over a change event to display more details for a
+   particular change event.
+1. Click the change event to pin it, and then click **View details** to display the
+   full [change event details](/observe/enable-events/use-events#change-event-details).
+1. In the **Change event** drawer, click **Open in Changes Explorer** to open the
+   change event in Changes Explorer with the full summary for that event.
+
+From Changes Explorer, you can [filter](/investigate/querying/filter-events)
+specifically on services by including `lens_service` and the name of the service you
+want to display. For example, the following filter displays all `deploy` events for
+the `auth` service:
+
+```text
+lens_service = "auth" AND category = "deploys"
+```
+
+Change events also display in a table pages for individual services. The information is
+similar to the change events list in
+[Changes Explorer](/observe/enable-events/use-events#view-change-events),
+but is filtered to the selected service.

@@ -1,0 +1,26 @@
+
+
+- **Unit**: Defines the unit used to render the Y-axis. This has the most significant
+  effect when you enable Abbreviate. Defaults to `Decimal`.
+  - **Decimal**: Base 10 values. Observability Platform renders a value of
+    `1000000` as `1M`.
+  - **Bytes**: As decimal multiple-byte units. Observability Platform renders a
+    value of `1000000` as `1MB`.
+  - **Time**: Determines the [unit of time](/overview/concepts/time-units)
+    that Observability Platform uses to interpret a numeric value.
+  - **Percent**: Interprets the value as a percentile, representing 0% to 100% in a
+    range of either 0.0 to 1.0 (**Percent (0.0-1.0)**) or 0 and 100
+    (**Percent (0-100)**).
+
+    For example, Observability Platform renders a value of `1.0` in **Percent
+    (0.0-1.0)** as `100%`, and in **Percent (0-100)** as `1%`.
+- **Decimals**: Defines how many decimal places Observability Platform renders for
+  values.
+  **Default** renders decimal places only if necessary and rounds to the nearest
+  value. Numeric values from `0` to `4` render the corresponding number of decimal
+  places.
+- **Abbreviate**: Toggles whether to abbreviate units on the Y-axis. For example, if
+  enabled, Observability Platform renders a value of `100000000` as `100M`. You can
+  toggle this setting only if you set the **Unit** to `Decimal` or `Bytes`; `Time`
+  units `Time` units are always abbreviated and `Percent` values don't require the toggle.
+  Defaults to `true`.

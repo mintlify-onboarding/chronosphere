@@ -1,0 +1,77 @@
+---
+title: Prometheus and OpenMetrics ingestion
+sidebarTitle: Prometheus and OpenMetrics
+---
+import ChronoctlConvert from '/snippets/_partials/chronoctlconvert.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+You can configure the Collector to accept text-exposition payloads in either
+Prometheus or OpenMetrics formats.
+
+To enable the Prometheus and OpenMetrics ingestion for the Collector, add
+`importPrometheus` and `importOpenMetrics` under the `push` YAML collection in the
+Collector configuration:
+
+```yaml
+push:
+  importPrometheus:
+    enabled: true
+  importOpenMetrics:
+    enabled: true
+```
+
+Traffic is served from `/import/openmetrics` and `/import/prometheus` from the
+`listenAddress`, which defaults to `0.0.0.0:3030`.
+
+```shell
+# Importing an untyped metric in OpenMetrics format.
+curl -d $'test_metric_import 100\n# EOF' -X POST http://localhost:3030/import/openmetrics
+# Same import, but in Prometheus format.
+curl -d 'test_metric_import 100' -X POST http://localhost:3030/import/prometheus
+```
+
+Additional query parameters:
+
+- `extra_label`: pass in repeated, default labels for all time series, formatted as
+  `name=value`.
+- `default_timestamp`: provide a default timestamp in Unix milliseconds for
+  any time series that doesn't have one. Otherwise, the value defaults to `Now()` on
+  the Chronosphere backend.
+
+The following command includes both of these additional query parameters:
+
+```shell
+curl -d 'test_metric_import 100' -X POST \
+    http://localhost:3030/import/prometheus?extra_label=svc%3Dauth&extra_label=team%3Dbar&default_timestamp=1669701600
+```
+
+## Export Prometheus assets
+
+You can use [Chronoctl](/tooling/chronoctl) to convert Prometheus assets for import
+into Observability Platform.
+
+<ChronoctlConvert/>
+
+For example, to retrieve, convert, and apply Prometheus alert rules to
+Observability Platform:
+
+1. In your Prometheus installation, retrieve your Prometheus rules and pipe them into a
+   `.yml` file:
+
+   ```shell
+   kubectl get prometheusrules -o yaml -A > alert_rules.yml
+   ```
+
+1. Convert the rules using Chronoctl:
+
+   ```shell
+   chronoctl convert prometheus -p prometheus_rules.yml -a alertmanager.yml
+   ```
+
+1. Apply the rules to Observability Platform:
+
+   ```shell
+   chronoctl apply -f alerts.yml
+   ```

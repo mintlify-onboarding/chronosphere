@@ -1,0 +1,90 @@
+---
+title: Build telemetry pipelines
+'og:description': Learn how to build telemetry pipelines to collect, transform, and route telemetry data.
+sidebarTitle: Overview
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+You can use Chronosphere Telemetry Pipeline to collect, transform, and route
+telemetry data.
+
+{/* markdownlint-disable MD013 */}
+
+```mermaid
+flowchart LR
+  accTitle: Pipeline data flow
+  accDescr: A diagram of a telemetry pipeline. Data originates from one or more source plugins (and each plugin can have an attached parser), then passes through processing rules, then continues to one or more destination plugins.
+    subgraph Pipeline data flow
+        direction LR
+        source1(<a href="/pipeline-data/plugins/source-plugins">Source plugin</a>)
+        source2(<a href="/pipeline-data/plugins/source-plugins">Source plugin</a>)
+        source3(<a href="/pipeline-data/plugins/source-plugins">Source plugin</a>)
+        parser1([<a href="/pipeline-data/parsers">Parser</a>])
+        parser2([<a href="/pipeline-data/parsers">Parser</a>])
+        parser3([<a href="/pipeline-data/parsers">Parser</a>])
+        processing1[/<a href="/pipeline-data/processing-rules">Processing rules</a>/]
+        processing2[/<a href="/pipeline-data/processing-rules">Processing rules</a>/]
+        processing3[/<a href="/pipeline-data/processing-rules">Processing rules</a>/]
+        processing4[/<a href="/pipeline-data/processing-rules">Processing rules</a>/]
+        processing5[/<a href="/pipeline-data/processing-rules">Processing rules</a>/]
+        destination1(<a href="/pipeline-data/plugins/destination-plugins">Destination plugin</a>)
+        destination2(<a href="/pipeline-data/plugins/destination-plugins">Destination plugin</a>)
+        node(( ))
+
+        source1 --> parser1 --> processing1
+        source2 --> parser2 --> processing2
+        source3 --> parser3 --> processing3
+        processing1 --- node
+        processing2 --- node
+        processing3 --- node
+        node --> processing4
+        node --> processing5
+        processing4 --> destination1
+        processing5 --> destination2
+
+    end
+        data1((Data))
+        data2((Data))
+        data3((Data))
+        data4((Data))
+        data5((Data))
+
+        data1 -.-> source1
+        data2 -.-> source2
+        data3 -.-> source3
+        destination1 -.-> data4
+        destination2 -.-> data5
+
+        style data1 stroke-dasharray: 5 5
+        style data2 stroke-dasharray: 5 5
+        style data3 stroke-dasharray: 5 5
+        style data4 stroke-dasharray: 5 5
+        style data5 stroke-dasharray: 5 5
+        style node stroke-width: 0, fill:none
+```
+
+{/* markdownlint-enable MD013 */}
+
+When you [create a pipeline](/pipeline-data/create-modify), you must include at
+least one [source plugin](/pipeline-data/plugins/source-plugins) and at least
+one [destination plugin](/pipeline-data/plugins/destination-plugins). You also
+have the option to add [parsers](/pipeline-data/parsers) and [processing rules](/pipeline-data/processing-rules)
+that transform the data passing through your pipeline.
+
+## Get started
+
+{/* markdownlint-disable MD013 */}
+{/* vale Chronosphere.SentenceLengthLong = NO */}
+
+ <Columns cols={1}>
+  <Card horizontal icon="dharmachakra" title="Automated Kubernetes logging" href="/pipeline-data/automated-logging" />
+  <Card horizontal icon="pipe" title="Create, modify, or delete pipelines" href="/pipeline-data/create-modify" />
+  <Card horizontal icon="file-code" title="Parsers" href="/pipeline-data/parsers" />
+  <Card horizontal icon="route" title="Plugins" href="/pipeline-data/plugins" />
+  <Card horizontal icon="filters" title="Processing rules" href="pipeline-data/processing-rules" />
+  <Card horizontal icon="bandage" title="Troubleshoot a pipeline" href="/pipeline-data/troubleshoot" />
+</Columns>
+
+{/* vale Chronosphere.SentenceLengthLong = YES */}
+{/* markdownlint-enable MD013 */}

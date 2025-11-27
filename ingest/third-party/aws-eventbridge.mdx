@@ -1,0 +1,214 @@
+---
+title: Send Amazon EventBridge events to Observability Platform
+sidebarTitle: AWS EventBridge
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Amazon EventBridge is a serverless service you can use to route a stream of real-time
+data from your applications, third-party software, and Amazon Web Services (AWS) to
+targets that include HTTP APIs and third-party integrations. You configure routing
+rules to route events to a target.
+
+Amazon EventBridge API destinations are HTTP endpoints you can configure as the
+target for a rule. Use API destinations to send events from Amazon EventBridge to
+Chronosphere Observability Platform.
+
+You can also use Amazon EventBridge to detect and react to AWS Health events, and
+send those events to Observability Platform. This configuration is similar to sending
+[Google Cloud Personalized Service Health events to Observability Platform](/ingest/third-party/google-cloud).
+
+To send Amazon EventBridge events to Observability Platform:
+
+1. [Create an API token](#create-an-api-token).
+1. [Create an API destination](#create-an-api-destination).
+1. Create an Amazon EventBridge rule, depending on which events you want to send to
+   Observability Platform:
+   - [Create an EventBridge rule](#create-an-amazon-eventbridge-rule) for specific events,
+     such as Amazon CloudWatch events.
+   - [Create an EventBridge rule for AWS Health](#create-an-amazon-eventbridge-rule-for-aws-health)
+     events to send those events to Observability Platform.
+
+## Create an API token
+
+Before configuring an API destination, [create an API token](/tooling/api-info#create-an-api-token)
+in Observability Platform, which you use to authenticate.
+
+## Create an API destination
+
+To configure Amazon EventBridge to send events to Observability Platform:
+
+1. Create an API destination by completing the steps in the
+   [Amazon EventBridge documentation](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-api-destinations.html#eb-api-destination-create).
+
+1. Configure the API destination you created:
+
+   1. For the **Authorization type**, select **API Key**. Enter **API-Token** as your
+      API key name, and enter the API token you created as the value.
+   1. For the destination endpoint, enter `https://ADDRESS/api/v1/data/events` and
+      select `POST` as the HTTP method.
+
+      Replace _`ADDRESS`_ with your company name prefixed to your Observability Platform
+      instance that ends in `.chronosphere.io`. For example,
+      _`MY_COMPANY`_`.chronosphere.io`.
+
+   1. For the **Invocation rate limit per second**, enter **5** as the value.
+   1. Select **Use an existing connection** and select the connection you created.
+
+## Create an Amazon EventBridge rule
+
+You can create an Amazon EventBridge rule to get notified about specific Amazon
+EventBridge events in Observability Platform.
+
+First, [create an API destination](#create-an-api-destination). Then complete the
+following steps:
+
+1. [Create an Amazon EventBridge rule](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule.html)
+   that reacts to events:
+
+   - Define the rule detail: Enter details for the rule and select
+     **Rule with an event pattern** as the rule type.
+   - Build the event pattern: Select **Use pattern form** as the creation method,
+     and define the event pattern.
+   - Define the target: Select **EventBridge API destination** as the target type,
+     choose your existing API destination from the list, and select
+     **Create a new role for this specific resource**.
+
+1. Expand **Additional settings** and configure an
+   [input transformation](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-transform-target-input.html)
+   to handle mapping from an AWS event to an Observability Platform `CreateEvent`
+   payload. This definition sends the transformed event to a target instead of the
+   original event.
+
+   You configure an input path to define variables, and then configure an input
+   template to match your event payload.
+
+1. Configure the input path to reference parameters in your event and store those
+   values in variables. For example:
+
+   ```json
+   {
+     "time": "$.time",
+     "resources": "$.resources",
+     "detail": "$.detail",
+     "state": "$.detail.state.value",
+     "prevState": "$.detail.previousState.value",
+     "alarmName": "$.detail.alarmName",
+     "description": "$.detail.configuration.description",
+     "detail": "$.detail",
+     "region": "$.region"
+   }
+   ```
+
+1. Configure the input template to specify the information you want to pass to your
+   target. This template matches your event payload and uses the variables defined in
+   your input path. You must surround all variables with angle brackets `<>`.
+
+   For example, the following template defines an Amazon CloudWatch input:
+
+   ```json
+   {
+     "event": {
+       "happenedAt": "<time>",
+       "category": "alerts",
+       "labels": {
+         "description": "<description>",
+         "aws_source": "aws.cloudwatch",
+         "region": "<region>"
+       },
+       "source": "EventBridge",
+       "title": "CloudWatch Alarm <alarmName> is in state <state>",
+       "type": "CloudWatch_Alarm_State_Change",
+       "payload_object": <detail>
+     }
+   }
+   ```
+
+1. For each additional event type you want to map to a change event, configure a rule
+   and select your existing API destination as the target. Each rule can have its own
+   input transformer.
+
+## Create an Amazon EventBridge rule for AWS Health
+
+You can create an Amazon EventBridge rule to get notified about AWS Health events in
+Observability Platform.
+
+First, [create an API destination](#create-an-api-destination). Then complete the
+following steps:
+
+1. [Create an Amazon EventBridge rule](https://docs.aws.amazon.com/health/latest/ug/cloudwatch-events-health.html#creating-event-bridge-events-rule-for-aws-health)
+   for AWS Health.
+
+1. In the step where you choose the target type on the **Select targets** page,
+   configure an
+   [input transformation](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-transform-target-input.html)
+   to handle mapping from an AWS event to an Observability Platform `CreateEvent`
+   payload. This definition sends the transformed event to a target instead of the
+   original event.
+
+1. Configure the input path to reference parameters in your event and store those
+   values in variables. For example:
+
+   ```json
+   {
+     "time": "$.time",
+     "source": "$.source",
+     "detail": "$.detail",
+     "service": "$.detail.service",
+     "statusCode": "$.detail.statusCode",
+     "eventDescription": "$.detail.eventDescription[0].latestDescription",
+     "affectedAccount": "$.detail.affectedAccount",
+     "region": "$.region",
+     "type": "$.detail.eventTypeCode"
+   }
+   ```
+
+1. Configure the input template to specify the information you want to pass to your
+   target. This template matches your event payload and uses the variables defined in
+   your input path. You must surround all variables with angle brackets `<>`.
+
+   For example, the following template defines an AWS Health input:
+
+   ```json
+   {
+     "event": {
+       "happenedAt": "<time>",
+       "category": "alerts",
+       "labels": {
+         "description": "<description>",
+         "aws_source": "aws.health",
+         "region": "<region>",
+         "service": "<service>",
+         "statusCode": "<statusCode>",
+         "affectedAccount": "<affectedAccount>",
+       },
+       "source": "EventBridge",
+       "title": "AWS Health <alarmName> is in state <state>",
+       "type": "AWS Health Event",
+       "payload_object": <detail>
+     }
+   }
+   ```
+
+1. Complete the remaining steps in the AWS Health documentation to create the
+   EventBridge rule.
+
+## Troubleshooting
+
+To return error messages and view responses from the API, configure an Amazon Simple
+Queue Service (SQS).
+
+1. [Create a queue](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-create-queue.html)
+   in Amazon SQS.
+1. Open the
+   [Amazon EventBridge rule](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule.html)
+   you created previously.
+1. Click the **Targets** tab and then click **Edit**.
+1. Expand the **Additional settings** section.
+1. In the **Dead-letter queue** section, click
+   **Select an Amazon SQS queue in the current AWS account to use as the dead-letter queue**,
+   then select the SQS queue you created.
+1. Update the Amazon EventBridge rule.
+
+Amazon EventBridge sends events that match this rule to the dead-letter queue if
+they're not successfully delivered to the target.

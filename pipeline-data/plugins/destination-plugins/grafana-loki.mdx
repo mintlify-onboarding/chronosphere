@@ -1,0 +1,64 @@
+---
+title: Grafana Loki destination plugin
+sidebarTitle: Grafana Loki
+'og:description': Send pipeline data to Grafana Loki.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import BasicAuthentication from '/snippets/_partials/pipeline-basic-auth.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Grafana Loki [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `loki`) lets you configure your telemetry pipeline to send your log data
+to Grafana Loki.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name     | Key | Description | Default |
+| -------- | --- | ----------- | ------- |
+| **Host** | `host` | Required. Loki hostname or IP address. Don't include the sub path, such as `loki/api/v1/push`. Include only the base hostname or URL. | `127.0.0.1` |
+| **Port** | `port` | Required. TCP port of the target Loki service. | `3100` |
+
+### Basic Authentication
+
+<BasicAuthentication />
+
+### Advanced
+
+| Name                              | Key | Description | Default |
+| --------------------------------- | --- | ----------- | ------- |
+| **Tenant ID**                     | `tenant_id` | Tenant ID used by default to push logs to Loki. If omitted or empty, it's assumed that Loki is running in single-tenant mode and no `X-Scope-OrgID` header is sent. | _none_ |
+| **Tenant ID Key**                 | `tenant_id_key` | Required. If set, `X-Scope-OrgID` will be the value of the key from incoming record. It can be useful to set `X-Scode-OrgID` dynamically. | _none_ |
+| **Labels**                        | `labels` | Labels for API requests. | `job=fluentbit` |
+| **Label Keys**                    | `label_keys` | Comma-separated list of keys to use as stream labels. | _none_ |
+| **Enable Auto Kubernetes Labels** | `auto_kubernetes_labels` | If set to true, adds all Kubernetes labels to Loki labels. Accepted values: `true`, `false`. | `false` |
+| **Drop Single Key**               | `drop_single_key` | If set to true and only a single key remains, the log line sent to Loki is the value of that key. Accepted values: `true`, `false`. | `false` |
+| **Remove Keys**                   | `remove_keys` | Comma-separated list of keys to remove. | _none_ |
+| **Line Format**                   | `line_format` | Format to use when flattening the record to a log line. Accepted values: `json` (sent log line is the Telemetry Pipeline record dumped as JSON), `key_value` (log line is each item in the record concatenated together, separated by a single space, in the format `=`). | `json` |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

@@ -1,0 +1,594 @@
+---
+title: Manage metric pools
+sidebarTitle: Manage pools
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import CodeConfig from '/snippets/_partials/code-config.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import TerraformPlan from '/snippets/_partials/terraformplan.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+In the **Metrics Quotas** page of Chronosphere Observability Platform, you can review
+current and preview potential impacts to your quota allocations by pool. Use this
+feature to shape and plan your pool sizes and future usage.
+
+To get started with pools, learn about how to
+[define a pool](/control/shaping/quotas/define-pools).
+
+## Add a metric pool
+
+Select from the following methods to add a metric pool. You can define a pool in
+Observability Platform, but must use Terraform to apply the changes.
+
+<Note>
+You can have a maximum of 20 metric pools.
+</Note>
+
+<Tabs>
+<Tab title="Web" id="create-a-pool-cloud">
+
+Although actual management of pools is handled using
+[Terraform](/tooling/infrastructure/terraform), this interface helps you
+understand what changes to make to reduce guesswork and repeated updates to your
+system.
+
+To create quota pools, you must have administrative privileges:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Metrics Quotas**.
+1. Click <Icon icon="gear" />**Configure Quotas**.
+1. Click **+ Add Pool**.
+1. The following fields display on the page. Update editable fields to modify your
+   pool configuration:
+   - **Pool name:** (Editable) Change the pool name.
+   - **Data matching:** The values the selected pool uses to match data.
+     - **Quota configuration label:** The label matching this pool.
+     - **Data matching values:** (Editable) The specific values for the label, which
+       match this pool. Add a value and press `Enter` to view a list. This value
+       supports [glob syntax](/investigate/querying/glob-syntax).
+   - **Observed label consumption:** Displays the total average DPPS for this pool,
+     broken down by label value.
+   - **Quota allocation:** (Editable) Set a quota percentage or DPPS for the selected
+     pool, similar to the [Preview quota allocations](#preview-quota-allocations)
+     section. The value you enter, whether percentage or DPPS, applies to both
+     [Standard and Histogram Metrics](/administer/limits-licensing/licensing).
+   - **Prioritization:** (Conditionally editable) Add the **Priority Label** and high or
+     low priority values.
+
+      <Note>
+      Pools using a global priority setting can't change their priorities for an
+          individual pool page.
+      </Note>
+
+1. In the **Quota Allocation** chart, select or clear the checkboxes next to each
+   pool name to display or remove that pool from the bar chart.
+
+   This panel includes a chart that displays a graph for total consumption, and a bar
+   chart for consumption by pool.
+
+1. Click **Done** after completing your changes.
+1. Click the **Code Config** tab.
+1. Click **<Icon icon="copy" /> Copy** to copy the file, or
+   **<Icon icon="download" /> Download** to download the file to your computer.
+1. Add the definition to a Terraform file, or create a new Terraform file.
+1. Run this command to apply the resource:
+
+   ```shell
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="Chronoctl" id="create-a-pool-chronoctl">
+
+To create a pool using [Chronoctl](/tooling/chronoctl):
+
+1. Run the following command to generate a sample pool configuration you can use as a
+   template:
+
+   ```shell
+   chronoctl resource-pools scaffold
+   ```
+
+   In the template, `kind: ResourcePools` defines an individual pool.
+
+1. With a completed definition, submit it with:
+
+   ```shell
+   chronoctl resource-pools create -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+</Tab>
+<Tab title="Terraform" id="create-a-pool-terraform">
+
+<TerraformPlan />
+
+To create a pool with [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file and add the definition by using the
+   `chronosphere_resource_pools_config` type, followed by a name in a resource
+   declaration.
+
+1. Run this command to apply the changes:
+
+   ```shell
+   terraform apply
+   ```
+
+See the [Terraform pool example](#terraform-pool-example) for a completed
+pool resource.
+
+</Tab>
+<Tab title="API" id="create-a-pool-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateResourcePools`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateResourcePools)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Chronoctl pool example
+
+The following code is an example of a Chronoctl resource used to create quotas and
+priorities.
+
+The example creates two pools: one for `team_a` and one for `team_b`. Each pool
+defines license values for persisted writes and matched writes, along with
+[thresholds](/control/shaping/quotas/define-pools#pool-thresholds) to manage persisted cardinality.
+
+```yaml
+api_version: v1/config
+kind: ResourcePools
+spec:
+  pools:
+    - name: team_a
+      allocation:
+        fixed_values:
+          - license: PERSISTED_WRITES_STANDARD
+            value: "70000"
+          - license: MATCHED_WRITES_STANDARD
+            value: "30000"
+        priority_thresholds:
+          - license: PERSISTED_CARDINALITY_STANDARD
+            all_priorities:
+              fixed_value: "6000000"
+            low_priority:
+              fixed_value: "2000000"
+      filters:
+        - name: team
+          value_glob: 'a'
+      priorities:
+        high_priority_filters:
+          - name: env
+            value_glob: '*prod*'
+        low_priority_filters:
+          - name: env
+            value_glob: '*dev*'
+    - name: team_b
+      allocation:
+        fixed_values:
+          - license: PERSISTED_WRITES_STANDARD
+            value: "16000"
+          - license: MATCHED_WRITES_STANDARD
+            value: "15000"
+        priority_thresholds:
+          - license: PERSISTED_CARDINALITY_STANDARD
+            all_priorities:
+              fixed_value: "1750000"
+            low_priority:
+              fixed_value: "750000"
+      filters:
+        - name: team
+          value_glob: 'b'
+      priorities:
+        high_priority_filters:
+          - name: env
+            value_glob: '*prod*'
+        low_priority_filters:
+          - name: env
+            value_glob: '*dev*'
+```
+
+### Terraform pool example
+
+The following code is an example of a Terraform file used to create pools and
+priorities.
+
+This code is an example and shouldn't be used directly. This example uses the
+following variables in place of a specific name:
+
+- _`MY_RESOURCE`_ is a resource in your system.
+- _`MY_SERVICE`_ is the name of a service in your system.
+
+```ruby
+resource "MY_RESOURCE_resource_pools_config" "resource_pools" {
+  default_pool {
+
+    priorities {
+      high_priority_match_rules = ["MY_RESOURCE_k8s_cluster:production*"]
+      low_priority_match_rules  = ["MY_RESOURCE_k8s_cluster:rc*"]
+    }
+  }
+
+  pool {
+    name = "Tracing Services"
+
+    allocation {
+    # Percentages of both persisted cardinality license and matched writes license
+    # allocated to the pool.
+      percent_of_license = 10
+      # Threshold expressed as a fixed value of the license.
+      fixed_value {
+        # Defines which license the allocation applies to. Can be one of these values:
+        # - PERSISTED_CARDINALITY_STANDARD
+        # - PERSISTED_CARDINALITY_HISTOGRAM
+        license = "PERSISTED_WRITES_STANDARD"
+        value = 6500
+      }
+
+      fixed_value {
+        license = "PERSISTED_WRITES_HISTOGRAM"
+        value = 2500
+      }
+    }
+
+    match_rules = ["service:{spanhandler,traceingester}"]
+
+    priorities {
+      # Optional. Match rules are filters that define which metrics are high or
+      # low priority. Any metric that matches at least one filter is considered
+      # high or low priority, depending on the defined priority. When the license
+      # limit is exceeded, high priority metrics are dropped last, and low priority
+      # metrics are dropped first. This behavior applies to only persisted writes
+      # and matched writes, but doesn't apply to persisted cardinality.
+      high_priority_match_rules = ["MY_RESOURCE_k8s_cluster:production*"]
+      low_priority_match_rules  = ["MY_RESOURCE_k8s_cluster:rc*"]
+    }
+  }
+
+  pool {
+    name = "Collector service"
+    allocation {
+      percent_of_license = 8
+      # Optional. For supported licenses, defines thresholds with strict limits
+      # for when to drop new consumption of the license for a pool. Currently, only
+      # `PERSISTED_CARDINALITY_STANDARD` and `PERSISTED_CARDINALITY_HISTOGRAM` are
+      # supported.
+      priority_thresholds {
+        license = "PERSISTED_CARDINALITY_STANDARD"
+        # Threshold limit that defines when to drop new metrics in the pool. This
+        # threshold applies to all priorities of metrics: high, default, and low.
+        # This field must be set, and have a value equal to or greater than other
+        # priority fields.
+        all_priorities {
+          percent_of_pool_allocation = 100
+        }
+      }
+      priority_thresholds {
+        license = "PERSISTED_CARDINALITY_HISTOGRAM"
+        all_priorities {
+          percent_of_pool_allocation = 100
+        }
+      }
+    }
+    match_rules = ["service:{${join(",", local.collector_services)}}"]
+    priorities {
+      high_priority_match_rules = ["chronosphere_k8s_cluster:prod*"]
+      low_priority_match_rules  = ["chronosphere_k8s_cluster:rc*"]
+    }
+  }
+
+  pool {
+    name = "MY_SERVICE Services"
+
+    allocation {
+      percent_of_license = 25
+    }
+
+    match_rules = ["service:MY_SERVICE*"]
+
+    priorities {
+      high_priority_match_rules = ["MY_RESOURCE_k8s_cluster:production*"]
+      low_priority_match_rules  = ["MY_RESOURCE_k8s_cluster:rc*"]
+    }
+  }
+
+  pool {
+    name = "Gateway Services"
+
+    allocation {
+      percent_of_license = 4
+    }
+
+    match_rules = ["service:gateway*"]
+
+    priorities {
+      high_priority_match_rules = ["MY_RESOURCE_k8s_cluster:production*"]
+      low_priority_match_rules  = ["MY_RESOURCE_k8s_cluster:rc*"]
+    }
+  }
+}
+```
+
+## Edit a pool
+
+Select from the following methods to edit pools. You can also
+[configure global priorities](/control/shaping/quotas/define-pools#configure-global-priority)
+to change global pool quota configurations by metric label.
+
+<Tabs>
+<Tab title="Web" id="edit-a-pool-cloud">
+
+To edit an existing pool:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Metrics Quotas**.
+1. Click <Icon icon="gear" />**Configure Quotas**.
+1. Click any row in the **Pools** table to display the **Edit Pool** page.
+
+   The **Edit Pool** page contains information specific to the selected pool. These
+   fields match the **Add Pool** screen, and some values can be edited.
+
+1. Make any necessary changes, and then click **Done** after completing your changes.
+1. Click the **Code Config** tab.
+1. Click **<Icon icon="copy" /> Copy** to copy the file, or
+   **<Icon icon="download" /> Download** to download the file to your computer.
+1. Add the definition to a Terraform file, or create a new Terraform file.
+1. Run this command to apply the resource:
+
+   ```shell
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="Chronoctl" id="edit-a-pool-chronoctl">
+
+To edit a pool using [Chronoctl](/tooling/chronoctl):
+
+1. View your existing metrics pools YAML definition with the
+   `chronoctl resource-pools read` command:
+
+   ```shell
+   chronoctl resource-pools read
+   ```
+
+1. Copy the YAML definition and save it to a new file ending in `.yaml`.
+
+1. Modify the YAML definition properties and apply the changes:
+
+   ```shell
+   chronoctl resource-pools update -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+</Tab>
+<Tab title="Terraform" id="edit-a-pool-terraform">
+
+To edit a pool using [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file that updates the resource's existing properties.
+1. Run this command to apply the changes:
+
+   ```shell
+   terraform apply
+   ```
+
+<CodeConfig />
+
+</Tab>
+<Tab title="API" id="edit-a-pool-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateResourcePools`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateResourcePools) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Understanding pool usage
+
+The **Pools** section of the **Configure Quotas** page describes what pools you have,
+and how they're configured. This includes:
+
+- **Pool name:** The display name of the pool.
+- **Data matching:** The label values the pool matches.
+- **Allocation:** The percentage or Data Points Per Second (DPPS) of total traffic
+  guaranteed to the pool before it might be penalized.
+- **Consumption:** The percentage or DPPS of total traffic the pool is consuming over
+  the selected [time range](/navigate/time-ranges).
+
+<Note>
+Allocation and Consumption DPPS describes
+[Standard Metrics License](/administer/limits-licensing/licensing) allocation and consumption.
+Histogram Metrics License allocation and consumption aren't included in the pool's
+reported DPPS.
+</Note>
+
+#### Quota allocations and consumption
+
+{/* vale off */}
+{/* It's in the UI, stop bugging me */}
+
+The **Quota Allocations vs Current Consumption** graph is a bar chart used to
+visualize the current quota allocation in Data Points Per Second (DPPS) for each
+pool, and what the pool is actually consuming. The top bar for each pool is the
+**Allocation**. The second bar is the **Current Consumption** for the pools. Using
+these two bars, you can determine consumption in relation to the allocated quota.
+Point to any group of bars to display a dialog with exact values.
+
+{/* vale on */}
+
+#### Quota consumption by pools (per second)
+
+The **Quota Consumption by pools** graph separates the pools so you can see each
+pool's **Average consumption** and its **Current quota limit**.
+
+#### Understand quota consumption trends
+
+The **Quota Consumption** graph is a running line of data points and quota limits,
+where the previous graph displays only a single value. Point to any point on the
+graph to see exact data. Drag in a graph to focus in on the selected time period.
+
+#### Preview quota allocations
+
+The **Pools** include a group of text fields corresponding to each created pool. These
+boxes contain values with the assigned percentage (**%**) or DPPS for each pool.
+Use these to set your general pool allocations.
+
+To preview a new quota allocation, change a number in the box for the pool to be
+updated. Click outside the boxes to update the total.
+
+Quota settings must meet the following criteria:
+
+- Quotas must add up to 100%. Changing any pool's quota causes a related
+  change in the default pool to ensure total quota is 100%.
+- The UI supports values greater than or equal to 0.01%.
+- The API supports values greater than or equal to 0.001%.
+
+Changing an assigned quota displays a third bar in the **Quota consumption by pools**
+chart. Use the new bar to determine if new quota assignments meet the needs of each
+of your pools.
+
+If one pool is consistently over quota and the other pools aren't, use the preview to
+adjust assigned quotas to better meet the needs of each pool.
+
+Click the **<Icon icon="clock-rotate-left" />Reset quotas** icon to return to the existing
+configuration.
+
+## Delete a pool
+
+Select from the following methods to delete pools.
+
+<Tabs>
+<Tab title="Web" id="delete-a-pool-cloud">
+
+To edit an existing pool:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Metrics Quotas**.
+1. Click <Icon icon="gear" />**Configure Quotas**.
+1. Click any row in the **Pools** table to display the **Edit Pool** page.
+1. At the bottom of the **Edit Pool** page, click **Remove Pool**.
+
+   The pool is removed from the **Configure Quotas** page, and no longer displays in
+   the resource definition of the **Code Config** tab.
+
+</Tab>
+<Tab title="Chronoctl" id="delete-a-pool-chronoctl">
+
+To delete a pool using [Chronoctl](/tooling/chronoctl):
+
+1. View your existing metrics pools YAML definition with the
+   `chronoctl resource-pools read` command:
+
+   ```shell
+   chronoctl resource-pools read
+   ```
+
+1. Copy the YAML definition and save it to a new file ending in `.yaml`.
+
+1. Remove the pool you want to delete from the YAML definition and save the updated
+   file.
+
+1. Apply the changes:
+
+   ```shell
+   chronoctl resource-pools update -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+To delete the _entire_ `ResourcePools` definition, use the
+`chronoctl resource-pools delete` command:
+
+```shell
+chronoctl resource-pools delete
+```
+
+<Warning>
+This command deletes the _entire_ `ResourcePools` definition.
+</Warning>
+
+</Tab>
+<Tab title="Terraform" id="deleting-a-pool-terraform">
+
+<TerraformDel />
+
+<CodeConfig />
+
+</Tab>
+<Tab title="API" id="delete-a-pool-api">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteResourcePools`](https://docs.chronosphere.io/tooling/api-info/definition/operations/DeleteResourcePools)
+endpoint.
+
+<ApiAuthReq />
+
+<Warning>
+This action deletes the _entire_ `ResourcePools` definition.
+</Warning>
+
+</Tab>
+</Tabs>
+
+## Best practices
+
+To keep penalty behavior and cost accounting transparent and predictable, pools
+should be hard partitions of your system, with no one time series matching
+more than one pool. The following processes help ensure pools have the correct data:
+
+- Chronosphere recommends selecting a single usage tag as the pool assignment
+  mechanism. Picking a single tag reduces the possibility where one pool matches
+  `serviceX`, and a second pool matches `environmentY`, where time series might match
+  either or both definitions.
+- Use exact match values for the selected label to decrease the chances of other tags
+  or a regular expression match allowing a time series to fit into more than one
+  pool.
+- Chronosphere Observability Platform uses match-ordering in pools. If a time series
+  matches more than one pool, it becomes part of the first pool in the list that it
+  matches. A time series might match more than one pool's criteria, but a first-match
+  policy ensures that a time series is accounted for consistently in a single pool.
+- If you see a pool that doesn't match the expected penalty behavior, open the pool
+  in the profiler and compare it with the Terraform configuration file. A match rule
+  value might be incorrect.
+
+## Create an alert for a pool in penalty
+
+When a pool is in a penalty state, it might drop metrics to reduce usage. For higher
+priority pools, this can result in the loss of important data. To reduce or prevent
+data loss, create a [monitor](/investigate/alerts/monitors) to alert on pool usage and
+[notify](/investigate/alerts/notifications) the appropriate team to take preventative action.
+
+1. Create a [notification policy](/investigate/alerts/notifications/policies) with criteria like
+   `warn if value is > 90% for 5 minutes`.
+1. Create a notifier and align with your internal alerting policies to route the
+   alerts to the right team.
+1. [Create a monitor](/investigate/alerts/monitors#create-a-monitor).
+
+1. In the monitor query, add the query to return each pool's percent utilization.
+   You can set up alerts using the
+   [`chrono_poolstats_count`](/overview/concepts/dictionary#shaping-usage-statistics)
+   metric. A query that returns each pool's percent utilization of its quota might
+   look like this:
+
+   ```text
+   (sum by (metrics_class) (rate(chrono_poolstats_count{type="persisted", dropped="no"}[2m]))) /
+   ((sum by(metrics_class) (coordinator_scheduler_metrics_class_weight{})) * on() group_left() limit_service_licensed_persist_limit{})
+   ```
+
+1. In the **Signals** section, select **Per time series (many alerts)** as the
+   [signal](/investigate/alerts/notifications/signals#per-time-series).
+1. Define any additional fields, such as a condition and sustain period.
+1. Click **Save** to save the monitor.

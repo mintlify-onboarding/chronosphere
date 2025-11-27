@@ -1,0 +1,45 @@
+---
+title: Forward destination plugin
+sidebarTitle: Forward
+'og:description': Use the forward destination plugin.
+---
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Forward [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `forward`) lets you configure your telemetry pipeline to send processed
+telemetry data to your Forward Services. This plugin supports both TCP and UDP
+transport protocols and provides options for configuring data buffering and
+batching to optimize network usage.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics     | Traces      |
+| :---------: | :---------: | :---------: |
+| <YesIcon /> | <YesIcon /> | <YesIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                            | Key | Description | Default |
+| ------------------------------- | --- | ----------- | ------- |
+| **Host**                        | `host` | Required. Target host where Fluent-Bit or Fluentd are listening for Forward messages. | `127.0.0.1` |
+| **Port**                        | `port` | Required. TCP port of the target service. | `24224` |
+| **Timestamps as Integers**      | `time_as_integer` | Sets timestamps in integer format, and enables compatibility mode for Fluentd v0.12 series. Accepted values: `true`, `false`. | `false` |
+| **Upstream Configuration Path** | `upstream` | If Forward will connect to an Upstream instead of a simple host, this property defines the absolute path for the Upstream configuration file. For more details, refer to the Upstream Servers documentation section. | _none_ |
+| **Unix Socket**                 | `unix_path` | Specifies the path to the Unix socket to send a Forward message. If set, Upstream is ignored. | _none_ |
+| **Tag**                         | `tag` | Overwrites the transmitted tag, which lets the receiving pipeline either start fresh or to attribute the source. | _none_ |
+| **Send Options**                | `send_options` | Always send options, with `size` equaling the count of messages. Accepted values: `true`, `false`. | `false` |
+| **Require Ack Response**        | `require_ack_response` | Indicates whether to send `chunk`-option and wait for `ack` response from server. Enables at-least-once and receiving server can control rate of traffic. Requires Fluentd v0.14.0 or later server. Accepted values: `true`, `false`. | `false` |
+| **Compress**                    | `compress` | Enables gzip compression. Incompatible with `time_as_integer=true` and tags set dynamically using the Rewrite Tag filter. Requires Fluentd v0.14.7 or later server. Accepted values: `gzip`, _none_. | _none_ |
+| **Workers**                     | `workers` | Enables one or more dedicated threads for this output. | `2` (`0` for versions 1.8.12 and earlier) |

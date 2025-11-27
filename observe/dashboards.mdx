@@ -1,0 +1,607 @@
+---
+title: Visualize data using dashboards
+'og:description': Use dashboards to create and organize data visualizations in Chronosphere Observability Platform.
+sidebarTitle: Overview
+---
+import { CollectionIcon, ServiceIcon} from '/snippets/Icons.jsx';
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import VersionHistory from '/snippets/_partials/version-history.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+Use dashboards to analyze your metrics by creating visualizations of query results
+that you can customize, filter, and focus. You can use this to identify and act on
+trends, correlate changes in data to incidents, and monitor real-time statuses.
+
+Chronosphere Observability Platform provides two types of dashboards:
+
+- Standard dashboards, documented on this page
+- [Classic dashboards](/observe/dashboards/classic-dashboards), based on Grafana
+
+Standard dashboards are purpose-built for observability with Observability Platform,
+and are the only dashboards with a commitment to ongoing development.
+
+<Note>
+Standard dashboards aren't available to all Observability Platform users and might
+not be visible in your app. For information about enabling this feature in your
+environment, contact [Chronosphere Support](/support).
+</Note>
+
+Dashboards are individual pages made up of [panels](/observe/dashboards/panels).
+These panels can be [different types](/observe/dashboards/panels#panel-types),
+depending on the data or text you want to visualize. Dashboards have many
+customization options to help you focus on and group the information you need.
+
+## View dashboards
+
+Select from the following methods to view your available dashboards.
+
+<Tabs>
+<Tab title="Web" id="view-dashboards-cloud">
+
+To search for a dashboard from anywhere in Observability Platform:
+
+1. Click the global search bar to focus on it, or use the keyboard shortcut
+   `Control+K` (`Command+K` on macOS).
+1. Click the **<Icon icon="table-cells" alt="Dashboard icon"/> Dashboards**
+   filter.
+1. Begin typing any part of the dashboard's name.
+1. Click a dashboard listed in the search results to view it, or use the arrow keys
+   to select the result and press `Enter` (`Return` on macOS).
+
+To view all dashboards, in the navigation menu select
+**<Icon icon="table-cells" alt="Dashboards"/> Dashboards**. This displays
+a table listing every dashboard in your organization.
+
+In the table's **Owner** column, the <CollectionIcon /> collection icon indicates a
+dashboard is part of a [collection](/administer/collections). The <ServiceIcon />
+service icon indicates a dashboard is part of a [service](/observe/services).
+
+The table's **Type** column indicates whether the dashboard is a
+[classic](/observe/dashboards/classic-dashboards) or standard dashboard.
+
+The table's **Source** column indicates how your organization manages each dashboard
+as an Observability Platform resource. Dashboards managed in Observability Platform
+or with [Chronoctl](/tooling/chronoctl) list no source, and you can manage and modify them
+with either the app or Chronoctl. You **must** manage dashboards created in
+[Terraform](/tooling/infrastructure/terraform) with Terraform.
+
+You can toggle the visibility of columns and pin selected columns to the left or
+right sides of the table by holding the pointer over the column and clicking
+the <Icon icon="ellipsis-vertical" alt="Settings icon"/> column settings icon.
+
+You can also filter the table's contents to display only those with certain names
+or properties.
+
+{/* vale off */}
+
+- To filter the table's contents by name, enter part or all of a dashboard name
+  into the **Search dashboards <Icon icon="magnifying-glass" alt="Search icon"/>** field.
+- To filter the table by team or owner, select their name from their respective
+  **Select a team** and **Select an owner** dropdowns or enter part or all of their
+  name into the fields to filter the dropdown options.
+- To filter the table by tag, click **Select a tag** and select its name from the
+  suggestion list, or enter part or all of a tag name into the field to filter the
+  list. Only classic dashboards support tags.
+- To filter the table to display only your
+  [favorite dashboards](#designate-your-favorite-dashboards), click the
+  **View only my favorites** toggle.
+- **Include connected dashboards**: If you filter dashboards by owner while the
+  toggle is disabled, you'll only get dashboards owned by that owner. When the toggle
+  is enabled, your filter includes dashboards that are connected to that owner, even
+  if they aren't owned by that owner. Connections are based on
+  [collections](/administer/collections/home).
+
+{/* vale on */}
+
+  Observability Platform displays your favorite dashboards and those you have
+  recently opened on your personal home page. Your favorite dashboards also appear
+  first in global search results.
+
+</Tab>
+<Tab title="Chronoctl" id="view-dashboards-chronoctl">
+
+To return a list of all dashboards with [Chronoctl](/tooling/chronoctl), use the
+`chronoctl dashboards list` command:
+
+```shell
+chronoctl dashboards list
+```
+
+You can list specific dashboards by name or slug by
+passing a comma-delimited list to the `--names` or `--slugs` flags, respectively. For
+example:
+
+```shell
+chronoctl dashboards list --names LIST
+```
+
+Replace _`LIST`_ with a comma-separated list of dashboard names as a string, such as
+`"Infra Dashboard,Frontend Dashboard"`.
+
+<Note>
+Dashboard resources returned by `list` don't contain the dashboard's JSON definitions
+by default, but resources returned by `read` do. To include dashboard JSON with
+`dashboards list`, add the `--include-dashboard-json` option to the command:
+
+```shell
+chronoctl dashboards list --include-dashboard-json
+```
+</Note>
+
+To return a single dashboard, use the `chronoctl dashboards read` command:
+
+```shell
+chronoctl dashboards read SLUG
+```
+
+Replace _`SLUG`_ with the dashboard's slug.
+
+</Tab>
+<Tab title="API" id="view-dashboards-api">
+
+To complete this action with the Chronosphere API, use the
+[`ListDashboards`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ListDashboards) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### View Chronosphere-managed dashboards
+
+Observability Platform includes several dashboards to visualize information about
+itself and its usage within your organization. For more information, see
+[Chronosphere-managed dashboards](/observe/dashboards/chronosphere-managed-dashboards).
+
+## Create or import a dashboard
+
+To add a dashboard, you can:
+
+- [Create a new dashboard](#create-a-new-dashboard).
+- [Duplicate an existing dashboard](#duplicate-a-dashboard).
+- [Import a classic dashboard](#import-a-classic-dashboard).
+
+### Create a new dashboard
+
+Select from the following methods to create a new dashboard. You can create a
+dashboard in the Observability Platform web interface, or define the
+dashboard [in code](/tooling/gitops#use-the-code-config-tool) and upload it. See the
+[dashboard configuration schema](/tooling/api-info/dashboard_schema) for help
+defining fields in code.
+
+<Tabs>
+<Tab title="Web" id="create-a-dashboard-cloud">
+
+<Note>
+These steps apply only to standard dashboards. For classic dashboards, see
+[Classic dashboards](/observe/dashboards/classic-dashboards).
+</Note>
+
+To create a new dashboard:
+
+1. In the navigation menu select
+   **<Icon icon="table-cells" alt="Dashboards"/> Dashboards**.
+1. Click **+ Add**.
+1. In the menu that appears, click **New dashboard** to open the **Add dashboard**
+   dialog.
+1. Enter a descriptive name in the **Dashboard name** field.
+1. Enter an **Owner** in the corresponding fields to associate the dashboard with
+   a [Collection](/administer/collections) or [Service](/observe/services).
+1. Optional: Enter **Tags** in the corresponding field to associate the dashboard
+   with key/value tag pairs.
+1. Click **Save**.
+
+You can also create a new dashboard from an
+[existing panel](/observe/dashboards/panels#copy-a-panel-to-another-dashboard),
+[duplicate an existing dashboard](#duplicate-a-dashboard), or
+[import a JSON file](#import-a-dashboard-with-json).
+
+</Tab>
+<Tab title="Chronoctl" id="create-a-dashboard-chronoctl">
+
+To create a new dashboard using [Chronoctl](/tooling/chronoctl), configure it in a YAML
+resource definition and apply it.
+
+<Note>
+If you don't already have a YAML configuration file, use the
+`chronoctl dashboards scaffold` command to generate a template for a specific
+resource type:
+
+```shell
+chronoctl dashboards scaffold
+```
+
+You can redirect the results (using the redirection operator `>`) to a file for
+editing.
+</Note>
+
+To create a new dashboard as code:
+
+1. Configure the dashboard by editing the resource's properties. Remove any properties
+   you don't want to configure.
+
+   Define the dashboard within the YAML resource as a block of JSON. You can retrieve
+   the JSON of an existing dashboard from Observability Platform by navigating to
+   the dashboard and clicking the **<Icon icon="download" /> Download JSON**
+   button.
+
+   For example, this resource creates an empty dashboard with the name `Infra Dashboard`
+   and slug `infra-dashboard`:
+
+   ```yaml
+   api_version: v1/config
+   kind: Dashboard
+   spec:
+     # Unique identifier of the Dashboard. If slug is not provided, one will be
+     # generated based of the name field. Cannot be modified after the Dashboard
+     # is created.
+     slug: "infra-dashboard"
+     # Required name of the Dashboard. May be modified after the Dashboard is created.
+     name: "Infra Dashboard"
+     # Required raw JSON of the dashboard.
+     dashboard_json: >
+       {
+         "kind": "Dashboard",
+         "metadata": {
+           "name": "Infra dashboard"
+         },
+         "spec": {
+           "events": [],
+           "panels": {},
+           "layouts": [],
+           "variables": [],
+           "duration": "30m"
+         }
+       }
+     # Required collection associated with this dashboard.
+     collection_slug: "infra-collection"
+   ```
+
+1. Apply the changes:
+
+   ```shell
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of your notifier YAML file.
+
+</Tab>
+<Tab title="Terraform" id="create-a-dashboard-terraform">
+
+To create a dashboard with [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file that updates the resource's existing properties.
+   You can [export the configuration](/observe/dashboards#export-a-dashboard) of an
+   existing dashboard and edit it to create a new dashboard.
+1. Run this command to apply the changes:
+
+   ```shell
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="API" id="create-a-dashboard-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateDashboard`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateDashboard) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+After creating a dashboard, you can populate it with
+[panels](/observe/dashboards/panels), add and edit
+[dashboard variables](/observe/dashboards/customization/dashboard-variables) and
+events, and configure its [layouts](/observe/dashboards/customization/layouts). You
+can also associate Services to dashboards by using either Chronoctl or Terraform.
+
+### Duplicate a dashboard
+
+You can duplicate dashboards, including in Observability Platform, and then customize
+the duplicate. Chronosphere-managed dashboards can be duplicated but not deleted.
+
+1. In the **Dashboards** page, click the <Icon icon="ellipsis-vertical" /> three
+   vertical dots icon and then click **Duplicate**.
+
+   Alternately, when viewing a dashboard, click
+   **Settings**  <span aria-label="and then">></span> **Duplicate dashboard**.
+1. Enter the following information:
+   - **Dashboard name**: A name for the new dashboard.
+   - **Owner**: The service or collection that owns this dashboard.
+   - Optional: Select tags for the dashboard.
+1. Click **Save**.
+
+Your duplicated dashboard opens and is ready to edit.
+
+### Import a dashboard with JSON
+
+Observability Platform lets you upload one or more dashboards as JSON files.
+To do so:
+
+1. In the navigation menu select **<Icon icon="table-cells" /> Dashboards**.
+1. Click **+ Add**.
+1. In the menu, click **Import dashboard** to open the **Import Dashboards** dialog.
+1. Click **Import or Drag and Drop dashboard JSON File** to upload one or more exported
+   dashboard JSON files, or drag and drop a dashboard JSON into the
+   **Import Dashboard JSON** field.
+
+   If the file fails validation, the dialog displays an error message that
+   describes the failure.
+
+   There is one entry for each uploaded file.
+1. In the **Upload Settings** section, select an **Owner** for the dashboard to
+   associate the dashboard with a [collection](/administer/collections) or
+   [service](/observe/services).
+1. Optional: Add a **Tag**.
+1. Optional: Enter a descriptive name in the **Name** field. The field default is
+   the import file's name.
+1. Optional: Enter **Tags** in the corresponding field to associate the dashboard
+   with key/value tag pairs.
+1. Click **Import Dashboards** to import the dashboard.
+
+When complete, the dialog displays a `Dashboard uploaded` success message.
+
+#### Import a classic dashboard
+
+You can [import a Grafana dashboard as a classic dashboard](/observe/dashboards/classic-dashboards/import-grafana-dashboards)
+with Chronoctl or Terraform.
+
+## Edit your dashboard settings
+
+<InfoTerraformLockout />
+
+All dashboards have common settings and tools in the
+**<Icon icon="gear" alt="Settings icon"/> Settings** menu.
+
+These steps apply only to standard dashboards. For classic dashboards, see
+[Classic dashboards](/observe/dashboards/classic-dashboards).
+
+### Rename a dashboard
+
+Select from the following methods to rename a dashboard.
+
+<Tabs>
+<Tab title="Web" id="rename-a-dashboard-cloud">
+
+To rename a dashboard:
+
+1. Select the dashboard you want to rename.
+1. Click **<Icon icon="gear" alt="Settings icon"/> Settings**.
+1. Click **General**.
+1. Enter a new name in the **Dashboard name** field.
+1. Click **Apply**, and then click **Save** on the dashboard itself to save the
+   change.
+
+</Tab>
+<Tab title="API" id="rename-a-dashboard-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateDashboard`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateDashboard) endpoint and
+update the `name` key of the `dashboard` object.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Reassign a dashboard's owner
+
+Select from the following methods to reassign a dashboard to a different
+[collection](/administer/collections) or [service](/observe/services).
+
+<Tabs>
+<Tab title="Web" id="reassign-a-dashboard-cloud">
+
+To reassign a dashboard:
+
+1. Select the dashboard you want to reassign.
+1. Click **<Icon icon="gear" alt="Settings icon"/> Settings**.
+1. Click **General**.
+1. Click the **Owner** dropdown.
+1. Scroll through the list and click the collection or service to which you want to assign
+   the dashboard. To filter the list by owner name, begin typing a name into
+   the dropdown field.
+1. Click **Apply**, and then click **Save** on the dashboard itself to save the
+   change.
+
+</Tab>
+<Tab title="API" id="reassign-a-dashboard-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateDashboard`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateDashboard) endpoint and
+update the `collection` key of the `dashboard` object.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Create and configure dashboard variables
+
+_Dashboard variables_ let users dynamically redefine parts of panel queries and
+other features by selecting values from a dropdown or entering them into a field.
+
+For details about creating and configuring dashboard variables, see
+[Customize panel queries with dashboard variables](/observe/dashboards/customization/dashboard-variables).
+
+### Add events to a dashboard
+
+For information about adding events to a dashboard while viewing it, see
+[Enable change events on dashboards](/observe/enable-events/dashboards#standard-dashboards).
+
+### Review the version history
+
+You can view the history of changes made to a dashboard.
+
+1. Select a dashboard.
+1. Click **<Icon icon="gear" alt="Settings icon"/> Settings**.
+1. <VersionHistory />
+
+#### Restore a previous version
+
+When reviewing the version history, you can restore a prior version.
+
+1. Select the version to revert to.
+1. Click **Restore to _`DATE`_**, where _`DATE`_ is the selected version.
+1. Click **Restore**.
+
+The dashboard refreshes and displays the restored version.
+
+### Connect a dashboard to a service
+
+Services and collections can own dashboards, but you can also connect a dashboard to a service
+that doesn't own it. You might have dashboards where different groups have
+responsibility for handling issues, but the information is important to other groups.
+
+To connect a dashboard to a service:
+
+1. Select a dashboard.
+1. Click **<Icon icon="gear" alt="Settings icon"/> Settings**.
+1. Click **Connections**.
+1. Add or remove a [connection](/observe/services/service-pages#connected-resources).
+
+### Make your dashboard full screen
+
+Observability teams often use full screen displays for operational dashboards,
+without menu bars cluttering the workspace. Observability Platform makes this
+feature available as **Kiosk mode**.
+
+To display Observability Platform in kiosk mode:
+
+1. Select a dashboard.
+1. Change any **Compare** or time period settings.
+1. Click **<Icon icon="gear" alt="Settings icon"/> Settings**.
+1. Click **Kiosk mode**.
+
+The dashboard expands to display in the full screen. Edit functions aren't available
+when in kiosk mode. You can however refresh the dashboard, or move forward and
+backwards in the defined time period.
+
+To exit kiosk mode, click `Esc`.
+
+## Export a dashboard
+
+Export your dashboard for use by your GitOps or infrastructure as code tools.
+
+   {/* vale Chronosphere.Spelling = NO */}
+
+To view or download the full dashboard's code in Chronoctl, Terraform,
+or API format:
+
+1. Select a dashboard.
+1. Click **<Icon icon="gear" alt="Settings icon"/> Settings**.
+1. Click [**Code config**](/tooling/gitops#use-the-code-config-tool).
+
+   {/* vale Chronosphere.Spelling = YES */}
+
+To export a dashboard's JSON configuration:
+
+1. In the dashboard, click **<Icon icon="gear" alt="Settings icon"/> Settings**.
+1. From the menu, select **JSON**. The **Dashboard JSON** dialog displays.
+1. Click **<Icon icon="copy" /> Copy** to copy the JSON to your clipboard,
+   or click **<Icon icon="download"/>** to download the JSON.
+
+You can also manually update the JSON, and then click **Apply** to change the
+dashboard.
+
+To view or export JSON for a specific panel, [view a panel's JSON](/observe/dashboards/panels#view-a-panels-json).
+
+## Delete a dashboard
+
+Select from the following methods to delete a dashboard.
+
+<InfoTerraformLockout />
+
+<Tabs>
+<Tab title="Web" id="delete-a-dashboard-cloud">
+
+<Note>
+These steps apply only to standard dashboards. For classic dashboards, see
+[Classic dashboards](/observe/dashboards/classic-dashboards).
+</Note>
+
+To delete a dashboard while viewing it:
+
+1. Click **<Icon icon="gear" alt="Settings icon"/> Settings**.
+1. Click **General**.
+1. Click **Delete dashboard**.
+1. In the **Delete dashboard** dialog, click **Delete** to confirm the deletion.
+
+You can also delete a dashboard from the [**Dashboards**](#view-dashboards) table:
+
+1. Hold the pointer over a dashboard's row.
+1. Click its <Icon icon="ellipsis-vertical" alt="Settings icon"/> settings icon.
+1. Click **Delete**.
+1. In the **Delete dashboard** dialog, click **Delete** to confirm the deletion.
+
+</Tab>
+<Tab title="Chronoctl" id="delete-a-dashboard-chronoctl">
+
+To delete a dashboard with [Chronoctl](/tooling/chronoctl), use the
+`chronoctl delete dashboard` command:
+
+```shell
+chronoctl dashboards delete SLUG
+```
+
+Replace _`SLUG`_ with the unique slug identifier for the dashboard you want to
+delete.
+
+</Tab>
+<Tab title="Terraform" id="delete-a-dashboard-terraform">
+
+To delete a dashboard using [Terraform](/tooling/infrastructure/terraform):
+
+1. Remove the dashboard definition from the Terraform file.
+1. Run this command to apply the changes:
+
+   ```shell
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="API" id="delete-a-dashboard-api">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteDashboard`](https://docs.chronosphere.io/tooling/api-info/definition/operations/DeleteDashboard) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Designate your favorite dashboards
+
+You can designate certain dashboards as your [favorites](/navigate/favorites).
+Observability Platform lists your favorite dashboards on your personal home page
+and prioritizes them in global search results.
+
+## Modify a dashboard's layout
+
+Dashboard _layouts_ help you organize related [panels](/observe/dashboards/panels)
+into panel groups.
+
+For more information, see
+[Organize dashboard content with layouts](/observe/dashboards/customization/layouts).
+
+## View and compare specific time ranges
+
+_Comparison mode_, sometimes called week-over-week (WoW) view, helps you overlay
+historical data on your current data in dashboards. This provides additional context
+for comparing your current metrics with historical trends and expectations, or
+identifying recurring trends and outliers.
+
+For details about using comparison mode, see
+[Manage dashboard time ranges](/observe/dashboards/customization/time-ranges).
+
+## Query Accelerator
+
+To help reduce the impact of slow queries on Dashboard performance, Observability
+Platform automatically optimizes queries. The optimization process detects slow
+aggregation queries in dashboard panels, creates pre-aggregated time series to
+reflect those rollups, and replaces the slow results with the optimized results at
+query time.

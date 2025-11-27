@@ -1,0 +1,47 @@
+---
+title: Prometheus scrape source plugin
+sidebarTitle: Prometheus Scrape
+'og:description': Use the Prometheus Scrape source plugin.
+---
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+You can use the Prometheus scrape [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `prometheus_scrape`) to ingest data from your Prometheus instances and
+into a telemetry pipeline.
+
+<SourceStyle/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs       | Metrics     | Traces     |
+| :--------: | :---------: | :--------: |
+| <NoIcon /> | <YesIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name                     | Key | Description | Default |
+| ------------------------ | --- | ----------- | ------- |
+| **Host**                 | `host` | Required. The host of the Prometheus metric endpoint you want to scrape. | _none_ |
+| **Port**                 | `port` | Required. The port of the Prometheus metric endpoint you want to scrape. | _none_ |
+| **Metrics URI Endpoint** | `metrics_path` | Required. The metrics URI endpoint, which must start with a forward slash. Parameters can also be added to the path by using \`?\`. | `/metrics` |
+| **Scrape Interval**      | `scrape_interval` | Required. The interval to scrape metrics. | `10s` |
+
+### Advanced
+
+| Name     | Key | Description | Default |
+| -------- | --- | ----------- | ------- |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |

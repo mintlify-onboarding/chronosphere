@@ -1,0 +1,21 @@
+---
+title: Shape your log data
+'og:description': Learn how to use different tools in Chronosphere Observability Platform to shape your log data and help control costs.
+sidebarTitle: Overview
+---
+{/* -- dri: Adam Locke -- */}
+
+
+After creating, monitoring, and adjusting [budgets](/control/consumption/budgeting)
+for your log data, you can use tools in Chronosphere Observability Platform to
+transform, reshape, retain, or exclude data. Managing the data you persist can reduce
+your overall consumption, provide predictability in generated log data, and result in
+more performant queries when searching through logs.
+
+To create structured logs from plaintext logs, and parse individual fields to
+extract meaningful data without changing your instrumentation, use
+[parsing](/control/consumption/shape-logs/parse-logs).
+
+To drop entire logs, drop individual fields, or sample a percentage of your log data,
+create [control rules](/control/consumption/shape-logs/control-logs). Use these rules
+to act on your log data and make decisions before persisting the data to the database.

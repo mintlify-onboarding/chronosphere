@@ -1,0 +1,205 @@
+---
+title: Use change events
+'og:description': Use change events in Chronosphere Observability Platform to understand what changed in your environment.
+sidebarTitle: View and create
+---
+import ChangeEventsList from '/snippets/_partials/change-events.mdx';
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Use change events to understand what changed and help investigate and remediate
+issues when they arise. You can [create change events](#create-change-events) that
+don't already exist in Chronosphere Observability Platform.
+
+You can also [enable change events](/observe/enable-events/dashboards) on standard
+and classic dashboards by configuring an annotation with a change events query.
+
+## View change events
+
+Select from the following methods to view change events.
+
+<Tabs>
+<Tab title="Web" id="view-change-events-cloud">
+
+To view change events:
+
+1. In the navigation menu select
+   **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Changes Explorer**.
+
+1. Click a change event in the results list to display its
+   [full details](#change-event-details).
+
+1. Use the query box to
+   [filter change events](/investigate/querying/filter-events) to locate where
+   and when an issue occurred.
+
+   In the left navigation, expand **Quick filters**.
+1. Click any filter to run a predefined filter.
+   - **Code deploys** returns all deploy change events that started or ended,
+     including any feature flag changes.
+   - **Triggered alerts** returns all alert change events where a monitor triggered.
+   - Other quick filters are defined by [users with SysAdmin](/investigate/querying/filter-events#save-a-filter)
+     privileges and will depend on how the filter is defined.
+1. As you refine your query, click and select a portion of the time chart to zoom in
+   to a shorter time window.
+
+</Tab>
+<Tab title="API" id="view-change-events-api">
+
+To complete this action with the Chronosphere API, use the
+[`ListEvents`](https://docs.chronosphere.io/tooling/api-info/data_definition/operations/ListEvents) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Change event details
+
+Click a specific change event to view all of its available details in a tabbed interface.
+
+#### Summary
+
+The **Summary** tab includes an expanded view of the information from the main view,
+such as all labels associated with the change event. You can filter by label in this
+view by typing any part of the key or value for a particular label. Observability
+Platform automatically renders any links in the **Labels** section as hyperlinks,
+such as links to third-party sources, runbooks, or logs in your cloud provider.
+
+Click the <Icon icon="ellipsis-vertical" />three dots menu in any label row to take
+one of the following actions for the selected label:
+
+- **Include in filter**
+- **Exclude in filter**
+- **Add field as column**
+- **Copy key**
+- **Copy value**
+
+#### Comments
+
+The **Comments** tab lets you view, add, and respond to
+[comments](/navigate/comments) for the selected change event.
+
+#### JSON
+
+The **JSON** tab displays the JSON payload accompanying the selected change event.
+Use this view to:
+
+- Investigate issues with a change event.
+- Share change event details with other on-call engineers.
+- Include snippets in a runbook.
+- Build an example for creating change events using the Chronosphere API.
+
+Explore this data to find metadata you want to extract and promote to the `labels`
+map, or data you need to remove from the `labels` map.
+
+## Create change events
+
+Observability Platform automatically categorizes and displays change events in
+Changes Explorer to help on-call engineers understand what changed, which can
+expedite root cause analysis. However, you might want to explicitly create a change
+event, like a broadcast to inform other users of an upcoming outage, or a third-party
+change event in addition to the predefined change event categories.
+
+Select from the following methods to create change events. Follow these
+[best practices](#best-practices) as guidelines.
+
+<Tabs>
+<Tab title="Web" id="create-change-events-cloud">
+
+To create change events with Observability Platform:
+
+1. In the navigation menu select **Explorers <span aria-label="and then">></span> Changes Explorer**.
+
+1. On the Changes Explorer page, click **+ Create Event**.
+
+1. In the **Create Custom Event** dialog, define your change event.
+
+1. In the **Title** field, enter a descriptive, unique title for the change event.
+
+1. Select a timestamp to associate with the change event. Event creation is limited
+   to 7 days in the past and 7 days into the future from the current time.
+
+1. Select the **Category** of change event, which is likely **broadcast** or
+   **third_party**.
+
+1. Select a **Source** for the change event, which defaults to **chronosphere_ui**.
+
+1. Enter a **Type** that maps to the category you selected. For example, if you
+   selected **broadcasts** as the category, you might enter **outage** as the event
+   type.
+
+1. Add event labels to associate with the change event as key/value pairs.
+   Observability Platform requires the `user_email` and `user_id` keys, which you
+   can't edit.
+
+1. Click **Create** to create the change event.
+
+Your event is viewable and searchable from Changes Explorer.
+
+</Tab>
+<Tab title="API" id="create-change-events-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateEvent`](https://docs.chronosphere.io/tooling/api-info/data_definition/operations/CreateEvent)
+endpoint.
+
+Refer to the [change event limits](/administer/limits-licensing/limits/event-limits) for the
+limitations of this API.
+
+<Note>
+Change Event categories are case sensitive. Each of the categories that Chronosphere
+[supports by default](/observe/enable-events/use-events#categorize-change-events-intentionally)
+are lowercase and must be queried in all lowercase. For example,
+`"category": "alerts"` is valid, but `"category": "Alerts"` is invalid.
+
+Chronosphere Support can add and remove custom categories upon request. Because
+categories are case sensitive, custom categories must be queried using the same case
+they were created. For example, if you create an event called `INGEST`, any queries
+in Changes Explorer must use `INGEST` in all uppercase as the category to query.
+</Note>
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Best practices
+
+Use the following best practices when creating change events with Observability
+Platform and the Chronosphere CreateEvent API.
+
+#### Categorize change events intentionally
+
+How you categorize change events matters. Use `category` values to organize your
+change events. Chronosphere supports the following change event categories by
+default:
+
+<ChangeEventsList />
+
+Chronosphere also supports custom change event categories. For example, you might
+rotate your secrets often, which can cause unintended authentication issues for
+users. To track those events, you might want to add a `secrets_change` category to
+quickly filter matching events. To request adding or removing a custom change event
+category in your tenant, contact [Chronosphere Support](/support).
+
+#### Identify the source
+
+The primary objective when sending change events to Observability Platform is to
+maintain both high signal and low noise. Avoid sending low-value events that create
+noise.
+
+The `source` field lets you know where events are coming from at all times. Use
+strings that help you identify the source instrumentation that's generating event
+data to help you locate that data.
+
+#### Improve quality with proper typing
+
+Types differentiate change events within a category or source. For example, you might
+have a source named `deployer` with a `deploys` category. You can use different types
+within that combination of source and category, such as `deploy_start` and
+`deploy_end` to identify when a deploy begins and ends. Types can help improve the
+quality of audit log events, and enable on-call engineers to better group and
+identify data anomalies at a given point in time.

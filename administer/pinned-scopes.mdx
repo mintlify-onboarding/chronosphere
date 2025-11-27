@@ -1,0 +1,49 @@
+---
+title: Configure pinned scopes
+'og:description': Learn how to configure pinned scopes in Observability Platform.
+sidebarTitle: Configure scopes
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+[Pinned scopes](/navigate/pinned-scopes) define a set of consistent criteria for
+users to select a subset of data. Scopes are used in several sections in Chronosphere
+Observability Platform.
+
+Click the **Pin scopes** box in a supported page to display the configured scopes.
+To select a scope, click it.
+
+## Create a pinned scope
+
+To create a scope:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Scope Configuration**.
+1. Click **<Icon icon="plus" /> Create**.
+1. Add values to the following fields:
+   - **Scope category name**: A name by which to group your filters. For
+     example, the category `Environment` might contain filters for `dev`, `test`, and
+     `production`.
+   - **Label name**: A label from a metric, which you want to filter by.
+   - **Matcher**: A list of label names. Matchers support regular expressions.
+   - **Default value**: Set an optional default value for this pinned scope. This
+     value should be one of the values from the **Label name**.
+   - **Values**: Label values. In the previous example, `dev`, `test`, and
+     `production` are label values.
+1. Click **Save**.
+
+## Edit a scope
+
+To edit a scope:
+
+1. Click the <Icon icon="ellipsis-vertical" /> three vertical dots icon in the
+   row with the scope name.
+1. Click **Edit**.
+1. Update the scope values.
+1. Click **Save**.
+
+## Delete a scope
+
+To delete a scope, click the <Icon icon="ellipsis-vertical" /> three vertical dots icon
+in the row with the scope name, and then click **Delete**.

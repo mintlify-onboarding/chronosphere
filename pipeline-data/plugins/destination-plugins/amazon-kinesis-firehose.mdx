@@ -1,0 +1,66 @@
+---
+title: Amazon Kinesis Firehose destination plugin
+sidebarTitle: Amazon Kinesis Firehose
+'og:description': Send pipeline data to Amazon Kinesis Firehose.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Amazon Kinesis Firehose [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `kinesis_firehose`) lets you configure your telemetry pipeline to collect
+various data types such as logs, metrics, traces, and events and stream them
+directly to your Kinesis Firehose delivery stream.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name                               | Key | Description | Default |
+| ---------------------------------- | --- | ----------- | ------- |
+| **Region**                         | `region` | Required. The AWS region to which to send your data. | `us-east-1` |
+| **Firehouse delivery stream name** | `delivery_stream` | Kinesis Firehouse name. | _none_ |
+
+### AWS Authentication
+
+| Name                        | Key | Description | Default |
+| --------------------------- | --- | ----------- | ------- |
+| **IAM Role ARN**            | `role_arn` | Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role to assume, for uses like cross-account access. | _none_ |
+| **Firehose API Endpoint**   | `endpoint` | Custom endpoint for the Firehose API. | _none_ |
+| **STS API Endpoint**        | `sts_endpoint` | Custom endpoint for the STS API. | _none_ |
+| **External ID for STS API** | `external_id` | Specifies an external ID for the STS API. Can be used with the `role_arn` parameter if your role requires an external ID. | _none_ |
+
+### Advanced
+
+| Name                           | Key | Description | Default |
+| ------------------------------ | --- | ----------- | ------- |
+| **Compression**                | `compression` | Compression type for Firehose records. Each log record is individually compressed and sent to Firehose. Accepted values: `gzip`, `arrow` (with `arrow` available only if Apache Arrow is enabled at compile time). | _none_ |
+| **Time Key**                   | `time_key` | Adds the timestamp to the record under this key. By default, the timestamp from Telemetry Pipeline isn't added to records sent to Kinesis. | _none_ |
+| **Time Key Format**            | `time_key_format` | `strftime`-compliant format string for the timestamp. This option is used with `time_key`. | `%Y-%m-%dT%H:%M:%S` |
+| **Log Key**                    | `log_key` | By default, the entire log record is sent to Kinesis. If you specify a key name with this option, only the value of that key is sent to Kinesis. For example, if you're using the Fluentd Docker log driver, you can specify `log_key log`, and only the log message is sent to Kinesis. | _none_ |
+| **Enable Auto Retry Requests** | `auto_retry_requests` | Whether to immediately retry failed requests to AWS services one time. This option doesn't affect the normal Telemetry Pipeline retry mechanism with backoff. Instead, it enables an immediate retry with no delay for networking errors, which can help improve throughput when there are transient or random networking issues. Accepted values: `true`, `false`. | `false` |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

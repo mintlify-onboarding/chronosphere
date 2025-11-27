@@ -1,0 +1,95 @@
+---
+title: Use OpenTelemetry protocol endpoints
+'og:description': Learn how to configure and use Chronosphere Observability Platform's endpoints for OpenTelemetry protocol ingestion of metrics and traces.
+sidebarTitle: OTLP endpoints
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Chronosphere Observability Platform supports ingestion of metrics and traces using
+OpenTelemetry protocol (OTLP) gRPC and HTTP ingestion endpoints.
+
+<Note>
+For best results, ingest telemetry through a local OpenTelemetry Collector or Fluent Bit
+for processing and batching. Sending telemetry directly from an OpenTelemetry SDK
+can be less reliable.
+</Note>
+
+## Requirements
+
+Your OTLP configuration must meet certain requirements.
+
+- **`API-Token` header:** All requests must include the `API-Token` HTTP header,
+  with the API token of a valid [service account](/administer/accounts-teams/service-accounts)
+  with write permissions as the value.
+- **OTLP version support:** Only v1.0 and higher are supported.
+- **Supported compression methods:** Only `gzip`, `snappy`, and `zstd` are supported,
+  and Chronosphere recommends `zstd`.
+- **Encryption:** All requests must be encrypted using TLS.
+- **Payload requirements:**
+    - Compressed payloads should be smaller than 16MB.
+    - Metric payloads must contain fewer than 10,000 items.
+    - For details, see [Optimize the batch processor](#optimize-the-batch-processor).
+
+### Recommendations
+
+Chronosphere recommends setting the timeout value for a metrics or trace request
+to 30 seconds, and to enable retries to prevent transient network errors from causing
+data loss.
+
+Chronosphere recommends using gRPC instead of HTTP when possible, because gRPC is a more efficient protocol for sending telemetry to the Observability Platform.
+
+### Optimize the batch processor
+
+The
+[OpenTelemetry Batch Processor](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor)
+defines batch limits by the quantity of items, not the size of the batch in bytes.
+Configure the batch processor as follows to prevent batches from exceeding the maximum
+payload size:
+
+- **`send_batch_size`:** Set to `1000` to trigger sending a batch when it reaches
+  1,000 items.
+- **`send_batch_max_size`:** Set to `2000` to force splitting the batch if it exceeds
+  more than 2,000 items.
+- **`timeout`:** Set to `1s` to send any items in the buffer after 1 second.
+
+## OTLP endpoint URLs
+
+Observability Platform provides gRPC and HTTP endpoints for metrics and traces.
+
+| Telemetry type | gRPC Endpoint | HTTP endpoint URL |
+| ----- | ----- | ----- |
+| Metrics | `COMPANY.chronosphere.io:443` | `https://COMPANY.chronosphere.io/data/opentelemetry/v1/metrics` |
+| Traces | `COMPANY.chronosphere.io:443` | `https://COMPANY.chronosphere.io/data/opentelemetry/v1/traces` |
+
+Replace `COMPANY` with the name of your company as it appears in the subdomain of
+the Observability Platform URL.
+
+OpenTelemetry exporters complete the path based on the telemetry type. For the `otlphttp`
+exporter, set the endpoint base path as follows:
+
+```yaml
+exporters:
+  otlphttp/chronosphere:
+    endpoint: https://COMPANY.chronosphere.io/data/opentelemetry/
+    ...
+```
+
+For an example OTLP exporter configuration, see
+[Configure the OpenTelemetry Collector](/ingest/metrics-traces/otel/otel-ingest#configure-the-opentelemetry-collector).
+
+## Metrics partial success responses
+
+If a metrics ingestion request succeeds but any series are rejected, the ingester
+returns an [OTLP partial success](https://opentelemetry.io/docs/specs/otlp/#partial-success)
+response that includes a count (`rejected_data_points`) and a description (`error_message`).
+The verbosity of the description is controlled by the `Chronosphere-Metrics-Validation-Response`
+header, which can be set to `SHORT`, `SUMMARY`, or `DETAILED` in the
+[OTel Collector configuration](/ingest/metrics-traces/otel/otel-ingest#configure-the-opentelemetry-collector).
+
+When a partial success response is returned, the client must not retry the request.
+All valid series from the request have been accepted, and the rejected series are
+dropped.
+
+For details about the response's design, see the
+[OTLP Partial Success Specification](https://opentelemetry.io/docs/specs/otlp/#otlpgrpc-response).

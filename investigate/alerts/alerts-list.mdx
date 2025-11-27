@@ -1,0 +1,40 @@
+---
+title: List of alerts
+'og:description': Chronosphere Observability Platform lists all triggered alerts and their status, and links to a detailed visualization of each alert.
+robots: noindex, nofollow
+---
+import EarlyAccess from '/snippets/_partials/early-access.mdx';
+
+
+<EarlyAccess/>
+
+Chronosphere Observability Platform lists all triggered alerts and their status,
+and links to a [detailed visualization](/investigate/alerts/alert-details) of each
+alert.
+
+To view the list of triggered alerts, select
+**<Icon icon="bell" /> Alerting <span aria-label="and then">></span> Alerts**
+in the navigation menu.
+
+## View an alert's status
+
+Each listed alert includes several columns of information:
+
+- The date and time that it was **Created at**
+- Its **Status**, designated with an icon, text, and color:
+
+  | Icon | Text | Description |
+  | ---- | ---- | ----------- |
+  | <Icon iconType="solid" icon="hexagon-exclamation" color="#ee6c6cff"/>      | **Critical** | Actively triggered alert that exceeds the defined critical conditions. |
+  | <Icon iconType="solid" icon="triangle-exclamation" color="#ffb249ff"/>               | **Warning**  | Actively triggered alert that exceeds the defined warning conditions.  |
+  | <Icon iconType="solid" icon="circle-info" color="#a6bff8ff"/> | **Muted**    | Alert that's muted by an active muting rule.                           |
+  | <Icon iconType="solid" icon="circle-check" color="#59cc8dff"/>         | **Resolved**  | A resolved alert.                                                      |
+
+- Its title (**Alert**), as a link to its [alert details](/investigate/alerts/alert-details) page
+- The duration that the alert has been **Alerting for**
+- The **Configuration entity** related to the alert, as a link to the associated
+  entity, such as a [monitor](/investigate/alerts/monitors) or [SLO](/observe/slo)
+
+You can define the number of **Rows per page** to display by clicking its dropdown
+and selecting a value. To navigate between pages, click the **\< Go to previous page**
+and **> Go to next page** buttons.

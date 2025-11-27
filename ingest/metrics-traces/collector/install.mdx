@@ -1,0 +1,57 @@
+---
+title: Install the Chronosphere Collector
+sidebarTitle: Overview
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+The Chronosphere Collector can either collect metrics data or receive trace data.
+When collecting metrics data, the Collector _pulls_ data it scrapes from Prometheus
+endpoints. When receiving trace data, an app _pushes_ data to a service, with the
+Collector behind that service receiving the data.
+
+Regardless of the installation method you use, Chronosphere recommends deploying
+separate, independent Collectors for metrics and for traces. This distinction means
+that a Collector either collects metrics data or receives trace data.
+
+## Collect metrics data
+
+You can install the Collector to retrieve metrics data, either with Kubernetes or as
+a standalone binary. When deployed within Kubernetes, the Collector scrapes
+Prometheus endpoints exposed on pods, based on pod-level annotations.
+
+### With Kubernetes
+
+You can install the Collector with Kubernetes to collect metrics as:
+
+- [A Kubernetes DaemonSet](/ingest/metrics-traces/collector/install/kubernetes) (recommended)
+- [A Deployment](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-using-a-deployment)
+- [A sidecar](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-as-a-sidecar)
+
+Chronosphere recommends installing the Collector as a Kubernetes DaemonSet on each
+node in a cluster to:
+
+- Minimize cross-node network traffic within a cluster.
+- Eliminate a single point of failure in case one node is offline.
+- Provide the ability to switch to a standalone deployment if the Collector is
+  using too many resources.
+
+### Without Kubernetes
+
+If you don't use Kubernetes, or want to gather metrics from services not managed by
+Kubernetes, you can install the Collector
+[as a standalone binary](/ingest/metrics-traces/collector/install/standalone).
+
+<Note>
+Docker images for versions `0.93.0` and later are `multiplatform` builds for both
+`linux/amd64` and `linux/arm64`. Chronosphere also offers
+[Linux binaries](/ingest/metrics-traces/collector/install/standalone#download-the-collector-binary-and-make-it-executable)
+for both of these platforms.
+</Note>
+
+## Receive trace data
+
+To receive trace data, Chronosphere recommends
+[installing the Collector](/ingest/metrics-traces/collector/install/tracing) as a Kubernetes
+Deployment, typically with a service in front to receive trace data. Your tracing app
+pushes trace data to the service, which the Collector receives the data from.

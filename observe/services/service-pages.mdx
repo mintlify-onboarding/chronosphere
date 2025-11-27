@@ -1,0 +1,580 @@
+---
+title: Service pages
+'og:description': Learn about the different aspects of service pages and how to view data related to your services.
+sidebarTitle: Service pages
+---
+import { ServiceNavIcon} from '/snippets/Icons.jsx';
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+A _service page_ takes advantage of consistent metric tagging to automatically
+produce queries for common compute and RPC metrics values, generate data visualization
+panels based on those interactive queries, and lists the status of related monitors.
+
+On the [Services](/observe/services) page in Chronosphere Observability
+Platform, click any service's **Name** to see that service's detail page.
+
+<Note>
+Service pages are part of the [Services](/observe/services) feature and might not be
+available in your app. For information about enabling this feature in your environment,
+contact [Chronosphere Support](/support).
+</Note>
+
+## Edit service information
+
+To edit basic information about a service, use one of the following methods.
+
+<Tabs>
+<Tab title="Web" id="edit-service-info-web">
+
+1. In the **Service information** section, click **Edit**.
+1. Make any needed changes to the following values:
+   - **Name:** Change the service name. This value defaults to the name discovered
+     by Chronosphere Observability Platform.
+   - **Parent team:** Set a [team](/administer/accounts-teams/teams) to
+     own the service.
+   - **Select a notification policy:** Choose an optional
+     [notification policy](/investigate/alerts/notifications/policies).
+   - **Description:** Add a description of your service to help others understand
+     the service's purpose.
+1. Click **Save**.
+
+</Tab>
+<Tab title="API" id="edit-service-info-api">
+
+To edit the attributes that appear on a service's detail page, use the
+[`CreateServiceAttribute`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateServiceAttribute)
+method in the Chronosphere API, which lets you specify custom attributes for a
+given service. After you've created these service attributes, you can use the
+[`UpdateServiceAttribute`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateServiceAttribute)
+method to change them.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+If you require more customization than a Chronosphere-provided service page provides,
+you can [create your own presentations](/administer/service-discovery). You can also
+create a [dashboard](/observe/dashboards), write your own
+[queries](/investigate/querying), or configure your own
+[data visualization panels](/observe/dashboards/panels). If you need a more
+customizable home page for a team or collection, see
+[Team and collection home pages](/administer/collections/home).
+
+The service page exposes the queries that it uses for the data visualization panels.
+You can copy and paste them into Metrics Explorer or a dashboard you've created and
+modify them as needed.
+
+## Service page components
+
+The service page header contains links to the service's related team and a dropdown
+to select a different service.
+
+The service page also contains these columns:
+
+- The primary column displays data visualization panels for compute metrics and RPC
+  metrics (if available), controls for filtering these panels (including by time
+  span), and a list of all [monitors](/investigate/alerts/monitors) related to the service (along
+  with their statuses).
+- The sidebar column collects links to related resources, which can include traces
+  in the [Trace Explorer](/investigate/querying/traces), change events in the
+  [Changes Explorer](/overview/types/change-events), logs in the
+  [Logs Explorer](/overview/types/logs), and [dashboards](/observe/dashboards).
+
+Observability Platform includes the following default components:
+
+- Compute (cAdvisor)
+- RPC (gRPC)
+- Istio
+- OTel HTTP server metrics
+
+<Note>
+To enable links to Logs Explorer from your service pages, contact
+[Chronosphere Support](/support) and provide the following information:
+
+- The name of your organization from your Observability Platform URL. For example,
+  _`MY_COMPANY`_`.chronosphere.io:443`.
+- The field name in your log data that refers to your service.
+</Note>
+
+## Visualization panels
+
+Each service displays [visualization panels](/observe/dashboards/panels) populated
+with queries for commonly tracked metrics.
+
+- **Compute metrics** panels visualize **CPU Usage**, **Memory Usage**, and
+  **Network Usage** for all pods with metrics tagged for this service.
+- **RPC** panels visualize **Requests per second**, **Errors per second**, and
+  **Duration P99** (slowest request in the 99th percentile of requests). Panels with
+  an <Icon icon="triangle-exclamation" color="#ffb249ff" alt="Yellow alert outline"/>
+  alert have truncated queries. Panels with a <Icon icon="circle-exclamation" iconType="solid" color="#ee6c6cff" alt="Red warning exclamation"/>
+  warning use a query which took too long.
+
+### Filter metrics
+
+Service pages support [pinned scopes](/navigate/pinned-scopes). You can filter
+metrics by labels and their values. To view and set scopes for available labels:
+
+1. Click the **Pin scope** dropdown to display a list of all labels and
+   selectable values for them.
+1. Click a label value to select it. Selecting a value filters all queries in the
+   service page's metrics visualization panels to display only the metrics with those
+   label values.
+
+   Because the dependency map displays services from trace data, selecting scopes
+   doesn't affect that view.
+
+If any filters are active, they appear as a list of labels and values in the
+**Apply global filter** field. To remove a filter, click the
+<Icon icon="xmark" /> cancel button for that filter in the list.
+
+### Interact with panels
+
+A service page's visualization panels display data as time-series line charts, which
+are interactive.
+
+- Hold the pointer over lines in a chart to view data at that point.
+- Click a line to pin the data view at that point. Click **Show All** in the
+  view to toggle between showing only the selected line and all lines at that point
+  in time.
+- Click and drag a region in the chart to narrow the view to a time range.
+  Selecting a time range modifies all panels simultaneously, which helps you correlate
+  data across the different types of data displayed on the page.
+
+Use the **<Icon icon="clock" /> [time range selector](/navigate/time-ranges)**
+to select or enter a time range.
+
+#### Annotations
+
+Services can integrate with
+[annotations for events](/investigate/alerts/monitors#use-annotations-with-monitors).
+If your service has [Kube state metrics](https://github.com/kubernetes/kube-state-metrics),
+those annotations can display on your service graphs. Annotations display based on a
+toggle.
+
+Activating the toggle updates the service's graphs to display annotation marks
+<Icon icon="diamond" /> along the top of each graph where events occurred. Hold
+the pointer over an annotation mark to display additional information about the
+event, such as the occurrence time, and global filters this event matches.
+
+<Note>
+**Kube Deploy Events** is the only metric configured to use annotations with
+services. To configure additional metrics, contact Chronosphere support.
+</Note>
+
+### Filter panels
+
+You can filter the panels for a service based on the discovered metric labels. For
+example, if a service includes a **Compute** panel that includes metric labels like
+**container** and **pod**, you can select individual values for that label to display
+usage statistics for only those instances.
+
+The default behavior displays **All** values.
+
+To filter panels:
+
+1. In a panel, click the dropdown arrow for the label you want to select values for.
+1. Select the values you want to display usage statistics for in the panels.
+
+### Explore queries
+
+Each panel's visualization uses an automatically generated metrics query. You
+can't modify the query or visualization type in this view. To edit and inspect
+a panel's query and examine its results in a larger view, you can open it in the
+[Metrics Explorer](/investigate/querying/metrics/explorer).
+
+You can also copy the query from the Metrics Explorer and paste it into other tools,
+including a visualization panel in a [dashboard](/observe/dashboards).
+
+Holding the pointer over a chart reveals a
+<Icon icon="ellipsis-vertical" /> three vertical dots menu. When clicked, this provides
+options to open the chart's query in Metrics Explorer, add the chart to a dashboard,
+or investigate it using Metrics DDx. See
+[common panel elements](/observe/dashboards/panels#common-panel-elements) for an
+explanation of the available tools.
+
+## Display change events
+
+<Note>
+To overlay change events, your organization must purchase
+[change event tracking](https://chronosphere.io/platform/change-event-tracking/)
+and have it enabled in your tenant.
+</Note>
+
+You can enable [change events](/observe/enable-events/services) to
+display them on panels for each of your services. This capability lets you visualize
+changes in your environment relative to a specific service.
+
+## Dependency map
+
+<Note>
+To view dependency maps for trace data in service pages, your organization must
+purchase [distributed tracing](https://chronosphere.io/platform/distributed-tracing/)
+and have it enabled in your tenant.
+</Note>
+
+When receiving an alert about your service, you need to identify and fix the issue as
+quickly as possible. If the issue isn't with your service, you want to inform the
+responsible team so they can investigate the issue.
+
+Use _dependency maps_ to view a perspective that's scoped to an individual service,
+including its upstream and downstream dependencies. These maps visualize trends in
+duration, requests, and errors, so you can [understand trends](#understand-trends) to
+focus your investigation. See [Service exploration](/observe/services/service-exploration)
+for an example of how to use dependency maps to help identify issues.
+
+### Understand trends
+
+Each service has its own dependency map that includes trending requests, errors, and
+latencies for that service and upstream and downstream services.
+
+Arrows on connecting edges indicate increases and decreases in trends for duration,
+requests, and errors, so you can identify spikes to focus your investigation.
+Although the icons are the same, each trend uses a different color for the arrow
+icons to visually indicate the trend type. When you select a
+[trend statistic](#trend-statistics) from the **Trends** menu, the icons change to
+match your selection.
+
+Single, double, and triple arrows indicate different percentages of change. An edge
+with a triple arrow indicates a larger trend than an edge with a single arrow:
+
+| Arrow type | Icon                                                    | Indication                        |
+|:-----------|:--------------------------------------------------------|:----------------------------------|
+| Single     | <img className="my-0" src="/public/doc-assets/request-up-low.svg" alt="Single arrow icon"/>    | Change of 0% up to 5%             |
+| Double     | <img className="my-0" src="/public/doc-assets/request-up-medium.svg" alt="Double arrow icon"/>  | Change greater than 5%, up to 15% |
+| Triple     | <img className="my-0" src="/public/doc-assets/request-up-high.svg" alt="Triple arrow icon"/>  | Change greater than 15%           |
+
+The thickness of edges correlate with request volume. The thicker the edge, the
+higher the request volume.
+
+Use trends and edge thickness in combination to gauge trend severity. For example, a
+thin edge with a triple arrow indicates very few requests, but a high trend increase.
+This combination might be less insightful than a thick edge, which on its own might
+indicate many requests to a highly used request path.
+
+### Find the root cause
+
+Using the dependency map on its own might be enough to identify where issues are
+occurring and which services to investigate. Sometimes, you need more information to
+identify the root cause, such as exploring span details to identify issues with a
+particular operation in a service.
+
+From a dependency map, you can access options to open a predefined query in Trace
+Explorer for the selected service. This capability means you don't have to create a
+query without any context and have a starting point to investigate from. Click the
+click the <Icon icon="ellipsis-vertical" /> more icon and choose one of these options:
+
+- **Explore trace data** opens Trace Explorer with a predefined query. You can add
+  additional search criteria as you [define your search](/investigate/querying/traces#define-a-search).
+- **View full map** opens Trace Explorer, scoped to the
+  [topology view](/investigate/querying/traces/features#topology-view). The full
+  topology map provides a broader perspective to help identify upstream and
+  downstream issues.
+
+### Trend statistics
+
+In the dependency map, hold the pointer over a service to display totals for the
+selected trend statistic.
+
+To view more detailed trend statistics, click an individual service in the map or one
+of its edges to display incoming and outgoing data, such as requests, errors, leaf
+errors, and duration:
+
+- **Requests**: Counts of all spans within the selected group, within the selected time range
+  of seconds in the time range. Ranked in descending order.
+- **Errors**: The number of spans that indicate an error outcome. Ranked in
+  descending order.
+- **Leaf errors**: Error spans that have no failing child spans. These spans are
+  often the potential cause of a trace's failure. Navigating directly to leaf errors
+  helps filter out propagated errors, and provides clearer signals about the source
+  of an error that might be causing the entire trace to fail. Ranked in descending
+  order.
+- **Median duration P50**: Ranks the spans of each group in order of duration, and
+  selects the duration of the span in the middle of the list (fiftieth percentile).
+  Ranks groups in descending order of this duration.
+- **Tail duration P99**: _Tail_ refers to the statistical notion of the upper tail of
+  a distribution. This statistic ranks the spans of each group in order of duration,
+  and selects the duration of the span that's 99% of the way through the list,
+  meaning, a span that typically has a high duration. Ranks service and operation in
+  descending order of this duration.
+
+### Identify issues behind suspicious trends
+
+The dependency map visualizes trends, but understanding what issues are causing
+trends is critical to resolving the underlying issue. From a dependency map, you can
+use [_differential diagnosis_](/investigate/analyze/differential-diagnosis/traces)
+to identify trends and immediately scan through all related tags and values to pinpoint
+the exact `tag:value` pairs most closely correlated with suspicious behavior.
+
+When you click a service in a dependency map, trends display for duration, requests,
+and errors. From this detailed view, click the <Icon icon="ellipsis-vertical" /> three dots
+icon for the statistic you want to run differential diagnosis on, and then click
+**Differential Diagnosis**.
+
+Observability Platform displays the **Differential Diagnosis** panel with the context
+you selected in the dependency map. From there, you can select related operations to
+refine the query, and select one or more tags to display the distribution of those
+`tag:value` pairs across
+[several metrics](/investigate/querying/traces/features#differential-diagnosis-metrics)
+simultaneously.
+
+## See more details
+
+If your service has **Compute(cAdvisor)** or **RPC(gRPC)** panels, you can click a
+**More details** link to open a view with filters scoped to the service page you came
+from. These views support pinned scopes.
+
+For example, clicking the **More details** link in a **Compute(cAdvisor)** panel
+opens that view with CPU usage statistics scoped to the service page you came from.
+
+Metrics on the **Compute(cAdvisor)** page are defined in
+[Monitoring cAdvisor with Prometheus](https://github.com/google/cadvisor/blob/master/docs/storage/prometheus.md).
+Observability Platform uses these metrics to display CPU, memory, network, and disk
+usage metrics during the selected time period.
+
+The first group of graphs displays the average and maximum values for that metric. In
+the **CPU**, **Memory**, **Network**, and **Disk** details sections, the relevant
+statics might be further broken down by pod and node if those statistics are
+available.
+
+With this information, you can more clearly visualize which pods or nodes have the
+highest contributions to each statistic.
+
+Use the **Compare** menu to select a second time period to graph against the current
+selected period.
+
+Drag in any chart to select a time frame across all charts on the page.
+
+## Own dashboards and monitors
+
+{/* Feature flag: serviceUiAccessControlEmails */}
+
+<LimitedAvail />
+
+Services can own [dashboards](/observe/dashboards) and [monitors](/investigate/alerts). Monitors
+owned by a service directly affect the
+[service's status](/observe/services#service-status).
+
+The total number of owned and connected items displays next to **Dashboards** or
+**All monitors**. For example, a service with one connected dashboard and one
+owned dashboard displays `(2)`. Click **Manage** next to either title to open the
+management menu. From this menu you can:
+
+- See the number of **Owned** items. Click to manage.
+- See the number of [**Connections**](#connected-resources). Click to manage.
+- Create a **New dashboard** or **New monitor**.
+
+<Tabs>
+<Tab title="Web" id="cloud-add-service">
+
+For some instances, you can use the Observability Platform app to create or edit a
+[monitor](/investigate/alerts/monitors#create-a-monitor) or
+[dashboard](/observe/dashboards#create-a-dashboard) to assign it to a service.
+
+To add a dashboard or monitor to a service, with the service as the owner:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**,
+   then select
+   **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> Services**.
+1. Select a service.
+1. Next to **Dashboards** or **All Monitors**, click **Manage** and then **New dashboard**
+   or **New monitor**.
+1. Populate the form and click **Save**.
+
+The selected service is listed as the owner.
+
+</Tab>
+<Tab title="Chronoctl" id="chronoct-add-service">
+
+> Requires [Chronoctl](/tooling/chronoctl) version 0.58.0 or later.
+
+Chronoctl configurations use a `collection` field (previously `collection_slug`),
+which sets a collection `type` and `slug`. When adding a monitor or dashboard to
+a service using Chronoctl, set the `type` to `SERVICE` and the `slug` to the
+service's slug.
+
+```yaml
+collection:
+  type: SERVICE
+  slug: my-service-slug
+```
+
+</Tab>
+<Tab title="Terraform" id="terraform-add-service">
+
+> Requires [Terraform provider](/tooling/infrastructure/terraform) version 0.44.0 or later.
+
+The following samples assume Chronosphere Observability Platform has discovered
+the service:
+
+-   **Monitor**: To associate a service with a monitor, create or update the
+    monitor using the following code, changing the variables to match your
+    environment's needs.
+
+    ```ruby
+    # Services are created automatically by the system, this references an existing service
+    data "chronosphere_service" "gateway" {
+      slug = "gateway"
+    }
+
+    resource "chronosphere_monitor" "m" {
+      name = "${var.prefix} Monitor in Gateway Service"
+      collection_id = data.chronosphere_service.gateway.id
+      notification_policy_id = chronosphere_notification_policy.np.id
+
+      query {
+        prometheus_expr = "up{test1=\"test2\"}"
+      }
+
+     series_conditions {
+       condition {
+          severity = "warn"
+          value = 2.0
+          op = "GT"
+        }
+      }
+    }
+    ```
+
+  - **Standard dashboard**: To associate a service with a dashboard, create or
+    update the dashboard using the following code, changing the variables to match
+    your environment's needs.
+
+    ```ruby
+    data "chronosphere_service" "gateway" {
+      slug = "gateway"
+    }
+
+    resource "chronosphere_dashboard" "dash_in_svc" {
+      collection_id = data.chronosphere_service.gateway.id
+      dashboard_json = jsonencode({
+        kind : "Dashboard",
+        metadata : {
+          name : "${var.prefix} Native Dashboard in Gateway Service"
+        }
+        spec : {
+        }
+      })
+    }
+    ```
+
+  - **Classic dashboard**: To associate a service with a classic dashboard, create
+    or update the classic dashboard using the following code, changing the
+    variables to match your environment's needs.
+
+    ```ruby
+    # This assumes the service is created out-of-band (see create-service.sh)
+    data "chronosphere_service" "gateway" {
+      slug = "gateway"
+    }
+
+    resource "chronosphere_grafana_dashboard" "dash_in_svc" {
+      collection_id = data.chronosphere_service.gateway.id
+      dashboard_json = jsonencode({
+        title : "${var.prefix} Dashboard In Gateway Service",
+        panels : [{
+          "gridPos" : {
+            "h" : 12,
+            "w" : 24,
+            "x" : 0,
+            "y" : 0
+          },
+          id : 2,
+          targets : [
+            {
+              expr : "1",
+            }
+          ],
+          title : "Panel Title",
+          type : "graph",
+        }],
+      })
+    }
+    ```
+</Tab>
+</Tabs>
+
+## Connected resources
+
+In addition to displaying monitors and dashboards
+[owned by a service](/observe/services/service-pages#visualization-panels), you can
+also connect these resources to a service, even when they're owned by another
+service. Connecting monitors and dashboards to services can help you identify issues
+in upstream or downstream services.
+
+Tables in a service page's sidebar list its associated dashboards and monitors,
+and include management tools to connect existing resources to the currently viewed
+service. Dashboards and monitors owned by the selected service prepopulate the lists.
+
+### Connect a resource to a service without transferring ownership
+
+To connect an existing resource to the currently viewed service without changing
+the resource's ownership:
+
+1. Next to **Dashboards** or **All Monitors**, click **Manage**.
+1. Select **Connections** to open the **Manage connections** panel.
+1. Search for a resource using the following methods:
+   - Scroll the list until you find the dashboard.
+   - Type the resource name in the **Search dashboards** box.
+   - Use the **Select a team** menu to choose a specific
+     [team](/administer/accounts-teams/teams).
+   - Use the **Select an owner** dropdown to choose a collection or service.
+1. Select the checkboxes on the rows of the resources you want to associate with
+   the service. You can select multiple resources at once.
+1. Click **Connect _`<RESOURCES>`_**. _`<RESOURCES>`_ reflects the type of resource
+   you're managing, such as **Connect dashboards** or **Connect monitors**.
+
+After resources are connected to a service, the **Connected _`<RESOURCES>`_** table
+on the **Manage connections** panel displays them.
+
+### Edit a connected resource
+
+1. Next to **All monitors** or **Dashboards**, click **Manage**.
+1. Select **Manage connections**.
+1. Make changes in the **Connected _`<RESOURCES>`_** table.
+
+### Remove a connection to a dashboard or monitor
+
+1. Next to **All monitors** or **Dashboards**, click **Manage**.
+1. Select **Manage connections**.
+1. In the **Connected _`<RESOURCES>`_** section, select the checkboxes on the rows
+   of the resources whose connections you want to remove.
+1. Click **Delete _`<RESOURCE>`_ connections**.
+1. Click **Delete** to confirm.
+
+### Connect a resource to a service by transferring ownership
+
+<Warning>
+Changing a resource's ownership removes its association with its current owner.
+Make sure any other users who rely on that association are aware of ownership changes
+to the resource.
+</Warning>
+
+To connect an existing resource to the currently viewed service by changing the
+resource's ownership to the service:
+
+1. Next to **Dashboards** or **All Monitors**, click **Manage**.
+1. Select **Owned _`<RESOURCE>`** to open the **Manage ownership** panel.
+   _`<RESOURCES>`_ reflects the type of resource you're managing, such as
+   **Owned dashboards** or **Owned monitors**.
+1. Search for a resource using the following methods:
+   - Scroll the list until you find the dashboard.
+   - Type the resource name in the **Search dashboards** box.
+   - Use the **Select a team** menu to choose a specific
+     [team](/administer/accounts-teams/teams).
+   - Use the **Select an owner** dropdown to choose a collection or service.
+1. Select the checkboxes on the rows of the resources you want to associate with
+   the service. You can select multiple resources at once.
+1. Click **Update ownership**.
+
+After resources are connected to a service, the **Owned _`<RESOURCES>`_** table
+on the **Manage ownership** panel displays them.
+
+### Affect service health
+
+When viewing a connected monitor, toggle **Affects service health** to include
+this resource in the service status.

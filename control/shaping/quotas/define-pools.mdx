@@ -1,0 +1,376 @@
+---
+title: Define a metric pool
+sidebarTitle: Define pools
+'og:description': Learn about metric pool concepts and how to apply them to help shape defining a metric pool.
+---
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Before [adding a metric pool](/control/shaping/quotas/manage-pools#add-a-metric-pool),
+review these concepts and how you apply them to help shape defining a pool. A metric
+_pool_ groups assigned metrics, which are organized by allocations, priorities, and
+thresholds:
+
+- [Pool allocations](#pool-allocations) define how much of your total persisted
+  writes license you want allocated to each pool. You can define allocations for each
+  of your licenses individually, or have the same allocations across all pools.
+- [Pool priorities](#configure-priority) let you selectively decide which metrics
+  within a given pool to drop first during a penalty scenario. You can set priorities
+  at a global level (for all pools), or individually.
+- [Pool thresholds](#pool-thresholds) are a capability that provide more strict
+  control on persisted cardinality on individual pools. Configure thresholds as a
+  proactive measure to strictly enforce dropping data, even when the overall capacity
+  limit hasn't been exceeded.
+- Match rules are the set of rules that determine which metrics belong to the pool.
+  A metric has to match only one of the rules to belong to the pool. Match rules
+  support [glob syntax](/investigate/querying/glob-syntax). See the `match_rules`
+  defined in the [pool thresholds example](#pool-thresholds-example) and the
+  [Terraform pool example](/control/shaping/quotas/manage-pools#terraform-pool-example)
+  to understand the rule syntax.
+
+## License impact
+
+Any applied quota configuration displays in the
+[Metrics Quotas](/control/shaping/quotas/quotas-ui) page, which shows how the pool's
+traffic interacts with the pool's quota, without penalizing that pool if the system
+goes over its limit.
+
+- To understand matched writes quotas and how they applies to individual pools, see
+  the [Matched Writes Quotas dashboard](/observe/dashboards/chronosphere-managed-dashboards#matched-writes-quotas).
+
+- To understand persisted cardinality and how it applies to individual pools, see the
+  [Persisted Cardinality Quotas dashboard](/observe/dashboards/chronosphere-managed-dashboards#persisted-cardinality-quotas).
+
+You can also access these dashboards from the
+[License Overview](/observe/dashboards/chronosphere-managed-dashboards#licensing-overview)
+by clicking the <Icon icon="ellipsis-vertical" />three dots icon in the dashboard panel
+relating to the license type, and then clicking the dashboard.
+
+When defining pool allocations, you can specify `fixed_values` for a license, you can
+specify any of the supported license types, which include persisted writes, persisted
+cardinality, and matched writes. When specifying `priority_thresholds`, you can
+specify only persisted cardinality license dimensions, defined by
+`PERSISTED_CARDINALITY_STANDARD` and `PERSISTED_CARDINALITY_HISTOGRAM`.
+See the
+[CreateResourcePools endpoint](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateResourcePools)
+for more information.
+
+## Pool allocations
+
+You can define pool allocations either as a percentage `(percent_of_license)` that
+applies to all pools for all licenses, or as a fixed value `(fixed_values)` in data
+points per second (DPPS) for individual licenses. Any remaining capacity within each
+license is allocated to the default pool, after subtracting the sum of allocations
+across pools for that license.
+
+The default pool allocation is calculated based on remaining capacity.
+To calculate the data allocation for the default pool, subtract the sum of
+allocations across pools for persisted writes, minus the overall
+[capacity limit](/administer/limits-licensing/licensing#capacity-limits):
+
+```text
+Capacity limit - allocations across pools = default pool allocation
+```
+
+The remainder is assigned to the default pool.
+
+You can specify any combination of `percent_of_license` and `fixed_values` for each
+license dimension. However, all pools within a license dimension must use the same
+units. For example, if matched writes uses `percent_of_license`, all pools must use
+that unit for matched writes. Similarly, if persisted writes uses `fixed_values`, all
+pools must use fixed value for persisted writes.
+
+- `percent_of_license`: Specify the percentage of the license to allocate to a pool.
+  This value applies to any license dimensions without `fixed_values` defined. For
+  example, consider that you allocate 10% of your persisted cardinality license to a
+  pool, and your total persisted cardinality license is `5.0M` (million). The
+  allocation for this pool is `5.0M` of persisted cardinality (.10*50), so any
+  consumption beyond that value causes metrics to be dropped.
+
+- `fixed_values`: Specify a fixed value for a license dimension in DPPS. You can set
+  a single fixed value per license dimension. Any `fixed_values` take precedence over
+  `percent_of_license` for a given license.
+
+  If you set any `fixed_values`, you can specify allocations for both matched writes
+  license and persisted writes. These allocations are available for both standard and
+  histogram metrics. See the
+  [CreateResourcePools endpoint](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateResourcePools)
+  for more information.
+
+  <Warning>
+  The sum of fixed values across all defined pools must be less than or equal to the
+    total allotted capacity, defined by the
+    [capacity limit](/administer/limits-licensing/licensing#capacity-limits). If your
+    organization exceeds the capacity limit, where the sum of fixed values exceeds
+    total capacity, a penalty is applied to all pools proportional to fixed
+    allocations. A validation in Terraform penalizes any pool that exceeds its allotted
+    quota.
+
+    In this penalty state, the default pool receives no allocation, and other pools are
+    adjusted down proportionally so that the sum of fixed values is equal to the
+    capacity limit.
+  </Warning>
+
+## Configure priority
+
+If you configured metrics quotas and your system exceeds its license limit,
+Observability Platform drops metrics from pools that exceed their respective quotas
+until all pools meet their quotas. Observability Platform penalizes only pools that
+exceed their persisted writes quota.
+
+To more selectively decide which metrics within a given pool to drop first during a
+penalty scenario, specify priorities for each pool:
+
+- **High**: Metrics dropped last.
+- **Low**: Metrics dropped first.
+- **Default**: Metrics dropped after low priority metrics, but before high priority
+  metrics.
+
+For persisted writes and matched writes, Observability Platform uses these priorities
+to determine the order of drops if your organization exceeds their capacity limit.
+These priorities are also used in conjunction with [setting thresholds](#pool-thresholds).
+
+Chronosphere recommends creating a pool for each team in your organization so they
+can manage their own budgets. For example, the Ordering Team who's responsible for
+the ordering service can manage their own budget with a pool that's specific to their
+team. If the ordering service is allotted 20% of the overall budget, the Ordering
+Team can configure priorities within that pool and follow the
+[best practices](/control/shaping/quotas/manage-pools#best-practices) to proactively
+manage their budget.
+
+### Configure global priority
+
+You can change global pool quota configurations by metric label. Any changes to quota
+configuration labels require updates to all pools.
+
+1. On the **Metrics Quotas** page, click <Icon icon="gear" />**Configure Quotas**.
+1. Click **Edit Global Settings**.
+1. In the **Edit Global Pool Settings** dialog, select a label from the
+   **Quota Configuration Label** dropdown. This label is the label key that defines
+   which keys can be used to create a pool.
+1. Select **Configure Globally** to apply the pool filtering globally, and complete
+   the following fields:
+
+   - **Prioritization label**: Select a label to change its priority.
+   - **High priority values**: Add a label value, such as `production*` to ensure
+     metrics with that label value are retained.
+   - **Low priority values**: Add a label value, such as `test*` to drop metrics of
+     lower importance first.
+
+1. Click **Done** when finished.
+1. Click the **Code Config** tab.
+1. Click **<Icon icon="copy" /> Copy** to copy the file, or
+   **<Icon icon="download" /> Download** to download the file to your computer.
+1. Add the definition to a Terraform file, or create a new Terraform file.
+1. Run this command to apply the resource:
+
+   ```shell
+   terraform apply
+   ```
+
+### Configure priority per pool
+
+You can configure priority for each pool instead of
+[configuring priority globally](#configure-global-priority). Complete the following
+steps to configure priority for each pool individually.
+
+1. On the **Metrics Quotas** page, click <Icon icon="gear" />**Configure Quotas**.
+1. Click **Edit Global Settings**.
+1. In the **Edit Global Pool Settings** dialog, select a label from the
+   **Quota Configuration Label** dropdown. This label is the label key that defines
+   which keys can be used to create a pool.
+1. Select **Configure per pool** to set priority independently for each pool.
+1. Click **Done** when finished.
+1. [Edit each pool](/control/shaping/quotas/manage-pools#edit-a-pool) to set priorities.
+
+## Pool thresholds
+
+After configuring [pool priorities](#configure-priority), administrative users should
+configure thresholds on individual pools to manage persisted cardinality. You must
+configure pool thresholds to set strict limits for when to drop new consumption of
+the persisted cardinality license for a pool.
+
+Thresholds let you strictly enforce certain pools at configured values, even if the
+overall capacity limit wasn't exceeded. By proactively limiting series in strictly
+enforced pools, thresholds prevents those series from consuming portions of the
+overall cardinality budget and inadvertently affecting pools that haven't exceeded
+their allocation.
+
+<Warning>
+If you don't configure pool thresholds, when a pool exceeds its defined allocation,
+drops occur randomly across all pools. You must configure pool thresholds to enforce
+limits on individual pools. Configuring pool allocations alone doesn't provide
+protections for persisted cardinality.
+</Warning>
+
+Administrative users can configure the following thresholds to take a more proactive
+approach to budget optimization, enabling them to implement incremental steps to
+prevent an overage before it occurs.
+
+### All priorities threshold
+
+To help solve the "noisy neighbor" problem and isolate the impact of changes to
+individual teams, strictly enforce the all priorities
+(`all_priorities.percent_of_pool_allocation`) threshold. This threshold stops
+accepting data of any priority if consumption for the pool exceeds the specified
+threshold value. This threshold limits churn in a pool from exceeding the defined
+threshold and inadvertently affecting other pools.
+
+<Warning>
+If you don't set the threshold for all priorities, an overage could result in drops
+across other pools. Medium and high priority data can continue to consume capacity
+until the entire pool allocation is exhausted. Setting the threshold for all
+priorities helps ensure that a pool's consumption doesn't impact other high priority
+metrics for other pools.
+</Warning>
+
+When configuring the all priorities threshold, consider the following best practices:
+
+- The value of this threshold should be greater than or equal to the pool allocation.
+  For example, if the pool allocation is 50%, then the threshold should be 50% or
+  greater. If the threshold value is less than the pool allocation, consider changing
+  the pool allocation instead.
+
+  <Warning>
+  Setting the threshold to a value that exceeds 100% of the pool allocation can cause
+    multiple pools to exceed their allocation, which can cause your system to hit the
+    [cardinality limit](/administer/limits-licensing/licensing#how-persisted-cardinality-limits-work)
+    and arbitrarily drop data.
+  </Warning>
+
+- Use a percentage for this value rather than a fixed value in DPPS, especially if
+  you want the threshold value to match the pool allocation. If the threshold is a
+  fixed value, then you must update that value any time the pool allocation or
+  license capacity changes.
+- You can set this threshold to a value that exceeds 100% of the pool allocation,
+  which provides a buffer before the threshold limit causes the pool to drop data.
+  This configuration accommodates occasional spikes, or situations when you're
+  migrating data from one pool to another over a longer period.
+
+### Low and medium priority thresholds
+
+To proactively limit churn for low and medium-priority series, configure low and
+medium priority thresholds to ensure there's room in your license for high-priority
+series.
+
+The low priority threshold (`low_priority`) stops accepting low-priority data only if
+the data exceeds the threshold value. This
+threshold limits churn in low-priority series that exceed the threshold.
+
+The low and medium priority threshold (`default_and_low_priority`) stops accepting
+low and medium priority data if low- and medium-priority data combine to exceed the
+threshold value. This threshold limits churn in low- and
+medium-priority series that exceed the threshold.
+
+### Configure pool thresholds
+
+<Note>
+Configuring pool thresholds is supported only in Terraform and the
+[`CreateResourcePools`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateResourcePools)
+endpoint of the [Chronosphere API](/tooling/api-info).
+</Note>
+
+To determine the threshold values for each pool, use the
+[Persisted Cardinality Quotas dashboard](/observe/dashboards/chronosphere-managed-dashboards#persisted-cardinality-quotas)
+to identify usage trends. The data in this dashboard can help inform recommended
+thresholds for low, medium, and high priority series in each pool. For example,
+
+- If the control team consistently uses approximately 95% of its pool, and you want
+  to prevent an overage from resulting in drops in other pools, set a strict
+  threshold (`all_priorities`) to 100%.
+- If the control team contains data for your most important pool, and you'd rather
+  drop data from all other pools except this one, set strict thresholds for all other
+  pools except the control team pool.
+- If the control team often experiments with new series in its development and
+  staging environments, set proactive thresholds to 10% for low priority and 20% for
+  combined low and medium priority data to preserve space for high-priority series.
+
+Complete the following steps to set pool thresholds. See the
+[example](#pool-thresholds-example) for how to configure thresholds within a pool.
+
+1. Add the `priority_thresholds` object to your existing metric pools definition with
+   either Terraform or the
+   [`CreateResourcePools`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateResourcePools)
+   endpoint.
+
+1. Define the license you want the threshold to operate on. Thresholds support these
+   licenses:
+
+   - `PERSISTED_CARDINALITY_STANDARD`: Refers to the
+     [standard metric license](/administer/limits-licensing/licensing#standard-metrics-license),
+     which measures the current consumption rates across persisted writes, matched
+     writes, and persisted cardinality license dimensions measured against the
+     capacity limit.
+   - `PERSISTED_CARDINALITY_HISTOGRAM`: Refers to the
+     [histogram metrics license](/administer/limits-licensing/licensing#histogram-metrics-license),
+     which measures the current consumption rate across all histogram metrics license
+     dimensions measured against the capacity limit.
+
+1. Define the thresholds you want to configure, which can be one of the following
+   values:
+
+   - `all_priorities`: Stop accepting any data (low, medium, and high) at the
+     specified threshold if consumption for the pool exceeds threshold value.
+   - `default_and_low_priority`: Stop accepting low and medium priority data at the
+     specified threshold if low and medium priority data combined exceed threshold
+     value.
+   - `low_priority`: Stop accepting only low priority data at the specified threshold
+     if low priority data exceeds threshold value.
+1. Save and apply your metric pools definition.
+
+After making changes, use the
+[Persisted Cardinality Quotas dashboard](/observe/dashboards/chronosphere-managed-dashboards#persisted-cardinality-quotas)
+to track which pools are approaching or exceeding defined thresholds, identify where
+drops are occurring, and view which priority levels are affected.
+
+<Note>
+After updating definitions for priorities or pools, only new inbound time series
+adhere to the new rules immediately. Any existing, inactive series that were already
+attributed to a changed pool might continue to count towards your cardinality limit
+until they naturally expire in the 150 minute rolling window. This means that it
+might take 150 minutes for cardinality per pool and per priority to accurately
+reflect counts.
+</Note>
+
+#### Pool thresholds example
+
+In the following example, priority thresholds are set for
+`PERSISTED_CARDINALITY_HISTOGRAM` for `all_priorities` and `low_priorities`:
+
+```ruby
+  pool {
+    name = "Control Services"
+    allocation {
+      percent_of_license = 16
+      priority_thresholds {
+        license = "PERSISTED_CARDINALITY_STANDARD"
+        all_priorities {
+          percent_of_pool_allocation = 100
+        }
+        default_and_low_priority {
+          percent_of_pool_allocation = 50
+        }
+        low_priority {
+          percent_of_pool_allocation = 25
+        }
+      }
+      priority_thresholds {
+        license = "PERSISTED_CARDINALITY_HISTOGRAM"
+        all_priorities {
+          percent_of_pool_allocation = 100
+        }
+        low_priority {
+          percent_of_pool_allocation = 25
+        }
+      }
+    }
+    match_rules = ["service:{${join(",", control_services)}}"]
+    priorities {
+      high_priority_match_rules = ["cluster:production*"]
+      low_priority_match_rules  = ["cluster:test*"]
+    }
+  }
+```

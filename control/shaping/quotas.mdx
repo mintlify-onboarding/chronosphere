@@ -1,0 +1,83 @@
+---
+title: Understand metric quotas and pools
+'og:description': Learn about metric quotas and pools, and how to give each pool a specific quota of your total persisted writes license.
+sidebarTitle: Overview
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Metric quotas assign specific percentages of your total persisted writes limit to
+_pools_ of metrics. A pool might translate to teams or other logical groupings within
+your organization.
+
+Use metric quotas to give each pool a specific quota of your total persisted writes
+license, expressed either as a percentage or a value in Data Points Per Second
+(DPPS).
+
+<Note>
+Chronosphere recommends using the fewest number of pools possible for
+administrative ease. Ten or fewer pools is adequate for most use cases.
+</Note>
+
+Before adding pools, review concepts about
+[defining pools](/control/shaping/quotas/define-pools) to understand how to apply
+pool allocations, priorities, and thresholds.
+
+## Exceeding limits
+
+If a metric, single service, pod, or environment begins to emit a high volume of data
+that pushes the system over its persisted writes limit, a penalty applies to the pool
+containing the emitted metric. Pools that haven't exceeded their quota aren't
+penalized.
+
+Individual pool quotas must sum to less than or equal to the
+[capacity limit](/administer/limits-licensing/licensing#capacity-limits). Metrics
+ingestion for individual pools is guaranteed up to the limit defined for the pool. If
+your entire Chronosphere Observability Platform tenant is under the capacity limit,
+an individual pool can exceed its defined quota without incurring a penalty, and
+Observability Platform allocates the remaining capacity to the **Default Pool**.
+
+When a tenant exceeds the overall capacity limit, enforcement rules take effect. How
+enforcement occurs differs between licenses:
+
+- **Persisted and matched writes**: When capacity limits are exceeded for persisted
+  and matched writes, writes are rate limited based on the defined pools and
+  [priority](/control/shaping/quotas/define-pools#configure-priority). Only pools
+  that exceed their allocation are penalized. In a penalty state, data is dropped in
+  priority order, starting with low-priority data first.
+- **Persisted cardinality**: When capacity limits are exceeded for persisted
+  cardinality, data is dropped indiscriminately across all pools and priorities until
+  the tenant is under the capacity limit.
+
+To control the data that's dropped across pools and priorities for persisted
+cardinality, you must configure
+[pool thresholds](/control/shaping/quotas/define-pools#pool-thresholds). Thresholds
+proactively limit dropped data to specific pools and priorities before overall
+capacity is reached. Defining thresholds avoids randomly dropping data, and isolates
+penalties so you don't impact pools that aren't exceeding their allocation.
+Configuring pool allocations alone doesn't provide protections for persisted
+cardinality.
+
+Thresholds define limits that prevent series from consuming portions of the overall
+cardinality budget and inadvertently affecting pools that haven't exceeded their
+allocation. Defining thresholds means that drops can occur, even if your pool
+allocation or overall license aren't exceeded.
+
+Threshold enforcement takes effect after consumption if the relevant pool exceeds
+the defined threshold value. This means that if low priority data exceeds the low
+priority threshold, Observability Platform starts dropping data. The exact point
+at which enforcement occurs beyond that value can vary. The smaller the threshold is
+relative to overall capacity, the greater the chance for delay when enforcement takes
+effect.
+
+## View and manage pools
+
+View [existing metric pools](/control/shaping/quotas/quotas-ui) in Observability
+Platform on the Metrics Quotas page. If you haven't configured any metric pools,
+Observability Platform shows a single **Default Pool**.
+
+You can also use the [Metrics Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer)
+to view the metrics that each pool contains, and filter by priority.
+
+You can then [manage pools](/control/shaping/quotas/manage-pools) to shape and plan
+your pool sizes, and plan for future usage.

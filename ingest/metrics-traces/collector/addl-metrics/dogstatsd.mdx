@@ -1,0 +1,262 @@
+---
+title: DogStatsD ingestion
+'og:description': Processes and configuration for ingesting DogStatsD metrics into Chronosphere Observability Platform.
+sidebarTitle: DogStatsD
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+When accepting DogStatsD metrics over the User Datagram Protocol (UDP), Observability Platform
+requires you to run the Chronosphere Collector as a
+Kubernetes [DaemonSet](/ingest/metrics-traces/collector#deployment)
+or as a [sidecar](/ingest/metrics-traces/collector#sidecar).
+
+All ingested DogStatsD metrics are subject to sanitization rules that follow the
+[Datadog best practice guidelines](https://docs.datadoghq.com/developers/guide/what-best-practices-are-recommended-for-naming-metrics-and-tags/).
+For example, Chronosphere Observability Platform converts all DogStatsD labels to
+lowercase.
+
+For information about converting Datadog metrics and dashboards to Observability
+Platform, see the [Datadog overview](/ingest/metrics-traces/collector/mappings/datadog).
+
+<Warning>
+Beginning with v0.110.0, the Chronosphere Collector supports DogStatsD protocols
+v1.0 to v1.6, and aggregates timer and distribution metrics as delta exponential
+histograms. The configuration options documented on this page are available in
+v0.110.0 and later. Prior versions of the Chronosphere Collector don't support all
+documented configuration options.
+</Warning>
+
+## Deploy the Chronosphere Collector
+
+Datadog metrics libraries primarily send metrics using the UDP protocol, which sends
+packets without reliability mechanisms, such as handshakes, retries, or acknowledgments.
+Using UDP to send data over the network increases the risk of losing metric data
+due to lost packets and other network issues.
+
+Because local UDP communication is generally more stable, keeping communication
+on the same Kubernetes node reduces this risk.
+
+### Install Collector as a Kubernetes DaemonSet
+
+To install the Chronosphere Collector, follow the steps described in
+[Kubernetes Collector installation to retrieve metrics](/ingest/metrics-traces/collector/install/kubernetes).
+
+The manifest defines a ClusterRole with the permissions required to access the local
+Kubelet API and mounts a volume to access the `cgroups` directory on the node.
+
+## Configure Chronosphere Collector for DogStatsD metrics
+
+1. Use the configuration from the
+   [annotated manifest](https://storage.googleapis.com/chronosphere-release/latest/kubernetes/chronocollector.yaml)
+   in the
+   [Kubernetes Collector installation documentation](/ingest/metrics-traces/collector/install/kubernetes)
+   as a starting point.
+1. Add `hostPort` to the DaemonSet `containters.ports` YAML collection to enable
+   network communication on the host network.
+
+   ```yaml
+   spec:
+     template:
+       spec:
+         containers:
+           ports:
+           ...
+           - containerPort: 8125
+             hostPort: 8125  # Add hostPort
+             name: dogstatsd
+             protocol: UDP
+   ```
+1. Enable DogStatsD mode under the `push.dogstatsd.enabled` YAML collection in the
+   Collector manifest.
+
+   ```yaml
+   push:
+      dogstatsd:
+         enabled: true
+   ```
+1. Configure additional [DogStatsD configuration options](#dogstatsd-configuration-options)
+   under the `push.dogstatsd` YAML collection as necessary.
+
+## DogStatsD configuration options
+
+You can configure the following options in the Collector manifest for DogStatsD,
+with the exception of those denoted as "not configurable", which appear in code
+configuration output but can't be overridden by changing their values.
+
+In addition to augmenting labels with metadata from Kubernetes Pods, Collector v0.115.0
+and later also supports label augmentation derived from the Kubernetes Node on which
+the Collector is running. Node metadata is fetched only once, at startup.
+
+- `listenAddress`: The address and port on which the server listens for connections.
+  Point DogStatsD clients sending metrics to this address and port.
+  Default: `0.0.0.0:8125`.
+
+  When changing the default port, also update the container ports in the DaemonSet
+  manifest to match.
+- `listenProtocol`: The protocol the server listens on. The Chronosphere Collector supports
+  `udp`, `tcp,` or `tcp/udp` (both protocols on the same port). Default: `udp`.
+
+  ```yaml
+  push:
+     dogstatsd:
+        enabled: true
+        listenAddress: 0.0.0.0:8125
+        listenProtocol: udp
+  ```
+- `aggregation`: A YAML collection that defines how the Collector ingests a data
+  sample.
+
+  When Chronosphere Collector ingests a data sample, it aggregates the data based
+  on the metric type and sends a single data point to Observability Platform that
+  represents the sample for the defined `interval`. These aggregations reduce network
+  egress and processed writes to Observability Platform.
+
+  Chronosphere Collector aggregates data points based on the metric type as follows:
+  - `counters` (not configurable): Sums all data point values for a time series
+    and sends the `SUM` as a [`DELTA COUNTER`](/control/shaping/types#delta-counter).
+  - `gauges` (not configurable): Selects the `LAST` value for a time series in the
+    interval.
+  - `timers`: Aggregates timer values into a
+    [`DELTA EXPONENTIAL HISTOGRAM`](/control/shaping/types#delta-exponential-histograms),
+    by default, including DogStatsD histograms and distributions.
+    - `aggregationType`: Defines how the Collector aggregates timers. Default: `histogram`.
+
+      The deprecated `tdigest` option provides backward compatibility for users
+      of DogStatsD support in Collector versions prior to v0.110.0, and will be
+      removed in future versions. Unlike histograms, t-digests require additional
+      aggregation rules to calculate and persist a computed quantile, count, min,
+      max, or average as a `gauge` in Observability Platform.
+  - `interval`: Defines the length of time before writing to Observability Platform.
+     Set an interval value that aligns with your licensed persistent writes and
+     cardinality ratio. A more frequent aggregation interval increases persisted
+     writes.
+  - `inactiveExpireAfter`: Determines the amount of time before Chronosphere Collector
+    evicts unused aggregation keys from the local cache. Default: `2m`.
+- `labels`: Adds labels to all DogStatsD metrics pushed. Define each label as a
+  key-value pair.
+
+  For example, the default configuration adds the labels `env` and `k8s_cluster_name`
+  using environment variables for the values.
+- `prefix`: Adds a prefix to all DogStatsD metrics pushed.
+
+  For example, setting this value to `qa` prefixes all metric names with `qa` followed
+  by \`.\`, the dot separator. A metric like `build_info.ip` becomes `qa.build_info.ip`
+  and is normalized to `qa_build_info_ip`.
+- `kubernetesMetadataAugmentation:` Defines the configuration and addition of Kubernetes
+  metadata, labels, and annotations to be added to the time series.
+
+  The Chronosphere Collector doesn't support using node or namespace metadata as the source for label
+  augmentation.
+  - `enabled`: A Boolean value that toggles augmentation. Default: `false`.
+    The Chronosphere Collector retrieves metadata from the local Kubelet API
+    and doesn't support other sources.
+  - `kubelet`:
+    - `kubeletNodeIP`: Defines the public IP address assigned to Kubelet. Defaults
+      to the value of the `KUBERNETES_NODE_IP` environment variable.
+    - `kubeletNodePort`: Defines the port that Kubelet listens on for HTTP requests.
+      Default: `10250`.
+    - `kubeletNodePodsEndpoint`: Overrides the URL of Kubelet's `/pods` endpoint,
+      which by default is constructed from `kubeletNodePort` and `kubeletNodeIP`
+      as `https://${kubeletNodePort}:${kubeletNodeIP}/pods`.
+    - `kubeletNodeTLSInsecureSkipVerify`: Determines whether the Chronosphere Collector
+       skips verification  of Kubelet's TLS certificate. Default: `true`.
+    - `kubeletNodeBearerTokenFile`: Defines the path to the file containing Collector's
+      service account token. Default: `/var/run/secrets/kubernetes.io/serviceaccount/token`.
+    - `timeout`: Defines the amount of time the Chronosphere Collector waits for a response from
+    the metadata source. Default: `1s`.
+    - `refreshInterval`: Defines the interval between refreshes if a cache miss
+      didn't trigger a cache update from Kubelet. Default: `10s`.
+  - `metadataToAugment`: Adds time series labels based on Kubernetes metadata from the
+    Pod that sent the metrics or the Node on which the Collector is running.
+    Node metadata is fetched only once, at startup. Supported metadata keys are
+    `name` and `namespace`.
+  - `labelsToAugment`: Adds time series labels based on Kubernetes labels from the
+    Pod that sent the metrics or the Node on which the Collector is running.
+    Node metadata is fetched only once, at startup.
+
+    Specify the source Kubernetes label by name, and provide a name for the label
+    as it should appear on the resulting metric time series.
+
+    For example, the default configuration uses the value from the Kubernetes Pod
+    label `app` as the value for the `service_name` label for all metrics.
+  - `annotationsToAugment`: Adds time series labels based on Kubernetes annotations
+    from the Pod that sent the metrics or the Node on which the Collector is running.
+
+    Specify the source Kubernetes annotation by name, and provide a name for the
+    label as it should appear on the resulting metric time series.
+
+    For example, the default configuration uses the Kubernetes Pod annotation `app.myorg.com/owner`
+    value as the value for the `team_owner` label.
+  - `extractLabelsFromAnnotations`: A collection that extracts label-value pairs
+    from Kubernetes Pod annotation values serialized as JSON key-value maps to add
+    labels to time series ingested by the DogStatsD protocol handler. Set this to
+    a `pod` containing `ad.datadoghq.com/tags` and `ad.datadoghq.com/%%container_name%%.tags`.
+    This supports
+    [Datadog Agent Tag Autodiscovery](https://docs.datadoghq.com/containers/kubernetes/tag/?tab=datadogoperator#tag-autodiscovery).
+  - `cgroupRefreshInterval`: Defines how often to refresh the inode to cgroup mapping,
+    if a cache miss didn't trigger a lookup. Default: `5m`.
+  - `disableCgroupInodeResolution`: If `true`, disables the resolution of inodes
+    to cgroups and containers. Default: `false`.
+- `stripContainerID`: Removes the `container_id` or `c` label sent by the DogStatsD
+  metrics client. Default: `true`.
+
+### Example configuration
+
+The following example YAML collection lists all the configuration options for receiving
+DogStatsD metrics with Chronosphere Collector:
+
+```yaml
+push:
+  dogstatsd:
+    enabled: true
+    listenAddress: 0.0.0.0:8125
+    listenProtocol: tcp/udp
+    aggregation:
+      timers:
+        # Default is "histogram" - aggregation to exponential histograms.
+        # Valid values are "histogram" and "tdigest".
+        # Use `tdigest` only when upgrading from Collector versions prior
+        # to v0.110.0 with aggregations explicitly enabled.
+        aggregationType: histogram
+      interval: 60s
+      inactiveExpireAfter: "2m"
+    labels:
+       env: ${ENV:""}
+       k8s_cluster_name: ${KUBERNETES_CLUSTER_NAME:""}
+   # prefix: "qa"
+   kubernetesMetadataAugmentation:
+      enabled: true
+      kubelet:
+        kubeletNodeIP: ${KUBERNETES_NODE_IP}
+        kubeletNodePort: 10250
+        # kubeletNodePodsEndpoint: https://${KUBERNETES_NODE_IP}:10250/pods
+        kubeletNodeTLSInsecureSkipVerify: true
+        kubeletNodeBearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+        refreshInterval: 10s
+        timeout: 1s
+      # Note: Node metadata is fetched only once, at startup.
+      metadataToAugment:
+        pod: # map of metadata_keyname: metric_label
+          name: kube_pod_name
+          namespace: kube_namespace
+        node: # map of node_metadata_key: metric_label
+          name: kube_node_name
+      labelsToAugment:
+        pod: # map of pod_label: metric_label
+          app: service_name
+        node: # map of node_label: metric_label
+          app: kube_node_name
+      annotationsToAugment:
+        pod: # map of pod_annotation: metric_label
+          "app.myorg.com/owner": owner_team
+        node: # map of node_annotation: metric_label
+          "app.myorg.com/owner": node_owner
+      extractLabelsFromAnnotations:
+        pod:
+          - ad.datadoghq.com/tags
+          - ad.datadoghq.com/%%container_name%%.tags
+      cgroupRefreshInterval: 5m
+      # disableCgroupInodeResolution: false
+    stripContainerID: true
+```

@@ -1,0 +1,475 @@
+---
+title: Chronoctl
+'og:description': Use Chronoctl to manage your organization's Chronosphere Observability Platform resources.
+sidebarTitle: Overview
+---
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Chronoctl is a Chronosphere-supplied app that lets you manage your organization's
+Chronosphere Observability Platform resources from the command line.
+
+For example, to list your team's monitor definitions:
+
+```shell
+chronoctl monitors list
+```
+
+<InfoTerraformLockout />
+
+To view product release notes for Chronoctl you must sign in to Observability Platform.
+In the navigation menu select
+**<Icon icon="circle-info" /> More information <span aria-label="and then">></span> Release Notes**,
+and then click the **Chronoctl** tab.
+
+## Getting started
+
+To install Chronoctl, see [Install Chronoctl](/tooling/chronoctl/install).
+
+To use Chronoctl, you must provide an API token and organization name to
+[authenticate](/tooling/chronoctl/install#authentication) as an account with `SysAdmin`
+privileges. You can provide the token and organization name by either configuring
+them as environment variables or passing them with the command. You can also securely
+authenticate by using the [`chronoctl auth`](#auth) command.
+
+After you're ready to use Chronoctl, refer to its [commands](#command-list) to
+directly control your Observability Platform environment.
+
+## Supported resources
+
+Use Chronoctl commands to take actions on Observability Platform _resources_, such
+as dashboards, teams, or collections. To display a list of the resources supported by
+your installed version of Chronoctl, view the Chronoctl help:
+
+```shell
+chronoctl --help
+```
+
+The list of available resources displays in the **Chronosphere Configuration** section
+of the output.
+
+## Command list
+
+Chronoctl is based on the structure of the Chronosphere API, which helps
+its commands be as consistent with one another as possible. This also better reflects
+features as they're presented for use in the Chronosphere API itself.
+
+### Flags
+
+Each command has several _flags_ for customizing its output or behavior.
+
+In addition to the [authentication](/tooling/chronoctl/install#authentication) flags, flags
+that are common among commands include:
+
+- `-h`, `--help`: Outputs help text for the given command.
+- `--timeout`: Defines a duration in seconds for the request before it times out
+  and fails. Defaults to 30 seconds.
+
+Chronoctl commands that return data representations of resources have additional
+common flags:
+
+- `-o`, `--output`: Defines the output format. Accepts `json` for JSON, `jsonl` for JSON
+  Lines, or defaults to `yaml` for YAML.
+
+Chronoctl commands that can change the state of a resource in Observability Platform,
+such as `chronoctl apply` or resource `create` and `update` subcommands, also have:
+
+- `-d`, `--dry-run`: If set, Chronoctl simulates but doesn't apply the manifest
+  or change in a dry run, and then displays the predicted result.
+- `--no-strict`: If set, Chronoctl accepts manifests or changes that contain unknown
+  fields.
+
+### Slugs
+
+Observability Platform identifies each resource by a unique _slug_, which has a
+255-character length limit and contains only letters, numbers, underscores (`_`),
+and dashes (`-`). Slugs are case-sensitive. By default, Observability Platform generates
+a random slug (containing less than 255 characters) for each resource. Chronoctl
+lets you optionally specify a slug when creating resources.
+
+### Configuration commands
+
+Configuration commands are the recommended way to interact with Observability
+Platform resources. Use the [`apply`](#apply) command for interacting with multiple
+resources, but in most cases, uses the configuration commands.
+
+Each of these commands are specific to Observability Platform resource types, which
+have the same following subcommands:
+
+- [`create`](#create)
+- [`delete`](#delete)
+- [`list`](#list)
+- [`read`](#read)
+- [`scaffold`](#scaffold)
+- [`update`](#update)
+
+#### `create`
+
+Creates one resource of the given type. For example:
+
+```shell /RESOURCE/ /FILE_NAME/
+chronoctl RESOURCE create -f FILE_NAME.yaml
+```
+
+Replace the following:
+
+- _`RESOURCE`_: The resource you want to take action on.
+- _`FILE_NAME`_: The name of the definition file you want to use.
+
+<Note>
+To create resources that require SysAdmin access, such as teams and accounts, you
+must use either of these processes:
+
+- Authenticate as a user or service account that's a member of a team with
+  SysAdmin access.
+- Start a session using [`chronoctl auth`](#auth).
+</Note>
+
+For more information about the subcommand, including its usage and accepted flags,
+see the Chronoctl command line help.
+
+```shell /RESOURCE/
+chronoctl RESOURCE create --help
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+#### `delete`
+
+Deletes one resource of the given type. For example:
+
+```shell /RESOURCE/ /SLUG/
+chronoctl RESOURCE delete SLUG
+```
+
+Replace the following:
+
+- _`RESOURCE`_: The resource you want to take action on.
+- _`SLUG`_: The slug of the resource you want to delete.
+
+<Note>
+To delete resources that require SysAdmin access, such as teams and accounts, you
+must use either of these processes:
+
+- Authenticate as a user or service account that's a member of a team with
+  SysAdmin access.
+- Start a session using [`chronoctl auth`](#auth).
+</Note>
+
+For more information about the subcommand, including its usage and accepted flags,
+see the Chronoctl command line help.
+
+```shell /RESOURCE/
+chronoctl RESOURCE delete --help
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+#### `list`
+
+Lists all resources of the given type. For example:
+
+```shell /RESOURCE/
+chronoctl RESOURCE list
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+For more information about the subcommand, including its usage and accepted flags,
+see the Chronoctl command line help.
+
+```shell /RESOURCE/
+chronoctl RESOURCE list --help
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+#### `read`
+
+Outputs one resource of the given type. For example:
+
+```shell /RESOURCE/ /SLUG/
+chronoctl RESOURCE read SLUG
+```
+
+Replace the following:
+
+- _`RESOURCE`_: The resource you want to take action on.
+- _`SLUG`_: The slug of the resource you want to output.
+
+For more information about the subcommand, including its usage and accepted flags,
+see the Chronoctl command line help.
+
+```shell /RESOURCE/
+chronoctl RESOURCE read --help
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+#### `scaffold`
+
+Outputs an example resource definition of the given type, including inline comments
+documenting its properties. For example:
+
+```shell /RESOURCE/
+chronoctl RESOURCE scaffold
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+#### `update`
+
+Updates a resource of the given type. For example:
+
+```shell /RESOURCE/ /FILE_NAME/
+chronoctl RESOURCE update -f FILE_NAME.yaml
+```
+
+Replace the following:
+
+- _`RESOURCE`_: The resource you want to take action on.
+- _`FILE_NAME`_: The name of the definition file you want to use.
+
+<Note>
+To update resources that require SysAdmin access, such as teams and accounts, you
+must use either of these processes:
+
+- Authenticate as a user or service account that's a member of a team with
+  SysAdmin access.
+- Start a session using [`chronoctl auth`](#auth).
+</Note>
+
+For more information about the subcommand, including its usage and accepted flags,
+see the Chronoctl command line help.
+
+```shell /RESOURCE/
+chronoctl RESOURCE update --help
+```
+
+Replace _`RESOURCE`_ with the resource you want to take action on.
+
+### Core commands
+
+Chronoctl core commands are independent of any resource type.
+
+#### `apply`
+
+Applies a configuration change to resources from a YAML or JSON file, or from
+standard input. When you apply resources with Chronoctl, Observability Platform
+creates them if they don't already exist.
+
+The `apply` command accepts input from a file by providing the path as the value
+of the `-f` (`--filename`) flag.
+
+For example, to apply a file containing a resource's YAML manifest:
+
+```shell
+chronoctl apply -f resources.yml
+```
+
+To apply a resource passed from standard input, use the `-` value of the `-f` flag:
+
+```shell
+chronoctl apply -f -
+```
+
+Upon success, the command returns the list of changes applied.
+
+The `apply` command accepts the dry run (`-d`, `--dry-run`) flag, which displays
+the changes without applying them.
+
+```shell
+chronoctl apply -f resources.yml -d
+```
+
+#### `auth`
+
+> Requires Chronoctl version 1.8.0 or later (or Chronoctl 0.65.0 or later if you're
+> using a version earlier than 1.0.0).
+
+Handles secure programmatic access to Observability Platform. This command lets
+users access their organizations' applications after
+[authentication](/tooling/chronoctl/install#authentication) with Chronoctl.
+
+<Note>
+This command uses a `session_ID` rather than an API token.
+</Note>
+
+- `login`: Authenticate the Chronoctl session as your Observability Platform user.
+- `logout`: Log the user out of their authenticated Chronoctl session. This command
+   only revokes Chronoctl session IDs. Revoke service accounts using the
+   [`DeleteServiceAccount`](https://docs.chronosphere.io/tooling/api-info/definition/operations/DeleteServiceAccount)
+   API endpoint.
+- `list`: List all authenticated Observability Platform organizations the current
+  user can access. Users might have access to multiple organizations such as a
+  production and a test organization.
+- `print-session-id`: Print the stored session id for an Observability Platform
+  organization.
+- `set-default-org`: Sets the default Observability Platform organization for future
+  commands.
+- `whoami`: Use to return the name of an existing
+  [service account](/administer/accounts-teams/service-accounts). Supply the
+  argument `--api-token=TOKEN` where _`TOKEN`_ is a service account token.
+
+To sign in, use this command:
+
+```shell /YOUR-ORG-NAME/
+chronoctl auth login --org-name YOUR-ORG-NAME
+```
+
+Replace _`YOUR-ORG-NAME`_ with the organization you want to sign in to. For example, if
+your Observability Platform tenant is `https://acme.chronosphere.io`, replace
+_`YOUR-ORG-NAME`_ with `acme`, and then follow the prompts.
+
+This process generates a `session_ID`, which is cached on your machine and valid
+for 24 hours. If a [personal access token](/administer/accounts-teams/personal-access-tokens) or
+[service account token](/administer/accounts-teams/service-accounts) isn't passed to Chronoctl
+using an environment variable or command line flag, Chronoctl uses the cached `session_ID`
+to authenticate your command.
+
+### State commands
+
+These commands evaluate the current state of Observability Platform.
+
+#### `rule-evaluations list`
+
+The `list` subcommand is the only subcommand for `rule-evaluations`.
+
+Returns a list of [rule evaluation failures](/control/shaping/rules/evaluation-failures),
+including the rule's type, slug, failure count, message, and detection timestamp.
+
+### Sync commands
+
+The `sync` command accepts the `prometheus` subcommand only. Use the `sync prometheus`
+command to sync a Prometheus rules YAML file and a Prometheus Alertmanager YAML
+configuration file into Chronosphere format.
+
+You include a `chronoconfig.yaml` file to assign the rules to a team, and to specify
+a team to own the related notification policy. This command converts and applies the
+assets and resources to your tenant.
+
+<Warning>
+The `sync prometheus` command is supported only in Chronoctl v0.x.x versions. You can
+[download and install](/tooling/chronoctl/install#download-and-install-a-v0xx-version) a
+v0.x.x version if you require this command. However, Chronosphere doesn't support
+continued use of Chronoctl v0.x.x.
+</Warning>
+
+```shell
+chronoctl sync prometheus
+```
+
+To sync Prometheus rules into Chronosphere format:
+
+1. Define a `chronoconfig.yaml` file to assign the converted rules to a team, and
+   specify a team to own the related notification policy:
+
+   ```yaml /OWNER_TEAM/ /POLICY_TEAM/
+   use_collections: "TRUE"
+   group_teams:
+     - group_regex: ".*"
+       team_slug: "OWNER_TEAM"
+   notification_policy_team_slug: "POLICY_TEAM"
+   ```
+
+   Replace the following:
+
+   - _`OWNER_TEAM`_: The `slug` of the Observability Platform team to own the
+     converted rules.
+   - _`POLICY_TEAM`_: The `slug` of the Observability Platform team to own the
+     notification policy.
+
+1. Run the `sync prometheus` command and pass in your Prometheus rules file,
+   Prometheus Alertmanager configuration file, and `chronoconfig.yaml` file:
+
+   ```shell /ALERTMANAGER_CONFIG/ /PROM_RULES/ /FLAGS/
+   chronoctl sync prometheus -a [ALERTMANAGER_CONFIG] -p [PROM_RULES] -c chronoconfig.yaml [FLAGS]
+   ```
+
+   Replace the following:
+
+   - _`ALERTMANAGER_CONFIG`_: The file containing your Prometheus Alertmanager
+     configuration.
+   - _`PROM_RULES`_: The file containing your Prometheus rules.
+   - _`FLAGS`_: Any flags to include with the command. Run
+     `chronoctl sync prometheus --help` to display supported flags.
+
+### Additional commands
+
+These commands provide additional information as you use Chronoctl.
+
+#### `help`
+
+Displays help text for the tool and any specified subcommand.
+
+```shell
+chronoctl help
+```
+
+#### `version`
+
+Displays the version, revision, build date, and Go version for Chronoctl. Provide
+this information when reporting an issue with Chronoctl to Chronosphere Support.
+
+```shell
+chronoctl version
+```
+
+## Command autocompletion
+
+You can add support for shell command autocompletion with Chronoctl for the Bash,
+Zsh, Fish, and PowerShell by using the `chronoctl completion` command.
+
+This section provides detailed steps for Bash and Zsh on macOS. For Linux-specific
+details and instructions for Fish and PowerShell, see the output of
+`chronoctl help completion`.
+
+<Tabs>
+
+<Tab title="Bash" id="autocomplete-bash">
+
+1. Update or install `bash-completion`:
+
+   ```shell
+   brew install bash-completion
+   ```
+
+1. In a shell initialization script, such as `~/.bashrc`, add the following:
+
+   ```shell
+   source "$(brew --prefix bash-completion)/etc/bash_completion"
+   eval "$(chronoctl completion bash)"
+   ```
+
+1. Restart the shell.
+
+</Tab>
+
+<Tab title="Zsh" id="autocomplete-zsh">
+
+1. Go to your Zsh `site-functions` folder.
+
+   - If you installed Zsh with Homebrew, the path is
+     `/opt/homebrew/share/zsh/site-functions`.
+   - If you use the default macOS Zsh, the path is
+     `/usr/local/share/zsh/site-functions`.
+
+1. Run the following command:
+
+   ```shell
+   chronoctl completion zsh > _chronoctl
+   ```
+
+1. Ensure your `~/.zshrc` file has
+   [`compinit`](https://zsh.sourceforge.io/Doc/Release/Completion-System.html) added.
+   If you use `oh-my-zsh`, it adds that for you.
+
+1. Restart the shell.
+
+</Tab>
+</Tabs>
+
+You can now press `Tab` on the command line to automatically complete
+Chronoctl commands.

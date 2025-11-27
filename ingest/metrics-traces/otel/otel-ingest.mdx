@@ -1,0 +1,374 @@
+---
+title: Configure your OpenTelemetry Collector
+'og:description': Learn about configuring the OpenTelemetry Collector for metric and tracing data.
+sidebarTitle: Configure collector
+---
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+You can configure the [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/)
+to send metric and tracing data to Chronosphere Observability Platform. You must send
+all traffic over HTTPS.
+
+<Tip>
+To learn more about OpenTelemetry, see
+[What is OpenTelementry?](https://chronosphere.io/learn/what-is-opentelemetry/)
+on the Chronosphere Blog.
+</Tip>
+
+Observability Platform accepts OpenTelemetry Protocol (OTLP) metrics from
+OpenTelemetry Collectors by using the gRPC OTLP Exporter.
+
+<Note>
+Chronosphere recommends not sending OTLP metrics directly from the OpenTelemetry
+Client SDK.
+</Note>
+
+This procedure adds each configuration section separately. For a complete file,
+which you can modify as needed, see the
+[OpenTelemetry configuration example](#opentelemetry-configuration-example).
+
+## Prerequisites
+
+To use the OpenTelemetry Collector, you need to
+[create a restricted service account](/administer/accounts-teams/service-accounts#create-a-restricted-service-account),
+which generates an API token you use to authenticate with Observability Platform. The
+access you provide for the service account depends on how you use the OpenTelemetry
+Collector.
+
+| Use case                                                     | Read access | Write access |
+| ------------------------------------------------------------ | :---------: | :----------: |
+| Collect metrics                                              | <NoIcon /> | <YesIcon /> |
+| Remote [head sampling](/control/sampling/head-sampling) only | <YesIcon /> | <NoIcon /> |
+| Collect traces plus remote head sampling                     | <YesIcon /> | <YesIcon /> |
+
+Chronosphere recommends storing the API token generated from your service account
+in a separate file, or securely as a
+[Kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret/), and
+reference it using an environment variable, such as `$API_TOKEN`. Binding a Secret to
+an environment variable on the Pod is a well-supported, secure pattern in Kubernetes.
+
+## Configure the OpenTelemetry Collector
+
+To configure the OpenTelemetry Collector to ingest metric and trace data:
+
+1. Pull the [OpenTelemetry Docker image](https://opentelemetry.io/docs/collector/getting-started/#docker)
+   to run the OpenTelemetry Collector in a Docker container:
+
+   ```shell
+   docker pull otel/opentelemetry-collector-contrib:VERSION
+   docker run otel/opentelemetry-collector-contrib:VERSION
+   ```
+
+   Replace _`VERSION`_ with the version of the OpenTelemetry Collector you want to
+   run, which must be version 0.83 or later.
+
+1. In the OpenTelemetry Collector
+   [`config.yaml` file](https://opentelemetry.io/docs/collector/configuration/), apply
+   the following settings to modify the `exporter` YAML collection. Specify an
+   `endpoint` that points to your Observability Platform tenant, and include the
+   Chronosphere API key you created as an HTTP header.
+
+   You can modify the OpenTelemetry Collector
+   [configuration](https://opentelemetry.io/docs/collector/configuration/) if you
+   want to change the defaults. For example, you can reference a `config.yaml` in a
+   different location, such as a Kubernetes ConfigMap.
+
+   ```yaml
+   exporters:
+     otlp/chronosphere:
+       endpoint: <ADDRESS>
+       timeout: 30s
+       retry_on_failure:
+         enabled: true
+       sending_queue:
+         num_consumers: 50
+       # Valid values are snappy, gzip, zstd and none.
+       compression: zstd
+       headers:
+         API-Token: ${env:API_TOKEN}
+         Chronosphere-Metrics-Validation-Response: SHORT
+   ```
+
+   - `endpoint`: Your organization name prefixed to your Observability Platform
+     tenant's address that ends in `.chronosphere.io:443`. For example,
+     _`MY_COMPANY`_`.chronosphere.io:443`.
+   - `timeout`: Set to `30s` to prevent larger requests from timing out, because
+     the upstream system might require more time for internal batching.
+   - `retry_on_failure`: Set `enabled` to `true` to enable retries for all retryable
+     errors.
+   - `sending_queue`: Set `num_consumers` to the number of consumers that dequeue
+     batches from the sending queue. Increase the value of `num_consumers` if the
+     exporter queue size demonstrates variability over time. A healthy sending queue
+     metric depicts a small number of batches that shouldn't experience spikes over
+     time. Chronosphere recommends setting this to 50 for
+     [gateway deployments](https://opentelemetry.io/docs/collector/deployment/gateway/)
+     of OTel Collectors.
+   - `compression`: The compression method to apply. The Chronosphere OpenTelemetry endpoint
+     supports `snappy`, `gzip`, and `zstd` compression, or `none`.
+   - _`API-Token`_: The API token generated from your service account, specified as
+     an HTTP header. Chronosphere recommends calling this value as
+     [an environment variable](#prerequisites).
+   - _`Chronosphere-Metrics-Validation-Response`_: The `ErrorMessage` verbosity for
+     rejected metrics. Default: `SHORT`.
+
+     Valid values are:
+     - `SHORT`, which reports the number of rejected metrics.
+     - `SUMMARY`, which also includes counts of rejection reasons.
+     - `DETAILED`, which also includes a sample of rejected metrics.
+
+1. Configure
+   [batch processing](https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/batchprocessor/README.md).
+   Sending telemetry in batches improves data compression and reduces the number of
+   outgoing connections required to transmit the data.
+
+   For example, the following configuration enforces a maximum batch size limit of
+   `2000` spans without introducing any artificial delays:
+
+   ```yaml
+   processors:
+     batch:
+       timeout: 1s
+       send_batch_size: 1000
+       send_batch_max_size: 2000
+   ```
+
+   The `timeout`, `batch size`, and `batch max size` are default recommendations.
+   Monitor the exporter send and enqueueing failure metrics to tune these parameters
+   based on your workload.
+
+1. Add the OTLP exporter and the batch processor to the metrics and traces exporters
+   definition.
+
+   ```yaml
+    service:
+      pipelines:
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp/chronosphere]
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp/chronosphere]
+   ```
+
+1. Instruct the OpenTelemetry Collector to load the API token from an environment
+   variable.
+
+    <Warning>
+    Never share or store your API token in plain text. Chronosphere recommends using
+      tools like SOPs to securely store this information.
+    </Warning>
+
+   ```yaml
+      # In the OpenTelemetry Collector Deployment:
+        - name: ${env:API_TOKEN}
+          valueFrom:
+            secretKeyRef:
+              name: chronosphere-api-token
+              key: apiToken
+
+      # The accompanying Secret:
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: chronosphere-api-token
+          namespace: YOUR_NAMESPACE
+        type: Opaque
+        data:
+          apiToken: ${env:API_TOKEN}
+   ```
+
+1. Save your OpenTelemetry Collector `config.yaml` file.
+
+## Map resource attributes to Prometheus job and instance
+
+Observability Platform uses the OpenTelemetry `service.namespace`, `service.name`
+and `service.instance.id` resource attributes as the values for the Prometheus
+[job and instance source labels](https://opentelemetry.io/docs/specs/otel/compatibility/prometheus_and_openmetrics/#resource-attributes-1).
+
+- `service.namespace/service.name -> job`: Recommended. Observability Platform sets
+  the job label value as a concatenation of `service.namespace` and `service.name`
+  attribute values. If only `service.name` is set, then `job = "service.name"`.
+  If neither `service.namespace` or `service.name` are present as resource attributes,
+  then Observability Platform doesn't create a job label as part of the conversion.
+- `service.instance.id -> instance`: ***Required***. Observability Platform sets
+  the instance label value to the `service.instance.id` attribute value.
+  Observability Platform rejects the metric if the `service.instance.id` resource
+  attribute is missing.
+
+To ensure all metrics have a valid `service.instance.id` attribute, copy an existing,
+unique resource attribute, such as `host.name` or `pod.id`, as the unique instance
+identifier value for `service.instance.id`.
+
+To define a default `service.instance.id` resource attribute:
+
+1. Add a resource detection processor. Use the resource detection processor can to
+   detect resource information from the environment. Append or override the resource
+   value in telemetry data with this information. Configure the resource detection
+   processor based on the environment where you've deployed the Collector. Review the
+   [resource detection processor documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor)
+   to select the processor for your environment. For example, if the Collector is
+   deployed on a host, the system processor is the best option to gather information
+   about the host.
+
+   ```yaml
+      processors:
+        resourcedetection:
+          detectors: [env, system]
+          timeout: 2s
+          override: true
+   ```
+
+1. Define a resource attribute processor.
+   In the processors ConfigMap, define a rule to add the `service.instance.id`.
+   The following example maps the `host.name` resource attribute to a new
+   `service.instance.id` resource attribute. Depending on how resource detection is
+   configured, your environment might have other resource attributes available, such
+   as `k8s.node.uid`, which can serve as the instance identifier.
+
+   ```yaml
+      resource/service-instance:
+        attributes:
+          - key: service.instance.id
+            from_attribute: host.name
+            action: insert
+   ```
+
+1. Add the resource detection and resource attribute processors to your metrics
+   processors pipeline. In the `service.pipelines.metrics.processors` ConfigMap, add
+   the resource attribute processor defined in the previous step:
+
+   ```yaml
+   processors: [transform, batch, resourcedetection, resource/service-instance]
+   ```
+
+## Send operational metrics about the OpenTelemetry Collector
+
+The OpenTelemetry Collector exposes metrics about its operations using a Prometheus
+scrape endpoint. Observability Platform uses OpenTelemetry Collector metrics in the
+OpenTelemetry Ingestion & Health dashboard to describe Collector health.
+
+To send operational metrics about your OpenTelemetry Collectors to Observability
+Platform:
+
+1. Define a Prometheus receiver to scrape the endpoint receiver:
+
+   ```yaml
+      prometheus/otel-collector-self-scrape:
+      config:
+        scrape_configs:
+          - job_name: 'otel-collector-self-scrape'
+            scrape_interval: 30s
+            static_configs:
+              - targets: ['0.0.0.0:8888']
+   ```
+
+1. Add the Prometheus receiver to the metrics pipeline:
+
+   ```yaml
+     metrics:
+       receivers: [prometheus/otel-collector-self-scrape, otlp/chronosphere]
+   ```
+
+1. Add the metrics service to the Service ConfigMap:
+
+   ```yaml
+      service:
+        telemetry:
+          metrics:
+            address: "0.0.0.0:8888"
+   ```
+
+## Next steps
+
+Observability Platform should begin ingesting data. Verify the Collector is receiving
+[metrics](/ingest/metrics-traces/collector/monitor/verify-metrics) and
+[traces](/ingest/metrics-traces/collector/monitor/verify-traces). You can also configure
+[head sampling](/control/sampling/head-sampling) to determine whether to drop a span or
+trace as early as possible.
+
+If you encounter issues, see the [troubleshooting](/ingest/metrics-traces/troubleshooting) page.
+
+## OpenTelemetry configuration example
+
+The following example is the entire configuration file, containing all of the
+previously provided required sections:
+
+```yaml filename="config.yaml" copy
+receivers:
+  # OTLP receiver
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+  # Prometheus receiver configured to scrape the Collector's own metrics
+  prometheus/otel-collector-self-scrape:
+    config:
+      scrape_configs:
+        - job_name: 'otel-collector-self-scrape'
+          scrape_interval: 30s
+          static_configs:
+            - targets: ['0.0.0.0:8888']
+
+exporters:
+  # OTLP exporter configured to send telemetry to your Observability Platform tenant
+  # Replace the endpoint's `MY_COMPANY` and `API_TOKEN` with your values
+  otlp/chronosphere:
+    endpoint: "<MY_COMPANY>.chronosphere.io:443"
+    timeout: 30s
+    retry_on_failure:
+      enabled: true
+    sending_queue:
+      num_consumers: 50
+    # Compression method. Valid values are snappy, gzip, zstd, and none.
+    compression: zstd
+    headers:
+      API-Token: ${env:API_TOKEN}
+      # Validation Response verbosity. Valid values are SHORT, SUMMARY, and DETAILED.
+      Chronosphere-Metrics-Validation-Response: SHORT
+
+processors:
+  # Detect environment information to include as telemetry attributes
+  # Configure the detector from the list of available detectors:
+  # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor
+  resourcedetection:
+    detectors: [env, system]
+    timeout: 2s
+    override: true
+  # Use environment information to define the `service.instance.id` attribute
+  # This example maps `host.name` detected by the `resourcedetection` processor
+  # to a new `service.instance.id` resource attribute
+  resource/service-instance:
+    attributes:
+      - key: service.instance.id
+        from_attribute: host.name
+        action: insert
+  # Add the batch processor to efficiently send telemetry
+  batch:
+    timeout: 1s
+    send_batch_size: 1000
+    send_batch_max_size: 2000
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch, resourcedetection, resource/service-instance]
+      exporters: [otlp/chronosphere]
+    metrics:
+      receivers: [otlp]
+      processors: [batch, resourcedetection, resource/service-instance]
+      exporters: [otlp/chronosphere]
+    # Define a separate metrics pipeline to send the Collector's metrics to
+    # Observability Platform
+    metrics/internal:
+      receivers: [prometheus/otel-collector-self-scrape]
+      processors: [batch, resourcedetection]
+      exporters: [otlp/chronosphere]
+```

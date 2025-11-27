@@ -1,0 +1,72 @@
+---
+title: Hash key
+'og:description': Learn about the hash key processing rule in Chronosphere Telemetry Pipeline.
+sidebarTitle: Hash key
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The hash key [processing rule](/pipeline-data/processing-rules) copies the value of a
+specified source key, hashes that value, then stores the hashed copy in a specified
+destination key.
+
+<Note>
+Unless you configure this rule to overwrite the specified source key, the resulting
+output will still include the source key and its original, un-hashed value.
+</Note>
+
+## Configuration parameters
+
+<Params />
+
+| Name                   | Key | Description | Default |
+| ---------------------- | --- | ----------- | ------- |
+| **Source key**         | `src` | Required. The key whose value to hash. The value of this key must be a string and not a number, Boolean, array, or object. | _none_ |
+| **Destination key**    | `dst` | The key that stores the hashed value of **Source key**. If you specify the name of an existing key, the hash keys rule overwrites the original value of that key. If you don't specify a key name, this rule creates a new key with the name `_SOURCE_HASH_`, where `SOURCE` is the name of your **Source Key** and `HASH` is the name of your **Hash algorithm**. | _none_ |
+| **Encoding algorithm** | `encoding` | Required. The scheme to store your hashed value. Accepted values: `Base64`, `Binary`, `Hexadecimal`. | `Hexadecimal` |
+| **Hash algorithm**     | `algo` | Required. The algorithm to hash your value. Accepted values: `MD5`, `SHA256`. | `SHA256` |
+| **Comment**            | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Example
+
+Using the hash keys rule lets you store values in hashed format, which can help
+validate the authenticity and integrity of your data.
+
+For example, given the following sample website log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"page_id":10,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"page_id":40,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"page_id":30,"action":"purchase"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"page_id":50,"action":"purchase"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"page_id":50,"action":"view"}
+```
+
+A processing rule with the **Source key** value `action`, the **Encoding algorithm**
+value `Hexadecimal`, and the **Hash algorithm** value `SHA256` returns the following
+result:
+
+```json
+{"user_id":3,"page_id":30,"action":"purchase","action_sha256":"7048dc8aa7663e713097535171b4ed72ab015705a885de9636e66d4b1fa18804","timestamp":"2023-03-28T09:08:41.64283645Z"}
+{"user_id":4,"page_id":10,"action":"purchase","action_sha256":"7048dc8aa7663e713097535171b4ed72ab015705a885de9636e66d4b1fa18804","timestamp":"2023-03-28T09:08:42.643343109Z"}
+{"user_id":1,"page_id":50,"action":"click","action_sha256":"e5c7ffac26fed654fe62045898f55b551a0dc120badf3d116bcd364418f3ec16","timestamp":"2023-03-28T09:08:48.643600498Z"}
+{"user_id":5,"page_id":40,"action":"purchase","action_sha256":"7048dc8aa7663e713097535171b4ed72ab015705a885de9636e66d4b1fa18804","timestamp":"2023-03-28T09:08:50.643773688Z"}
+{"user_id":1,"page_id":30,"action":"purchase","action_sha256":"7048dc8aa7663e713097535171b4ed72ab015705a885de9636e66d4b1fa18804","timestamp":"2023-03-28T09:08:51.643932272Z"}
+{"user_id":2,"page_id":40,"action":"click","action_sha256":"e5c7ffac26fed654fe62045898f55b551a0dc120badf3d116bcd364418f3ec16","timestamp":"2023-03-28T09:08:56.644080944Z"}
+{"user_id":3,"page_id":30,"action":"click","action_sha256":"e5c7ffac26fed654fe62045898f55b551a0dc120badf3d116bcd364418f3ec16","timestamp":"2023-03-28T09:09:03.64425954Z"}
+{"user_id":1,"page_id":20,"action":"view","action_sha256":"2bcb43cbc8f6b7ef66331532881143fcbae60a879db3a8fb853f645bb24c2b3c","timestamp":"2023-03-28T09:09:03.644317046Z"}
+{"user_id":2,"page_id":50,"action":"purchase","action_sha256":"7048dc8aa7663e713097535171b4ed72ab015705a885de9636e66d4b1fa18804","timestamp":"2023-03-28T09:09:10.64447719Z"}
+{"user_id":2,"page_id":10,"action":"view","action_sha256":"2bcb43cbc8f6b7ef66331532881143fcbae60a879db3a8fb853f645bb24c2b3c","timestamp":"2023-03-28T09:09:17.644810963Z"}
+{"user_id":1,"page_id":50,"action":"view","action_sha256":"2bcb43cbc8f6b7ef66331532881143fcbae60a879db3a8fb853f645bb24c2b3c","timestamp":"2023-03-28T09:09:20.644994805Z"}
+```
+
+This rule hashed the value of `action` from each log entry and stored the hashed
+value in a new key named `action_sha256`.

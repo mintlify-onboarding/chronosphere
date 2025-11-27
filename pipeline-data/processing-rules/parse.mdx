@@ -1,0 +1,86 @@
+---
+title: Parse
+'og:description': Learn about the parse processing rule in Chronosphere Telemetry Pipeline.
+sidebarTitle: Parse
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The parse [processing rule](/pipeline-data/processing-rules) uses a regular
+expression to search for values inside a string and to assign a key to each value,
+then stores those key/value pairs in a structured object. Additionally, the
+resulting output always includes the original string.
+
+## Configuration parameters
+
+<Params />
+
+| Name                | Key | Description | Default |
+| ------------------- | --- | ----------- | ------- |
+| **Source key**      | `src` | Required. The key whose value contains data to parse. | _none_ |
+| **Destination key** | `dst` | Required. The key of the object to store your structured key/value pairs. This rule can't overwrite an existing key, so this value must be a unique name within your telemetry data. | _none_ |
+| **Regex**           | `regex` | Required. The regular expression for extracting values from the value of **Source key** and assigning keys to those values. | _none_ |
+| **Regex engine**    | `regexEngine` | Required. The [engine](/pipeline-data/processing-rules#regex-engines) to parse your regular expression. Accepted values: `GNU`, `Oniguruma`, `PCRE2`, `POSIX`, `TRE`. | `PCRE2` |
+| **Comment**         | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## GPT generation
+
+<Note>
+Keep in mind that this feature is experimental, and that Chronosphere can't guarantee
+the accuracy or quality of generated scripts.
+</Note>
+
+{/* vale Chronosphere.Spelling = NO */}
+
+The custom Lua rule processing rule lets you turn text descriptions into scripts
+by using generative pre-trained transformer (GPT) generation. To use this
+feature, enter a description of your script in the **Comment** text box, and then
+click **Generate Regular Expression With Gpt Experimental**.
+
+{/* vale Chronosphere.Spelling = YES */}
+
+## Example
+
+Using the parse processing rule lets you extract any data from a string and
+turn that data into parsable key/value pairs. You can then use these key/value
+pairs in other processing rules or for general storage and analysis.
+
+For example, given the following sample website logs:
+
+{/* markdownlint-disable MD013 */}
+
+```json
+{"log":"198.143.234.244 - - [18/Mar/2012:13:55:36 -0700] \"GET /lease.pdf HTTP/1.0\" 200 5689972 \"bluth-homes.oc\" \"Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.3; Trident/4.0)\""}
+{"log":"66.216.63.42 - Lucille [18/Mar/2012:15:07:29 -0700] \"DELETE /lease.pdf HTTP/1.0\" 200 5689972 \"bluth-homes.oc\" \"Mozilla/5.0 (iPhone; CPU iPhone OS 7_1_3; like Mac OS X) AppleWebKit/533.11 (KHTML, like Gecko)  Chrome/52.0.3189.332 Mobile Safari/536.3\""}
+{"log":"70.137.97.47 - - [18/Mar/2012:19:21:04 -0700] \"GET /lease.pdf HTTP/1.0\" 404 5689972 \"bluth-homes.oc\" \"Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.3; Trident/4.0)\""}
+{"log":"7.160.29.68 - Michael [19/Mar/2012:01:38:17 -0700] \"POST /lease.pdf HTTP/1.0\" 200 5689972 \"bluth-homes.oc\" \"Mozilla/5.0 (U; Linux i585 x86_64; en-US) Gecko/20130401 Firefox/60.7\""}
+{"log":"31.119.193.169 - - [19/Mar/2012:08:33:29 -0700] \"GET /lease.pdf HTTP/1.0\" 200 5689972 \"bluth-homes.oc\" \"Mozilla/5.0 (iPad; CPU iPad OS 7_9_0 like Mac OS X) AppleWebKit/602.13 (KHTML, like Gecko)  Chrome/50.0.2327.233 Mobile Safari/534.2\""}
+```
+
+A processing rule with the **Source key** value `log`, the **Destination key**
+value `parsed`, the **Regex** value
+`^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^ ]*) +\S*)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>.*)")?$`, and the **Regex engine**
+value `PCRE2` returns the following result:
+
+```json
+{"parsed":{"host":"198.143.234.244","time":"18/Mar/2012:13:55:36 -0700","path":"/lease.pdf","code":"200","user":"-","agent":"Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.3; Trident/4.0)","method":"GET","referer":"bluth-homes.oc","size":"5689972"},"log":"198.143.234.244 - - [18/Mar/2012:13:55:36 -0700] \"GET /lease.pdf HTTP/1.0\" 200 5689972 \"bluth-homes.oc\" \"Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.3; Trident/4.0)\""}
+{"parsed":{"host":"66.216.63.42","time":"18/Mar/2012:15:07:29 -0700","path":"/lease.pdf","code":"200","user":"Lucille","agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 7_1_3; like Mac OS X) AppleWebKit/533.11 (KHTML, like Gecko)  Chrome/52.0.3189.332 Mobile Safari/536.3","method":"DELETE","referer":"bluth-homes.oc","size":"5689972"},"log":"66.216.63.42 - Lucille [18/Mar/2012:15:07:29 -0700] \"DELETE /lease.pdf HTTP/1.0\" 200 5689972 \"bluth-homes.oc\" \"Mozilla/5.0 (iPhone; CPU iPhone OS 7_1_3; like Mac OS X) AppleWebKit/533.11 (KHTML, like Gecko)  Chrome/52.0.3189.332 Mobile Safari/536.3\""}
+{"parsed":{"host":"70.137.97.47","time":"18/Mar/2012:19:21:04 -0700","path":"/lease.pdf","code":"404","user":"-","agent":"Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.3; Trident/4.0)","method":"GET","referer":"bluth-homes.oc","size":"5689972"},"log":"70.137.97.47 - - [18/Mar/2012:19:21:04 -0700] \"GET /lease.pdf HTTP/1.0\" 404 5689972 \"bluth-homes.oc\" \"Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.3; Trident/4.0)\""}
+{"parsed":{"host":"7.160.29.68","time":"19/Mar/2012:01:38:17 -0700","path":"/lease.pdf","code":"200","user":"Michael","agent":"Mozilla/5.0 (U; Linux i585 x86_64; en-US) Gecko/20130401 Firefox/60.7","method":"POST","referer":"bluth-homes.oc","size":"5689972"},"log":"7.160.29.68 - Michael [19/Mar/2012:01:38:17 -0700] \"POST /lease.pdf HTTP/1.0\" 200 5689972 \"bluth-homes.oc\" \"Mozilla/5.0 (U; Linux i585 x86_64; en-US) Gecko/20130401 Firefox/60.7\""}
+{"parsed":{"host":"31.119.193.169","time":"19/Mar/2012:08:33:29 -0700","path":"/lease.pdf","code":"200","user":"-","agent":"Mozilla/5.0 (iPad; CPU iPad OS 7_9_0 like Mac OS X) AppleWebKit/602.13 (KHTML, like Gecko)  Chrome/50.0.2327.233 Mobile Safari/534.2","method":"GET","referer":"bluth-homes.oc","size":"5689972"},"log":"31.119.193.169 - - [19/Mar/2012:08:33:29 -0700] \"GET /lease.pdf HTTP/1.0\" 200 5689972 \"bluth-homes.oc\" \"Mozilla/5.0 (iPad; CPU iPad OS 7_9_0 like Mac OS X) AppleWebKit/602.13 (KHTML, like Gecko)  Chrome/50.0.2327.233 Mobile Safari/534.2\""}
+```
+
+{/* markdownlint-enable MD013 */}
+
+This rule extracted values from the string stored in the `log` key, assigned a key
+to each value, then stored the resulting key/value pairs in a new structured object
+named `parsed`.
+
+## Related rules
+
+This rule is a modified version of the [parsers](/pipeline-data/parsers) feature.
+
+For a processing rule that performs a similar operation on embedded data already
+formatted as key/value pairs, see [extract keys/values](/pipeline-data/processing-rules/extract-keys-values).

@@ -1,0 +1,40 @@
+---
+title: Send CircleCI events to Observability Platform
+sidebarTitle: CircleCI
+---
+import EventsToken from '/snippets/_partials/events-token.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+To send CircleCI events to Chronosphere Observability Platform, create a webhook
+within CircleCI and include your API key to authenticate with Observability Platform.
+
+## Obtain an API token
+
+Before sending events from CircleCI, contact [Chronosphere Support](/support) to
+obtain an API token to use when authenticating your third-party app with
+Observability Platform.
+
+<EventsToken />
+
+## Create a CircleCI webhook
+
+To send CircleCI events to Observability Platform:
+
+1. In CircleCI, go to the project you want to create a webhook for.
+1. Click **Project Settings**.
+1. In the navigation menu, click **Webhooks**, and then click **Add Webhook**.
+1. In the **Add Webhook** dialog, enter a name for your webhook, such as
+   `Chronosphere change events`.
+1. In the **Receiver URL** field, enter
+   `https://ADDRESS.chronosphere.io/api/v1/data/events/receiver/circleci`
+
+   Replace _`ADDRESS`_ with your company name prefixed to your Observability Platform
+   instance that ends in `.chronosphere.io`. For example,
+   _`MY_COMPANY`_`.chronosphere.io`.
+1. In the **Secret token** field, enter the API token you obtained from
+   Chronosphere Support.
+1. Select the **Events** to trigger the webhook. Observability Platform supports
+   **Workflow Completed** and **Job Completed** events.
+1. Click **Add Webhook** to create the webhook.

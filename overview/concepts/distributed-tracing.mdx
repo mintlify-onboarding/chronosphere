@@ -1,0 +1,29 @@
+---
+title: Distributed tracing
+'og:description': Learn about distributed tracing in Chronosphere Observability Platform.
+sidebarTitle: Distributed tracing
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Distributed tracing is the process of mapping and analyzing requests as they flow
+through a distributed system. A _trace_ represents a single request flow, which
+follows the path of a specific transaction or request from the origin point of the
+request, through an app, and back. A single trace can traverse hundreds of
+independent services that make up an app. When aggregated, engineers can use a
+collection of traces to identify issues related to app latency and diagnose errors.
+
+Each trace contains one or more segments called _spans_. Each span is like a single
+unit of work, or a single operation within a trace. Spans have a parent/child
+relationship, and each span can include details like service name, operation name,
+operation duration, and additional metadata that describes the span. Combining this
+relationship with a timestamp enables assembling individual spans into a trace.
+
+Traces are essential to provide a view of distributed systems based on the incoming
+and outgoing requests. This architecture can be complex and difficult to navigate as
+your app grows, making it more challenging to pinpoint issues. Distributed
+tracing provides insights into how and where data flows for individual requests, and
+where the source of a problem originates.
+
+Learn about interacting with [trace data](/overview/types/traces) in Chronosphere
+Observability Platform.

@@ -1,0 +1,322 @@
+---
+title: Scrape configuration using Kubernetes
+sidebarTitle: Scrape
+---
+import RelabelExpansion from '/snippets/_partials/relabel-expansion.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+When using Kubernetes discovery, Chronosphere Collector determines the options for
+scraping endpoints based on this order:
+
+1. Default global scrape configuration
+1. [Global scrape configuration](/ingest/metrics-traces/collector/discover/scrape-configuration#global-scrape-configuration)
+1. [Kubernetes annotations](/ingest/metrics-traces/collector/discover/scrape-configuration#kubernetes-annotations)
+1. [Job configuration](/ingest/metrics-traces/collector/discover/scrape-configuration#define-jobs-configuration)
+
+Any settings made by an earlier configuration are overwritten by a later configuration.
+For example, the default scrape interval as set in the default global scrape configuration
+is 10 seconds (`10s`). You can override this interval by setting a scrape configuration,
+adding an annotation to a Kubernetes object, or adding a job configuration.
+
+## Global scrape configuration
+
+To apply those settings globally to all jobs, define the following default scrape
+configuration:
+
+```yaml
+scrape:
+ defaults:
+    metricsPath: "/metrics"
+    scheme: "http"
+    scrapeInterval: 10s
+    scrapeTimeout: 10s
+    honorLabels: false
+    honorTimestamps: true
+    relabels: <nil>
+    metricRelabels: <nil>
+    enableCompression: true
+```
+
+You can override the global `scrape` configuration to set options for your instance.
+If you don't specify a field, it uses the default values.
+
+The [Prometheus `relabel_config`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
+configuration applies to `relabels` and `metricRelabels` parameters. This configuration
+allows for advanced modifications to any target and its labels before Collector
+ingests metrics.
+
+By default, scrapes request gzip compression by using the `Accept-Encoding` header.
+This is configured by the `enableCompression` option.
+
+## Kubernetes annotations
+
+You can use Kubernetes annotations to override any global defaults. Collector supports
+the following Prometheus annotations to enable scraping for a pod. By default, `prometheus.io`
+prefixes each of these annotations, such as `prometheus.io/scrape`. You can
+[change the annotation prefix](#change-annotation-prefix) to a different value.
+
+- `/scrape`: Determines whether to enable scraping. Excludes scraping the pod if
+  set to `false`.
+- `/port`: The port to scrape on the pod.
+- `/path`: The pod's metrics path.
+- `/params`: HTTP URL parameters.
+- `/scheme`: The connection protocol, either `http` or `https`.
+- `/job`: Overrides the value of the `job` label.
+- `/collectionInterval`: Determines how often to scrape endpoints. Default: `10s`.
+- `/collectionTimeout`: The timeout for a scrape operation.
+- `/serviceAccountBearerToken`: The token value, if using service account authentication.
+- `/httpProxyURL`: The Proxy URL of connections to this pod.
+- `/tlsServerName`: The host name when using TLS authentication.
+- `/tlsInsecureSkipVerify`: Determines whether to verify a server's certificate.
+  Set to `true` to avoid verifying the server's certificate for validity.
+
+The pod being scraped might use some of the following annotations. If so, the Collector
+pod must also have either an environment variable or a file pointing to `files/env vars`.
+
+- `/httpBasicAuthUsernameEnvVar`: The `Username` environment variable when using
+  basic authentication.
+- `/httpBasicAuthPasswordEnvVar`: The `Password` environment variable when using
+  basic authentication.
+- `/httpBasicAuthPasswordFile`: The path to a file containing a password when using
+  basic authentication.
+- `/httpBearerTokenEnvVar`: The `Token` environment variable when using HTTP bearer
+  token authentication.
+- `/httpBearerTokenFile`: The path to a file containing a bearer token when using
+  HTTP bearer token authentication.
+- `/tlsCAFile`: The path to a CA certificate when using TLS authentication.
+- `/tlsCertFile`: The path to a personal certificate when using TLS authentication.
+- `/tlsKeyFile`: The path to a private key when using TLS authentication.
+
+For example, if the Kubernetes pod to be scraped includes the following annotations:
+
+```text
+prometheus.io/scrape=true
+prometheus.io/port=8090
+prometheus.io/httpBasicAuthUsernameEnvVar=MY_USERNAME
+httpBasicAuthPasswordEnvVar=MY_PASSWORD
+```
+
+The Collector pod must define these environment variables to populate the
+`httpBasicAuthUsernameEnvVar` and `httpBasicAuthPasswordEnvVar` annotations' values:
+
+```text
+MY_USERNAME=admin
+MY_PASSWORD=mypassword
+```
+
+### Change annotation prefix
+
+You can change the annotation prefix by setting the environment variable
+_`KUBERNETES_PROCESSOR_ANNOTATIONS_PREFIX`_ as the value of the `annotationsPrefix` key
+in the `processor` section of the `kubernetes` collection. The default value is
+`prometheus.io/`.
+
+```yaml
+kubernetes:
+  ...
+  # processor defines configuration for processing pods discovered on Kubernetes.
+  processor:
+    # annotationsPrefix is the prefix for annotations that the Collector uses to scrape discovered pods.
+    annotationsPrefix: ${KUBERNETES_PROCESSOR_ANNOTATIONS_PREFIX:"prometheus.io/"}
+```
+
+<Note>
+If you modify a Collector manifest, you must
+[update it in the cluster and restart the Collector](/ingest/metrics-traces/collector/configure#modify-the-collector-manifest).
+</Note>
+
+### Scrape multiple ports
+
+The `prometheus.io/port` annotation can accept a comma-separated list of the ports
+to scrape, such as `prometheus.io/port: 1234,5678`.
+
+The endpoints must both use the same path. For example both ports `1234` and `5678`
+must expose Prometheus metrics on the `/metrics` path.
+
+If you specify multiple ports, the pods must expose all ports in the list. The following
+is an example of a container ports configuration in a pod manifest that exposes
+both `1234` and `5678`:
+
+```yaml
+ports:
+  - name: metrics
+    containerPort: 1234
+  - name: other_metrics
+    containerPort: 5678
+```
+
+### Define `jobs` configuration
+
+When using annotations for scraping, you can configure the `jobs` collection to
+override any of the defaults set in the global scrape configuration.
+
+The following example contains the value types for the `jobs` collection:
+
+```yaml
+jobs:
+  - name: "example_job"
+    options:
+      metricsPath: PATH
+      params: STRING
+      scheme: SCHEME
+      scrapeInterval: SCRAPE_INTERVAL
+      scrapeTimeout: SCRAPE_TIMEOUT
+      honorLabels: BOOLEAN
+      honorTimestamps: BOOLEAN
+      relabels: RELABEL_CONFIG
+      metricRelabels: RELABEL_CONFIG
+      enableCompression: BOOLEAN
+```
+
+<Note>
+The `name` value must be unique across all scrape configurations, and must match the
+job name set in the annotations. For example, `prometheus.io/job`.
+</Note>
+
+For example, to change the `scrapeInterval` to `1m` and create a relabeling rule that
+changes the name of the label `code` to `status_code` for the `api` job, add the
+following configuration to the `config.yml` field of the `chronocollector-config`
+ConfigMap:
+
+```yaml
+jobs:
+  - name: api
+    options:
+      scrapeInterval: 1m
+      relabels:
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          sourceLabels:
+            - code
+          targetLabel: status_code
+```
+
+<Note>
+If you modify a Collector manifest, you must
+[update it in the cluster and restart the Collector](/ingest/metrics-traces/collector/configure#modify-the-collector-manifest).
+</Note>
+
+### Differences between `relabel` and `metricRelabels`
+
+A Prometheus `relabel` configuration defines the targets you want to scrape and
+the target labels. Using `relabel` rewrites the label set of a target before it's
+scraped.
+
+Collector applies `metricRelabels` after the scrape but before ingesting data. Use
+`metricRelabels` if there are expensive metrics that you want to drop, or labels
+coming from the scrape itself that you want to manipulate.
+
+In this example, the `relabel` rule replaces the name of the label `code` to
+`status_code` for the `api` job before scraping the metrics:
+
+```yaml
+jobs:
+  - name: api
+    options:
+      scrapeInterval: 1m
+      relabels:
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          sourceLabels:
+            - code
+          targetLabel: status_code
+```
+
+The following `metricsRelabel` rule replaces the `pod` and `job` labels for the
+`cadvisor` job on `promremotebench-0` to `database`:
+
+```yaml
+jobs:
+  - name: cadvisor
+    options:
+      metricRelabels:
+        - action: replace
+          regex: promremotebench-0;(.*)
+          replacement: $1
+          sourceLabels:
+            - pod
+            - job
+          targetLabel: database
+```
+
+<RelabelExpansion />
+
+#### `metricRelabels` actions
+
+The following actions are available for `metricRelabels`:
+
+- `replace`: Match a regular expression against the concatenated `sourceLabels`.
+  Then, set `targetLabel` to `replacement`, with match group references (such as
+  `${1}` or `${2}`) in the replacement substituted by their value. If the regular
+  expression doesn't match, no replacement occurs.
+
+- `keep`: Drop targets for which a regular expression doesn't match the concatenated
+  `sourceLabels`.
+  
+  ```yaml
+  jobs:
+    - name: kubelet
+      options:
+        metricRelabels:
+          - action: keep
+            regex: (?i)(kubelet_volume_stats_available_bytes|kubelet_volume_stats_capacity_bytes)
+            sourceLabels: [__name__]
+  ```
+- `drop`: Drop targets for which the regular expression matches the concatenated
+  `sourceLabels`.
+
+  The following example demonstrates using `relabels` to drop the `__name__` on
+  `cadvisor` metrics:
+
+  ```yaml
+  jobs:
+    - name: cadvisor
+      options:
+        relabels:
+          - action: drop
+            regex: (.*)
+            sourceLabels: [__name__]
+  ```
+
+- `labelmap`: Match a regular expression against all label names. Then, copy the
+  values of the matching labels to the label names given by the replacement with
+  match group references (such as `${1}` or `${2}`) in the replacement substituted by
+  their value.
+
+  The following example uses `labelmap` to copy all labels containing
+  `__meta_kubernetes_service_label_` and keep only a portion:
+
+  ```yaml
+  - action: labelmap
+    regex: __meta_kubernetes_service_label_(.+)
+  ```
+
+  In this example, the label `__meta_kubernetes_service_label_app='api'` is changed
+  to `app='api'`.
+
+- `labeldrop`: Match a regular expression against all label names and remove any
+  label that from the set of labels.
+
+  The following example matches all label names that contain
+  `container_label_com_amazonaws_ecs_task_arn`:
+
+  ```yaml
+  metricRelabels:
+    - regex: 'container_label_com_amazonaws_ecs_task_arn'
+      action: labeldrop
+  ```
+
+- `labelkeep`: Match a regular expression against all label names and remove any
+  label that doesn't match from the set of labels.
+
+  The following example drops all label names that don't match `job`:
+
+  ```yaml
+  metricRelabels:
+    - regex: 'job'
+      action: labelkeep
+  ```

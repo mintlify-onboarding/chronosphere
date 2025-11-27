@@ -1,0 +1,233 @@
+---
+title: Navigate the Telemetry Pipeline web interface
+'og:description': Learn how to navigate the Chronosphere Telemetry Pipeline web interface.
+sidebarTitle: Overview
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+After you've [installed](/pipeline-install) Chronosphere Telemetry Pipeline,
+you can navigate the [Telemetry Pipeline web interface](https://core.calyptia.com/)
+to access a variety of tools and features.
+
+<Note>
+For information about interacting with Telemetry Pipeline through a command-line
+interface, see [Pipeline CLI](/pipeline-cli).
+</Note>
+
+## Home
+
+The Telemetry Pipeline home page includes quick links to common pages and
+several embedded video tutorials.
+
+## Core Instances
+
+This page lists the [Core Instances](/pipelines/concepts#core-operators-and-core-instances)
+that you've created and displays information about each, including:
+
+- **Core Instance**: The name of that Core Instance.
+- **Status**: The status of that Core Instance.
+- **Pipelines Count**: The number of pipelines associated with that Core Instance.
+- **Version**: The version of the [Core Operator](/pipelines/core-components)
+  associated with that Core Instance.
+- **Last Modification**: The date and time of the most recent changes to that
+  Core Instance.
+
+You can click <Icon icon="plus" />&nbsp;**Deploy a new Core Instance**
+to [create a new Core Instance](/pipeline-install/create-instance).
+
+To view more information about a specific Core Instance, to modify that Core Instance,
+or to view or modify any of its associated pipelines, click the name of that Core Instance.
+This opens the Core Instance details page.
+
+### Core Instance details
+
+This page displays information about a specific Core Instance, including its
+name, tags, version, information about its Kubernetes environment, and any
+associated pipelines.
+
+Click **Edit** to modify the Core Instance's name and tags, or click
+<Icon icon="square-pen" />&nbsp;**Advanced Settings**
+to manage [files](/pipeline-configure/files) and
+[secrets](/pipeline-configure/secrets).
+
+In the **Kubernetes Namespaces** section, you can enable
+[automated Kubernetes logging](/pipeline-data/automated-logging).
+
+The **Data Pipelines** section lists the pipelines within that Core Instance and
+displays information about each, including:
+
+- **Name**: The name of that pipeline.
+- **Status**: The status of that pipeline.
+- **Workload**: The [workload type](/pipeline-configure/kubernetes/workloads)
+  of that pipeline.
+- **Version**: The [version](/pipelines/core-components) of the pipeline agent
+  powering that pipeline. If a pipeline isn't using the latest agent version,
+  an **Upgrade** is displayed, which you can click to navigate to the
+  [pipeline details](#pipeline-details) page.
+- **Uptime**: How long that pipeline has been running.
+- **Last modified**: The date and time of the most recent changes to that
+  pipeline.
+
+You can also click **Create Data Pipeline**
+to [create a new pipeline](/pipeline-data/create-modify).
+
+To view more information about a specific pipeline or it modify its settings,
+click the name of that pipeline. This opens the pipeline details page.
+
+### Pipeline details
+
+This page displays information about a specific pipeline, including its active
+sources, destination, and endpoints.
+
+Click **Edit** to open the pipeline builder, where you can add and configure
+[source plugins](/pipeline-data/plugins/source-plugins),
+[destination plugins](/pipeline-data/plugins/destination-plugins), and
+[processing rules](/pipeline-data/processing-rules) for that pipeline.
+
+Click <Icon icon="square-pen" />&nbsp;**Advanced Settings** to manage
+that pipeline's advanced settings, including:
+
+- [Replicas](/pipeline-configure/scaling)
+- [Deployment strategy](/pipeline-configure/deployment-strategies)
+- [Version](/pipelines/core-components) and [agent image type](/pipeline-configure/agent-image)
+- [Files](/pipeline-configure/files)
+- [Secrets](/pipeline-configure/secrets)
+
+If a pipeline isn't using the latest agent [version](/pipelines/core-components),
+an `Upgrade to <version> available` notice is displayed, and you can click
+**Upgrade** to upgrade the pipeline to the latest version.
+
+#### Pipeline output
+
+In the **Pipeline Output** section, click **Get Latest Logs** to view operational logs generated
+by that pipeline, including status changes and error messages. If your pipeline
+has the [Standard output](/pipeline-data/plugins/destination-plugins/standard-output)
+destination plugin, the telemetry data routed through your pipeline will also
+print here.
+
+<Note>
+When you use **Pipeline Output** while the Standard output plugin is active,
+your telemetry data is temporarily cached in the Telemetry Pipeline backend.
+</Note>
+
+## Monitoring
+
+This page displays information about the performance and throughput of your
+Core Instances and pipelines.
+
+## Fleets
+
+This page lists the [fleets](/fleets) that you've deployed and displays
+information about each, including:
+
+- **Fleet Name**: The name of that fleet.
+- **Agent Type**: The [type of agent](/fleets/agent) that makes up that fleet.
+- **Managed Agents**: The number of agents within that fleet.
+- **Last Edit**: The date and time of the most recent changes to that fleet.
+
+You can click <Icon icon="plus" />&nbsp;**Create new fleet**
+to [create a new fleet](/fleets#create-a-fleet).
+
+To view more information about a specific fleet, modify that fleet, or view
+details about its associated agents, click the name of that fleet. This opens
+the fleet details page.
+
+### Fleet details
+
+This page displays information about a specific fleet, including its name,
+configuration settings, attached files, and any associated agents.
+
+The **Agents List** section lists the agents within that fleet and displays
+information about each, including:
+
+- **Host Name**: The name of the machine where that agent is deployed.
+- **Status**: The status of that agent.
+- **Version**: The version of the Fluent Bit or Core Agent for that agent.
+- **Platform**: The operating system where the agent is deployed.
+- **Architecture**: The architecture of the environment where the agent is deployed.
+- **Last Edit**: The date and time of the most recent changes to that agent.
+
+You can click <Icon icon="note-sticky-plus" />&nbsp;**Attach New File**
+to add a file to that fleet, or <Icon icon="circle-plus" />&nbsp;**Add Agent**
+to [add a new agent](/fleets/add-agent-to-fleet).
+
+## Parser playground
+
+The parser playground lets you preview the effect of [parsers](/pipeline-data/parsers)
+on your telemetry data. The **Examples** column includes several of the default
+parsers included with Telemetry Pipeline, and you can test your own custom parsers by
+pasting any string into the **Regular Expression** field.
+
+To preview the result of a specified parser, either enter raw log data into the
+**Enter Your Test String** field or use the pre-populated data, then click **Parse**.
+The **Output** pane displays the resulting structured data.
+
+After you've created and testing a custom parser in the parser playground, you can
+[add that parser to a `parsers.conf` file](/pipeline-data/parsers#custom-parsers).
+
+## Pipeline builder playground
+
+The pipeline builder playground lets you construct pipelines in a sandbox environment.
+You can use this tool to configure [source plugins](/pipeline-data/plugins/source-plugins),
+[destination plugins](/pipeline-data/plugins/destination-plugins), and
+[processing rules](/pipeline-data/processing-rules), and then preview the resulting pipeline.
+The **Advanced Settings** section also generates a [YAML configuration file](/pipeline-configure/config-files)
+from your choices.
+
+This tool is functionally identical to the pipeline builder for real production
+environments, but any plugins or processing rules you configure here won't go into
+effect and won't affect your telemetry data. If you'd like to export your choices
+for later use, including in a production environment, click **Export** to save a
+copy of the pipeline's configuration file to your device.
+
+## Processing rules playground
+
+The processing rules playground lets you create and test [processing rules](/pipeline-data/processing-rules)
+in a sandbox environment, including custom Lua scripts.
+
+This tool is functionally identical to the processing rules builder for real production
+environments, but the playground environment is isolated from the internet and
+has no access to internal Telemetry Pipeline resources. Any processing rules you
+create here won't affect your pipelines, Core Instances, or telemetry data.
+
+If you'd like to save your playground processing rules for later use,
+including in a production environment, click <Icon icon="inbox-out" />&nbsp;**Export**
+to save a JSON template file to your device. You can also click
+<Icon icon="hexagon-check" />&nbsp;**Save** to save your template
+within the Telemetry Pipeline web interface, which makes that template available
+to any other users in your current project.
+
+## Settings
+
+This page displays information about your current Telemetry Pipeline project.
+You can also [generate new API keys](/pipeline-cli/authenticate)
+and view keys that you previously generated.
+
+## Team
+
+This page displays information about the team members in your current project,
+including:
+
+{/* vale Chronosphere.WordList = NO */}
+
+- **User Name**: The name of that user.
+- **Email**: The email address of that user.
+- **Permissions**: The permissions assigned to that user.
+- **Added on**: The time elapsed since that user was added to the project.
+
+{/* vale Chronosphere.WordList = YES */}
+
+Click **Invite Members** to invite members to your project, or click the
+<Icon icon="gear" />&nbsp;**Edit** icon next to a user to adjust settings
+for that user.
+
+### Permissions
+
+The following permission levels are available for Telemetry Pipeline users:
+
+- **Viewer**: Users who can view your organization's Telemetry Pipeline resources.
+- **Team**: Users who can view and update Telemetry Pipeline resources.
+- **Manager**: Users who can view, update, and create Telemetry Pipeline resources.
+- **Admin**: Users who can view, update, create, and delete Telemetry Pipeline
+  resources.

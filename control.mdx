@@ -1,0 +1,70 @@
+---
+title: Control your telemetry data
+'og:description': Learn about how to control your telemetry data with Chronosphere Observability Platform.
+sidebarTitle: Overview
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Your app generates a lot of data, but not all of it's useful. Storing every byte is
+costly, and can quickly overwhelm your capacity limit, license limit, or both. Aside
+from financial cost, there's computing cost associated with generating, processing,
+and temporarily storing your telemetry data.
+
+Reducing telemetry data volume keeps costs predictable and manageable as your
+business scales, and helps teams manage their data effectively by reducing the amount
+of available information. When you optimize your telemetry data, on-call engineers
+can find the data they need to solve problems faster.
+
+To take control of your telemetry data, Chronosphere Observability Platform provides
+multiple tools you can use to identify and eliminate data that isn't used and doesn't
+deliver value to your business. See [Chronosphere control concepts](/control/storage)
+to learn about the mechanisms you can use to control your telemetry data.
+
+<Tip>
+See this technical brief on the
+[Control Plane](https://chronosphere.io/learn/control-plane-technical-brief-pdf/)
+to understand how Chronosphere helps reduce observability costs and improve
+performance.
+</Tip>
+
+## Understand consumption and limits
+
+Manage license consumption by
+[reviewing licensing dashboards](/observe/dashboards/chronosphere-managed-dashboards#licensing-overview)
+to identify usage trends and avoid exceeding your organization's licensing limits.
+
+[Understand telemetry data limits](/administer/limits-licensing) for each telemetry type to ensure a
+performant experience when ingesting, querying, and creating resources.
+
+## Shape metric data
+
+Use the Chronosphere Control Plane to [shape your metric data](/control/shaping) and
+reduce the amount of telemetry data you persist. Manage your telemetry data with
+tools that help you shape that traffic, such as creating drop rules, quotas, and
+aggregation rules.
+
+## Sample trace data
+
+Create [trace datasets](/control/sampling/datasets) that map tracing license
+consumption to relevant business units in your organization. Datasets let you track
+and measure trace data usage over time before you implement sampling strategies,
+whereas head and tail sampling alone require you to measure and implement together.
+
+By parsing out the ability to measure and track trace data volume, you can create
+datasets, learn about how trace data is processed and persisted, and then apply
+[behaviors](/control/sampling/behaviors) to set sampling rules for your datasets
+without having to write, coordinate, and manage head and tail sampling rules
+individually.
+
+## Control log data
+
+Understanding your license consumption helps identify where you're spending the most
+money on your log data, and which services or operations are consuming the most of
+your license capacity. [Control log data](/control/consumption) to determine what
+portion of your license is allocated to the most important data.
+
+Create [partitions](/control/consumption/partitions) to provide a structure for
+attributing costs to different groups in your organization, and then define
+[budgets](/control/consumption/budgeting) to assign percentages of your license
+consumption to each partition.

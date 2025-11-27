@@ -1,0 +1,96 @@
+---
+title: Differences between the Prometheus Operator and Chronosphere Collector
+sidebarTitle: Prometheus Operator differences
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+## Summary
+
+| Requirement                           | Prometheus Operator | Chronosphere Collector |
+| ------------------------------------- | ------------------- | ---------------------- |
+| Deployment                            | StatefulSets managed by Prometheus Operator | Sidecar, Deployment, or DaemonSet |
+| Alerting                              | AlertManagerConfig, AlertManager, PrometheusRule | Alerts and Monitors |
+| High availability / Long-term storage | Provided by Thanos | Natively supported |
+| Service discovery                     | Probe, PodMonitor, ServiceMonitors | Annotations, ServiceMonitors, Prometheus Discovery |
+
+## Alerting
+
+Chronosphere Observability Platform supports Prometheus alerts, but not
+[AlertManagerConfig](https://prometheus.io/docs/alerting/latest/configuration/) or
+[AlertManager custom resource definitions (CRDs)](https://prometheus-operator.dev/docs/getting-started/design/#alertmanager).
+Observability Platform alerting (called _monitors_) has concepts that don't apply to
+Prometheus alerting rules, has its own concepts and models, and doesn't support
+complex routing trees. For more information, refer to the [monitors
+documentation](/investigate/alerts/monitors).
+
+Due to Observability Platform being a single data store, you can merge alerts, so an
+alert queries all metrics and not only metrics local to a Prometheus instance.
+
+You manage alerting configuration separate of any cluster or Chronosphere Collector
+configuration with Observability Platform, [Chronoctl](/tooling/chronoctl), or
+[Terraform](/tooling/infrastructure/terraform). This approach brings more
+flexibility for managing configuration and means you can spread configuration
+responsibility between teams.
+
+## Scaling
+
+### Thanos support
+
+Observability Platform is a scalable backend for Prometheus and doesn't require
+[Thanos](https://thanos.io) or the
+[ThanosRuler CRD](https://prometheus-operator.dev/docs/getting-started/design/#thanosruler).
+
+### Sharding across instances
+
+The Prometheus Operator supports automatically sharding ServiceMonitors across
+multiple Prometheus instances. However, you still need to setup a remote write
+destination such as Thanos, or a single large instance.
+
+The Collector handles scale by using a DaemonSet and scoping each instance of the
+Collector to a particular node. Using a DaemonSet is the recommended way to deploy
+the Collector, but there are other methods available you can read about in the
+[Collector documentation](/ingest/metrics-traces/collector/install/kubernetes).
+
+There are advantages and disadvantages to deploying the Collector as a DaemonSet:
+
+- **Advantages**:
+  - Using a DaemonSet means you don't need large or powerful instances to run the
+    Collector.
+  - The DaemonSet implementation reduces any impact of a single Collector instance
+    experiencing issues.
+- **Disadvantages**:
+  - All instances created with a DaemonSet must have uniform resources.
+
+## Configure Prometheus
+
+Prometheus Operator has a
+[Prometheus CRD](https://prometheus-operator.dev/docs/getting-started/design/#prometheus)
+for configuring global settings on the instances it creates. Observability Platform
+supports many of these settings, but instead you set them in Collector configuration.
+For more information, visit the
+[configuration documentation](/ingest/metrics-traces/collector/configure).
+
+Some Prometheus Operator settings that don't transfer to the context of the Collector,
+such as `volumeMounts` and `priorityClass`.
+
+The Collector doesn't support the following fields from the ServiceMonitor CRD:
+
+- `targetLabels`
+- `podTargetLabels`
+
+Instead, use [Prometheus `relabel_config`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
+which allows advanced modifications to any target and its labels before ingesting the
+metrics.
+
+## Service discovery
+
+### Static scrape targets
+
+To replicate the capabilities of the
+[Prometheus Operator Probe CRD](https://prometheus-operator.dev/docs/getting-started/design/#probe),
+Chronosphere recommends running a single instance of the Collector as a sidecar (if
+possible), or a one instance Deployment. If you run the Collector as a DaemonSet, all
+instances of the Collector attempt to scrape the same targets, resulting in multiple
+copies of the same metrics. For more information about available options, refer to
+the [Collector documentation](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector).

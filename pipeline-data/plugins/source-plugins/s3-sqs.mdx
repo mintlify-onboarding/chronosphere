@@ -1,0 +1,254 @@
+---
+title: S3 Input (SQS) source plugin
+sidebarTitle: S3 Input (SQS)
+'og:description': Use the S3 Input (SQS) source plugin.
+---
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import PluginDuplicates from '/snippets/_partials/plugin-duplicates.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+> Requires [pipeline agent](/pipelines/core-components) v25.8.1 or later,
+> [Core Operator](/pipelines/core-components) v3.67.0 or later, and
+> [Pipeline CLI](/pipeline-cli) v3.66.0 or later.
+
+The S3 Input (SQS) [source plugin](/pipeline-data/plugins/source-plugins) (name: `s3_sqs`)
+lets you continuously ingest new data from Amazon S3 buckets into a telemetry pipeline.
+This plugin monitors an SQS queue configured to receive notifications
+[directly from S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ways-to-add-notification-config-to-bucket.html)
+or [through SNS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-subscribe-queue-sns-topic.html),
+then creates logs from the files described in S3 events. This plugin ignores
+any SQS notifications that can't be decoded as references to an object in an S3 bucket,
+but it does not [filter](#filtering) notifications by event type.
+
+<SourceStyle/>
+
+<PluginDuplicates/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Requirements
+
+To use the S3 Input (SQS) plugin, you must meet these requirements:
+
+- Your IAM user or IAM role must have the following permissions for the ARN of your
+  SQS queue:
+  - [`sqs:ChangeMessageVisibility`](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ChangeMessageVisibility.html)
+  - [`sqs:DeleteMessage`](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_DeleteMessage.html)
+  - [`sqs:GetQueueAttributes`](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_GetQueueAttributes.html)
+  - [`sqs:GetQueueUrl`](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_GetQueueUrl.html)
+  - [`sqs:ReceiveMessage`](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ReceiveMessage.html)
+
+- Your IAM user or IAM role must have the
+  [`s3:GetObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)
+  permission for all buckets configured to notify your SQS queue.
+
+- Your SQS queue must have
+  [a redrive policy and a dead letter queue](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
+  Additionally, Chronosphere recommends setting the `maxReceiveCount` of your redrive
+  queue to a value greater than `1`, which lets SQS retry sending messages upon failure.
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+{/* markdownlint-disable MD033 */}
+
+| Name | Key | Description | Default |
+| ---- | --- | ----------- | ------- |
+| **AWS SQS Queue Name** | `sqs_queue_name` | Required. The name of the SQS queue whose notifications you want to monitor. | _none_ |
+| **AWS SQS Queue Region** | `sqs_queue_region` | Required if `aws_sqs_endpoint` isn't set. The name of the region where your SQS queue exists. For example, `us-east-1`. | _none_ |
+
+### Advanced
+
+| Name | Key | Description | Default |
+| :---- | :---- | :---- | :---- |
+| **Regular Expression Object Match** | `match_regexp` | The regular expression for matching or excluding object keys from S3. This plugin processes notifications only for objects that match the specified regular expression. If not set, the default value of `.*` matches all possible object keys. | `.*` |
+| **Delete Message from SQS** | `delete_messages` | If `true`, deletes SQS messages after processing the associated S3 data. If `false`, the plugin re-processes each message at an interval specified by your SQS [visibility timeout](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html), and continues to process each message until a [redrive policy](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) is triggered or until you meet your SQS message retention policy. Chronosphere recommends not modifying this value unless you're testing a pipeline during its initial setup. This is because deleting SQS messages prevents the plugin from processing the same message multiple times and creating duplicate logs. Accepted values: `true`, `false`. | `true` |
+| **Line Buffer Max Size** | `max_line_buffer_size` | The maximum line size the plugin will read from [JSON or plain text files](#supported-data-types). | `10MiB` |
+| **S3 Assume Role ARN** | `s3_assume_role_arn` | The ARN of the role to assume in S3. This can be an ARN within the same account or across accounts. | _none_ |
+| **S3 Role External ID** | `s3_role_external_id` | The [external ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_third-party.html) of the role to assume in S3. | _none_ |
+| **SQS Role ARN** | `sqs_cross_account_role_arn` | The ARN of the role to assume in SQS. This can be an ARN within the same account or across accounts. | _none_ |
+| **SQS Role External ID** | `sqs_role_external_id` | The [external ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_third-party.html) of the role to assume in SQS. | _none_ |
+| **S3 Read Concurrency** | `s3_read_concurrency` | The maximum number of concurrent S3 [`GetObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html) calls that this plugin will make. | The number of logical CPUs allocated to each pipeline [replica](/pipeline-configure/scaling). |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |
+
+{/* markdownlint-enable MD033 */}
+
+## Authentication methods
+
+The S3 Input (SQS) plugin supports the following authentication methods:
+
+- [EKS Pod Identities](#eks-pod-identities)
+- [IMDS](#imds)
+- [IRSA](#irsa)
+- [Static credentials](#static-credentials)
+
+### EKS Pod Identities
+
+To use EKS Pod Identities for authentication:
+
+1. In AWS, configure [EKS Pod Identities](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html).
+
+1. In [Pipeline CLI](/pipeline-cli), add the following flag to a `create pipeline`
+   or `update pipeline` command:
+
+   ```shell /VALUE/
+   calyptia {create|update} pipeline --service-account VALUE
+   ```
+
+	Replace _`VALUE`_ with the name of the Kubernetes service account associated
+   with your Pods.
+
+### IMDS
+
+To use IMDS for authentication:
+
+- In AWS, configure [IAM roles for your EC2 instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html).
+
+### IRSA
+
+To use IRSA for authentication:
+
+1. In AWS, [set up IRSA for your EKS cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html).
+
+1. [Assign an IAM role to your Kubernetes service account](https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html).
+
+1. In [Pipeline CLI](/pipeline-cli), add the following flag to a `create pipeline`
+   or `update pipeline` command:
+
+   ```shell /VALUE/
+   calyptia {create|update} pipeline --service-account VALUE
+   ```
+
+   Replace _`VALUE`_ with the name of your Kubernetes service account.
+
+### Static credentials
+
+To use static credentials for authentication:
+
+- In Telemetry Pipeline, [create secrets](/pipeline-configure/secrets#add-a-secret)
+  that contain the values of your [IAM access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+  These secrets must use the key names `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+
+<Note>
+You don't need to add an explicit [reference](/pipeline-configure/secrets#reference-a-secret)
+to these secrets in your pipeline configuration file. If secrets with the correct
+key names are present, the S3 Input (SQS) plugin automatically detects these values
+and uses them for authentication.
+</Note>
+
+## Supported data types
+
+The S3 Input (SQS) plugin can ingest [JSON objects](#json) and [plain text](#plain-text)
+from files stored in S3 buckets, including gzip-compressed files. Additionally,
+this plugin can extract and ingest compressed and uncompressed files from
+[tar archives](#tar-archives).
+
+### JSON
+
+This plugin can ingest data from JSON files with these file extensions:
+
+- `.json`
+- `.jsonl`
+- `.ndjson`
+
+If a file contains only a single JSON object, this plugin creates
+a new log from that object. If a file contains multiple
+[newline-delimited JSON (NDJSON)](https://github.com/ndjson/ndjson-spec)
+objects, this plugin creates a new log from each JSON object within that file.
+Key/value pairs from JSON objects are stored as key/value pairs in the resulting log.
+
+For JSON files that use gzip compression (with file extensions such as `.json.gzip`
+or `.json.gz`), this plugin decompresses each file before processing it accordingly.
+
+### Plain text
+
+If a file doesn't use a file extension that identifies it as a JSON file, the
+S3 Input (SQS) plugin processes that file as plain text. It creates a new log from
+each line of the file and stores the content in a key named `_raw` within the
+resulting log.
+
+For non-JSON files that use gzip compression (with file extensions that include
+the `.gzip` or `.gz` suffix), this plugin decompresses each file before processing
+it accordingly.
+
+### Tar archives
+
+The plugin can extract and consume files from tar archives with these file extensions:
+
+- `.tar`
+- `.tar.gz`
+- `.tar.gzip`
+
+After the plugin extracts these files, it processes
+any [JSON](#json) and [plain text](#plain-text) data accordingly, but skips directories
+and symbolic links.
+
+If files inside a tar archive are gzip-compressed, this plugin decompresses those
+files accordingly.
+
+## Filtering
+
+The S3 Input (SQS) plugin doesn't filter notifications by event type. If a
+notification contains a reference to an object in an S3 bucket, the plugin will
+ingest data from that object, regardless of its associated event type.
+
+To create filters based on event type, you must configure the notification settings
+of your SQS settings in AWS. For more information, see the AWS
+[Event notification types and destinations](https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-how-to-event-types-and-destinations.html)
+guide.
+
+## Metadata
+
+The S3 Input (SQS) plugin attaches the following metadata to each log:
+
+- `__chrono_bucket`: The name of the S3 bucket that contains the file from which
+   the log was created.
+- `__chrono_file`: The key of the S3 object from which the log was created.
+- `__chrono_tar_file_entry`: For data extracted from [tar archives](#tar-archives)
+   only. The name of the tar archive that contained the file from which the log
+   was created.
+
+## Get started
+
+To get started with the S3 Input (SQS) plugin, follow these steps.
+
+1. Either [create a new pipeline](http://docs.chronosphere.io/pipeline-data/create-modify#create-a-pipeline)
+   or [modify an existing pipeline](https://docs.chronosphere.io/pipeline-data/create-modify).
+
+1. For testing purposes, set the pipeline's destination to
+   [standard output](https://docs.chronosphere.io/pipeline-data/plugins/destination-plugins/standard-output).
+
+1. Set the pipeline's source to S3 Input (SQS), and then add values for all required
+   parameters, along with any optional parameters of your choosing.
+
+1. Set up one of the supported [authentication methods](#authentication-methods)
+   for the S3 Input (SQS) source plugin.
+
+1. In the Telemetry Pipeline web interface, go to the summary page for that pipeline.
+
+1. In the [**Pipeline Output**](/pipeline-navigate#pipeline-output) section,
+   click **Get latest logs**.
+
+1. Review this log output to ensure that you're receiving data from S3. If you don't
+   receive any data, or if you encounter connection errors, review your plugin
+   configuration settings.
+
+1. After you've confirmed that the S3 Input (SQS) plugin is functioning correctly,
+   you can overwrite the standard output destination with the destination where
+   you want to send your telemetry data.

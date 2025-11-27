@@ -1,0 +1,161 @@
+---
+title: Okta user synchronization
+'og:description': Configure user synchronization between Okta and Chronosphere Observability Platform.
+sidebarTitle: Okta user synchronization
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+[System for Cross-domain Identity Management (SCIM)](https://en.wikipedia.org/wiki/System_for_Cross-domain_Identity_Management)
+is a standard used to automate exchanges of user identity details between identity
+systems or Identity Providers (IdP), like Okta. It's used to deprovision, update, and
+provision users.
+
+SCIM integration helps you control user access in Chronosphere Observability
+Platform.
+
+This document applies to existing customers using Okta who want to use SCIM. New
+customers can configure SCIM when moving to Observability Platform.
+
+After migrating to SCIM, Chronosphere Support sends you a list of users not managed
+by SCIM. On a case-by-case basis, determine if a user should be deactivated, or if
+the user is still active but has a new email address. Your Chronosphere team manually
+remediates these issues to complete the migration process.
+
+## Setup
+
+Setting up SCIM with Okta requires configuration in both Observability Platform and
+the Okta dashboard.
+
+### Prepare Observability Platform for SCIM integration
+
+<Note>
+Setting up SCIM with Okta requires a user with Okta super administrator access and a
+user with Observability Platform SysAdmin permissions. These accounts can be the same
+user.
+</Note>
+
+Before proceeding with Okta integration, you must:
+
+1. Contact Chronosphere Support to enable SCIM integration for Okta Workforce for
+   your application.
+
+   <Warning>
+   After Chronosphere Support enables SCIM integration, new users won't be able to
+      access Observability Platform until the setup process is complete.
+   </Warning>
+
+1. [Create an unrestricted service account in Observability Platform](/administer/accounts-teams/service-accounts#create-an-unrestricted-service-account).
+   You must be a member of a team with the SysAdmin role to create a new service account.
+   For the **New Service Account Name**, Chronosphere recommends a meaningful service
+   account name like `Okta SCIM integration`.
+1. Copy the token to a safe place, as it's provided only once, and can't be
+   displayed or recovered later.
+1. In Observability Platform,
+   [create a new, distinct team](/administer/accounts-teams/teams) for the purpose
+   of SCIM administration.
+1. Assign the
+   [**User Administrator** role to the team](/administer/accounts-teams/teams#add-a-role-to-a-team).
+   For security, Chronosphere recommends only this team be assigned the **User
+   Admin** role, and the role be specifically scoped to only have permission to
+   communicate with the SCIM API, or have access to the service token.
+1. Add the service account user you created.
+
+### Configure SCIM integration on Okta
+
+Your organization's Okta administrator must configure Okta provisioning integration.
+
+Find general instructions for setting up Okta integration in the
+[Okta documentation](https://developer.okta.com/docs/guides/scim-provisioning-integration-connect/main/).
+
+1. Using an administrator account, sign in to the Okta app to be used for
+   single sign-on (SSO) integration with Observability Platform.
+1. Next to your username, click **Admin**.
+1. In the left sidebar menu, go to **Applications <span aria-label="and
+   then">></span> Applications**.
+1. In the **General** tab, next to **Provisioning**, select **SCIM** and then click
+   **Save**.
+1. Click the **Provisioning** tab.
+1. Click **Integration**, and then click **Edit**.
+1. Enter information for the following fields:
+   - **SCIM connector base URL:**
+   `https://ADDRESS.chronosphere.io/api/scim/v2`, where `ADDRESS` is
+     your company name prefixed to your Observability Platform instance.
+   - **Unique identifier field for users:** Enter `email`.
+   - **Supported provisioning actions:** Select only these values:
+      - **Push New Users**
+      - **Push Profile Updates**
+1. For **Authentication Mode**, select `HTTP Header`.
+1. For the **Authorization** section's **Bearer** field, copy and paste the service
+   token obtained when creating a service account in the Observability Platform
+   console.
+1. Click **Test Connector Configuration** to ensure the integration configuration is
+   correct. If you encounter an error message, review the configuration and try
+   again.
+1. Click **Save** to save the configuration. The **Provisioning to App** page
+   displays.
+1. Select the **Enable** checkboxes for **Create Users** and
+   **Update User Attributes**.
+1. Click **Save**.
+
+<Warning>
+You must complete both step 7 (select **Push new users**), and step 12 (Enable the
+checkbox for **Create Users**). Provisioning fails if either of these steps isn't
+completed.
+</Warning>
+
+### Update the Observability Platform default group in Okta
+
+After completing SCIM integration setup process and connecting to Observability
+Platform, sync the existing users in your Okta tenant with Observability Platform. To
+do this, you must first remove all assigned users and groups, and then reassign them.
+
+1. Sign in to Okta.
+1. Click **Admin**.
+1. In the left sidebar menu, go to **Applications <span aria-label="and
+   then">></span> Applications**.
+1. In the **Provisioning** tab, clear the **Deactivate Users** checkbox.
+   <Note>
+   Clear this checkbox before updating the group.
+   </Note>
+1. Navigate to the **Assignments** tab and then select **Groups**.
+1. To remove all **Existing Groups**, click the **X** icon next to each group.
+1. Click the **Assign** button and reassign all **Existing Groups**.
+1. Navigate to the **Provisioning** tab, and then click **Edit**.
+1. Select the **Deactivate Users** checkbox.
+
+The SCIM integration setup is now complete and users will be provisioned and
+deprovisioned by Observability Platform.
+
+### Verify successful provisioning
+
+After completing the setup process, verify the provisioning process succeeded.
+
+1. In Okta, navigate to **Dashboard -> Tasks**.
+1. Look for failed requests. These display as
+   `Application assignments encountered errors`.
+1. Retry any failed requests. If failures persist, contact [Chronosphere Support](/support).
+
+It's a good practice to review for failed requests whenever deactivating users or
+changing users assigned to Observability Platform. Use
+[Okta Workflows](https://help.okta.com/wf/en-us/Content/Topics/Workflows/use-case-lifecycle-event-notification.htm)
+to send notifications when provisioning or deprovisioning fails.
+
+## Deprovisioned users
+
+When a user is deprovisioned, personal access tokens and any outstanding credentials
+they had from Observability Platform no longer work.
+
+<Warning>
+SCIM deactivates users from the time of enablement, but won't deactivate existing users who are
+no longer assigned to or were removed from the Chronosphere app.
+</Warning>
+
+Group memberships remain intact, and
+[service accounts](/administer/accounts-teams/service-accounts)
+continue to function.
+
+Observability Platform doesn't revoke service accounts created by a given user during
+user deactivation. Service accounts can be used in production, and deactivating them
+can cause outages. This is consistent with other web services, such as Amazon Web
+Services and Google Cloud Platform, where service accounts aren't tied to a user.

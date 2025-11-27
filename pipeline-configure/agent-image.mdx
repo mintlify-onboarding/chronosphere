@@ -1,0 +1,50 @@
+---
+title: Agent image type
+'og:description': Choose the image type for your pipeline agent in Chronosphere Telemetry Pipeline.
+sidebarTitle: Agent image type
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+One [component](/pipelines/core-components) of Chronosphere Telemetry Pipeline
+is the agent that powers each pipeline. Chronosphere maintains two different versions
+of this agent that are built from distinct container images. You can set the image type for this
+pipeline agent when you [create](/pipeline-data/create-modify#create-a-pipeline)
+a new pipeline, or change the image type when you [upgrade](/pipeline-install/upgrade#upgrade-a-pipeline)
+an existing pipeline.
+
+The agent image that you choose doesn't affect the features available to that
+pipeline. All [plugins](/pipeline-data/plugins), [parsers](/pipeline-data/parsers),
+[processing rules](/pipeline-data/processing-rules), and
+[configuration options](/pipeline-configure) are compatible with all agent image types.
+
+The following pipeline agent image types are available:
+
+- Red Hat UBI (default)
+- Distroless
+
+## Red Hat UBI
+
+The Red Hat UBI pipeline agent is based on the
+[Red Hat Universal Base Image](https://catalog.redhat.com/en/software/base-images),
+which is itself based on Red Hat Enterprise Linux.
+This is the default agent image in Telemetry Pipeline.
+
+Pipelines that use the Red Hat UBI agent image have access to several utilities
+bundled with the Red Hat-supplied container image, including debugging
+tools, which makes this agent image ideal for development environments. However,
+the Red Hat UBI agent image has more package dependencies than the distroless agent
+image, which means it might not be suitable in environments with strict security
+requirements.
+
+## Distroless
+
+The distroless pipeline agent is based on the
+[distroless](https://github.com/GoogleContainerTools/distroless)
+container image published by Google, which is itself based on Debian.
+
+The distroless agent image has fewer package dependencies than the Red Hat UBI
+agent image, which reduces the risk of underlying security vulnerabilities and
+makes it ideal for production environments. However, pipelines that use the
+distroless agent image are harder to debug than pipelines that use the Red Hat
+UBI agent image.

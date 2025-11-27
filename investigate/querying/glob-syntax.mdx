@@ -1,0 +1,37 @@
+---
+title: Glob syntax
+'og:description': Learn how to use glob syntax patterns in queries.
+sidebarTitle: Glob syntax
+---
+import RegexGlob from '/snippets/_partials/regex-glob.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<RegexGlob />
+
+Glob patterns specify sets of filenames with wildcard characters. The most common
+wildcards are `*`, `?`, and `[…]`. You can negate any pattern by prefixing it with a
+`!`.
+
+<Note>
+Observability Platform glob syntax doesn't support using two asterisks where one of
+them is in the middle of a string. For example, `*k8s*staging` isn't valid.
+</Note>
+
+{/* vale Chronosphere.Spelling = NO */}
+
+| Wildcard | Description | Example | Matches | Doesn't match |
+| :------- | :---------- | :------ | :------ | :------------- |
+| `*`      | Matches any number of any characters, including none. | `Law\*`<br />`\*Law\*`<br />`L\*aw` | Law, Laws, or Lawyer<br />Law, GrokLaw, or Lawyer<br />Law or Laaw | GrokLaw, La, or aw<br />La or aw<br />La or Laws |
+| `?`      | Matches any single character. | `?at` | Cat, cat, Bat, or bat | at |
+| `[abc]`  | Matches one character given in the bracket. | `\[CB]at` | Cat or Bat | cat, bat, or CBat |
+| `[a-z]`  | Matches one character from the (locale-dependent) range given in the bracket. | `Letter\[0-9]` | Letter0, Letter1, Letter2, up to Letter9 | Letters, Letter, or Letter10 |
+| `{a,b}`  | Matches one word given in the braces. | `\{pass,word}` | pass, word | password, passing |
+
+{/* vale Chronosphere.Spelling = YES */}
+
+_Table sourced from [Wikipedia](https://en.wikipedia.org/wiki/Glob_\(programming\))._
+
+For more pattern matching specifics, see the
+[Glob primer](https://github.com/isaacs/node-glob#glob-primer).

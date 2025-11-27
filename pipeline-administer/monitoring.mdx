@@ -1,0 +1,116 @@
+---
+title: Monitoring
+'og:description': Monitor your pipelines, fleets, and other components of Chronosphere Telemetry Pipeline.
+sidebarTitle: Monitoring
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The different components of Chronosphere Telemetry Pipeline generate their own
+observability metrics that you can monitor in real time. These metrics include
+data about throughput, volume, and the health of your components.
+
+## Scope
+
+Telemetry Pipeline metrics are grouped at the project level. Each project's
+metrics include the following labels, where applicable:
+
+- Core Instance IDs
+- Pipeline IDs
+- Fleet IDs
+- Agent and replica IDs
+
+## Access
+
+There are two main ways to access your Telemetry Pipeline metrics: through
+[Chronosphere Observability Platform](/overview), or by importing data into
+a third-party platform. Both methods are available to all Telemetry Pipeline
+users at no extra cost.
+
+### Observability Platform
+
+You can access your Telemetry Pipeline metrics in an Observability Platform
+[dashboard](/observe/dashboards). These dashboards include visualizations for the
+following metrics:
+
+- Input (in bytes)
+- Input (number of records)
+- Output (in bytes)
+- Output (number of records)
+- Total retries
+- Total dropped
+- Total filtered
+
+Observability Platform receives these metrics from your Telemetry Pipeline components
+every 30 seconds granularity and stores them for 60 days.
+
+To get started with Telemetry Pipeline monitoring in Observability Platform, contact
+Chronosphere Support.
+
+### Third-party platform
+
+You can also access your Telemetry Pipeline metrics in the third-party platform
+of your choosing. To generate an import token, contact [Chronosphere Support](/support).
+
+## Metrics list
+
+Each component of Telemetry Pipeline emits a variety of metrics. These metrics
+flow directly to the Chronosphere backend and don't impact the performance or
+behavior of Telemetry Pipeline itself.
+
+Metrics are sorted into three granularity levels: per-input, per-output, and
+per-pipeline.
+
+### Per-input metrics
+
+The following metrics have per-input granularity.
+
+| Metric | Type | Unit | Description |
+|---|---|---|---|
+| `fluentbit_input_bytes_total` | counter | bytes | The number of bytes that an input instance successfully ingested. |
+| `fluentbit_input_records_total` | counter | records | The number of records that an input instance successfully ingested. |
+| `fluentbit_filter_bytes_total` | counter | bytes | The number of bytes that a filter instance successfully ingested. |
+| `fluentbit_filter_records_total` | counter | records | The number of records that a filter instance successfully ingested. |
+| `fluentbit_filter_added_records_total` | counter | records | The number of records that a filter instance added to a pipeline. |
+| `fluentbit_filter_dropped_records_total` | counter | records | The number of records that a filter instance removed from a pipeline. |
+| `fluentbit_input_storage_overlimit` | gauge | Boolean | Whether the input instance has exceeded the configured value of `mem_buf_limit`. |
+| `fluentbit_input_storage_memory_bytes` | gauge | bytes | The amount of memory that an input instance is consuming to buffer logs in chunks. |
+| `fluentbit_input_storage_chunks` | gauge | chunks | The current number of chunks that belong to an input instance. |
+| `fluentbit_input_storage_chunks_up` | gauge | chunks | The current number of chunks that are in memory for an input instance. If file system storage is available, chunks that in memory are also available in the file system layer. |
+| `fluentbit_input_storage_chunks_down` | gauge | chunks | The current number of chunks that are in the file system for an input instance. |
+| `fluentbit_input_storage_chunks_busy` | gauge | chunks | The current number of chunks being processed by an output instance and aren't eligible to have new data appended. |
+| `fluentbit_input_storage_chunks_busy_bytes ` | gauge | bytes | The total size of all chunks currently being processed. |
+
+### Per-output metrics
+
+The following metrics have per-output granularity.
+
+| Metric | Type | Unit | Description |
+|---|---|---|---|
+| `fluentbit_output_dropped_records_total` | counter | records | The number of records that were dropped by an output instance. This includes records that faced an unrecoverable error, or records in a chunk for whom retries expired. |
+| `fluentbit_output_errors_total` | counter | chunks | The number of records that faced both recoverable and unrecoverable errors. This value describes the number of times a chunk has failed, and does not match the number of error messages generated in a pipeline's log output. |
+| `fluentbit_output_proc_bytes_total` | counter | bytes | The amount of data successfully sent by an output instance. This value describes all unique chunks sent. Records that encounter an error don't count towards this total. |
+| `fluentbit_output_proc_records_total` | counter | records | The number of records successfully sent by an output instance. This value describes all unique chunks. Records that encounter an error don't count towards this total. |
+| `fluentbit_output_retried_records_total` | counter | records | The number of records that experienced a retry. This value is calculated at the chunk level and increments when an entire chunk is marked for retry. An output might perform multiple actions that generate multiple error messages when uploading a single chunk. |
+| `fluentbit_output_retries_failed_total` | counter | chunks | The number of times that retries expired for a chunk. This value increments when an output instance exceeds the number of retries specified by `Retry_Limit`. |
+| `fluentbit_output_retries_total` | counter | chunks | The number of times that an output instance requested retries for a chunk. |
+| `fluentbit_output_upstream_total_connections` | gauge | bytes | The total connection count for an output instance. |
+| `fluentbit_output_upstream_busy_connections` | gauge | bytes | The total count of busy connections for an output instance. |
+
+### Per-pipeline metrics
+
+The following metrics have per-pipeline granularity.
+
+| Metric | Type | Unit | Description |
+|---|---|---|---|
+| `fluentbit_uptime` | counter | seconds | The number of seconds that a pipeline has been running. |
+| `fluentbit_process_start_time_seconds` | gauge | seconds | The timestamp of when a pipeline started running, in Unix epoch format. |
+| `fluentbit_build_info` | gauge | seconds | Build version information about a pipeline. This value initializes the Unix epoch timestamp of configuration context. |
+| `fluentbit_hot_reloaded_times` | gauge | n/a | The number of times that a pipeline underwent a hot reload. |
+| `fluentbit_input_chunks.storage_chunks` | gauge | chunks | The total number of chunks that a pipeline is currently buffering. |
+| `fluentbit_storage_mem_chunk` | gauge | chunks | The total number of chunks currently buffered in the memory of a pipeline. Keep in mind that a chunk can simultaneously be in memory and on the file system. |
+| `fluentbit_storage_fs_chunks` | gauge | chunks | The total number of chunks in the file system of a pipeline. |
+| `fluentbit_storage_fs_chunks_up` | gauge | chunks | The total number of chunks both in the file system and in the memory of a pipeline. |
+| `fluentbit_storage_fs_chunks_down` | gauge | chunks | The total number of chunks that are _only_ in the file system of a pipeline. This value excludes pipelines that are both in the file system and in memory. |
+| `fluentbit_storage_fs_chunks_busy` | gauge | chunks | The total number of busy chunks in a pipeline. |
+| `fluentbit_storage_fs_chunks_busy_bytes` | gauge | bytes | The total size of busy chunks in a pipeline. |

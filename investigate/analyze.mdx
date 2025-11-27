@@ -1,0 +1,32 @@
+---
+title: Analyze data
+'og:description': Learn how to analyze data and queries in Observability Platform.
+sidebarTitle: Overview
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere Observability Platform provides tools to analyze both your telemetry data
+and queries.
+
+When your data is streaming to Observability Platform, use the Live Telemetry
+Analyzer to view incoming [metrics](/investigate/analyze/telemetry-analyzer) and
+[traces](/investigate/analyze/trace-analyzer) grouped by label and their relative
+frequency. Use this real-time view to learn more about how often your applications
+emit data, troubleshoot spikes in ingest rates, and ensure the Collector is aware of
+particular data.
+
+When you need to understand the value a metric is providing, the
+[Usage Analyzer](/investigate/analyze/usage) helps identify metrics that
+your teams find the most useful, or metrics you might consider consolidating.
+[Logs Usage](/investigate/analyze/logs-usage) displays the volume of log data passing
+through Observability Platform, including its utility compared to other patterns.
+
+Use the [Query Analyzer](/investigate/analyze/query-analyzer) to identify
+load-intensive queries and determine whether to make changes to reduce slow queries.
+
+When investigating issues, use
+[Differential Diagnosis (DDx)](/investigate/analyze/differential-diagnosis)
+to analyze all available dimensions in your metrics or traces to highlight what
+changed, and find what's broken faster. DDx lets developers resolve service
+performance issues without writing queries or needing knowledge of the entire system.

@@ -1,0 +1,111 @@
+---
+title: Multiline join
+'og:description': Learn about the multiline join processing rule in Chronosphere Telemetry Pipeline.
+sidebarTitle: Multiline join
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The multiline join [processing rule](/pipeline-data/processing-rules) combines
+multiple logs into a single log by looking for repeating patterns in log data.
+
+## Configuration parameters
+
+<Params />
+
+| Name              | Key | Description | Default |
+| ----------------- | --- | ----------- | ------- |
+| **Source key**    | `src` | Required. The key that contains the log data to combine. This key's value must be a string, as the rule can't parse standard JSON objects, but it can parse [escaped JSON strings](/pipeline-data/processing-rules/encode-json). | `log` |
+| **Regex**         | `regex` | Required. The regular expression that determines which logs to combine. When a log that contains a matching string is found, that log plus all subsequent logs are combined until another log is reached that also contains a matching string. The new matching log becomes the start of the next combined log, and the pattern repeats. | _none_ |
+| **Regex engine**  | `regexEngine` | Required. The [engine](/pipeline-data/processing-rules#regex-engines) to parse your regular expression. Accepted values: `GNU`, `Oniguruma`, `PCRE2`, `POSIX`, `TRE`. | `PCRE2` |
+| **Maximum lines** | `lineLimit` | Required. The maximum number of logs that can be combined into a single log. This setting is a failsafe designed to prevent the rule from falling into an endless loop if it can't find the specified **Regex** pattern after a certain number of logs. | `1000` |
+| **Comment**       | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Examples
+
+Using the multiline join processing rule lets you group related logs together.
+You can use this rule to combine data that was inadvertently split into multiple
+parts, like a stack trace where each line of the message was assigned to its
+own log.
+
+### JSON logs
+
+For example, given this sample log data:
+
+```json
+{"inventory":"fruit:apricot"}
+{"inventory":"vegetable:artichoke"}
+{"inventory":"vegetable:asparagus"}
+{"inventory":"fruit:banana"}
+{"inventory":"vegetable:butternut_squash"}
+{"inventory":"fruit:cantaloupe"}
+{"inventory":"vegetable:cauliflower"}
+{"inventory":"vegetable:corn"}
+{"inventory":"vegetable:cucumber"}
+{"inventory":"fruit:durian"}
+{"inventory":"vegetable:daikon"}
+{"inventory":"fruit:elderberry"}
+{"inventory":"vegetable:edamame"}
+```
+
+A processing rule with the **Source key** value `inventory` and the **Regex** value
+`fruit` returns the following result:
+
+```json
+{"inventory":"fruit:apricot\nvegetable:artichoke\nvegetable:asparagus"}
+{"inventory":"fruit:banana\nvegetable:butternut_squash"}
+{"inventory":"fruit:cantaloupe\nvegetable:cauliflower\nvegetable:corn\nvegetable:cucumber"}
+{"inventory":"fruit:durian\nvegetable:daikon"}
+{"inventory":"fruit:elderberry\nvegetable:edamame"}
+```
+
+This rule searched for logs in the `inventory` key that contained the string
+`fruit`, then combined each of those logs with any subsequent logs that didn't
+contain the string `fruit`. After the rule found another log that contained
+the string `fruit`, it started over and repeated the same pattern.
+
+### Raw logs
+
+<Note>
+To combine raw logs, always use the value `log` for **Source key**.
+</Note>
+
+You can also use the multiline join rule to combine raw logs. For example,
+given this sample log data:
+
+```text
+Exception in thread "main" java.lang.RuntimeException:
+    at com.storefront.module.Checkout.paymentProcess(Checkout.java:71)
+    at com.storefront.module.Checkout.billingAddress(Checkout.java:435)
+    at com.storefront.module.Checkout.shippingAddress(Checkout.java:742)
+    at com.storefront.module.Checkout.main(Checkout.java:6)
+Exception in thread "main" java.lang.NullPointerException:
+    at com.storefront.module.Listing.productPhoto(Listing.java:84)
+    at com.storefront.module.Listing.productColorway(Listing.java:219)
+Exception in thread "main" java.lang.RuntimeException:
+    at com.storefront.module.Settings.country(Settings.java:149)
+    at com.storefront.module.Settings.currencyType(Settings.java:736)
+    at com.storefront.module.Settings.main(Checkout.java:11)
+```
+
+A processing rule with the **Source key** value `log` and the **Regex** value
+`exception` returns the following result:
+
+{/* markdownlint-disable MD013 */}
+
+```json
+{"log":"Exception in thread \"main\" java.lang.RuntimeException:\n    at com.storefront.module.Checkout.paymentProcess(Checkout.java:71)\n    at com.storefront.module.Checkout.billingAddress(Checkout.java:435)\n    at com.storefront.module.Checkout.shippingAddress(Checkout.java:742)\n    at com.storefront.module.Checkout.main(Checkout.java:6)"}
+{"log":"Exception in thread \"main\" java.lang.NullPointerException:\n    at com.storefront.module.Listing.productPhoto(Listing.java:84)\n    at com.storefront.module.Listing.productColorway(Listing.java:219)"}
+{"log":"Exception in thread \"main\" java.lang.RuntimeException:\n    at com.storefront.module.Settings.country(Settings.java:149)\n    at com.storefront.module.Settings.currencyType(Settings.java:736)\n    at com.storefront.module.Settings.main(Checkout.java:11)"}
+```
+
+{/* markdownlint-enable MD013 */}
+
+Chronosphere Telemetry Pipeline assigned a new `log` key to each raw event. After that
+transformation, this rule searched for logs with the `log` key that contained
+the string `exception`, then combined each of those logs with any subsequent
+logs that didn't contain the string `exception`.  After the rule found another
+log that contained the string `exception`, it started over and repeated the same
+pattern.

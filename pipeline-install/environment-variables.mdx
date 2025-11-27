@@ -1,0 +1,21 @@
+---
+title: Linux environment variables
+'og:description': Configure environment variables to use Chronosphere Telemetry Pipleine on Linux.
+sidebarTitle: Linux environment variables
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+To [create a Core Instance](/pipeline-install/create-instance) on Linux, you
+must configure the following environment variables. Chronosphere provides these
+environment variables as part of the systemd service, using the
+`/opt/calyptia/etc/calyptia-custom.conf` file.
+
+
+| Name                                 | Description |
+| ------------------------------------ | ----------- |
+| `CALYPTIA_CLOUD_PROJECT_TOKEN`       | The token used to manage the Core Instance. |
+| `CALYPTIA_CORE_INSTANCE_NAME`        | Optional. Sets a specific name, otherwise selects a random name. |
+| `CALYPTIA_CORE_INSTANCE_NAME_PREFIX` | Optional. The prefix to use for a randomly generated Core Instance name. |
+| `CALYPTIA_CLOUD_URL`                 | The URL of the Telemetry Pipeline backend. Default: `cloud-api.calyptia.com`. |
+| `CALYPTIA_CORE_ADDITIONAL_FLAGS`     | Optional. Custom flags to assign to the Core Instance. These arguments are passed to [Pipeline CLI](/pipeline-cli/) when creating the Core Instance. |

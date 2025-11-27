@@ -1,0 +1,105 @@
+---
+title: Manage dashboard time ranges
+'og:description': Analyze and correlate the contents of data visualization panels in Chronosphere dashboards by setting time ranges.
+sidebarTitle: Time ranges
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+Use a dashboard's _time range_ to analyze visualized data in multiple
+[panels](/observe/dashboards/panels). You can define a refresh interval to control
+how frequently the dashboard updates panel data. You can also select a
+[time range](/navigate/time-ranges) to view the same period across all of a
+dashboard's panels to help you correlate events. You can also compare current data
+to past data to identify trends.
+
+## Set a dashboard's refresh interval
+
+To manually refresh a dashboard's panels, click the **<Icon icon="arrow-rotate-right" /> Refresh**
+button in the dashboard.
+
+To set how often a dashboard refreshes its panels:
+
+1. Click the refresh dropdown, which defaults to **Off**.
+1. Click an interval in the list, or **Off** to disable automatic refreshing.
+
+## Define a dashboard's time range
+
+You can define a dashboard's time range by using the
+**<Icon icon="clock" /> time range selector**, or by selecting part of
+a data visualization within a panel.
+
+### Define a dashboard's time range with the time range selector
+
+The **<Icon icon="clock" /> time range selector** is a dropdown menu
+and text-entry field that provides several ways to define a relative or absolute
+time range. For details about time ranges in Observability Platform and
+time range selector usage, see [Select time ranges](/navigate/time-ranges).
+
+### Select a dashboard's time range from a panel
+
+You can also define a time range by selecting it inside of a data visualization
+chart panel.
+
+To select a time range:
+
+1. In any of the dashboard's chart visualizations, click the beginning or end point
+   in time for the range you want to define.
+1. Drag to the point at the other end of the time range.
+   Chronosphere masks the area between in gray to visualize the range that you've
+   selected.
+
+Upon releasing the cursor, the dashboard updates all of its panels to display the
+selected time range.
+
+### Pin a time range
+
+You can pin dashboard time ranges to the last selected interval, or to a relative
+time period. When a time range is pinned, all dashboards respect the pinned interval.
+This lets you review multiple dashboards while using the same time range, enabling
+comparison of the same time period.
+
+1. In the [time range selector](/navigate/time-ranges#use-the-time-range-selector),
+   click the <Icon icon="thumbtack" /> Pin icon.
+1. Select a pin option:
+   - **Pin with absolute time range**: Pins a specific time interval. If you're
+     viewing a dashboard and don't want it to refresh, pin it.
+   - **Pin with relative time range**: Pins the last selected interval. For example,
+     if your time selector uses **Last 30 minutes**, the relative range is the last
+     30 minutes.
+
+When a time range is pinned, the pin is green.
+
+To unpin the time range, click the <Icon icon="thumbtack" iconType="solid" color="#59cc8dff"/> pin again.
+
+## Compare current data to past data
+
+Comparison mode, sometimes called week-over-week view, is a Chronosphere
+feature that overlays historical data on your current data in dashboards. This
+feature provides additional context for comparing your current metrics with historical
+trends and expectations, or identifying recurring trends and outliers.
+
+To compare current data to past data:
+
+1. Click **Compare**.
+1. Select a past period to overlay onto the dashboard's panels.
+
+   The **Preceding period** option overlays the immediately preceding period of the same
+   length as the selected time range.
+
+   An additional query runs to pull historical ("offset") time series into your graph,
+   which returns data with the same resolution as your current data.
+
+   Depending on the time period you select and your data retention settings, the
+   result might include a gap for your most recent data, such as the last 10 minutes.
+
+   Chronosphere matches the current and historical data queries using tag logic, with
+   `_offset_:true` on the offset query and `_series_:series<num>` for all of the
+   series. This associates data from the offset time series to the current series for
+   similar presentation, so the results in comparison mode contain labels that
+   resemble `__chrono_offset__: offset_7d1h` or `__chrono_series__: "series1"`.
+
+For details, see the
+[Chronosphere blog](https://chronosphere.io/learn/how-to-monitor-week-over-week-trends-in-chronosphere/).
+
+To disable the overlay, click **Compare** and select **Off**.

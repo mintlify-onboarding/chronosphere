@@ -1,0 +1,79 @@
+---
+title: Okta source plugin
+sidebarTitle: Okta System Logs Collector
+'og:description': Receive pipeline data from Okta.
+---
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Okta System Logs Collector [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `http_loader`, alias: `okta_system_logs`) lets you ingest data from your
+Okta instances into a telemetry pipeline.
+
+<SourceStyle/>
+
+<Note>
+This plugin doesn't support the use of a
+[descriptive metadata name](/pipeline-data/plugins#descriptive-names) in the
+Pipeline Builder interface.
+</Note>
+
+<Note>
+This plugin doesn't support duplicates of itself within the same pipeline.
+Additionally, this plugin can't be used in combination with these source plugins
+within the same telemetry pipeline:
+
+- [Absolute](/pipeline-data/plugins/source-plugins/absolute)
+- [HTTP API collector](/pipeline-data/plugins/source-plugins/http-api-collector)
+- [Mandiant ASM](/pipeline-data/plugins/source-plugins/mandiant-asm)
+- [Signal Sciences](/pipeline-data/plugins/source-plugins/signal-sciences)
+- [Slack](/pipeline-data/plugins/source-plugins/slack)
+- [Vectra M365](/pipeline-data/plugins/source-plugins/vectram365)
+</Note>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                | Key | Description | Default |
+| ------------------- | --- | ----------- | ------- |
+| **Okta Domain URL** | `url` | The URL of your Okta domain. | _none_ |
+| **Okta API Token**  | `api_token` | Your Okta API token. | _none_ |
+| **Pull Interval**   | `pull_interval` | The time between each API call in Okta system logs. | `10s` |
+
+### Advanced
+
+| Name                      | Key | Description | Default |
+| ------------------------- | --- | ----------- | ------- |
+| **Optional Request body** | `body` | Optional request body. For example, `{"custom":"data"}`. | _none_ |
+| **Request Timeout**       | `timeout` | The amount of time between requests. | `10s` |
+| **Max Response Bytes**    | `max_response_bytes` | Whether to limit the amount of bytes to read from the response body. | `1572860` |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |
+
+### OAuth2
+
+| Name                         | Key | Description | Default |
+| ---------------------------- | --- | ----------- | ------- |
+| **OAuth2 Client ID**         | `oauth2_client_id` | Optional OAuth2 Client ID. You need to at least pass the client ID, secret and token URL to enable OAuth2. Uses the `client_credentials` flow. | _none_ |
+| **OAuth2 Client Secret**     | `oauth2_client_secret` | Optional OAuth2 client secret. | _none_ |
+| **OAuth2 Token URL**         | `oauth2_token_url` | Optional OAuth2 token URL in the formal of HTTP or HTTPS. For example, https://example.org/oauth2/token. | _none_ |
+| **OAuth2 Scopes**            | `oauth2_scopes` | Optional list of additional scopes for OAuth2 separated by space. For example, `scope1 scope2`. | _none_ |
+| **OAuth2 Scopes Separator**  | `oauth2_scopes_separator` | Additional parameter to pass during OAuth2 that separates scopes specified in OAuth2 Scopes. | _none_ |
+| **OAuth2 Additional Params** | `oauth2_endpoint_params` | Optional additional parameters to add during OAuth2. The format is a URL query string. For example, `foo=bar&bar=qux`. | _none_ |

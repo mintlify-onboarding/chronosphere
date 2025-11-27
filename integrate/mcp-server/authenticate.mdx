@@ -1,0 +1,116 @@
+---
+title: Authenticate with the Chronosphere MCP server
+'og:description': Learn how to authenticate with the Chronosphere MCP server so you can interact with resources in Chronosphere Observability Platform.
+sidebarTitle: Authenticate
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Before you can use the Chronosphere Model Context Protocol (MCP) server, you need to
+authenticate with the MCP client you use to access a large language model (LLM). Use
+one of the following options to configure authentication:
+
+- Generate a Chronosphere API token, either through a personal access token or a
+  service account.
+- Use [OAuth](https://oauth.net/2/). To use the Chronosphere MCP server with OAuth,
+  your MCP client must support OAuth.
+
+  <Note>
+  OAuth authentication with the Chronosphere MCP server has been tested with the
+    following MCP clients only.
+  </Note>
+
+The following steps explain how to authenticate with popular AI-powered code editors.
+After authenticating, you can use the LLM features in your code editor to interact
+with the [Chronosphere MCP server tools](/integrate/mcp-server/resources).
+
+## Prerequisites
+
+If you're authenticating your MCP client with a Chronosphere API token, use one of
+the following options to generate one:
+
+- **Personal access**: Create a
+  [personal access token](/administer/accounts-teams/personal-access-tokens) to
+  authenticate your user account with Chronosphere. When you authenticate with a
+  personal access token, Chronosphere Observability Platform associates the actions
+  you take with your identity and respects the permissions granted to your user
+  account's team.
+- **Programmatic access**: Create an
+  [unrestricted service account](/administer/accounts-teams/service-accounts#create-an-unrestricted-service-account)
+  to create a persistent identity for a service or agent that you want to authenticate
+  with your MCP client. You must have
+  [administrative access](/administer/accounts-teams/user-accounts#grant-system-administrator-sysadmin-privileges-to-users)
+  to create a service account.
+
+## Authenticating using Claude Code
+
+To authenticate with the Chronosphere MCP server from Claude Code, add the MCP server
+as a
+[remote HTTP server](https://docs.claude.com/en/docs/claude-code/mcp#option-3%3A-add-a-remote-http-server).
+
+1. From within Claude Code, run the following command:
+
+   ```bash /TENANT/ /API_TOKEN/
+   claude mcp add --transport http chronosphere "https://TENANT.chronosphere.io/api/mcp/mcp" \
+   --header "Authorization: API_TOKEN"
+   ```
+
+   Replace the following:
+
+   - _`TENANT`_: The name of your Observability Platform tenant.
+   - _`API_TOKEN`_: The API token generated from your service account. Chronosphere
+     recommends storing your API token in a separate file or Kubernetes Secret and
+     calling it using an environment variable, such as `$API_TOKEN`.
+
+    <Note>
+    To authenticate using OAuth instead of a Chronosphere API token, omit the
+      `--header` flag. You can also use the `/mcp` command to authenticate with OAuth
+      authentication.
+    </Note>
+
+1. Test your connection with the Chronosphere MCP server:
+
+   ```bash
+   claude mcp get chronosphere
+   ```
+
+The command returns the details for the Chronosphere MCP server.
+
+## Authenticating using Cursor
+
+To authenticate with the Chronosphere MCP server from Cursor, modify the `mcp.json`
+file to include the Chronosphere MCP server remote endpoint.
+
+1. From within Cursor,
+   [access the `mcp.json` file](https://cursor.com/docs/context/mcp#using-mcpjson).
+1. Add the following configuration to the `mcp.json` file:
+
+   ```json /TENANT/ /API_TOKEN/
+   {
+     "mcpServers": {
+       "chronosphere": {
+         "url": "https://TENANT.chronosphere.io/api/mcp/mcp",
+         "headers": {
+           "Authorization": "Bearer API_TOKEN"
+         }
+       }
+     }
+   }
+   ```
+
+   Replace the following:
+
+   - _`TENANT`_: The name of your Observability Platform tenant.
+   - _`API_TOKEN`_: The API token generated from your service account. Chronosphere
+     recommends storing your API token in a separate file or Kubernetes Secret and
+     calling it using an environment variable, such as `$API_TOKEN`.
+
+    <Note>
+    To authenticate using OAuth instead of a Chronosphere API token, omit the
+      `headers` section from the configuration.
+    </Note>
+
+1. Save and close the `mcp.json` file.
+1. Refresh the MCP server settings in Cursor.
+
+The Chronosphere MCP server displays in the list of configured MCP servers.

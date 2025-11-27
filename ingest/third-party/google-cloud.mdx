@@ -1,0 +1,75 @@
+---
+title: Send Google Cloud Personalized Service Health events to Observability Platform
+sidebarTitle: Google Cloud
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+To send Google Cloud Personalized Service Health events to Chronosphere Observability
+Platform, create a webhook in the Google Cloud Personalized Service Health dashboard
+and include credentials to authenticate with Observability Platform.
+
+## Obtain credentials
+
+Before sending events from Google Cloud Personalized Service Health, contact
+[Chronosphere Support](/support) to obtain a username and password to authenticate
+your third-party app with Observability Platform.
+
+## Create a Google Cloud Personalized Service Health webhook
+
+1. Enable Google Cloud Personalized Service Health in the Google Cloud console. See
+   [Manage Personalized Service Health access](https://cloud.google.com/service-health/docs/manage-access)
+   in the Google Cloud documentation for required steps.
+1. In the Google Cloud console, search for **Service Health**.
+1. Navigate to Google Service Health, and click **Create Alert Policy**.
+1. In the **Alert policy templates** dialog, in the **Configure notifications**
+   section, click the **Notification channels** dropdown menu and then click
+   **Manage notification channels**.
+1. In the **Notification channels** dialog, scroll to the **Webhooks** section and
+   click **Add new**.
+1. In the **Add Webhook** dialog, define your webhook:
+   1. In the **Endpoint URL** field, enter
+      `https://ADDRESS.chronosphere.io/api/v1/data/events/receiver/gcp-service-health`.
+
+      Replace _`ADDRESS`_ with your company name prefixed to your Observability
+      Platform instance that ends in `.chronosphere.io`. For example,
+      _`MY_COMPANY`_`.chronosphere.io`.
+
+   1. In the **Display Name** field, enter a name to display for your webhook, and
+      then select the **Use HTTP Basic Auth** checkbox.
+
+   1. Input the username and password credentials that Chronosphere Support supplied.
+
+   1. Click **Test Connection** to test your webhook configuration.
+
+      <Note>
+      No confirmation dialog displays to confirm whether your webhook is configured
+            correctly, but you must complete this step to proceed.
+      </Note>
+
+   1. Click **Save** to save your webhook.
+1. In the **Alert policy templates** dialog, select the **All incidents, all updates**
+   checkbox, click the <Icon icon="ellipsis-vertical" /> three vertical dots icon, and select
+   **Customize alert policy**.
+   1. In the **Create logs-based alert policy** dialog, in the **Alert details**
+      section, click **Next**.
+   1. In the **Extract log labels** section, ensure that the following log labels are
+      included in the template:
+
+      - `impactedProducts`: `jsonPayload.impactedProducts`
+      - `detailedState`: `jsonPayload.detailedState`
+      - `impactedLocations`: `jsonPayload.impactedLocations`
+      - `updateTime`: `jsonPayload.updateTime`
+      - `startTime`: `jsonPayload.startTime`
+      - `relevance`: `jsonPayload.relevance`
+      - `title`: `jsonPayload.title`
+      - `description`: `jsonPayload.description`
+      - `state`: `jsonPayload.state`
+
+      If any of these labels aren't included in the list, click **Add a label** to add
+      the missing label.
+   1. Click **Next**.
+   1. Select the notification frequency and duration, or accept the default values.
+   1. Click **Next**.
+   1. In the **Who should be notified** section, the notification channel that you
+      created when defining the webhook, and then click **Ok**.

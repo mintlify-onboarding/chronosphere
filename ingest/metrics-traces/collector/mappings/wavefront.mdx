@@ -1,0 +1,102 @@
+---
+title: Migration notes for Tanzu (Wavefront) to PromQL
+sidebarTitle: Wavefront
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+WavefrontQL and PromQL are both used to visualize data, and some functions are very
+similar. Use this information for guidance as you convert queries from Wavefront to
+Prometheus.
+
+## Functions
+
+| Wavefront          | PromQL | Notes |
+| ------------------ | ------ | ----- |
+| `abs()`            | `abs()` | _none_ |
+| `exists()`         | `absent()` | WavefrontQL must use the `ts()` function. |
+| *unsupported*      | `absent_over_time()` | _none_ |
+| `ceil()`           | `ceil()` | WavefrontQL must use the `ts()` function. |
+| *unsupported*      | `changes()` | _none_ |
+| `limit()`          | `clamp_max()` | _none_ |
+| `floor()`          | `clamp_min()` | _none_ |
+| `day()`            | `day_of_month()` | Wavefront needs to specify the time zone with the day function. PromQL returns results in Coordinated Universal Time (UTC). |
+| `weekday()`        | `day_of_week()` | _none_ |
+| `daysInMonth()`    | `days_in_month()` | _none_ |
+| `align()`          | `<aggr>_over_time()` | _none_ |
+| `deriv()`          | `deriv()` | _none_ |
+| `exp()`            | `exp()` | _none_ |
+| *unsupported*      | `floor()` | _none_ |
+| `percentile()`     | `histogram_quantile()` | In PromQL, use `histogram_quantile(0.95, sum by (le) rate(my_histogram_metric_bucket[1m]))` to get the ninety-fifth percentile. |
+| `hw()`             | `holt_winters()` | _none_ |
+| `hour()`           | `hour()` | _none_ |
+| *unsupported*      | `idelta()` | Use only with gauges in PromQL. |
+| `ratediff()`       | `increase()` or `irate()` | WavefrontQl `ratediff()` gives you the only difference in value between each two data points. |
+| `join()`           | `label_join()` | Wavefront can do specific joins like SQL. |
+| `taggify()`        | `label_replace()` | _none_ |
+| `log()`            | `ln()` | _none_ |
+| *unsupported*      | `log2()` | _none_ |
+| `log10()`          | `log10()` | _none_ |
+| `minute()`         | `minute()` | PromQL returns results in Coordinated Universal Time (UTC). You must specify a timezone in WavefrontQL. |
+| `month()`          | `month()` | PromQL returns results in Coordinated Universal Time (UTC). You must specify a timezone in WavefrontQL. |
+| `linearforecast()` | `predict_linear()` | WavefrontQL can specify a length of time in the past for use with predicting the linear regression. PromQL predicts using the entire series, for use only with gauges. |
+| `rate()`           | `rate()` | _none_ |
+| `flapping()`       | `resets()` | _none_ |
+| `round()`          | `round()` | PromQL rounds up the tied values. |
+| *unsupported*      | `scalar()` | _none_ |
+| *unsupported*      | `sort()` | PromQL `sort()` and `sort_desc()` show the data order in the Console view. Because Wavefront visualizes queries in charts instead of a console, they don't support this option. |
+| *unsupported*      | `sort_desc()` | PromQL `sort()` and `sort_desc()` show the data order in the Console view. Because Wavefront visualizes queries in charts instead of a console, they don't support this option. |
+| `sqrt()`           | `sqrt()` | _none_ |
+| `time()`           | `time()` | _none_ |
+| `timestamp()`      | `timestamp()` | _none_ |
+| *unsupported*      | `vector()` | _none_ |
+| `year()`           | `year()` | PromQL returns results in Coordinated Universal Time (UTC). You must specify a timezone in WavefrontQL. |
+
+## Time functions
+
+| Wavefront      | PromQL                 | Notes |
+| -------------- | ---------------------- | ----- |
+| `mavg()`       | `avg_over_time()`      | _none_ |
+| `min()`        | `min_over_time()`      | WavefrontQL must use the `ts()` function to match `min_over_time()`. |
+| `max()`        | `max_over_time()`      | WavefrontQL must use the following form to match `max_over_time()`. |
+| `msum()`       | `sum_over_time()`      | `sum_over_time()` is applicable only to gauges. |
+| `mcount()`     | `count_over_time()`    | _none_ |
+| `percentile()` | `quantile_over_time()` | WavefrontQL requires the rawpercentile() function instead of percentile(). |
+|                | `stddev_over_time()`   | _none_ |
+|                | `stdvar_over_time()`   | _none_ |
+
+## Aggregations
+
+| Wavefront    | PromQL           | Notes |
+| ------------ | ---------------- | ----- |
+| `rawsum()`   | `sum()`          | _none_ |
+| `min()`      | `min()`          | To emulate PromQl, use the following WavefrontQL form. |
+| `max()`      | `max()`          | To emulate PromQl, use the following WavefrontQL form. |
+| `avg()`      | `avg()`          | To emulate PromQL, use the following WavefrontQL form. |
+|              | `group()`        | _none_ |
+| `stddev()`   | `stddev()`       | WavefrontQL can do only standard deviation on histograms. |
+| `variance()` | `stdvar()`       | The `variance()` function uses interpolation. To not use interpolation, use `rawvariance()`. |
+| `count()`    | `count()`        | WavefrontQL must use the `ts()` function to approximate the effect of the PromQL function. |
+| `count()`    | `count_values()` | To emulate PromQL function, use a Wavefront `events` function. |
+| `bottomk()`  | `bottomk()`      | _none_ |
+| `topk()`     | `topk()`         | _none_ |
+|              | `quantile()`     | _none_ |
+
+## Binary operators
+
+| Wavefront | PromQL | Notes  |
+| --------- | ------ | ------ |
+| `.eq()`   | `==`   | _none_ |
+| `.ne()`   | `!=`   | _none_ |
+| `.gt()`   | `>`    | _none_ |
+| `.lt()`   | `<`    | _none_ |
+| `.ge()`   | `>=`   | _none_ |
+| `.le()`   | `<=`   | _none_ |
+
+## Boolean operations
+
+| Wavefront      | PromQL   | Notes        |
+| -------------- | -------- | ------------ |
+| `intersect()`  | `and`    | intersection |
+| `union()`      | `or`     | union        |
+| `complement()` | `unless` | complement   |

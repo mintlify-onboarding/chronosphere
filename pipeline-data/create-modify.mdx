@@ -1,0 +1,224 @@
+---
+title: Create and modify pipelines
+'og:description': Learn how to create, modify, and delete custom pipelines.
+sidebarTitle: Create and modify pipelines
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+You can use Chronosphere Telemetry Pipeline to create, modify, and delete
+pipelines.
+
+## Create a pipeline
+
+Select from the following methods to create a pipeline.
+
+<Tabs>
+<Tab title="Web interface" id="ui-create">
+
+To create a pipeline using the Telemetry Pipeline web interface:
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Open the project where you want to deploy a new pipeline.
+1. Go to **Core Instances**, and then click the name of the Core Instance running
+   in the environment where you want to deploy a new pipeline.
+1. In the **Data Pipelines** section, click **Create Data Pipeline**.
+1. In the dialog that appears, configure the following options:
+   - **Name**: The name to give your pipeline.
+   - **Service type**: The [Service type](/pipeline-configure/networking#service-types)
+   to use for your pipeline.
+   - **Workload type**: The [Workload type](/pipeline-configure/kubernetes/workloads)
+   to use for your pipeline.
+   - **Storage class**: ([StatefulSet](/pipeline-configure/kubernetes/workloads#additional-settings-for-statefulset-pipelines)
+   pipelines only) The [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
+   to use for each Pod's [PersistentVolume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
+   After you set this value for a StatefulSet pipeline, you can't modify it.
+   - **Retention policy when scaled**: ([StatefulSet](/pipeline-configure/kubernetes/workloads#additional-settings-for-statefulset-pipelines)
+   pipelines only) Specifies whether Kubernetes should retain or delete the
+  [PersistentVolumeClaim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
+  (PVC) associated with each affected Pod if the StatefulSet pipeline is scaled down.
+   - **Retention policy when deleted**: ([StatefulSet](/pipeline-configure/kubernetes/workloads#additional-settings-for-statefulset-pipelines)
+   pipelines only) Specifies whether Kubernetes should retain or delete each Pod's PVC
+   if the StatefulSet pipeline is deleted.
+1. Click **Save and continue**.
+1. Add and configure your [source plugins](/pipeline-data/plugins/source-plugins) and
+   [destination plugins](/pipeline-data/plugins/destination-plugins).
+1. Add [processing rules](/pipeline-data/processing-rules) to transform the telemetry
+   data as it passes through your pipeline.
+1. Click **Save and Deploy** to finish creating your pipeline.
+
+</Tab>
+<Tab title="Pipeline CLI" id="cli-create">
+
+To create a pipeline using [Pipeline CLI](/pipeline-cli):
+
+1. Create a [pipeline configuration file](/pipeline-configure/config-files).
+   For example, this configuration file specifies a pipeline that uses
+   [mock data](/pipeline-data/plugins/source-plugins/mock-data) as a source
+   and [standard output](/pipeline-data/plugins/destination-plugins/standard-output)
+   as a destination:
+
+   ```yaml
+   pipeline:
+      inputs:
+         - dummy: '{"message":"dummy"}'
+           rate: "1"
+           samples: "0"
+           start_time_sec: "-1"
+           start_time_nsec: "-1"
+           name: dummy
+           tag: dummy.92a99f85-50b8-401d-a619-a52b14288f21
+      filters:
+         - name: lua
+           match: dummy.92a99f85-50b8-401d-a619-a52b14288f21
+      outputs:
+         - format: json
+           Name: stdout
+           Match_Regex: ^(?!.*_calyptia_cloud).*$
+   ```
+
+1. Run the following command:
+
+   ```shell /INSTANCE/ /PIPELINE/ /VERSION/ /CONFIG/
+   calyptia create pipeline \
+   --core-instance INSTANCE \
+   --name PIPELINE \
+   --image ghcr.io/chronosphereio/core/calyptia-fluent-bit:VERSION
+   --config-file CONFIG \
+   ```
+
+   Replace the following:
+
+   - _`INSTANCE`_: The name of your Core Instance.
+
+   - _`PIPELINE`_: The name to give your new pipeline.
+
+   - _`VERSION`_: Optional. The latest version of the pipeline agent.
+     You can find this value in the **Pipeline agent** column of the
+     [Telemetry Pipeline component versions](/pipelines/core-components) table.
+     For example, if the latest version of the pipeline agent is 1.23.0, provide the
+     value `1.23.0` to use the Red Hat UBI [agent image](/pipeline-configure/agent-image)
+     or `1.23.0-distroless` to use the distroless agent image.
+
+     If you don't specify a version number, Telemetry Pipeline uses the latest version
+     of the Red Hat UBI agent image by default.
+
+   - _`CONFIG`_: Optional. The name of your
+     [pipeline configuration file](/pipeline-configure/config-files). If you don't
+     specify a configuration file, Telemetry Pipeline creates an empty placeholder
+     that you can [modify at a later time](/pipeline-configure/config-files#modify-a-pipelines-configuration-file).
+
+     If you specify a configuration file, you can also add the `--skip-config-validation`
+     flag to skip the validation process for that file.
+
+Telemetry Pipeline assigns a full name to each pipeline using the
+`[core-instance-name]-[pipeline_name]` naming schema, where `[core-instance-name]`
+is the name of your Core Instance and `[pipeline-name]` is the short name you gave
+your pipeline during the `calyptia create` process.
+
+</Tab>
+</Tabs>
+
+## Modify a pipeline
+
+Select from the following methods to modify a pipeline.
+
+<Note>
+To upgrade a pipeline to the latest version, you must use Pipeline CLI. For
+more information, see [Upgrade a pipeline](/pipeline-install/upgrade#upgrade-a-pipeline).
+</Note>
+
+<Tabs>
+<Tab title="Web interface" id="ui-modify">
+
+To modify a pipeline in the Telemetry Pipeline web interface:
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Open the project that contains the pipeline that you want to modify.
+1. Go to **Core Instances**, then click the name of the Core Instance associated
+   with the pipeline you want to modify.
+1. Under **Data Pipelines**, click the name of the pipeline that you want to modify.
+1. Click **Edit**.
+1. Configure the [source](/pipeline-data/plugins/source-plugins),
+   [destination](/pipeline-data/plugins/destination-plugins),
+   and [processing rules](/pipeline-data/processing-rules) for your pipeline.
+1. Click **Save and Deploy** to save your changes.
+1. To manage advanced pipeline settings, go to the
+   <Icon icon="square-pen" />&nbsp;**Advanced Settings** page.
+   The settings on this page include:
+   - [Replicas](/pipeline-configure/scaling)
+   - [Deployment strategy](/pipeline-configure/deployment-strategies)
+   - [Version](/pipelines/core-components) and [agent image type](/pipeline-configure/agent-image)
+   - [Files](/pipeline-configure/files)
+   - [Secrets](/pipeline-configure/secrets)
+
+</Tab>
+<Tab title="Pipeline CLI" id="cli-modify">
+
+To modify a pipeline using Pipeline CLI, follow these guides:
+
+- [Modify a pipeline's configuration file](/pipeline-configure/config-files#modify-a-pipelines-configuration-file)
+- [Add a file to a pipeline](/pipeline-configure/files#add-a-file-to-a-pipeline)
+- [Add a secret to a pipeline](/pipeline-configure/secrets#add-a-secret)
+- [Update a pipeline's parsers](/pipeline-data/parsers#custom-parsers)
+- [Add or remove replicas](/pipeline-configure/scaling#fixed-number-of-replicas)
+- [Enable horizontal pod autoscaling](/pipeline-configure/scaling#horizontal-pod-autoscaling)
+- [Modify a pipeline's Service type](/pipeline-configure/networking#modify-the-service-type-of-an-existing-pipeline)
+- [Modify a pipeline's deployment strategy](/pipeline-configure/deployment-strategies)
+- [Create pipeline sidecars](/pipeline-configure/kubernetes/sidecars#create-a-sidecar)
+- [Set pipeline tolerations](/pipeline-configure/kubernetes/tolerations#pipeline-tolerations)
+- [Pause a pipeline](/pipeline-configure/scaling#pause-a-pipeline)
+
+</Tab>
+</Tabs>
+
+## Delete a pipeline
+
+Select from the following methods to delete a pipeline.
+
+<Tabs>
+<Tab title="Web interface" id="ui-delete">
+
+To delete a pipeline in the Telemetry Pipeline web interface:
+
+{/* markdownlint-disable MD013 */}
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Open the project that contains the pipeline that you want to delete.
+1. Go to **Core Instances**, then click the name of the Core Instance associated
+   with the pipeline you want to delete.
+1. Under **Data Pipelines**, find the pipeline that you want to delete, and
+   then click **<Icon icon="gear" />Settings&nbsp;<span aria-label="and then">></span> <Icon icon="trash" />Delete**.
+1. In the confirmation dialog that appears, click <Icon icon="trash" />**Delete**
+   to permanently delete your pipeline.
+
+{/* markdownlint-enable MD013 */}
+
+</Tab>
+<Tab title="Pipeline CLI" id="cli-delete">
+
+To delete a pipeline using [Pipeline CLI](/pipeline-cli):
+
+1. Run the following command:
+
+   ```shell /PIPELINE/
+   calyptia delete pipeline PIPELINE
+   ```
+
+   Replace _`PIPELINE`_ with either the name or [unique ID](/pipeline-configure/metadata#get-pipeline-ids)
+   of the pipeline to delete.
+
+1. Optional: If you installed Telemetry Pipeline in a Kubernetes cluster, use
+   `kubectl` to delete the CRDs associated with your pipeline. This ensures no
+   stray pipeline resources persist in your cluster. To do so, run the following
+   command:
+
+   ```shell /NAME/
+   kubectl delete pipeline NAME
+   ```
+
+   Replace _`NAME`_ with the name of the pipeline you deleted in the previous
+   step.
+
+</Tab>
+</Tabs>

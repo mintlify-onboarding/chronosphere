@@ -1,0 +1,493 @@
+---
+title: Azure metrics integration
+sidebarTitle: Overview
+'og:description': Learn how to ingest Azure metrics into Chronosphere Observability Platform.
+---
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<LimitedAvail />
+
+[Azure metrics](https://learn.microsoft.com/en-us/azure/azure-monitor/metrics/data-platform-metrics)
+integration connects Chronosphere Observability Platform with Azure Monitor to ingest
+metrics.
+
+## Create the Azure principal
+
+Configure Azure to allow Observability Platform to access metrics in Azure. To do so:
+
+1. Ensure the Azure Managed Identity principal is assigned the built-in
+   [`Reader`](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/general#reader)
+   role for every subscription within scope. The `Reader` role is more restrictive
+   than the `MonitoringReader` role. It's important to create a dedicated Managed
+   Identity to isolate the Azure API quota used by Chronosphere.
+
+1. Contact [Chronosphere Support](/support) to obtain the
+   specific `credential_issuer` and `credential_subject` for your tenant.
+1. Copy both the `credential_issuer` and `credential_subject` variables exactly
+   as specified to allow authentication between your Chronosphere tenant and Azure.
+
+1. When creating the Azure principal, grant it access to subscriptions using one of
+   the following options:
+
+   - Management group-based: Access can be granted at the
+   [Azure Management Group](https://learn.microsoft.com/en-us/azure/governance/management-groups/overview)
+   level. This is the preferred approach, as it means that the subscriptions that
+   Chronosphere has access to are kept in sync with the management group. As
+   subscriptions are added and removed from the management group, these changes will
+   be automatically reflected in Chronosphere. The same principal can also be granted
+   access to multiple management groups.
+   - Subscription-based: Access can be granted at the subscription level. In this case,
+   the principal is granted access to individual subscriptions. This approach provides
+   the most control, but has the downside that the list of subscriptions granted to the
+   principal must be kept up to date by the customer. Chronosphere won't be able to
+   ingest Azure metric data for subscriptions that haven't been assigned to the
+   principal.
+
+1. After provisioning the Azure Managed Identity, provide Chronosphere with the two
+   Terraform outputs defined in the following examples: `azure_tenant_id` and
+   `identity_client_id`. These outputs specify the ID of your Azure tenant and the
+   client ID of the Azure Managed Identity, respectively. Chronosphere requires both
+   values to complete the integration.
+
+### Terraform examples
+
+The following examples show how you can integrate Azure using one of the previously
+mentioned methods:
+
+<Tabs>
+<Tab title="Management group">
+
+The following Terraform code provides an example of how to create an Azure principal
+and grant it access to the subscriptions within a management group.
+
+```ruby
+################################################################################
+## Azure Provider
+
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  subscription_id = var.subscription_id
+  features {}
+}
+
+################################################################################
+## Terraform Variables
+
+variable "subscription_id" {
+  type        = string
+  description = "Azure subscription ID in which to create resources"
+}
+
+variable "location" {
+  type        = string
+  description = "Location in which to create resources"
+  default     = "eastus"
+}
+
+variable "resource_group_name" {
+  type        = string
+  description = "Name of the existing resource group to create resources in"
+}
+
+variable "management_group_id" {
+  type        = string
+  description = "Management group to be integrated with Chronosphere"
+  default     = "production-group"
+}
+
+variable "principal_name" {
+  type        = string
+  description = "Name of the Azure principal managed identity"
+  default     = "chronosphere-integration"
+}
+
+variable "credential_issuer" {
+  type        = string
+  description = "Federated identity credential issuer"
+  default     = "https://accounts.google.com"
+}
+
+variable "credential_subject" {
+  type        = string
+  description = "Unique ID of your tenant-specific GCP service account"
+  default     = "123456789123456789"
+}
+
+################################################################################
+## Azure Resources
+
+data "azurerm_management_group" "this" {
+  name = var.management_group_id
+}
+
+resource "azurerm_user_assigned_identity" "chronosphere" {
+  name                = var.principal_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+}
+
+# Assign the principal the Reader role on all subscriptions in the management group.
+resource "azurerm_role_assignment" "chronosphere" {
+  principal_id         = azurerm_user_assigned_identity.chronosphere.principal_id
+  scope                = data.azurerm_management_group.this.id
+  role_definition_name = "Reader"
+}
+
+resource "azurerm_federated_identity_credential" "chronosphere" {
+  name                = var.principal_name
+  issuer              = var.credential_issuer
+  subject             = var.credential_subject
+  resource_group_name = var.resource_group_name
+  parent_id           = azurerm_user_assigned_identity.chronosphere.id
+  audience            = ["api://AzureADTokenExchange"]
+}
+
+################################################################################
+## Terraform Outputs
+
+output "azure_tenant_id" {
+  value = azurerm_user_assigned_identity.chronosphere.tenant_id
+}
+
+output "identity_client_id" {
+  value = azurerm_user_assigned_identity.chronosphere.client_id
+}
+```
+
+</Tab>
+<Tab title="Individual subscription">
+
+The following Terraform code provides an example of how to create an Azure principal
+and grant it access to individual subscriptions. In this example, read access is
+granted to all accessible subscriptions.
+
+```ruby
+################################################################################
+## Azure Provider
+
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  subscription_id = var.subscription_id
+  features {}
+}
+
+################################################################################
+## Terraform Variables
+
+variable "subscription_id" {
+  type        = string
+  description = "Azure subscription ID in which to create resources"
+}
+
+variable "location" {
+  type        = string
+  description = "Location in which to create resources"
+  default     = "eastus"
+}
+
+variable "resource_group_name" {
+  type        = string
+  description = "Name of the existing resource group to create resources in"
+}
+
+variable "principal_name" {
+  type        = string
+  description = "Name of the Azure principal managed identity"
+  default     = "chronosphere-integration"
+}
+
+variable "credential_issuer" {
+  type        = string
+  description = "Federated identity credential issuer"
+  default     = "https://accounts.google.com"
+}
+
+variable "credential_subject" {
+  type        = string
+  description = "Unique ID of your tenant-specific GCP service account"
+  default     = "123456789123456789"
+}
+
+################################################################################
+## Azure Resources
+
+data "azurerm_subscriptions" "all" {}
+
+resource "azurerm_user_assigned_identity" "chronosphere" {
+  name                = var.principal_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+}
+
+# Assign the principal the Reader role on each subscription.
+resource "azurerm_role_assignment" "chronosphere" {
+  for_each             = toset(data.azurerm_subscriptions.all.subscriptions[*].id)
+  principal_id         = azurerm_user_assigned_identity.chronosphere.principal_id
+  scope                = each.key
+  role_definition_name = "Reader"
+}
+
+resource "azurerm_federated_identity_credential" "chronosphere" {
+  name                = var.principal_name
+  issuer              = var.credential_issuer
+  subject             = var.credential_subject
+  resource_group_name = var.resource_group_name
+  parent_id           = azurerm_user_assigned_identity.chronosphere.id
+  audience            = ["api://AzureADTokenExchange"]
+}
+
+################################################################################
+## Terraform Outputs
+
+output "azure_tenant_id" {
+  value = azurerm_user_assigned_identity.chronosphere.tenant_id
+}
+
+output "identity_client_id" {
+  value = azurerm_user_assigned_identity.chronosphere.client_id
+}
+```
+
+</Tab>
+</Tabs>
+
+## Set up Observability Platform to receive Azure data
+
+After configuring Azure to enable access to metrics, you must configure
+Observability Platform to receive and process those metrics.
+
+To access the API directly, see the
+[Chronosphere API for Azure metrics](https://docs.chronosphere.io/tooling/api-info/definition/operations/ListAzureMetricsIntegrations).
+
+### View Azure metrics integrations
+
+To list or view Azure metrics integrations, use one of the following options:
+
+<Tabs>
+<Tab title="Chronoctl" id="azure-view-chronoctl">
+
+To list your Azure metrics integrations using [Chronoctl](/tooling/chronoctl), use
+this command:
+
+```shell
+chronoctl azure-metrics-integrations list
+```
+
+To view a Azure metrics integration, use this command:
+
+```shell
+chronoctl azure-metrics-integrations read SLUG
+```
+
+Replace _`SLUG`_ with the unique identifier of the Azure metrics integration.
+</Tab>
+<Tab title="API" id="list-azure-API">
+
+To list Azure metrics integrations with the Chronosphere API, use the
+[`ListAzureMetricsIntegrations`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ListAzureMetricsIntegrations)
+endpoint.
+
+To view a single Azure metrics integration with the Chronosphere API, use
+the [`ReadAzureMetricsIntegration`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ReadAzureMetricsIntegration)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Create or update an Azure metrics integration
+
+You can create or update your Azure metrics integration with Observability Platform by
+applying a configuration file with Chronoctl or Terraform. You must add your
+account principal to an Observability Platform team with
+[SysAdmin](/administer/accounts-teams/teams#add-a-role-to-a-team) permissions.
+
+<Tabs>
+<Tab title="Chronoctl">
+
+To create a Azure metrics integration using [Chronoctl](/tooling/chronoctl), use
+this command:
+
+```shell
+chronoctl azure-metrics-integrations create --filename FILENAME
+```
+
+Replace _`FILENAME`_ with the name of your Chronoctl configuration file.
+
+To update a Azure metrics integration, use this command:
+
+```shell
+chronoctl azure-metrics-integrations update --filename FILENAME
+```
+
+Replace _`FILENAME`_ with the name of your Chronoctl configuration file.
+
+The input file uses the following structure:
+
+```yaml
+api_version: v1/config
+kind: AzureMetricsIntegration
+spec:
+  name: NAME
+  slug: SLUG
+  principal:
+    tenant_id: TENANT_ID
+    client_id: CLIENT_ID
+  scrape_config:
+    resource_types:
+      - name: RESOURCE_TYPE_NAME
+        metric_names:
+          - METRIC_NAME
+    locations:
+      - LOCATION
+    subscription_ids:
+      - SUBSCRIPTION_ID
+  usage_metrics_enabled: USAGE_METRICS_ENABLED
+  count_metrics_enabled: COUNT_METRICS_ENABLED
+  propagate_tags: PROPAGATE_TAGS
+```
+
+</Tab>
+<Tab title="Terraform">
+
+To create a Azure integration with Terraform, use the
+`chronosphere_azure_metrics_integration` resource:
+
+```ruby
+resource "chronosphere_azure_metrics_integration" "chronosphere_azure_metrics" {
+  name = "Azure Metrics"
+  slug = "azure-metrics"
+  principal {
+    tenant_id = TENANT_ID
+    client_id = CLIENT_ID
+  }
+  scrape_config {
+    resource_type {
+      name = RESOURCE_TYPE_NAME
+      metric_names = [METRIC_NAME]
+    }
+
+    locations = [LOCATION]
+    subscription_ids = [SUBSCRIPTION_ID]
+  }
+
+  usage_metrics_enabled = USAGE_METRICS_ENABLED
+  count_metrics_enabled = COUNT_METRICS_ENABLED
+  propagate_tags = PROPAGATE_TAGS
+```
+
+</Tab>
+<Tab title="API" id="list-azure-API">
+
+To create Azure integrations with the Observability Platform API, use the
+[`CreateAzureMetricsIntegration`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateAzureMetricsIntegration)
+endpoint.
+
+To update a single Azure integration with the Observability Platform API, use
+the [`UpdateAzureMetricsIntegration`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateAzureMetricsIntegration)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+Replace the following:
+
+- _`NAME`_: (string) The name of the Azure integration.
+- _`SLUG`_: (string) The unique identifier of the Azure integration.
+- _`TENANT_ID`_: (UUID) The ID of the Azure tenant that hosts the managed identity principal.
+- _`CLIENT_ID`_: (UUID) The OAuth 2.0 client ID of the managed identity principal.
+- _`RESOURCE_TYPE_NAME`_: (string) Name of the resource type.
+- _`METRIC_NAME`_: (list(string)) List of metric names to be targeted. These apply to
+  this resource type. Leave unset to retrieve all metrics.
+- _`LOCATION`_: (list(string)) Locations to be ingested for this integration. Applies
+  to all subscriptions. Leave unset to retrieve all locations.
+- _`SUBSCRIPTION_ID`_: (list(string)) Subscriptions to be targeted for this
+  integration. Leave unset to retrieve all subscriptions.
+- _`USAGE_METRICS_ENABLED`_: (Boolean) Enables collection of azure usage metrics under
+  this principal (`Microsoft.Compute`, `Microsoft.Network`, `Microsoft.Storage`).
+- _`COUNT_METRICS_ENABLED`_: (Boolean) Enables Azure count metrics for the configured
+  resources.
+- _`PROPAGATE_TAGS`_: (Boolean) Specifies whether Azure resource, group, and
+  subscription tags should be propagated as metric labels.
+
+### Delete an Azure integration
+
+Delete an Azure integration using one of the following methods:
+
+<Tabs>
+<Tab title="Chronoctl" id="delete-azure-chronoctl">
+
+Your account must have [SysAdmin](/administer/accounts-teams/teams#add-a-role-to-a-team)
+permissions to complete this action.
+
+To delete an Azure integration using [Chronoctl](/tooling/chronoctl), use
+this command:
+
+Use the command:
+
+```shell
+chronoctl azure-metrics-integrations delete SLUG
+```
+
+Replace _`SLUG`_ with the unique identifier of the Azure metrics integration.
+</Tab>
+<Tab title="API" id="list-azure-API">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteAzureMetricsIntegration`](https://docs.chronosphere.io/tooling/api-info/definition/operations/DeleteAzureMetricsIntegration)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Metric information
+
+Observability Platform ingests a wide range of Azure metrics. See the
+[list of available Azure metrics](/ingest/metrics-traces/azure/azure-metrics).
+
+### Metric labels
+
+You can request custom labels for your Azure metrics as `defaultLabels`. To add
+custom labels, contact [Chronosphere Support](/support).
+
+When importing metrics, some `defaultLabels` might conflict with prefixes which
+already exist in Observability Platform (for example, `job`). When this occurs,
+Observability Platform adds the prefix `exported_` to the source labels to prevent
+conflicts.
+
+### Find Azure metrics in Metrics Explorer
+
+Use [Metrics Explorer](/investigate/querying/metrics/explorer) to find and review the status
+of your ingested metrics.
+
+- All Azure metrics start with the prefix `azure_`. Search for this prefix to
+  display all Azure metrics in the platform.
+
+- Search supports substrings. For example, if the original Azure metric name
+  contains a substring like `storageAccounts`, searching for the substring returns
+  the Azure metric, along with other metrics containing the substring.

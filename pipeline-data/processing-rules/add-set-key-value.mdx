@@ -1,0 +1,67 @@
+---
+title: Add/set key/value
+sidebarTitle: Add/set key/value
+'og:description': Learn about the add/set key/value processing rule in Chronosphere Telemetry Pipeline.
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The add/set key/value [processing rule](/pipeline-data/processing-rules)
+adds the same key/value pair to every record that passes through your pipeline. If a
+record contains a matching key, this rule overwrites that key's associated value with
+the value you specify.
+
+## Configuration parameters
+
+<Params />
+
+| Name        | Key | Description | Default |
+| ----------- | --- | ----------- | ------- |
+| **Key**     | `key` | Required. The key to add to each record. You can use [record accessor syntax](/pipeline-data/processing-rules#record-accessor-syntax) to add or overwrite keys nested inside a parent object. | _none_ |
+| **Value**   | `value` | Required. The value to associate with your key. This value is identical for every instance of **Key**. | _none_ |
+| **Comment** | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Example
+
+Using the add/set key/value rule lets you add identifying information to events,
+such as including the source from which they originate or their associated user
+action.
+
+For example, given this sample log data:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"page_id":30,"action":"purchase", "source": "storefront"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"page_id":10,"action":"purchase", "source": "storefront"}
+{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":1,"page_id":50,"action":"click"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"page_id":40,"action":"purchase", "source": "storefront"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"page_id":30,"action":"purchase", "source": "storefront"}
+{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":2,"page_id":40,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":3,"page_id":30,"action":"click"}
+{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":1,"page_id":20,"action":"view"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"page_id":50,"action":"purchase", "source": "storefront"}
+{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":2,"page_id":10,"action":"view"}
+{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":1,"page_id":50,"action":"view"}
+```
+
+A rule with the **Key** value `source` and the **Value** value `acme-wholesale` returns the
+following result:
+
+```json
+{"source":"acme-wholesale","user_id":3,"page_id":30,"action":"purchase","timestamp":"2023-03-28T09:08:41.64283645Z"}
+{"source":"acme-wholesale","user_id":4,"page_id":10,"action":"purchase","timestamp":"2023-03-28T09:08:42.643343109Z"}
+{"source":"acme-wholesale","user_id":1,"page_id":50,"action":"click","timestamp":"2023-03-28T09:08:48.643600498Z"}
+{"source":"acme-wholesale","user_id":5,"page_id":40,"action":"purchase","timestamp":"2023-03-28T09:08:50.643773688Z"}
+{"source":"acme-wholesale","user_id":1,"page_id":30,"action":"purchase","timestamp":"2023-03-28T09:08:51.643932272Z"}
+{"source":"acme-wholesale","user_id":2,"page_id":40,"action":"click","timestamp":"2023-03-28T09:08:56.644080944Z"}
+{"source":"acme-wholesale","user_id":3,"page_id":30,"action":"click","timestamp":"2023-03-28T09:09:03.64425954Z"}
+{"source":"acme-wholesale","user_id":1,"page_id":20,"action":"view","timestamp":"2023-03-28T09:09:03.644317046Z"}
+{"source":"acme-wholesale","user_id":2,"page_id":50,"action":"purchase","timestamp":"2023-03-28T09:09:10.64447719Z"}
+{"source":"acme-wholesale","user_id":2,"page_id":10,"action":"view","timestamp":"2023-03-28T09:09:17.644810963Z"}
+{"source":"acme-wholesale","user_id":1,"page_id":50,"action":"view","timestamp":"2023-03-28T09:09:20.644994805Z"}
+```
+
+A `source` key is now included for each record, with the value `acme-wholesale`.
+Records that already had a key named `source` had their values replaced with the new
+value.

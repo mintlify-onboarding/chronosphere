@@ -1,0 +1,229 @@
+---
+title: Enable change events on dashboards
+sidebarTitle: Dashboards
+---
+{/* -- dri: Adam Locke -- */}
+
+
+You can enable change events for charts and panels on both
+[classic dashboards](#classic-dashboards) and
+[standard dashboards](#standard-dashboards) by adding annotations with a defined
+change events query.
+
+When enabled, change events display as a lined annotation on your dashboard panels
+and service graphs. You must enable annotations on each dashboard or service page
+where you want them to display.
+
+## Standard dashboards
+
+Complete the following steps to enable change events on
+[standard dashboard](/observe/dashboards) panels.
+
+To enable change events on standard dashboard panels:
+
+1. Click **<Icon icon="gear" alt="Settings icon"/> Settings**.
+1. From the menu, select **Events**. The **Dashboard events** dialog displays.
+1. In the **Dashboard events** dialog, click **Add event**.
+
+1. In the **Add event** dialog, enter a name for your event, such as
+   **Alerts from Slack receiver**.
+
+1. In the **Datasource** menu, select **Timeline events**.
+
+   If you select **Prometheus Event Query** as the datasource, you can enter a
+   Prometheus query to generate a visualization. This datasource has the same support
+   as
+   [Grafana annotations](https://grafana.com/docs/grafana/latest/dashboards/build-dashboards/annotate-visualizations/)
+   for Prometheus queries.
+
+1. In the box, enter the change events filter you want to display in your panel. Use
+   the change event [filtering syntax](/investigate/querying/filter-events#filtering-syntax)
+   to build your filter. For example, the following filter includes all deploy change
+   events in the `production` environment:
+
+   ```text
+   category = "deploys" AND labels.environment = "production"
+   ```
+
+   <Note>
+   If you're unsure what syntax is available, press `Control+Space` to
+      display available syntax options.
+   </Note>
+
+1. In the  **Add event** dialog, click **Add** to add your filter.
+
+1. In the **Dashboard events** dialog, click **Apply** to apply your filter to your
+   dashboard panels.
+
+1. In your dashboard, click **Save** to save your changes.
+
+Change events matching the filter display as lined annotations on your dashboard
+panels, with icons representing the
+[change event type](/observe/enable-events/use-events#categorize-change-events-intentionally).
+
+To open a change event in Changes Explorer, click the event to pin it to the panel,
+and then click **Open in Changes Explorer**. Observability Platform directs you to
+the **Summary** tab for the specific event in Changes Explorer.
+
+## Classic dashboards
+
+Complete the following steps to enable change events on
+[classic dashboards](/observe/dashboards/classic-dashboards) panels.
+
+You can use [Grafana variable syntax](https://grafana.com/docs/grafana/v7.5/variables/syntax/)
+in your query, such as including `$varname` to interpolate values from your
+dashboard. Defining variables enables dropdowns in dashboards to better filter your
+displayed data. In conjunction with annotations, you can display change events
+relevant to your other telemetry data, such as metrics and traces. For example, if
+you filter your dashboard to display only metric data for your `staging` environment,
+you can display relevant change events for that environment only.
+
+### Limitations
+
+The following limitations apply to change events for classic dashboards:
+
+- Change events created using the
+  [CreateEvent API](https://docs.chronosphere.io/tooling/api-info/data_definition/operations/CreateEvent)
+  don't display as ranged annotations on Grafana charts. Only built-in change events,
+  such as alerting monitors, and change events created through
+  [webhook integrations](/ingest/third-party)
+  display as ranged annotations.
+
+- Change events display as annotations on Grafana graph panels only. If you use
+  classic dashboards and want to display change events, your dashboard must use the
+  graph panel type. Annotations aren't supported on other panel types, such as time
+  series panels.
+
+To enable change events on classic dashboard panels:
+
+1. From a classic dashboard, click
+  **Settings <span aria-label="and then">></span> Advanced settings** to display
+  all dashboard options.
+
+1. Optional: You can define variables and include them in your annotation. When the
+   Grafana query evaluates, the current value replaces the variable.
+
+   1. Click the **Variables** tab, and then click **New**.
+
+   1. In the **General** section, enter a name for your variable in the **Name** field.
+
+   1. In the **Query Options** section, select a **Refresh** interval and enter your
+      query in the **Regex** field. For example, you might create a variable named
+     `cluster` with the following query:
+
+      ```text
+      label_values(frontend_requests, k8s_cluster)
+      ```
+
+   1. In the **Selection Options** section, choose the options for how to display
+      your data in the dashboard:
+
+      - **Multi-value**: Presents each value for variable data as a checkbox in the
+        variable dropdown to let you select multiple values.
+      - **Include all option**: Provides an **All** option in the variable dropdown
+        menu to let you select all available values.
+
+      Refer to [Grafana selection options](#grafana-selection-options) for more
+      information and examples about these options.
+
+1. Click the **Annotations** tab, and then click **Add Annotation Query**.
+
+1. In the **Annotations** page, enter a name for your annotation and select
+   **Chronosphere Timeline** as the data source.
+
+1. In the **Query** field, enter a change events query to define the data you want to
+   display on your dashboard. If you defined variables, you can enter them in your
+   query.
+
+   For example, the following query displays all change events categorized as
+   `deploys` that contain an `environment` label including `production-`, and
+   includes the `$cluster` variable you defined previously:
+
+   ```text
+   category = "deploys" AND labels.environment =~ "production-.*" AND title =~ ".*($cluster).*"
+   ```
+
+1. In the **Include Labels** field, enter a comma-separated list of labels you want
+   to display in the annotation tooltip. If you enter a label that isn't mapped to an
+   event, Observability Platform doesn't display that label in the annotation. For
+   example:
+
+   ```text
+   deployment_id,target_service,user_email
+   ```
+
+1. Click **Add** to add your annotation, then click **Save dashboard** to save your
+   changes.
+
+### Grafana selection options
+
+When enabling change events for Grafana dashboards, you can define variables to
+include in your annotation. In the **Selection Options** section, you can choose
+**Multi-value**, **Include all option**, or both options. The approach you choose
+depends on your use case and user requirements, in addition to whether you integrate
+with other annotation plugins.
+
+- **Multi-value**: This option lets you select multiple values simultaneously, which
+  is ideal for scenarios where you must associate annotations with various tags or
+  categories.
+- **Include all option**: This option lets you select all values simultaneously. You
+  can also enter a custom value to display annotations across all available values.
+
+The following examples show how these settings operate for the Chronosphere Timeline
+data source. The query you construct and the end result differs depending on the data
+source you choose when defining a Grafana annotation.
+
+Each of the following examples use the same query in the **Query** field of the
+**Query Options** section when defining a variable called `cluster` for a Grafana
+annotation:
+
+```text
+label_values(production_request_ms_bucket, production_k8s_cluster)
+```
+
+#### Select neither option
+
+If you select neither **Multi-value** or **Include all option**, the **cluster**
+dropdown in your classic dashboard lets you select only one value at a time.
+
+#### Select include all with custom value
+
+If you select **Include all option** and enter a wildcard (`.*`) value in the
+**Custom all value** field, the **cluster** dropdown in your Grafana dashboard
+includes an **All** option. Selecting **All** in the dropdown selects all values and
+is equivalent to the following query:
+
+```text
+cluster =~ ".*.*.*"
+```
+
+#### Select multi-value only
+
+If you select only **Multi-value**, you can select multiple values from the
+**cluster** dropdown in your classic dashboard. Selecting multiple values is
+equivalent to the following query, where `production-a|production-b|...` are the
+values:
+
+```text
+cluster =~ "production-a|production-b|production-c|test-a|test-b"
+```
+
+#### Select both multi-value and include all
+
+If you select both **Multi-value** and **Include all option**, and enter a wildcard
+(`.*`) value in the **Custom all value** field, the **cluster** dropdown in your
+classic dashboard both includes an **All** option *and* lets you select multiple
+values.
+
+Selecting **All** in the dropdown is equivalent to the following query:
+
+```text
+cluster =~ ".*.*.*"
+```
+
+Selecting multiple values in the dropdown is equivalent to the following query
+where `production-a|production-b|...` are the values:
+
+```text
+cluster =~ "production-a|production-b|production-c|test-a|test-b"
+```

@@ -1,0 +1,46 @@
+---
+title: Ingest metrics using Prometheus remote write
+'og:description': Use the Prometheus Remote-Write 2.0 API to collect and transfer metrics to Chronosphere for analysis.
+robots: noindex, nofollow
+---
+import RemoteWriteRequirements from '/snippets/_partials/remote-write-requirements.mdx';
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+<LimitedAvail/>
+
+The [Prometheus Remote-Write 2.0 API](https://prometheus.io/docs/specs/prw/remote_write_spec_2_0/)
+provides a standard interface for sending metrics data from Prometheus servers to
+compatible receivers.
+
+Chronosphere Observability Platform supports metrics ingestion by providing Prometheus
+remote write HTTP ingestion endpoints.
+
+<RemoteWriteRequirements/>
+
+## Remote write endpoints
+
+The Prometheus Remote-Write 2.0 API provides a standard interface for sending metrics
+data from Prometheus servers to compatible receivers. For Chronosphere Observability Platform,
+the best practice is to use the
+[Prometheus Agent](/ingest/metrics-traces/prometheus-remote-write/prometheus-agent)
+to send metrics with batching and retries.
+
+However, when using the [OpenTelemetry Collector](/ingest/metrics-traces/otel),
+use the OTLP exporter to send metrics instead of the Prometheus Remote Write exporter.
+
+The remote write endpoint URL is:
+
+```text
+https://<COMPANY>.chronosphere.io/data/metrics/api/v1/prom/remote/write
+```
+
+Replace `<COMPANY>` with your tenant name as used in your Observability Platform
+URL.
+
+## Prometheus Agent
+
+To get started with Prometheus remote write, configure
+[Prometheus Agent](/ingest/metrics-traces/prometheus-remote-write/prometheus-agent).

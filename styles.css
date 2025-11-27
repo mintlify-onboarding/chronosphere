@@ -1,0 +1,20 @@
+.card img {
+  margin: 0 !important;
+}
+
+div.tabs ul {
+  margin-bottom: 0 !important;
+}
+
+div.tabs > div {
+  padding: 12px;
+  background-color: #f9f9fb;
+}
+
+.dark div.tabs > div {
+  background-color: #1a1f28;
+}
+
+ol ol {
+  list-style-type: decimal !important;
+}

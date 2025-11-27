@@ -1,0 +1,53 @@
+---
+title: Send Harness events to Observability Platform
+sidebarTitle: Harness
+---
+import EventsToken from '/snippets/_partials/events-token.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+To send Harness events to Chronosphere Observability Platform, create a webhook
+within Harness and include your API key to authenticate with Observability
+Platform.
+
+## Obtain an API token
+
+Before sending events from Harness, contact [Chronosphere Support](/support) to
+obtain an API token for use with authenticating your third-party app with
+Observability Platform.
+
+<EventsToken />
+
+## Create a Harness webhook
+
+To send Harness events to Observability Platform:
+
+1. In Harness, [create a webhook](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/cd-steps/notify-users-of-pipeline-events).
+
+1. Select **Add a Notification Rule**.
+   Observability Platform supports the following Harness events:
+   - `PipelineSuccess`
+   - `PipelineFailed`
+   - `PipelineStart`
+
+      Observability Platform listens for `PipelineStart`, `PipelineSuccess`,
+      and `PipelineFailed` events. There can be several hours between a
+      `PipelineStart` event and a deployment. Chronosphere recommends using
+      `PipelineSuccess` or `PipelineFailed` unless start events are critical
+      information.
+1. Select a [**Webhook notification method**](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/cd-steps/notify-users-of-pipeline-events/#webhook-notifications).
+1. Enter the following URL:
+   `https://TENANT.chronosphere.io/api/v1/data/events/receiver/harness`
+
+   Replace _`TENANT`_ with your Observability Platform tenant name.
+
+1. Click **+ Add Headers** to add the following custom header:
+
+   ```text
+   X-Harness-Token: CHRONOSPHERE_HARNESS_TOKEN
+   ```
+
+   Replace _`CHRONOSPHERE_HARNESS_TOKEN`_ with the API token obtained from
+   Chronosphere support.
+1. Click **Finish**.

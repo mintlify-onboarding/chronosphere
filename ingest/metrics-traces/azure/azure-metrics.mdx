@@ -1,0 +1,2694 @@
+---
+title: Azure metrics available in Chronosphere Observability Platform
+sidebarTitle: Azure metrics
+shortDesc: Azure metrics available in Observability Platform
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+Observability Platform ingests the following metrics for Azure. If there are
+additional metrics you want to ingest, contact [Chronosphere Support](/support).
+
+By default, all metrics are scraped. Users can customize the allowed metrics by
+customizing
+[the scrape configuration](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/prometheus-metrics-scrape-configuration).
+
+For specific information about each metric, see Microsoft's documentation for
+[Supported metrics with AzureMonitor](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/metrics-index).
+
+{/* vale off */}
+
+{/* begin auto-generated */}
+
+## microsoft.analysisservices/servers
+
+- `CleanerCurrentPrice`
+- `CleanerMemoryNonshrinkable`
+- `CleanerMemoryShrinkable`
+- `CommandPoolBusyThreads`
+- `CommandPoolIdleThreads`
+- `CommandPoolJobQueueLength`
+- `CurrentConnections`
+- `CurrentUserSessions`
+- `LongParsingBusyThreads`
+- `LongParsingIdleThreads`
+- `LongParsingJobQueueLength`
+- `MemoryLimitHard`
+- `MemoryLimitHigh`
+- `MemoryLimitLow`
+- `MemoryLimitVertiPaq`
+- `MemoryUsage`
+- `ProcessingPoolBusyIOJobThreads`
+- `ProcessingPoolBusyNonIOThreads`
+- `ProcessingPoolIOJobQueueLength`
+- `ProcessingPoolIdleIOJobThreads`
+- `ProcessingPoolIdleNonIOThreads`
+- `ProcessingPoolJobQueueLength`
+- `QueryPoolBusyThreads`
+- `QueryPoolIdleThreads`
+- `QueryPoolJobQueueLength`
+- `Quota`
+- `QuotaBlocked`
+- `RowsConvertedPerSec`
+- `RowsReadPerSec`
+- `RowsWrittenPerSec`
+- `ShortParsingBusyThreads`
+- `ShortParsingIdleThreads`
+- `ShortParsingJobQueueLength`
+- `SuccessfullConnectionsPerSec`
+- `TotalConnectionFailures`
+- `TotalConnectionRequests`
+- `VertiPaqNonpaged`
+- `VertiPaqPaged`
+- `mashup_engine_memory_metric`
+- `mashup_engine_private_bytes_metric`
+- `mashup_engine_qpu_metric`
+- `mashup_engine_virtual_bytes_metric`
+- `memory_metric`
+- `memory_thrashing_metric`
+- `private_bytes_metric`
+- `qpu_metric`
+- `virtual_bytes_metric`
+
+## microsoft.apimanagement/service
+
+- `BackendDuration`
+- `Capacity`
+- `ConnectionAttempts`
+- `CpuPercent_Gateway`
+- `Duration`
+- `EventHubDroppedEvents`
+- `EventHubRejectedEvents`
+- `EventHubSuccessfulEvents`
+- `EventHubThrottledEvents`
+- `EventHubTimedoutEvents`
+- `EventHubTotalBytesSent`
+- `EventHubTotalEvents`
+- `EventHubTotalFailedEvents`
+- `FailedRequests`
+- `MemoryPercent_Gateway`
+- `NetworkConnectivity`
+- `OtherRequests`
+- `Requests`
+- `SuccessfulRequests`
+- `TotalRequests`
+- `UnauthorizedRequests`
+- `WebSocketMessages`
+
+## microsoft.app/containerapps
+
+- `CoresQuotaUsed`
+- `CpuPercentage`
+- `GpuUtilizationPercentage`
+- `JvmBufferCount`
+- `JvmBufferMemoryLimit`
+- `JvmBufferMemoryUsage`
+- `JvmGcCount`
+- `JvmGcDuration`
+- `JvmMemoryCommitted`
+- `JvmMemoryLimit`
+- `JvmMemoryTotalCommitted`
+- `JvmMemoryTotalLimit`
+- `JvmMemoryTotalUsed`
+- `JvmMemoryUsed`
+- `JvmThreadCount`
+- `MemoryPercentage`
+- `Replicas`
+- `Requests`
+- `ResiliencyConnectTimeouts`
+- `ResiliencyEjectedHosts`
+- `ResiliencyEjectionsAborted`
+- `ResiliencyRequestRetries`
+- `ResiliencyRequestTimeouts`
+- `ResiliencyRequestsPendingConnectionPool`
+- `ResponseTime`
+- `RestartCount`
+- `RxBytes`
+- `TotalCoresQuotaUsed`
+- `TxBytes`
+- `UsageNanoCores`
+- `WorkingSetBytes`
+
+## microsoft.appconfiguration/configurationstores
+
+- `DailyStorageUsage`
+- `HttpIncomingRequestCount`
+- `HttpIncomingRequestDuration`
+- `ReplicationLatency`
+- `RequestQuotaUsage`
+- `SnapshotStorageSize`
+- `ThrottledHttpRequestCount`
+
+## microsoft.automation/automationaccounts
+
+- `HybridWorkerPing`
+- `TotalJob`
+- `TotalUpdateDeploymentMachineRuns`
+- `TotalUpdateDeploymentRuns`
+
+## microsoft.batch/batchaccounts
+
+- `CoreCount`
+- `CreatingNodeCount`
+- `IdleNodeCount`
+- `JobDeleteCompleteEvent`
+- `JobDeleteStartEvent`
+- `JobDisableCompleteEvent`
+- `JobDisableStartEvent`
+- `JobStartEvent`
+- `JobTerminateCompleteEvent`
+- `JobTerminateStartEvent`
+- `LeavingPoolNodeCount`
+- `LowPriorityCoreCount`
+- `OfflineNodeCount`
+- `PoolCreateEvent`
+- `PoolDeleteCompleteEvent`
+- `PoolDeleteStartEvent`
+- `PoolResizeCompleteEvent`
+- `PoolResizeStartEvent`
+- `PreemptedNodeCount`
+- `RebootingNodeCount`
+- `ReimagingNodeCount`
+- `RunningNodeCount`
+- `StartTaskFailedNodeCount`
+- `StartingNodeCount`
+- `TaskCompleteEvent`
+- `TaskFailEvent`
+- `TaskStartEvent`
+- `TotalLowPriorityNodeCount`
+- `TotalNodeCount`
+- `UnusableNodeCount`
+- `WaitingForStartTaskNodeCount`
+
+## microsoft.cache/redis
+
+- `ConnectedClientsUsingAADToken`
+- `GeoReplicationConnectivityLag`
+- `GeoReplicationDataSyncOffset`
+- `GeoReplicationFullSyncEventFinished`
+- `GeoReplicationFullSyncEventStarted`
+- `GeoReplicationHealthy`
+- `LatencyP99`
+- `allConnectionsClosedPerSecond`
+- `allConnectionsCreatedPerSecond`
+- `allcacheRead`
+- `allcacheWrite`
+- `allcachehits`
+- `allcachemisses`
+- `allconnectedclients`
+- `allevictedkeys`
+- `allexpiredkeys`
+- `allgetcommands`
+- `alloperationsPerSecond`
+- `allpercentprocessortime`
+- `allserverLoad`
+- `allsetcommands`
+- `alltotalcommandsprocessed`
+- `alltotalkeys`
+- `allusedmemory`
+- `allusedmemoryRss`
+- `allusedmemorypercentage`
+- `cacheLatency`
+- `cacheRead`
+- `cacheRead0`
+- `cacheRead1`
+- `cacheRead2`
+- `cacheRead3`
+- `cacheRead4`
+- `cacheRead5`
+- `cacheRead6`
+- `cacheRead7`
+- `cacheRead8`
+- `cacheRead9`
+- `cacheWrite`
+- `cacheWrite0`
+- `cacheWrite1`
+- `cacheWrite2`
+- `cacheWrite3`
+- `cacheWrite4`
+- `cacheWrite5`
+- `cacheWrite6`
+- `cacheWrite7`
+- `cacheWrite8`
+- `cacheWrite9`
+- `cachehits`
+- `cachehits0`
+- `cachehits1`
+- `cachehits2`
+- `cachehits3`
+- `cachehits4`
+- `cachehits5`
+- `cachehits6`
+- `cachehits7`
+- `cachehits8`
+- `cachehits9`
+- `cachemisses`
+- `cachemisses0`
+- `cachemisses1`
+- `cachemisses2`
+- `cachemisses3`
+- `cachemisses4`
+- `cachemisses5`
+- `cachemisses6`
+- `cachemisses7`
+- `cachemisses8`
+- `cachemisses9`
+- `cachemissrate`
+- `connectedclients`
+- `connectedclients0`
+- `connectedclients1`
+- `connectedclients2`
+- `connectedclients3`
+- `connectedclients4`
+- `connectedclients5`
+- `connectedclients6`
+- `connectedclients7`
+- `connectedclients8`
+- `connectedclients9`
+- `errors`
+- `evictedkeys`
+- `evictedkeys0`
+- `evictedkeys1`
+- `evictedkeys2`
+- `evictedkeys3`
+- `evictedkeys4`
+- `evictedkeys5`
+- `evictedkeys6`
+- `evictedkeys7`
+- `evictedkeys8`
+- `evictedkeys9`
+- `expiredkeys`
+- `expiredkeys0`
+- `expiredkeys1`
+- `expiredkeys2`
+- `expiredkeys3`
+- `expiredkeys4`
+- `expiredkeys5`
+- `expiredkeys6`
+- `expiredkeys7`
+- `expiredkeys8`
+- `expiredkeys9`
+- `getcommands`
+- `getcommands0`
+- `getcommands1`
+- `getcommands2`
+- `getcommands3`
+- `getcommands4`
+- `getcommands5`
+- `getcommands6`
+- `getcommands7`
+- `getcommands8`
+- `getcommands9`
+- `operationsPerSecond`
+- `operationsPerSecond0`
+- `operationsPerSecond1`
+- `operationsPerSecond2`
+- `operationsPerSecond3`
+- `operationsPerSecond4`
+- `operationsPerSecond5`
+- `operationsPerSecond6`
+- `operationsPerSecond7`
+- `operationsPerSecond8`
+- `operationsPerSecond9`
+- `percentProcessorTime`
+- `percentProcessorTime0`
+- `percentProcessorTime1`
+- `percentProcessorTime2`
+- `percentProcessorTime3`
+- `percentProcessorTime4`
+- `percentProcessorTime5`
+- `percentProcessorTime6`
+- `percentProcessorTime7`
+- `percentProcessorTime8`
+- `percentProcessorTime9`
+- `serverLoad`
+- `serverLoad0`
+- `serverLoad1`
+- `serverLoad2`
+- `serverLoad3`
+- `serverLoad4`
+- `serverLoad5`
+- `serverLoad6`
+- `serverLoad7`
+- `serverLoad8`
+- `serverLoad9`
+- `setcommands`
+- `setcommands0`
+- `setcommands1`
+- `setcommands2`
+- `setcommands3`
+- `setcommands4`
+- `setcommands5`
+- `setcommands6`
+- `setcommands7`
+- `setcommands8`
+- `setcommands9`
+- `totalcommandsprocessed`
+- `totalcommandsprocessed0`
+- `totalcommandsprocessed1`
+- `totalcommandsprocessed2`
+- `totalcommandsprocessed3`
+- `totalcommandsprocessed4`
+- `totalcommandsprocessed5`
+- `totalcommandsprocessed6`
+- `totalcommandsprocessed7`
+- `totalcommandsprocessed8`
+- `totalcommandsprocessed9`
+- `totalkeys`
+- `totalkeys0`
+- `totalkeys1`
+- `totalkeys2`
+- `totalkeys3`
+- `totalkeys4`
+- `totalkeys5`
+- `totalkeys6`
+- `totalkeys7`
+- `totalkeys8`
+- `totalkeys9`
+- `usedmemory`
+- `usedmemory0`
+- `usedmemory1`
+- `usedmemory2`
+- `usedmemory3`
+- `usedmemory4`
+- `usedmemory5`
+- `usedmemory6`
+- `usedmemory7`
+- `usedmemory8`
+- `usedmemory9`
+- `usedmemoryRss`
+- `usedmemoryRss0`
+- `usedmemoryRss1`
+- `usedmemoryRss2`
+- `usedmemoryRss3`
+- `usedmemoryRss4`
+- `usedmemoryRss5`
+- `usedmemoryRss6`
+- `usedmemoryRss7`
+- `usedmemoryRss8`
+- `usedmemoryRss9`
+- `usedmemorypercentage`
+
+## microsoft.cache/redisenterprise
+
+- `cacheLatency`
+- `cacheRead`
+- `cacheWrite`
+- `cachehits`
+- `cachemisses`
+- `connectedclients`
+- `evictedkeys`
+- `expiredkeys`
+- `geoReplicationHealthy`
+- `getcommands`
+- `operationsPerSecond`
+- `percentProcessorTime`
+- `serverLoad`
+- `setcommands`
+- `totalcommandsprocessed`
+- `totalkeys`
+- `usedmemory`
+- `usedmemorypercentage`
+
+## microsoft.cdn/profiles
+
+- `ActiveWebSocketConnections`
+- `AverageWebSocketConnectionDuration`
+- `ByteHitRatio`
+- `OriginHealthPercentage`
+- `OriginLatency`
+- `OriginRequestCount`
+- `Percentage4XX`
+- `Percentage5XX`
+- `RequestCount`
+- `RequestSize`
+- `ResponseSize`
+- `TotalLatency`
+- `WebApplicationFirewallCaptchaRequestCount`
+- `WebApplicationFirewallJsRequestCount`
+- `WebApplicationFirewallRequestCount`
+- `WebSocketConnections`
+
+## microsoft.cognitiveservices/accounts
+
+- `ActionFeatureIdOccurrences`
+- `ActionFeaturesPerEvent`
+- `ActionIdOccurrences`
+- `ActionNamespacesPerEvent`
+- `ActionsPerEvent`
+- `ActiveTokens`
+- `AudioCompletionTokens`
+- `AudioPromptTokens`
+- `AudioSecondsBatchTranscribed`
+- `AudioSecondsBatchWhisperTranscribed`
+- `AudioSecondsFastTranscribed`
+- `AudioSecondsFastWhisperTranscribed`
+- `AudioSecondsTranscribed`
+- `AudioSecondsTranslated`
+- `AvatarModelHostingSeconds`
+- `AvatarModelTrainingSeconds`
+- `AzureOpenAIAvailabilityRate`
+- `AzureOpenAIContextTokensCacheMatchRate`
+- `AzureOpenAINormalizedTBTInMS`
+- `AzureOpenAINormalizedTTFTInMS`
+- `AzureOpenAIProvisionedManagedUtilization`
+- `AzureOpenAIProvisionedManagedUtilizationV2`
+- `AzureOpenAIRequests`
+- `AzureOpenAITTLTInMS`
+- `AzureOpenAITimeToResponse`
+- `AzureOpenAITokenPerSecond`
+- `BaselineEstimatorOverallReward`
+- `BaselineEstimatorSlotReward`
+- `BaselineRandomEstimatorOverallReward`
+- `BaselineRandomEstimatorSlotReward`
+- `BaselineRandomEventCount`
+- `BaselineRandomReward`
+- `BlockedCalls`
+- `CarnegieInferenceCount`
+- `CharactersTrained`
+- `CharactersTranslated`
+- `ClientErrors`
+- `ComputerVisionTransactions`
+- `ContentSafetyImageAnalyzeRequestCount`
+- `ContentSafetyTextAnalyzeRequestCount`
+- `ContextFeatureIdOccurrences`
+- `ContextFeaturesPerEvent`
+- `ContextNamespacesPerEvent`
+- `CustomVisionTrainingTime`
+- `CustomVisionTransactions`
+- `DataIn`
+- `DataOut`
+- `DocumentCharactersTranslated`
+- `DocumentCustomCharactersTranslated`
+- `FaceImagesTrained`
+- `FaceTransactions`
+- `FacesStored`
+- `FeatureCardinality_Action`
+- `FeatureCardinality_Context`
+- `FeatureCardinality_Slot`
+- `FineTunedTrainingHours`
+- `GeneratedTokens`
+- `ImagesStored`
+- `InputTokens`
+- `JobDuration`
+- `LUISSpeechRequests`
+- `LUISTextRequests`
+- `Latency`
+- `LearnedEvents`
+- `MatchedRewards`
+- `ModelAvailabilityRate`
+- `ModelRequests`
+- `NonActivatedEvents`
+- `NormalizedTimeBetweenTokens`
+- `NormalizedTimeToFirstToken`
+- `NumberOfSlots`
+- `NumberofSpeakerProfiles`
+- `ObservedRewards`
+- `OneDocumentCharactersTranslated`
+- `OneDocumentCustomCharactersTranslated`
+- `OnlineEstimatorOverallReward`
+- `OnlineEstimatorSlotReward`
+- `OnlineEventCount`
+- `OnlineReward`
+- `OutputTokens`
+- `ProcessedCharacters`
+- `ProcessedHealthTextRecords`
+- `ProcessedImages`
+- `ProcessedPages`
+- `ProcessedPromptTokens`
+- `ProcessedTextRecords`
+- `ProvisionedUtilization`
+- `QuestionAnsweringTextRecords`
+- `RAIAbusiveUsersCount`
+- `RAIHarmfulRequests`
+- `RAIRejectedRequests`
+- `RAISystemEvent`
+- `RAITotalRequests`
+- `Ratelimit`
+- `Reward`
+- `ServerErrors`
+- `SlotFeatureIdOccurrences`
+- `SlotFeaturesPerEvent`
+- `SlotIdOccurrences`
+- `SlotNamespacesPerEvent`
+- `SlotReward`
+- `SpeakerRecognitionTransactions`
+- `SpeechModelHostingHours`
+- `SpeechSessionDuration`
+- `SuccessRate`
+- `SuccessfulCalls`
+- `SynthesizedCharacters`
+- `TextCharactersTranslated`
+- `TextCustomCharactersTranslated`
+- `TextTrainedCharacters`
+- `TimeToLastByte`
+- `TimeToResponse`
+- `TokenTransaction`
+- `TokensPerSecond`
+- `TotalCalls`
+- `TotalErrors`
+- `TotalEvents`
+- `TotalTokenCalls`
+- `TotalTokens`
+- `TotalTransactions`
+- `TranslatorProAppSeconds`
+- `UserBaselineEventCount`
+- `UserBaselineReward`
+- `VideoSecondsSynthesized`
+- `VoiceModelHostingHours`
+- `VoiceModelTrainingMinutes`
+
+## microsoft.compute/virtualmachines
+
+- `Available Memory Bytes`
+- `Available Memory Percentage`
+- `CPU Credits Consumed`
+- `CPU Credits Remaining`
+- `Data Disk Bandwidth Consumed Percentage`
+- `Data Disk IOPS Consumed Percentage`
+- `Data Disk Latency`
+- `Data Disk Max Burst Bandwidth`
+- `Data Disk Max Burst IOPS`
+- `Data Disk Queue Depth`
+- `Data Disk Read Bytes/sec`
+- `Data Disk Read Operations/Sec`
+- `Data Disk Target Bandwidth`
+- `Data Disk Target IOPS`
+- `Data Disk Used Burst BPS Credits Percentage`
+- `Data Disk Used Burst IO Credits Percentage`
+- `Data Disk Write Bytes/sec`
+- `Data Disk Write Operations/Sec`
+- `Disk Read Bytes`
+- `Disk Read Operations/Sec`
+- `Disk Write Bytes`
+- `Disk Write Operations/Sec`
+- `Inbound Flows`
+- `Inbound Flows Maximum Creation Rate`
+- `Network In`
+- `Network In Total`
+- `Network Out`
+- `Network Out Total`
+- `OS Disk Bandwidth Consumed Percentage`
+- `OS Disk IOPS Consumed Percentage`
+- `OS Disk Latency`
+- `OS Disk Max Burst Bandwidth`
+- `OS Disk Max Burst IOPS`
+- `OS Disk Queue Depth`
+- `OS Disk Read Bytes/sec`
+- `OS Disk Read Operations/Sec`
+- `OS Disk Target Bandwidth`
+- `OS Disk Target IOPS`
+- `OS Disk Used Burst BPS Credits Percentage`
+- `OS Disk Used Burst IO Credits Percentage`
+- `OS Disk Write Bytes/sec`
+- `OS Disk Write Operations/Sec`
+- `Outbound Flows`
+- `Outbound Flows Maximum Creation Rate`
+- `Percentage CPU`
+- `Premium Data Disk Cache Read Hit`
+- `Premium Data Disk Cache Read Miss`
+- `Premium OS Disk Cache Read Hit`
+- `Premium OS Disk Cache Read Miss`
+- `Temp Disk Latency`
+- `Temp Disk Queue Depth`
+- `Temp Disk Read Bytes/sec`
+- `Temp Disk Read Operations/Sec`
+- `Temp Disk Write Bytes/sec`
+- `Temp Disk Write Operations/Sec`
+- `VM Cached Bandwidth Consumed Percentage`
+- `VM Cached IOPS Consumed Percentage`
+- `VM Local Used Burst BPS Credits Percentage`
+- `VM Local Used Burst IO Credits Percentage`
+- `VM Remote Used Burst BPS Credits Percentage`
+- `VM Remote Used Burst IO Credits Percentage`
+- `VM Uncached Bandwidth Consumed Percentage`
+- `VM Uncached IOPS Consumed Percentage`
+- `VmAvailabilityMetric`
+
+## microsoft.compute/virtualmachinescalesets
+
+- `Available Memory Bytes`
+- `Available Memory Percentage`
+- `CPU Credits Consumed`
+- `CPU Credits Remaining`
+- `Data Disk Bandwidth Consumed Percentage`
+- `Data Disk IOPS Consumed Percentage`
+- `Data Disk Latency`
+- `Data Disk Max Burst Bandwidth`
+- `Data Disk Max Burst IOPS`
+- `Data Disk Queue Depth`
+- `Data Disk Read Bytes/sec`
+- `Data Disk Read Operations/Sec`
+- `Data Disk Target Bandwidth`
+- `Data Disk Target IOPS`
+- `Data Disk Used Burst BPS Credits Percentage`
+- `Data Disk Used Burst IO Credits Percentage`
+- `Data Disk Write Bytes/sec`
+- `Data Disk Write Operations/Sec`
+- `Disk Read Bytes`
+- `Disk Read Operations/Sec`
+- `Disk Write Bytes`
+- `Disk Write Operations/Sec`
+- `Inbound Flows`
+- `Inbound Flows Maximum Creation Rate`
+- `Network In`
+- `Network In Total`
+- `Network Out`
+- `Network Out Total`
+- `OS Disk Bandwidth Consumed Percentage`
+- `OS Disk IOPS Consumed Percentage`
+- `OS Disk Latency`
+- `OS Disk Max Burst Bandwidth`
+- `OS Disk Max Burst IOPS`
+- `OS Disk Queue Depth`
+- `OS Disk Read Bytes/sec`
+- `OS Disk Read Operations/Sec`
+- `OS Disk Target Bandwidth`
+- `OS Disk Target IOPS`
+- `OS Disk Used Burst BPS Credits Percentage`
+- `OS Disk Used Burst IO Credits Percentage`
+- `OS Disk Write Bytes/sec`
+- `OS Disk Write Operations/Sec`
+- `Outbound Flows`
+- `Outbound Flows Maximum Creation Rate`
+- `Percentage CPU`
+- `Premium Data Disk Cache Read Hit`
+- `Premium Data Disk Cache Read Miss`
+- `Premium OS Disk Cache Read Hit`
+- `Premium OS Disk Cache Read Miss`
+- `Temp Disk Latency`
+- `Temp Disk Queue Depth`
+- `Temp Disk Read Bytes/sec`
+- `Temp Disk Read Operations/Sec`
+- `Temp Disk Write Bytes/sec`
+- `Temp Disk Write Operations/Sec`
+- `VM Cached Bandwidth Consumed Percentage`
+- `VM Cached IOPS Consumed Percentage`
+- `VM Local Used Burst BPS Credits Percentage`
+- `VM Local Used Burst IO Credits Percentage`
+- `VM Remote Used Burst BPS Credits Percentage`
+- `VM Remote Used Burst IO Credits Percentage`
+- `VM Uncached Bandwidth Consumed Percentage`
+- `VM Uncached IOPS Consumed Percentage`
+- `VmAvailabilityMetric`
+
+## microsoft.compute/virtualmachinescalesets/virtualmachines
+
+- `Available Memory Bytes`
+- `Available Memory Percentage`
+- `CPU Credits Consumed`
+- `CPU Credits Remaining`
+- `Data Disk Bandwidth Consumed Percentage`
+- `Data Disk IOPS Consumed Percentage`
+- `Data Disk Latency`
+- `Data Disk Max Burst Bandwidth`
+- `Data Disk Max Burst IOPS`
+- `Data Disk Queue Depth`
+- `Data Disk Read Bytes/sec`
+- `Data Disk Read Operations/Sec`
+- `Data Disk Target Bandwidth`
+- `Data Disk Target IOPS`
+- `Data Disk Used Burst BPS Credits Percentage`
+- `Data Disk Used Burst IO Credits Percentage`
+- `Data Disk Write Bytes/sec`
+- `Data Disk Write Operations/Sec`
+- `Disk Read Bytes`
+- `Disk Read Operations/Sec`
+- `Disk Write Bytes`
+- `Disk Write Operations/Sec`
+- `Inbound Flows`
+- `Inbound Flows Maximum Creation Rate`
+- `Network In`
+- `Network In Total`
+- `Network Out`
+- `Network Out Total`
+- `OS Disk Bandwidth Consumed Percentage`
+- `OS Disk IOPS Consumed Percentage`
+- `OS Disk Latency`
+- `OS Disk Max Burst Bandwidth`
+- `OS Disk Max Burst IOPS`
+- `OS Disk Queue Depth`
+- `OS Disk Read Bytes/sec`
+- `OS Disk Read Operations/Sec`
+- `OS Disk Target Bandwidth`
+- `OS Disk Target IOPS`
+- `OS Disk Used Burst BPS Credits Percentage`
+- `OS Disk Used Burst IO Credits Percentage`
+- `OS Disk Write Bytes/sec`
+- `OS Disk Write Operations/Sec`
+- `Outbound Flows`
+- `Outbound Flows Maximum Creation Rate`
+- `Percentage CPU`
+- `Premium Data Disk Cache Read Hit`
+- `Premium Data Disk Cache Read Miss`
+- `Premium OS Disk Cache Read Hit`
+- `Premium OS Disk Cache Read Miss`
+- `Temp Disk Latency`
+- `Temp Disk Queue Depth`
+- `Temp Disk Read Bytes/sec`
+- `Temp Disk Read Operations/Sec`
+- `Temp Disk Write Bytes/sec`
+- `Temp Disk Write Operations/Sec`
+- `VM Cached Bandwidth Consumed Percentage`
+- `VM Cached IOPS Consumed Percentage`
+- `VM Local Used Burst BPS Credits Percentage`
+- `VM Local Used Burst IO Credits Percentage`
+- `VM Remote Used Burst BPS Credits Percentage`
+- `VM Remote Used Burst IO Credits Percentage`
+- `VM Uncached Bandwidth Consumed Percentage`
+- `VM Uncached IOPS Consumed Percentage`
+- `VmAvailabilityMetric`
+
+## microsoft.containerinstance/containergroups
+
+- `CpuUsage`
+- `MemoryUsage`
+- `NetworkBytesReceivedPerSecond`
+- `NetworkBytesTransmittedPerSecond`
+
+## microsoft.containerregistry/registries
+
+- `AgentPoolCPUTime`
+- `RunDuration`
+- `StorageUsed`
+- `SuccessfulPullCount`
+- `SuccessfulPushCount`
+- `TotalPullCount`
+- `TotalPushCount`
+
+## microsoft.containerservice/managedclusters
+
+- `apiserver_cpu_usage_percentage`
+- `apiserver_current_inflight_requests`
+- `apiserver_memory_usage_percentage`
+- `cluster_autoscaler_cluster_safe_to_autoscale`
+- `cluster_autoscaler_scale_down_in_cooldown`
+- `cluster_autoscaler_unneeded_nodes_count`
+- `cluster_autoscaler_unschedulable_pods_count`
+- `etcd_cpu_usage_percentage`
+- `etcd_database_usage_percentage`
+- `etcd_memory_usage_percentage`
+- `kube_node_status_allocatable_cpu_cores`
+- `kube_node_status_allocatable_memory_bytes`
+- `kube_node_status_condition`
+- `kube_pod_status_phase`
+- `kube_pod_status_ready`
+- `node_cpu_usage_millicores`
+- `node_cpu_usage_percentage`
+- `node_disk_usage_bytes`
+- `node_disk_usage_percentage`
+- `node_memory_rss_bytes`
+- `node_memory_rss_percentage`
+- `node_memory_working_set_bytes`
+- `node_memory_working_set_percentage`
+- `node_network_in_bytes`
+- `node_network_out_bytes`
+
+## microsoft.datafactory/factories
+
+- `ActivityCancelledRuns`
+- `ActivityFailedRuns`
+- `ActivitySucceededRuns`
+- `AirflowIntegrationRuntimeCeleryTaskTimeoutError`
+- `AirflowIntegrationRuntimeCollectDBDags`
+- `AirflowIntegrationRuntimeCpuPercentage`
+- `AirflowIntegrationRuntimeCpuUsage`
+- `AirflowIntegrationRuntimeDAGFileRefreshError`
+- `AirflowIntegrationRuntimeDAGProcessingImportErrors`
+- `AirflowIntegrationRuntimeDAGProcessingLastDuration`
+- `AirflowIntegrationRuntimeDAGProcessingLastRunSecondsAgo`
+- `AirflowIntegrationRuntimeDAGProcessingManagerStalls`
+- `AirflowIntegrationRuntimeDAGProcessingProcesses`
+- `AirflowIntegrationRuntimeDAGProcessingProcessorTimeouts`
+- `AirflowIntegrationRuntimeDAGProcessingTotalParseTime`
+- `AirflowIntegrationRuntimeDAGRunDependencyCheck`
+- `AirflowIntegrationRuntimeDAGRunDurationFailed`
+- `AirflowIntegrationRuntimeDAGRunDurationSuccess`
+- `AirflowIntegrationRuntimeDAGRunFirstTaskSchedulingDelay`
+- `AirflowIntegrationRuntimeDAGRunScheduleDelay`
+- `AirflowIntegrationRuntimeDagBagSize`
+- `AirflowIntegrationRuntimeDagCallbackExceptions`
+- `AirflowIntegrationRuntimeExecutorOpenSlots`
+- `AirflowIntegrationRuntimeExecutorQueuedTasks`
+- `AirflowIntegrationRuntimeExecutorRunningTasks`
+- `AirflowIntegrationRuntimeJobEnd`
+- `AirflowIntegrationRuntimeJobHeartbeatFailure`
+- `AirflowIntegrationRuntimeJobStart`
+- `AirflowIntegrationRuntimeMemoryPercentage`
+- `AirflowIntegrationRuntimeMemoryUsage`
+- `AirflowIntegrationRuntimeNodeCount`
+- `AirflowIntegrationRuntimeOperatorFailures`
+- `AirflowIntegrationRuntimeOperatorSuccesses`
+- `AirflowIntegrationRuntimePoolOpenSlots`
+- `AirflowIntegrationRuntimePoolQueuedSlots`
+- `AirflowIntegrationRuntimePoolRunningSlots`
+- `AirflowIntegrationRuntimePoolStarvingTasks`
+- `AirflowIntegrationRuntimeSchedulerCriticalSectionBusy`
+- `AirflowIntegrationRuntimeSchedulerCriticalSectionDuration`
+- `AirflowIntegrationRuntimeSchedulerFailedSLAEmailAttempts`
+- `AirflowIntegrationRuntimeSchedulerHeartbeat`
+- `AirflowIntegrationRuntimeSchedulerOrphanedTasksAdopted`
+- `AirflowIntegrationRuntimeSchedulerOrphanedTasksCleared`
+- `AirflowIntegrationRuntimeSchedulerTasksExecutable`
+- `AirflowIntegrationRuntimeSchedulerTasksKilledExternally`
+- `AirflowIntegrationRuntimeSchedulerTasksRunning`
+- `AirflowIntegrationRuntimeSchedulerTasksStarving`
+- `AirflowIntegrationRuntimeStartedTaskInstances`
+- `AirflowIntegrationRuntimeTaskInstanceCreatedUsingOperator`
+- `AirflowIntegrationRuntimeTaskInstanceDuration`
+- `AirflowIntegrationRuntimeTaskInstanceFailures`
+- `AirflowIntegrationRuntimeTaskInstanceFinished`
+- `AirflowIntegrationRuntimeTaskInstancePreviouslySucceeded`
+- `AirflowIntegrationRuntimeTaskInstanceSuccesses`
+- `AirflowIntegrationRuntimeTaskRemovedFromDAG`
+- `AirflowIntegrationRuntimeTaskRestoredToDAG`
+- `AirflowIntegrationRuntimeTriggersBlockedMainThread`
+- `AirflowIntegrationRuntimeTriggersFailed`
+- `AirflowIntegrationRuntimeTriggersRunning`
+- `AirflowIntegrationRuntimeTriggersSucceeded`
+- `AirflowIntegrationRuntimeZombiesKilled`
+- `FactorySizeInGbUnits`
+- `IntegrationRuntimeAvailableMemory`
+- `IntegrationRuntimeAvailableNodeNumber`
+- `IntegrationRuntimeAverageTaskPickupDelay`
+- `IntegrationRuntimeCpuPercentage`
+- `IntegrationRuntimeQueueLength`
+- `MVNetIRCopyAvailableCapacityPCT`
+- `MVNetIRCopyCapacityUtilization`
+- `MVNetIRCopyWaitingQueueLength`
+- `MVNetIRExternalAvailableCapacityPCT`
+- `MVNetIRExternalCapacityUtilization`
+- `MVNetIRExternalWaitingQueueLength`
+- `MVNetIRPipelineAvailableCapacityPCT`
+- `MVNetIRPipelineCapacityUtilization`
+- `MVNetIRPipelineWaitingQueueLength`
+- `MaxAllowedFactorySizeInGbUnits`
+- `MaxAllowedResourceCount`
+- `PipelineCancelledRuns`
+- `PipelineElapsedTimeRuns`
+- `PipelineFailedRuns`
+- `PipelineSucceededRuns`
+- `ResourceCount`
+- `SSISIntegrationRuntimeStartCancel`
+- `SSISIntegrationRuntimeStartFailed`
+- `SSISIntegrationRuntimeStartSucceeded`
+- `SSISIntegrationRuntimeStopStuck`
+- `SSISIntegrationRuntimeStopSucceeded`
+- `SSISPackageExecutionCancel`
+- `SSISPackageExecutionFailed`
+- `SSISPackageExecutionSucceeded`
+- `TriggerCancelledRuns`
+- `TriggerFailedRuns`
+- `TriggerSucceededRuns`
+
+## microsoft.datalakeanalytics/accounts
+
+- `JobAUEndedCancelled`
+- `JobAUEndedFailure`
+- `JobAUEndedSuccess`
+- `JobEndedCancelled`
+- `JobEndedFailure`
+- `JobEndedSuccess`
+- `JobStage`
+
+## microsoft.datalakestore/accounts
+
+- `DataRead`
+- `DataWritten`
+- `ReadRequests`
+- `TotalStorage`
+- `WriteRequests`
+
+## microsoft.dataprotection/backupvaults
+
+- `BackupHealthEvent`
+- `RestoreHealthEvent`
+
+## microsoft.dbformariadb/servers
+
+- `active_connections`
+- `backup_storage_used`
+- `connections_failed`
+- `cpu_percent`
+- `io_consumption_percent`
+- `memory_percent`
+- `network_bytes_egress`
+- `network_bytes_ingress`
+- `seconds_behind_master`
+- `serverlog_storage_limit`
+- `serverlog_storage_percent`
+- `serverlog_storage_usage`
+- `storage_limit`
+- `storage_percent`
+- `storage_used`
+
+## microsoft.dbformysql/flexibleservers
+
+- `Com_alter_table`
+- `Com_create_db`
+- `Com_create_table`
+- `Com_delete`
+- `Com_drop_db`
+- `Com_drop_table`
+- `Com_insert`
+- `Com_select`
+- `Com_update`
+- `HA_IO_status`
+- `HA_SQL_status`
+- `HA_replication_lag`
+- `Innodb_buffer_pool_pages_data`
+- `Innodb_buffer_pool_pages_dirty`
+- `Innodb_buffer_pool_pages_flushed`
+- `Innodb_buffer_pool_pages_free`
+- `Innodb_buffer_pool_read_requests`
+- `Innodb_buffer_pool_reads`
+- `Innodb_data_writes`
+- `Innodb_row_lock_time`
+- `Innodb_row_lock_waits`
+- `Queries`
+- `Replica_IO_Running`
+- `Replica_SQL_Running`
+- `Slow_queries`
+- `Sort_merge_passes`
+- `Threads_running`
+- `Uptime`
+- `aborted_connections`
+- `active_connections`
+- `active_transactions`
+- `backup_storage_used`
+- `binlog_storage_used`
+- `cpu_credits_consumed`
+- `cpu_credits_remaining`
+- `cpu_percent`
+- `data_storage_used`
+- `ibdata1_storage_used`
+- `io_consumption_percent`
+- `lock_deadlocks`
+- `lock_timeouts`
+- `memory_percent`
+- `network_bytes_egress`
+- `network_bytes_ingress`
+- `others_storage_used`
+- `replication_lag`
+- `serverlog_storage_limit`
+- `serverlog_storage_percent`
+- `serverlog_storage_usage`
+- `storage_io_count`
+- `storage_limit`
+- `storage_percent`
+- `storage_used`
+- `total_connections`
+- `trx_rseg_history_len`
+
+## microsoft.dbformysql/servers
+
+- `active_connections`
+- `backup_storage_used`
+- `connections_failed`
+- `cpu_percent`
+- `io_consumption_percent`
+- `memory_percent`
+- `network_bytes_egress`
+- `network_bytes_ingress`
+- `seconds_behind_master`
+- `serverlog_storage_limit`
+- `serverlog_storage_percent`
+- `serverlog_storage_usage`
+- `storage_limit`
+- `storage_percent`
+- `storage_used`
+
+## microsoft.dbforpostgresql/flexibleservers
+
+- `active_connections`
+- `analyze_count_user_tables`
+- `autoanalyze_count_user_tables`
+- `autovacuum_count_user_tables`
+- `backup_storage_used`
+- `blks_hit`
+- `blks_read`
+- `bloat_percent`
+- `client_connections_active`
+- `client_connections_waiting`
+- `connections_failed`
+- `connections_succeeded`
+- `cpu_credits_consumed`
+- `cpu_credits_remaining`
+- `cpu_percent`
+- `database_size_bytes`
+- `deadlocks`
+- `disk_bandwidth_consumed_percentage`
+- `disk_iops_consumed_percentage`
+- `disk_queue_depth`
+- `iops`
+- `is_db_alive`
+- `logical_replication_delay_in_bytes`
+- `longest_query_time_sec`
+- `longest_transaction_time_sec`
+- `max_connections`
+- `maximum_used_transactionIDs`
+- `memory_percent`
+- `n_dead_tup_user_tables`
+- `n_live_tup_user_tables`
+- `n_mod_since_analyze_user_tables`
+- `network_bytes_egress`
+- `network_bytes_ingress`
+- `num_pools`
+- `numbackends`
+- `oldest_backend_time_sec`
+- `oldest_backend_xmin`
+- `oldest_backend_xmin_age`
+- `physical_replication_delay_in_bytes`
+- `physical_replication_delay_in_seconds`
+- `postmaster_process_cpu_usage_percent`
+- `read_iops`
+- `read_throughput`
+- `server_connections_active`
+- `server_connections_idle`
+- `sessions_by_state`
+- `sessions_by_wait_event_type`
+- `storage_free`
+- `storage_percent`
+- `storage_used`
+- `tables_analyzed_user_tables`
+- `tables_autoanalyzed_user_tables`
+- `tables_autovacuumed_user_tables`
+- `tables_counter_user_tables`
+- `tables_vacuumed_user_tables`
+- `tcp_connection_backlog`
+- `temp_bytes`
+- `temp_files`
+- `total_pooled_connections`
+- `tps`
+- `tup_deleted`
+- `tup_fetched`
+- `tup_inserted`
+- `tup_returned`
+- `tup_updated`
+- `txlogs_storage_used`
+- `vacuum_count_user_tables`
+- `write_iops`
+- `write_throughput`
+- `xact_commit`
+- `xact_rollback`
+- `xact_total`
+
+## microsoft.dbforpostgresql/servergroupsv2
+
+- `active_connections`
+- `apps_reserved_memory_percent`
+- `cpu_credits_consumed`
+- `cpu_credits_remaining`
+- `cpu_percent`
+- `iops`
+- `memory_percent`
+- `network_bytes_egress`
+- `network_bytes_ingress`
+- `replication_lag`
+- `storage_percent`
+- `storage_used`
+- `vm_cached_bandwidth_percent`
+- `vm_cached_iops_percent`
+- `vm_uncached_bandwidth_percent`
+- `vm_uncached_iops_percent`
+
+## microsoft.dbforpostgresql/servers
+
+- `active_connections`
+- `backup_storage_used`
+- `connections_failed`
+- `cpu_percent`
+- `io_consumption_percent`
+- `memory_percent`
+- `network_bytes_egress`
+- `network_bytes_ingress`
+- `pg_replica_log_delay_in_bytes`
+- `pg_replica_log_delay_in_seconds`
+- `serverlog_storage_limit`
+- `serverlog_storage_percent`
+- `serverlog_storage_usage`
+- `storage_limit`
+- `storage_percent`
+- `storage_used`
+
+## microsoft.dbforpostgresql/serversv2
+
+- `active_connections`
+- `cpu_percent`
+- `iops`
+- `memory_percent`
+- `network_bytes_egress`
+- `network_bytes_ingress`
+- `storage_percent`
+- `storage_used`
+
+## microsoft.devices/iothubs
+
+- `C2DMessagesExpired`
+- `EventGridDeliveries`
+- `EventGridLatency`
+- `RoutingDataSizeInBytesDelivered`
+- `RoutingDeliveries`
+- `RoutingDeliveryLatency`
+- `c2d.commands.egress.abandon.success`
+- `c2d.commands.egress.complete.success`
+- `c2d.commands.egress.reject.success`
+- `c2d.methods.failure`
+- `c2d.methods.requestSize`
+- `c2d.methods.responseSize`
+- `c2d.methods.success`
+- `c2d.twin.read.failure`
+- `c2d.twin.read.size`
+- `c2d.twin.read.success`
+- `c2d.twin.update.failure`
+- `c2d.twin.update.size`
+- `c2d.twin.update.success`
+- `configurations`
+- `connect.success`
+- `connectedDeviceCount`
+- `d2c.endpoints.egress.builtIn.events`
+- `d2c.endpoints.egress.eventHubs`
+- `d2c.endpoints.egress.serviceBusQueues`
+- `d2c.endpoints.egress.serviceBusTopics`
+- `d2c.endpoints.egress.storage`
+- `d2c.endpoints.egress.storage.blobs`
+- `d2c.endpoints.egress.storage.bytes`
+- `d2c.endpoints.latency.builtIn.events`
+- `d2c.endpoints.latency.eventHubs`
+- `d2c.endpoints.latency.serviceBusQueues`
+- `d2c.endpoints.latency.serviceBusTopics`
+- `d2c.endpoints.latency.storage`
+- `d2c.telemetry.egress.dropped`
+- `d2c.telemetry.egress.fallback`
+- `d2c.telemetry.egress.invalid`
+- `d2c.telemetry.egress.orphaned`
+- `d2c.telemetry.egress.success`
+- `d2c.telemetry.ingress.allProtocol`
+- `d2c.telemetry.ingress.sendThrottle`
+- `d2c.telemetry.ingress.success`
+- `d2c.twin.read.failure`
+- `d2c.twin.read.size`
+- `d2c.twin.read.success`
+- `d2c.twin.update.failure`
+- `d2c.twin.update.size`
+- `d2c.twin.update.success`
+- `dailyMessageQuotaUsed`
+- `deviceDataUsage`
+- `deviceDataUsageV2`
+- `devices.connectedDevices.allProtocol`
+- `devices.totalDevices`
+- `jobs.cancelJob.failure`
+- `jobs.cancelJob.success`
+- `jobs.completed`
+- `jobs.createDirectMethodJob.failure`
+- `jobs.createDirectMethodJob.success`
+- `jobs.createTwinUpdateJob.failure`
+- `jobs.createTwinUpdateJob.success`
+- `jobs.failed`
+- `jobs.listJobs.failure`
+- `jobs.listJobs.success`
+- `jobs.queryJobs.failure`
+- `jobs.queryJobs.success`
+- `totalDeviceCount`
+- `twinQueries.failure`
+- `twinQueries.resultSize`
+- `twinQueries.success`
+
+## microsoft.devices/provisioningservices
+
+- `AttestationAttempts`
+- `DeviceAssignments`
+- `RegistrationAttempts`
+
+## microsoft.documentdb/cassandraclusters
+
+- `cassandra_cache_capacity`
+- `cassandra_cache_entries`
+- `cassandra_cache_hit_rate`
+- `cassandra_cache_hits`
+- `cassandra_cache_miss_latency_histogram`
+- `cassandra_cache_miss_latency_p99`
+- `cassandra_cache_requests`
+- `cassandra_cache_size`
+- `cassandra_client_auth_failure`
+- `cassandra_client_auth_failure2`
+- `cassandra_client_auth_failure3`
+- `cassandra_client_auth_success`
+- `cassandra_client_connected_native_clients`
+- `cassandra_client_request_condition_not_met`
+- `cassandra_client_request_contention_histogram`
+- `cassandra_client_request_contention_histogram_p99`
+- `cassandra_client_request_failures`
+- `cassandra_client_request_failures2`
+- `cassandra_client_request_failures3`
+- `cassandra_client_request_latency_histogram`
+- `cassandra_client_request_latency_max`
+- `cassandra_client_request_latency_p99`
+- `cassandra_client_request_timeouts`
+- `cassandra_client_request_timeouts2`
+- `cassandra_client_request_timeouts3`
+- `cassandra_client_request_unfinished_commit`
+- `cassandra_commit_log_waiting_on_commit_latency_histogram`
+- `cassandra_cql_prepared_statements_executed`
+- `cassandra_cql_regular_statements_executed`
+- `cassandra_dropped_message_count`
+- `cassandra_dropped_message_cross_node_latency`
+- `cassandra_dropped_message_cross_node_latency_p99`
+- `cassandra_dropped_message_internal_latency`
+- `cassandra_dropped_message_rate`
+- `cassandra_hints_failed_rate`
+- `cassandra_hints_succeeded_rate`
+- `cassandra_hints_timed_out_rate`
+- `cassandra_jvm_gc_count`
+- `cassandra_jvm_gc_time`
+- `cassandra_storage_total_hints_counter_total`
+- `cassandra_storage_total_hints_in_progress_counter_total`
+- `cassandra_table_all_memtables_live_data_size`
+- `cassandra_table_all_memtables_off_heap_size`
+- `cassandra_table_bloom_filter_disk_space_used`
+- `cassandra_table_bloom_filter_false_positives`
+- `cassandra_table_bloom_filter_false_ratio`
+- `cassandra_table_bloom_filter_off_heap_memory_used`
+- `cassandra_table_bytes_flushed`
+- `cassandra_table_cas_commit`
+- `cassandra_table_cas_commit_p99`
+- `cassandra_table_cas_prepare`
+- `cassandra_table_cas_prepare_p99`
+- `cassandra_table_cas_propose`
+- `cassandra_table_cas_propose_p99`
+- `cassandra_table_col_update_time_delta_histogram`
+- `cassandra_table_col_update_time_delta_histogram_p99`
+- `cassandra_table_compaction_bytes_written`
+- `cassandra_table_compression_metadata_off_heap_memory_used`
+- `cassandra_table_compression_ratio`
+- `cassandra_table_coordinator_read_latency`
+- `cassandra_table_coordinator_read_latency_p99`
+- `cassandra_table_coordinator_scan_latency`
+- `cassandra_table_coordinator_scan_latency_p99`
+- `cassandra_table_dropped_mutations`
+- `cassandra_table_dropped_mutations2`
+- `cassandra_table_dropped_mutations3`
+- `cassandra_table_estimated_column_count_histogram`
+- `cassandra_table_estimated_column_count_histogram_p99`
+- `cassandra_table_estimated_partition_count`
+- `cassandra_table_estimated_partition_size_histogram`
+- `cassandra_table_estimated_partition_size_histogram_p99`
+- `cassandra_table_index_summary_off_heap_memory_used`
+- `cassandra_table_key_cache_hit_rate`
+- `cassandra_table_live_disk_space_used`
+- `cassandra_table_live_scanned_histogram`
+- `cassandra_table_live_scanned_histogram_p99`
+- `cassandra_table_live_sstable_count`
+- `cassandra_table_max_partition_size`
+- `cassandra_table_mean_partition_size`
+- `cassandra_table_memtable_columns_count`
+- `cassandra_table_memtable_off_heap_size`
+- `cassandra_table_memtable_on_heap_size`
+- `cassandra_table_memtable_switch_count`
+- `cassandra_table_min_partition_size`
+- `cassandra_table_pending_compactions`
+- `cassandra_table_pending_compactions2`
+- `cassandra_table_pending_compactions3`
+- `cassandra_table_pending_flushes`
+- `cassandra_table_pending_flushes2`
+- `cassandra_table_pending_flushes3`
+- `cassandra_table_percent_repaired`
+- `cassandra_table_range_latency`
+- `cassandra_table_range_latency_p99`
+- `cassandra_table_read_latency`
+- `cassandra_table_read_latency_p99`
+- `cassandra_table_row_cache_hit`
+- `cassandra_table_row_cache_hit_out_of_range`
+- `cassandra_table_row_cache_miss`
+- `cassandra_table_speculative_retries`
+- `cassandra_table_sstables_per_read_histogram`
+- `cassandra_table_sstables_per_read_histogram_p99`
+- `cassandra_table_tombstone_scanned_histogram`
+- `cassandra_table_tombstone_scanned_histogram_p99`
+- `cassandra_table_total_disk_space_used`
+- `cassandra_table_total_disk_space_used2`
+- `cassandra_table_total_disk_space_used3`
+- `cassandra_table_view_lock_acquire_time`
+- `cassandra_table_view_lock_acquire_time_p99`
+- `cassandra_table_view_read_time`
+- `cassandra_table_view_read_time_p99`
+- `cassandra_table_waiting_on_free_memtable_space`
+- `cassandra_table_waiting_on_free_memtable_space_p99`
+- `cassandra_table_write_latency`
+- `cassandra_table_write_latency_p99`
+- `cassandra_thread_pools_active_tasks`
+- `cassandra_thread_pools_currently_blocked_tasks`
+- `cassandra_thread_pools_currently_blocked_tasks2`
+- `cassandra_thread_pools_currently_blocked_tasks3`
+- `cassandra_thread_pools_max_pool_size`
+- `cassandra_thread_pools_pending_tasks`
+- `cassandra_thread_pools_total_blocked_tasks`
+- `cpu`
+- `disk_utilization`
+- `diskio_merged_reads`
+- `diskio_merged_writes`
+- `diskio_read_bytes`
+- `diskio_read_time`
+- `diskio_reads`
+- `diskio_write_bytes`
+- `diskio_write_time`
+- `diskio_writes`
+- `ethtool_rx_bytes`
+- `ethtool_rx_packets`
+- `ethtool_tx_bytes`
+- `ethtool_tx_packets`
+- `iops`
+- `percent_mem`
+- `raid_array_degraded`
+- `raid_array_rebuild`
+- `total_cpu`
+
+## microsoft.documentdb/databaseaccounts
+
+- `AddRegion`
+- `AutoscaleMaxThroughput`
+- `AutoscaledRU`
+- `AvailableStorage`
+- `BackupModeUpdate`
+- `BackupPolicyIntervalUpdate`
+- `BackupPolicyRedundancyUpdate`
+- `BackupPolicyRetentionUpdate`
+- `BackupPolicyUpdate`
+- `CassandraConnectionClosures`
+- `CassandraConnectorAvgReplicationLatency`
+- `CassandraConnectorReplicationHealthStatus`
+- `CassandraKeyspaceCreate`
+- `CassandraKeyspaceDelete`
+- `CassandraKeyspaceThroughputUpdate`
+- `CassandraKeyspaceUpdate`
+- `CassandraRequestCharges`
+- `CassandraRequests`
+- `CassandraTableCreate`
+- `CassandraTableDelete`
+- `CassandraTableThroughputUpdate`
+- `CassandraTableUpdate`
+- `ContinuousTierUpdate`
+- `CreateAccount`
+- `DataUsage`
+- `DedicatedGatewayAverageCPUUsage`
+- `DedicatedGatewayAverageMemoryUsage`
+- `DedicatedGatewayCPUUsage`
+- `DedicatedGatewayMaximumCPUUsage`
+- `DedicatedGatewayMemoryUsage`
+- `DedicatedGatewayRequests`
+- `DeleteAccount`
+- `DocumentCount`
+- `DocumentQuota`
+- `GlobalSecondaryIndexCatchupGapInMinutes`
+- `GremlinDatabaseCreate`
+- `GremlinDatabaseDelete`
+- `GremlinDatabaseThroughputUpdate`
+- `GremlinDatabaseUpdate`
+- `GremlinGraphCreate`
+- `GremlinGraphDelete`
+- `GremlinGraphThroughputUpdate`
+- `GremlinGraphUpdate`
+- `GremlinRequestCharges`
+- `GremlinRequests`
+- `IndexUsage`
+- `IntegratedCacheEvictedEntriesSize`
+- `IntegratedCacheItemExpirationCount`
+- `IntegratedCacheItemHitRate`
+- `IntegratedCacheQueryExpirationCount`
+- `IntegratedCacheQueryHitRate`
+- `MaterializedViewCatchupGapInMinutes`
+- `MaterializedViewsBuilderAverageCPUUsage`
+- `MaterializedViewsBuilderAverageMemoryUsage`
+- `MaterializedViewsBuilderMaximumCPUUsage`
+- `MetadataRequests`
+- `MongoCollectionCreate`
+- `MongoCollectionDelete`
+- `MongoCollectionThroughputUpdate`
+- `MongoCollectionUpdate`
+- `MongoDBDatabaseCreate`
+- `MongoDBDatabaseUpdate`
+- `MongoDatabaseDelete`
+- `MongoDatabaseThroughputUpdate`
+- `MongoRequestCharge`
+- `MongoRequests`
+- `NormalizedRUConsumption`
+- `OfflineRegion`
+- `OnlineRegion`
+- `PhysicalPartitionCount`
+- `PhysicalPartitionSizeInfo`
+- `PhysicalPartitionThroughputInfo`
+- `ProvisionedThroughput`
+- `RegionFailover`
+- `RemoveRegion`
+- `ReplicationLatency`
+- `ServerSideLatency`
+- `ServerSideLatencyDirect`
+- `ServerSideLatencyGateway`
+- `ServiceAvailability`
+- `SqlContainerCreate`
+- `SqlContainerDelete`
+- `SqlContainerThroughputUpdate`
+- `SqlContainerUpdate`
+- `SqlDatabaseCreate`
+- `SqlDatabaseDelete`
+- `SqlDatabaseThroughputUpdate`
+- `SqlDatabaseUpdate`
+- `TableTableCreate`
+- `TableTableDelete`
+- `TableTableThroughputUpdate`
+- `TableTableUpdate`
+- `TotalRequestUnits`
+- `TotalRequestUnitsPreview`
+- `TotalRequests`
+- `TotalRequestsPreview`
+- `UpdateAccountKeys`
+- `UpdateAccountNetworkSettings`
+- `UpdateAccountReplicationSettings`
+- `UpdateDiagnosticsSettings`
+
+## microsoft.eventgrid/domains
+
+- `AdvancedFilterEvaluationCount`
+- `DeadLetteredCount`
+- `DeliveryAttemptFailCount`
+- `DeliverySuccessCount`
+- `DestinationProcessingDurationInMs`
+- `DroppedEventCount`
+- `MatchedEventCount`
+- `PublishFailCount`
+- `PublishSuccessCount`
+- `PublishSuccessLatencyInMs`
+
+## microsoft.eventgrid/eventsubscriptions
+
+- `DeadLetteredCount`
+- `DeliveryAttemptFailCount`
+- `DeliverySuccessCount`
+- `DestinationProcessingDurationInMs`
+- `DroppedEventCount`
+- `MatchedEventCount`
+
+## microsoft.eventgrid/extensiontopics
+
+- `PublishFailCount`
+- `PublishSuccessCount`
+- `PublishSuccessLatencyInMs`
+- `UnmatchedEventCount`
+
+## microsoft.eventgrid/partnernamespaces
+
+- `PublishFailCount`
+- `PublishSuccessCount`
+- `PublishSuccessLatencyInMs`
+- `UnmatchedEventCount`
+
+## microsoft.eventgrid/partnertopics
+
+- `AdvancedFilterEvaluationCount`
+- `DeadLetteredCount`
+- `DeliveryAttemptFailCount`
+- `DeliverySuccessCount`
+- `DestinationProcessingDurationInMs`
+- `DroppedEventCount`
+- `MatchedEventCount`
+- `PublishSuccessCount`
+- `UnmatchedEventCount`
+
+## microsoft.eventgrid/systemtopics
+
+- `AdvancedFilterEvaluationCount`
+- `DeadLetteredCount`
+- `DeliveryAttemptFailCount`
+- `DeliverySuccessCount`
+- `DestinationProcessingDurationInMs`
+- `DroppedEventCount`
+- `MatchedEventCount`
+- `PublishFailCount`
+- `PublishSuccessCount`
+- `PublishSuccessLatencyInMs`
+- `ServerDeliverySuccessRate`
+- `UnmatchedEventCount`
+
+## microsoft.eventgrid/topics
+
+- `AdvancedFilterEvaluationCount`
+- `DeadLetteredCount`
+- `DeliveryAttemptFailCount`
+- `DeliverySuccessCount`
+- `DestinationProcessingDurationInMs`
+- `DroppedEventCount`
+- `MatchedEventCount`
+- `PublishFailCount`
+- `PublishSuccessCount`
+- `PublishSuccessLatencyInMs`
+- `UnmatchedEventCount`
+
+## microsoft.eventhub/clusters
+
+- `ActiveConnections`
+- `AvailableMemory`
+- `CPU`
+- `CaptureBacklog`
+- `CapturedBytes`
+- `CapturedMessages`
+- `ConnectionsClosed`
+- `ConnectionsOpened`
+- `IncomingBytes`
+- `IncomingMessages`
+- `IncomingRequests`
+- `OutgoingBytes`
+- `OutgoingMessages`
+- `QuotaExceededErrors`
+- `ServerErrors`
+- `Size`
+- `SuccessfulRequests`
+- `ThrottledRequests`
+- `UserErrors`
+
+## microsoft.eventhub/namespaces
+
+- `ActiveConnections`
+- `CaptureBacklog`
+- `CapturedBytes`
+- `CapturedMessages`
+- `ConnectionsClosed`
+- `ConnectionsOpened`
+- `EHABL`
+- `EHAMBS`
+- `EHAMSGS`
+- `EHINBYTES`
+- `EHINMBS`
+- `EHINMSGS`
+- `EHOUTBYTES`
+- `EHOUTMBS`
+- `EHOUTMSGS`
+- `FAILREQ`
+- `INMSGS`
+- `INREQS`
+- `INTERR`
+- `IncomingBytes`
+- `IncomingMessages`
+- `IncomingRequests`
+- `MISCERR`
+- `NamespaceCpuUsage`
+- `NamespaceMemoryUsage`
+- `OUTMSGS`
+- `OutgoingBytes`
+- `OutgoingMessages`
+- `QuotaExceededErrors`
+- `ReplicationLagCount`
+- `ReplicationLagDuration`
+- `SUCCREQ`
+- `SVRBSY`
+- `ServerErrors`
+- `Size`
+- `SuccessfulRequests`
+- `ThrottledRequests`
+- `UserErrors`
+
+## microsoft.hdinsight/clusters
+
+- `CategorizedGatewayRequests`
+- `GatewayRequests`
+- `KafkaRestProxy.ConsumerRequest.m1_delta`
+- `KafkaRestProxy.ConsumerRequestFail.m1_delta`
+- `KafkaRestProxy.ConsumerRequestTime.p95`
+- `KafkaRestProxy.ConsumerRequestWaitingInQueueTime.p95`
+- `KafkaRestProxy.MessagesIn.m1_delta`
+- `KafkaRestProxy.MessagesOut.m1_delta`
+- `KafkaRestProxy.OpenConnections`
+- `KafkaRestProxy.ProducerRequest.m1_delta`
+- `KafkaRestProxy.ProducerRequestFail.m1_delta`
+- `KafkaRestProxy.ProducerRequestTime.p95`
+- `KafkaRestProxy.ProducerRequestWaitingInQueueTime.p95`
+- `NumActiveWorkers`
+- `PendingCPU`
+- `PendingMemory`
+
+## microsoft.keyvault/managedhsms
+
+- `Availability`
+- `ServiceApiHit`
+- `ServiceApiLatency`
+
+## microsoft.keyvault/vaults
+
+- `Availability`
+- `SaturationShoebox`
+- `ServiceApiHit`
+- `ServiceApiLatency`
+- `ServiceApiResult`
+
+## microsoft.kusto/clusters
+
+- `BatchBlobCount`
+- `BatchDuration`
+- `BatchSize`
+- `BatchesProcessed`
+- `BlobsDropped`
+- `BlobsProcessed`
+- `BlobsReceived`
+- `CPU`
+- `CacheUtilization`
+- `CacheUtilizationFactor`
+- `ContinuousExportMaxLatenessMinutes`
+- `ContinuousExportNumOfRecordsExported`
+- `ContinuousExportPendingCount`
+- `ContinuousExportResult`
+- `DiscoveryLatency`
+- `EventsDropped`
+- `EventsProcessed`
+- `EventsReceived`
+- `ExportUtilization`
+- `FollowerLatency`
+- `IngestionLatencyInSeconds`
+- `IngestionResult`
+- `IngestionUtilization`
+- `IngestionVolumeInMB`
+- `InstanceCount`
+- `KeepAlive`
+- `MaterializedViewAgeMinutes`
+- `MaterializedViewAgeSeconds`
+- `MaterializedViewDataLoss`
+- `MaterializedViewExtentsRebuild`
+- `MaterializedViewHealth`
+- `MaterializedViewRecordsInDelta`
+- `MaterializedViewResult`
+- `PartitioningPercentage`
+- `PartitioningPercentageHot`
+- `ProcessedPartitionedRecords`
+- `QueryDuration`
+- `QueryResult`
+- `QueueLength`
+- `QueueOldestMessage`
+- `ReceivedDataSizeBytes`
+- `StageLatency`
+- `StreamingIngestDataRate`
+- `StreamingIngestDuration`
+- `StreamingIngestResults`
+- `StreamingIngestUtilization`
+- `TotalNumberOfConcurrentQueries`
+- `TotalNumberOfExtents`
+- `TotalNumberOfThrottledCommands`
+- `TotalNumberOfThrottledQueries`
+- `WeakConsistencyLatency`
+
+## microsoft.logic/workflows
+
+- `ActionLatency`
+- `ActionSuccessLatency`
+- `ActionThrottledEvents`
+- `ActionsCompleted`
+- `ActionsFailed`
+- `ActionsSkipped`
+- `ActionsStarted`
+- `ActionsSucceeded`
+- `AgentLoopExecution`
+- `BillableActionExecutions`
+- `BillableTriggerExecutions`
+- `BillingUsageNativeOperation`
+- `BillingUsageStandardConnector`
+- `BillingUsageStorageConsumption`
+- `CompletionTokenOverflowUsage`
+- `PromptTokenOverflowUsage`
+- `RunFailurePercentage`
+- `RunLatency`
+- `RunStartThrottledEvents`
+- `RunSuccessLatency`
+- `RunThrottledEvents`
+- `RunsCancelled`
+- `RunsCompleted`
+- `RunsFailed`
+- `RunsStarted`
+- `RunsSucceeded`
+- `TotalBillableExecutions`
+- `TriggerFireLatency`
+- `TriggerLatency`
+- `TriggerSuccessLatency`
+- `TriggerThrottledEvents`
+- `TriggersCompleted`
+- `TriggersFailed`
+- `TriggersFired`
+- `TriggersSkipped`
+- `TriggersStarted`
+- `TriggersSucceeded`
+
+## microsoft.machinelearningservices/workspaces
+
+- `Active Cores`
+- `Active Nodes`
+- `Agents`
+- `Cancel Requested Runs`
+- `Cancelled Runs`
+- `Completed Runs`
+- `CpuCapacityMillicores`
+- `CpuMemoryCapacityMegabytes`
+- `CpuMemoryUtilizationMegabytes`
+- `CpuMemoryUtilizationPercentage`
+- `CpuUtilization`
+- `CpuUtilizationMillicores`
+- `CpuUtilizationPercentage`
+- `DiskAvailMegabytes`
+- `DiskReadMegabytes`
+- `DiskUsedMegabytes`
+- `DiskWriteMegabytes`
+- `Errors`
+- `Failed Runs`
+- `Finalizing Runs`
+- `GpuCapacityMilliGPUs`
+- `GpuEnergyJoules`
+- `GpuMemoryCapacityMegabytes`
+- `GpuMemoryUtilization`
+- `GpuMemoryUtilizationMegabytes`
+- `GpuMemoryUtilizationPercentage`
+- `GpuUtilization`
+- `GpuUtilizationMilliGPUs`
+- `GpuUtilizationPercentage`
+- `IBReceiveMegabytes`
+- `IBTransmitMegabytes`
+- `Idle Cores`
+- `Idle Nodes`
+- `IndexedFiles`
+- `Leaving Cores`
+- `Leaving Nodes`
+- `Messages`
+- `Model Deploy Failed`
+- `Model Deploy Started`
+- `Model Deploy Succeeded`
+- `Model Register Failed`
+- `Model Register Succeeded`
+- `NetworkInputMegabytes`
+- `NetworkOutputMegabytes`
+- `Not Responding Runs`
+- `Not Started Runs`
+- `Preempted Cores`
+- `Preempted Nodes`
+- `Preparing Runs`
+- `Provisioning Runs`
+- `Queued Runs`
+- `Quota Utilization Percentage`
+- `Runs`
+- `Started Runs`
+- `Starting Runs`
+- `StorageAPIFailureCount`
+- `StorageAPISuccessCount`
+- `Threads`
+- `Tokens`
+- `ToolCalls`
+- `Total Cores`
+- `Total Nodes`
+- `Unusable Cores`
+- `Unusable Nodes`
+- `Warnings`
+
+## microsoft.monitor/accounts
+
+- `ActiveTimeSeries`
+- `ActiveTimeSeriesLimit`
+- `ActiveTimeSeriesPercentUtilization`
+- `EventsDropped`
+- `EventsPerMinuteIngested`
+- `EventsPerMinuteIngestedLimit`
+- `EventsPerMinuteIngestedPercentUtilization`
+- `TimeSeriesSamplesDropped`
+
+## microsoft.network/applicationgateways
+
+- `ApplicationGatewayTotalTime`
+- `AvgRequestCountPerHealthyHost`
+- `AzWAFJSChallengeRequestCount`
+- `AzwafBotProtection`
+- `AzwafCustomRule`
+- `AzwafPenaltyBoxHits`
+- `AzwafPenaltyBoxSize`
+- `AzwafSecRule`
+- `AzwafTotalRequests`
+- `BackendConnectTime`
+- `BackendFirstByteResponseTime`
+- `BackendLastByteResponseTime`
+- `BackendResponseStatus`
+- `BlockedCount`
+- `BytesReceived`
+- `BytesSent`
+- `CapacityUnits`
+- `ClientRtt`
+- `ComputeUnits`
+- `CpuUtilization`
+- `CurrentConnections`
+- `EstimatedBilledCapacityUnits`
+- `FailedRequests`
+- `FixedBillableCapacityUnits`
+- `HealthyHostCount`
+- `MatchedCount`
+- `NewConnectionsPerSecond`
+- `ResponseStatus`
+- `Throughput`
+- `TlsProtocol`
+- `TotalRequests`
+- `UnhealthyHostCount`
+- `WebSocketActiveConnections`
+- `WebsocketSpecificCloseStatusCode`
+
+## microsoft.network/azurefirewalls
+
+- `ApplicationRuleHit`
+- `DataProcessed`
+- `FirewallHealth`
+- `FirewallLatencyPng`
+- `NetworkRuleHit`
+- `ObservedCapacity`
+- `SNATPortUtilization`
+- `Throughput`
+
+## microsoft.network/expressroutecircuits
+
+- `ArpAvailability`
+- `BgpAvailability`
+- `BitsInPerSecond`
+- `BitsOutPerSecond`
+- `EgressBandwidthUtilization`
+- `FastPathRoutesCountForCircuit`
+- `GlobalReachBitsInPerSecond`
+- `GlobalReachBitsOutPerSecond`
+- `IngressBandwidthUtilization`
+- `QosDropBitsInPerSecond`
+- `QosDropBitsOutPerSecond`
+
+## microsoft.network/expressroutecircuits/peerings
+
+- `BitsInPerSecond`
+- `BitsOutPerSecond`
+
+## microsoft.network/expressroutegateways
+
+- `ErGatewayConnectionBitsInPerSecond`
+- `ErGatewayConnectionBitsOutPerSecond`
+- `ExpressRouteGatewayActiveFlows`
+- `ExpressRouteGatewayBitsPerSecond`
+- `ExpressRouteGatewayCountOfRoutesAdvertisedToPeer`
+- `ExpressRouteGatewayCountOfRoutesLearnedFromPeer`
+- `ExpressRouteGatewayCpuUtilization`
+- `ExpressRouteGatewayFrequencyOfRoutesChanged`
+- `ExpressRouteGatewayMaxFlowsCreationRate`
+- `ExpressRouteGatewayNumberOfVmInVnet`
+- `ExpressRouteGatewayPacketsPerSecond`
+
+## microsoft.network/expressrouteports
+
+- `AdminState`
+- `FastPathRoutesCountForDirectPort`
+- `LineProtocol`
+- `PortBitsInPerSecond`
+- `PortBitsOutPerSecond`
+- `RxLightLevel`
+- `TxLightLevel`
+
+## microsoft.network/frontdoors
+
+- `BackendHealthPercentage`
+- `BackendRequestCount`
+- `BackendRequestLatency`
+- `BillableResponseSize`
+- `RequestCount`
+- `RequestSize`
+- `ResponseSize`
+- `TotalLatency`
+- `WebApplicationFirewallRequestCount`
+
+## microsoft.network/loadbalancers
+
+- `AllocatedSnatPorts`
+- `ByteCount`
+- `DipAvailability`
+- `GlobalBackendAvailability`
+- `PacketCount`
+- `SYNCount`
+- `SnatConnectionCount`
+- `UsedSnatPorts`
+- `VipAvailability`
+
+## microsoft.network/natgateways
+
+- `ByteCount`
+- `DatapathAvailability`
+- `PacketCount`
+- `PacketDropCount`
+- `SNATConnectionCount`
+- `TotalConnectionCount`
+
+## microsoft.network/networkinterfaces
+
+- `BytesReceivedRate`
+- `BytesSentRate`
+- `PacketsReceivedRate`
+- `PacketsSentRate`
+
+## microsoft.network/p2svpngateways
+
+- `P2SBandwidth`
+- `P2SConnectionCount`
+- `UserVpnRouteCount`
+
+## microsoft.network/privateendpoints
+
+- `PEBytesIn`
+- `PEBytesOut`
+
+## microsoft.network/privatelinkservices
+
+- `PLSBytesIn`
+- `PLSBytesOut`
+- `PLSNatPortsUsage`
+
+## microsoft.network/publicipaddresses
+
+- `ByteCount`
+- `BytesDroppedDDoS`
+- `BytesForwardedDDoS`
+- `BytesInDDoS`
+- `DDoSTriggerSYNPackets`
+- `DDoSTriggerTCPPackets`
+- `DDoSTriggerUDPPackets`
+- `IfUnderDDoSAttack`
+- `PacketCount`
+- `PacketsDroppedDDoS`
+- `PacketsForwardedDDoS`
+- `PacketsInDDoS`
+- `SynCount`
+- `TCPBytesDroppedDDoS`
+- `TCPBytesForwardedDDoS`
+- `TCPBytesInDDoS`
+- `TCPPacketsDroppedDDoS`
+- `TCPPacketsForwardedDDoS`
+- `TCPPacketsInDDoS`
+- `UDPBytesDroppedDDoS`
+- `UDPBytesForwardedDDoS`
+- `UDPBytesInDDoS`
+- `UDPPacketsDroppedDDoS`
+- `UDPPacketsForwardedDDoS`
+- `UDPPacketsInDDoS`
+- `VipAvailability`
+
+## microsoft.network/virtualnetworkgateways
+
+- `AverageBandwidth`
+- `BgpPeerStatus`
+- `BgpRoutesAdvertised`
+- `BgpRoutesLearned`
+- `ExpressRouteGatewayActiveFlows`
+- `ExpressRouteGatewayBitsPerSecond`
+- `ExpressRouteGatewayCountOfRoutesAdvertisedToPeer`
+- `ExpressRouteGatewayCountOfRoutesLearnedFromPeer`
+- `ExpressRouteGatewayCpuUtilization`
+- `ExpressRouteGatewayFrequencyOfRoutesChanged`
+- `ExpressRouteGatewayMaxFlowsCreationRate`
+- `ExpressRouteGatewayNumberOfVmInVnet`
+- `ExpressRouteGatewayPacketsPerSecond`
+- `InboundFlowsCount`
+- `MmsaCount`
+- `OutboundFlowsCount`
+- `P2SBandwidth`
+- `P2SConnectionCount`
+- `QmsaCount`
+- `ScalableExpressRouteGatewayActiveFlows`
+- `ScalableExpressRouteGatewayBitsPerSecond`
+- `ScalableExpressRouteGatewayCountOfRoutesAdvertisedToPeer`
+- `ScalableExpressRouteGatewayCountOfRoutesLearnedFromPeer`
+- `ScalableExpressRouteGatewayCpuUtilization`
+- `ScalableExpressRouteGatewayFrequencyOfRoutesChanged`
+- `ScalableExpressRouteGatewayMaxFlowsCreationRate`
+- `ScalableExpressRouteGatewayNumberOfVmInVnet`
+- `ScalableExpressRouteGatewayPacketsPerSecond`
+- `ScalableExpressRouteGatewayScaleUnit`
+- `TunnelAverageBandwidth`
+- `TunnelEgressBytes`
+- `TunnelEgressPacketDropCount`
+- `TunnelEgressPacketDropTSMismatch`
+- `TunnelEgressPackets`
+- `TunnelIngressBytes`
+- `TunnelIngressPacketDropCount`
+- `TunnelIngressPacketDropTSMismatch`
+- `TunnelIngressPackets`
+- `TunnelNatAllocations`
+- `TunnelNatFlowCount`
+- `TunnelNatPacketDrop`
+- `TunnelNatedBytes`
+- `TunnelNatedPackets`
+- `TunnelPeakPackets`
+- `TunnelReverseNatedBytes`
+- `TunnelReverseNatedPackets`
+- `TunnelTotalFlowCount`
+- `UserVpnRouteCount`
+- `VnetAddressPrefixCount`
+
+## microsoft.network/vpngateways
+
+- `AverageBandwidth`
+- `BgpPeerStatus`
+- `BgpRoutesAdvertised`
+- `BgpRoutesLearned`
+- `InboundFlowsCount`
+- `MmsaCount`
+- `OutboundFlowsCount`
+- `QmsaCount`
+- `TunnelAverageBandwidth`
+- `TunnelEgressBytes`
+- `TunnelEgressPacketDropCount`
+- `TunnelEgressPacketDropTSMismatch`
+- `TunnelEgressPackets`
+- `TunnelIngressBytes`
+- `TunnelIngressPacketDropCount`
+- `TunnelIngressPacketDropTSMismatch`
+- `TunnelIngressPackets`
+- `TunnelNatAllocations`
+- `TunnelNatFlowCount`
+- `TunnelNatPacketDrop`
+- `TunnelNatedBytes`
+- `TunnelNatedPackets`
+- `TunnelPeakPackets`
+- `TunnelReverseNatedBytes`
+- `TunnelReverseNatedPackets`
+- `TunnelTotalFlowCount`
+- `VnetAddressPrefixCount`
+
+## microsoft.notificationhubs/namespaces/notificationhubs
+
+- `incoming`
+- `incoming.all.failedrequests`
+- `incoming.all.requests`
+- `incoming.scheduled`
+- `incoming.scheduled.cancel`
+- `installation.all`
+- `installation.delete`
+- `installation.get`
+- `installation.patch`
+- `installation.upsert`
+- `notificationhub.pushes`
+- `outgoing.allpns.badorexpiredchannel`
+- `outgoing.allpns.channelerror`
+- `outgoing.allpns.invalidpayload`
+- `outgoing.allpns.pnserror`
+- `outgoing.allpns.success`
+- `outgoing.apns.badchannel`
+- `outgoing.apns.expiredchannel`
+- `outgoing.apns.invalidcredentials`
+- `outgoing.apns.invalidnotificationsize`
+- `outgoing.apns.pnserror`
+- `outgoing.apns.success`
+- `outgoing.fcmv1.badchannel`
+- `outgoing.fcmv1.invalidcredentials`
+- `outgoing.fcmv1.invalidnotificationformat`
+- `outgoing.fcmv1.invalidnotificationsize`
+- `outgoing.fcmv1.pnserror`
+- `outgoing.fcmv1.success`
+- `outgoing.fcmv1.throttled`
+- `outgoing.fcmv1.wrongchannel`
+- `outgoing.gcm.authenticationerror`
+- `outgoing.gcm.badchannel`
+- `outgoing.gcm.expiredchannel`
+- `outgoing.gcm.invalidcredentials`
+- `outgoing.gcm.invalidnotificationformat`
+- `outgoing.gcm.invalidnotificationsize`
+- `outgoing.gcm.pnserror`
+- `outgoing.gcm.success`
+- `outgoing.gcm.throttled`
+- `outgoing.gcm.wrongchannel`
+- `outgoing.mpns.authenticationerror`
+- `outgoing.mpns.badchannel`
+- `outgoing.mpns.channeldisconnected`
+- `outgoing.mpns.dropped`
+- `outgoing.mpns.invalidcredentials`
+- `outgoing.mpns.invalidnotificationformat`
+- `outgoing.mpns.pnserror`
+- `outgoing.mpns.success`
+- `outgoing.mpns.throttled`
+- `outgoing.wns.authenticationerror`
+- `outgoing.wns.badchannel`
+- `outgoing.wns.channeldisconnected`
+- `outgoing.wns.channelthrottled`
+- `outgoing.wns.dropped`
+- `outgoing.wns.expiredchannel`
+- `outgoing.wns.invalidcredentials`
+- `outgoing.wns.invalidnotificationformat`
+- `outgoing.wns.invalidnotificationsize`
+- `outgoing.wns.invalidtoken`
+- `outgoing.wns.pnserror`
+- `outgoing.wns.success`
+- `outgoing.wns.throttled`
+- `outgoing.wns.tokenproviderunreachable`
+- `outgoing.wns.wrongtoken`
+- `registration.all`
+- `registration.create`
+- `registration.delete`
+- `registration.get`
+- `registration.update`
+- `scheduled.pending`
+
+## microsoft.recoveryservices/vaults
+
+- `BackupHealthEvent`
+- `RestoreHealthEvent`
+
+## microsoft.relay/namespaces
+
+- `ActiveConnections`
+- `ActiveListeners`
+- `BytesTransferred`
+- `ListenerConnections-ClientError`
+- `ListenerConnections-ServerError`
+- `ListenerConnections-Success`
+- `ListenerConnections-TotalRequests`
+- `ListenerDisconnects`
+- `SenderConnections-ClientError`
+- `SenderConnections-ServerError`
+- `SenderConnections-Success`
+- `SenderConnections-TotalRequests`
+- `SenderDisconnects`
+
+## microsoft.search/searchservices
+
+- `DocumentsProcessedCount`
+- `SearchLatency`
+- `SearchQueriesPerSecond`
+- `SkillExecutionCount`
+- `ThrottledSearchQueriesPercentage`
+
+## microsoft.servicebus/namespaces
+
+- `AbandonMessage`
+- `ActiveConnections`
+- `ActiveMessages`
+- `CPUXNS`
+- `CompleteMessage`
+- `ConnectionsClosed`
+- `ConnectionsOpened`
+- `DeadletteredMessages`
+- `IncomingBytes`
+- `IncomingMessages`
+- `IncomingRequests`
+- `Messages`
+- `NamespaceCpuUsage`
+- `NamespaceMemoryUsage`
+- `OutgoingBytes`
+- `OutgoingMessages`
+- `PendingCheckpointOperationCount`
+- `ReplicationLagCount`
+- `ReplicationLagDuration`
+- `ScheduledMessages`
+- `ServerErrors`
+- `ServerSendLatency`
+- `Size`
+- `SuccessfulRequests`
+- `ThrottledRequests`
+- `UserErrors`
+- `WSXNS`
+
+## microsoft.signalrservice/signalr
+
+- `ConnectionCloseCount`
+- `ConnectionCount`
+- `ConnectionOpenCount`
+- `ConnectionQuotaUtilization`
+- `InboundTraffic`
+- `MessageCount`
+- `OutboundTraffic`
+- `ServerConnectionLatency`
+- `ServerLoad`
+- `SystemErrors`
+- `UserErrors`
+
+## microsoft.signalrservice/signalr/replicas
+
+- `ConnectionCloseCount`
+- `ConnectionCount`
+- `ConnectionOpenCount`
+- `ConnectionQuotaUtilization`
+- `InboundTraffic`
+- `MessageCount`
+- `OutboundTraffic`
+- `ServerConnectionLatency`
+- `ServerLoad`
+- `SystemErrors`
+- `UserErrors`
+
+## microsoft.signalrservice/webpubsub
+
+- `ClientRequestStatus`
+- `ConnectionCloseCount`
+- `ConnectionOpenCount`
+- `ConnectionQuotaUtilization`
+- `InboundTraffic`
+- `OutboundTraffic`
+- `RestApiResponseTimeCount`
+- `ServerLoad`
+- `TotalConnectionCount`
+
+## microsoft.signalrservice/webpubsub/replicas
+
+- `ClientRequestStatus`
+- `ConnectionCloseCount`
+- `ConnectionOpenCount`
+- `ConnectionQuotaUtilization`
+- `InboundTraffic`
+- `OutboundTraffic`
+- `RestApiResponseTimeCount`
+- `ServerLoad`
+- `TotalConnectionCount`
+
+## microsoft.sql/managedinstances
+
+- `avg_cpu_percent`
+- `io_bytes_read`
+- `io_bytes_written`
+- `io_requests`
+- `reserved_storage_mb`
+- `storage_space_used_mb`
+- `virtual_core_count`
+
+## microsoft.sql/servers/databases
+
+- `active_queries`
+- `allocated_data_storage`
+- `app_cpu_billed`
+- `app_cpu_billed_ha_replicas`
+- `app_cpu_percent`
+- `app_memory_percent`
+- `availability`
+- `base_blob_size_bytes`
+- `blocked_by_firewall`
+- `cache_hit_percent`
+- `cache_used_percent`
+- `connection_failed`
+- `connection_failed_user_error`
+- `connection_successful`
+- `cpu_limit`
+- `cpu_percent`
+- `cpu_used`
+- `deadlock`
+- `diff_backup_size_bytes`
+- `dtu_consumption_percent`
+- `dtu_limit`
+- `dtu_used`
+- `dwu_consumption_percent`
+- `dwu_limit`
+- `dwu_used`
+- `free_amount_consumed`
+- `free_amount_remaining`
+- `full_backup_size_bytes`
+- `ledger_digest_upload_failed`
+- `ledger_digest_upload_success`
+- `local_tempdb_usage_percent`
+- `log_backup_size_bytes`
+- `log_write_percent`
+- `memory_usage_percent`
+- `physical_data_read_percent`
+- `queued_queries`
+- `replication_lag_seconds`
+- `sessions_count`
+- `sessions_percent`
+- `snapshot_backup_size_bytes`
+- `sql_instance_cpu_percent`
+- `sql_instance_memory_percent`
+- `sqlserver_process_core_percent`
+- `sqlserver_process_memory_percent`
+- `storage`
+- `storage_percent`
+- `tempdb_data_size`
+- `tempdb_log_size`
+- `tempdb_log_used_percent`
+- `wlg_active_queries`
+- `wlg_active_queries_timeouts`
+- `wlg_allocation_relative_to_system_percent`
+- `wlg_allocation_relative_to_wlg_effective_cap_percent`
+- `wlg_effective_cap_resource_percent`
+- `wlg_effective_min_resource_percent`
+- `wlg_queued_queries`
+- `workers_percent`
+- `xtp_storage_percent`
+
+## microsoft.sql/servers/elasticpools
+
+- `allocated_data_storage`
+- `allocated_data_storage_percent`
+- `app_cpu_billed`
+- `app_cpu_percent`
+- `app_memory_percent`
+- `cpu_limit`
+- `cpu_percent`
+- `cpu_used`
+- `dtu_consumption_percent`
+- `eDTU_limit`
+- `eDTU_used`
+- `log_write_percent`
+- `physical_data_read_percent`
+- `sessions_count`
+- `sessions_percent`
+- `sql_instance_cpu_percent`
+- `sql_instance_memory_percent`
+- `sqlserver_process_core_percent`
+- `sqlserver_process_memory_percent`
+- `storage_limit`
+- `storage_percent`
+- `storage_used`
+- `tempdb_data_size`
+- `tempdb_log_size`
+- `tempdb_log_used_percent`
+- `workers_percent`
+- `xtp_storage_percent`
+
+## microsoft.storage/storageaccounts
+
+- `Availability`
+- `Egress`
+- `Ingress`
+- `SuccessE2ELatency`
+- `SuccessServerLatency`
+- `Transactions`
+- `UsedCapacity`
+
+## microsoft.storage/storageaccounts/blobservices
+
+- `Availability`
+- `BlobCapacity`
+- `BlobCount`
+- `BlobProvisionedSize`
+- `ContainerCount`
+- `Egress`
+- `IndexCapacity`
+- `Ingress`
+- `SuccessE2ELatency`
+- `SuccessServerLatency`
+- `Transactions`
+
+## microsoft.storage/storageaccounts/fileservices
+
+- `Availability`
+- `Egress`
+- `FileCapacity`
+- `FileCount`
+- `FileShareAvailableBurstCredits`
+- `FileShareCapacityQuota`
+- `FileShareCount`
+- `FileShareMaxUsedBandwidthMiBps`
+- `FileShareMaxUsedIOPS`
+- `FileSharePaidBurstingBandwidth`
+- `FileSharePaidBurstingIOS`
+- `FileShareProvisionedBandwidthMiBps`
+- `FileShareProvisionedIOPS`
+- `FileShareSnapshotCount`
+- `FileShareSnapshotSize`
+- `Ingress`
+- `SuccessE2ELatency`
+- `SuccessServerLatency`
+- `Transactions`
+
+## microsoft.storage/storageaccounts/queueservices
+
+- `Availability`
+- `Egress`
+- `Ingress`
+- `QueueCapacity`
+- `QueueCount`
+- `QueueMessageCount`
+- `SuccessE2ELatency`
+- `SuccessServerLatency`
+- `Transactions`
+
+## microsoft.storage/storageaccounts/tableservices
+
+- `Availability`
+- `Egress`
+- `Ingress`
+- `SuccessE2ELatency`
+- `SuccessServerLatency`
+- `TableCapacity`
+- `TableCount`
+- `TableEntityCount`
+- `Transactions`
+
+## microsoft.streamanalytics/streamingjobs
+
+- `AMLCalloutFailedRequests`
+- `AMLCalloutInputEvents`
+- `AMLCalloutRequests`
+- `ConversionErrors`
+- `DeserializationError`
+- `DroppedOrAdjustedEvents`
+- `EarlyInputEvents`
+- `Errors`
+- `InputEventBytes`
+- `InputEvents`
+- `InputEventsSourcesBacklogged`
+- `InputEventsSourcesPerSecond`
+- `LateInputEvents`
+- `OutputEvents`
+- `OutputWatermarkDelaySeconds`
+- `ProcessCPUUsagePercentage`
+- `ResourceUtilization`
+
+## microsoft.synapse/workspaces
+
+- `BuiltinSqlPoolDataProcessedBytes`
+- `BuiltinSqlPoolLoginAttempts`
+- `BuiltinSqlPoolRequestsEnded`
+- `IntegrationActivityRunsEnded`
+- `IntegrationLinkConnectionEvents`
+- `IntegrationLinkProcessedChangedRows`
+- `IntegrationLinkProcessedDataVolume`
+- `IntegrationLinkProcessingLatencyInSeconds`
+- `IntegrationLinkTableEvents`
+- `IntegrationPipelineRunsEnded`
+- `IntegrationTriggerRunsEnded`
+- `SQLStreamingBackloggedInputEventSources`
+- `SQLStreamingConversionErrors`
+- `SQLStreamingDeserializationError`
+- `SQLStreamingEarlyInputEvents`
+- `SQLStreamingInputEventBytes`
+- `SQLStreamingInputEvents`
+- `SQLStreamingInputEventsSourcesPerSecond`
+- `SQLStreamingLateInputEvents`
+- `SQLStreamingOutOfOrderEvents`
+- `SQLStreamingOutputEvents`
+- `SQLStreamingOutputWatermarkDelaySeconds`
+- `SQLStreamingResourceUtilization`
+- `SQLStreamingRuntimeErrors`
+
+## microsoft.synapse/workspaces/bigdatapools
+
+- `BigDataPoolAllocatedCores`
+- `BigDataPoolAllocatedMemory`
+- `BigDataPoolApplicationsActive`
+- `BigDataPoolApplicationsEnded`
+
+## microsoft.synapse/workspaces/scopepools
+
+- `ScopePoolJobPNMetric`
+- `ScopePoolJobQueuedDurationMetric`
+- `ScopePoolJobRunningDurationMetric`
+
+## microsoft.synapse/workspaces/sqlpools
+
+- `ActiveQueries`
+- `AdaptiveCacheHitPercent`
+- `AdaptiveCacheUsedPercent`
+- `CPUPercent`
+- `Connections`
+- `ConnectionsBlockedByFirewall`
+- `DWULimit`
+- `DWUUsed`
+- `DWUUsedPercent`
+- `LocalTempDBUsedPercent`
+- `MemoryUsedPercent`
+- `QueuedQueries`
+- `WLGActiveQueries`
+- `WLGActiveQueriesTimeouts`
+- `WLGAllocationByEffectiveCapResourcePercent`
+- `WLGAllocationBySystemPercent`
+- `WLGEffectiveCapResourcePercent`
+- `WLGEffectiveMinResourcePercent`
+- `WLGQueuedQueries`
+
+## microsoft.web/hostingenvironments
+
+- `ActiveRequests`
+- `AverageResponseTime`
+- `BytesReceived`
+- `BytesSent`
+- `CpuPercentage`
+- `DiskQueueLength`
+- `Http101`
+- `Http2xx`
+- `Http3xx`
+- `Http401`
+- `Http403`
+- `Http404`
+- `Http406`
+- `Http4xx`
+- `Http5xx`
+- `HttpQueueLength`
+- `HttpResponseTime`
+- `LargeAppServicePlanInstances`
+- `MediumAppServicePlanInstances`
+- `MemoryPercentage`
+- `Requests`
+- `SmallAppServicePlanInstances`
+- `TotalFrontEnds`
+
+## microsoft.web/hostingenvironments/multirolepools
+
+- `ActiveRequests`
+- `AverageResponseTime`
+- `BytesReceived`
+- `BytesSent`
+- `CpuPercentage`
+- `DiskQueueLength`
+- `Http101`
+- `Http2xx`
+- `Http3xx`
+- `Http401`
+- `Http403`
+- `Http404`
+- `Http406`
+- `Http4xx`
+- `Http5xx`
+- `HttpQueueLength`
+- `HttpResponseTime`
+- `LargeAppServicePlanInstances`
+- `MediumAppServicePlanInstances`
+- `MemoryPercentage`
+- `Requests`
+- `SmallAppServicePlanInstances`
+- `TotalFrontEnds`
+
+## microsoft.web/hostingenvironments/workerpools
+
+- `CpuPercentage`
+- `MemoryPercentage`
+- `WorkersAvailable`
+- `WorkersTotal`
+- `WorkersUsed`
+
+## microsoft.web/serverfarms
+
+- `BytesReceived`
+- `BytesSent`
+- `CpuPercentage`
+- `DiskQueueLength`
+- `HttpQueueLength`
+- `MemoryPercentage`
+- `SocketInboundAll`
+- `SocketLoopback`
+- `SocketOutboundAll`
+- `SocketOutboundEstablished`
+- `SocketOutboundTimeWait`
+- `TcpCloseWait`
+- `TcpClosing`
+- `TcpEstablished`
+- `TcpFinWait1`
+- `TcpFinWait2`
+- `TcpLastAck`
+- `TcpSynReceived`
+- `TcpSynSent`
+- `TcpTimeWait`
+
+## microsoft.web/sites
+
+- `AlwaysReadyFunctionExecutionCount`
+- `AlwaysReadyFunctionExecutionUnits`
+- `AlwaysReadyUnits`
+- `AppConnections`
+- `AverageMemoryWorkingSet`
+- `AverageResponseTime`
+- `BytesReceived`
+- `BytesSent`
+- `CpuPercentage`
+- `CpuTime`
+- `CurrentAssemblies`
+- `FileSystemUsage`
+- `FunctionExecutionCount`
+- `FunctionExecutionUnits`
+- `Gen0Collections`
+- `Gen1Collections`
+- `Gen2Collections`
+- `Handles`
+- `HealthCheckStatus`
+- `Http101`
+- `Http2xx`
+- `Http3xx`
+- `Http401`
+- `Http403`
+- `Http404`
+- `Http406`
+- `Http4xx`
+- `Http5xx`
+- `HttpResponseTime`
+- `InstanceCount`
+- `IoOtherBytesPerSecond`
+- `IoOtherOperationsPerSecond`
+- `IoReadBytesPerSecond`
+- `IoReadOperationsPerSecond`
+- `IoWriteBytesPerSecond`
+- `IoWriteOperationsPerSecond`
+- `MemoryWorkingSet`
+- `OnDemandFunctionExecutionCount`
+- `OnDemandFunctionExecutionUnits`
+- `PrivateBytes`
+- `Requests`
+- `RequestsInApplicationQueue`
+- `Threads`
+- `TotalAppDomains`
+- `TotalAppDomainsUnloaded`
+- `WorkflowActionsCompleted`
+- `WorkflowActionsFailureRate`
+- `WorkflowAppJobPullRate`
+- `WorkflowJobExecutionDelay`
+- `WorkflowJobExecutionDuration`
+- `WorkflowRunsCompleted`
+- `WorkflowRunsDispatched`
+- `WorkflowRunsFailureRate`
+- `WorkflowRunsStarted`
+- `WorkflowTriggersCompleted`
+- `WorkflowTriggersFailureRate`
+
+## microsoft.web/sites/slots
+
+- `AppConnections`
+- `AverageMemoryWorkingSet`
+- `AverageResponseTime`
+- `BytesReceived`
+- `BytesSent`
+- `CpuTime`
+- `CurrentAssemblies`
+- `FileSystemUsage`
+- `FunctionExecutionCount`
+- `FunctionExecutionUnits`
+- `Gen0Collections`
+- `Gen1Collections`
+- `Gen2Collections`
+- `Handles`
+- `HealthCheckStatus`
+- `Http101`
+- `Http2xx`
+- `Http3xx`
+- `Http401`
+- `Http403`
+- `Http404`
+- `Http406`
+- `Http4xx`
+- `Http5xx`
+- `HttpResponseTime`
+- `IoOtherBytesPerSecond`
+- `IoOtherOperationsPerSecond`
+- `IoReadBytesPerSecond`
+- `IoReadOperationsPerSecond`
+- `IoWriteBytesPerSecond`
+- `IoWriteOperationsPerSecond`
+- `MemoryWorkingSet`
+- `PrivateBytes`
+- `Requests`
+- `RequestsInApplicationQueue`
+- `Threads`
+- `TotalAppDomains`
+- `TotalAppDomainsUnloaded`
+
+{/* end auto-generated */}

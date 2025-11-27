@@ -1,0 +1,65 @@
+---
+title: Create a Core Instance
+'og:description': Learn how to create a Core Instance in Chronosphere Telemetry Pipeline.
+sidebarTitle: Create a Core Instance
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+After you've [installed a Core Operator](/pipeline-install/install-operator) in
+your Kubernetes cluster or Linux environment, you'll need to create a
+[Core Instance](/pipelines/concepts#core-instance) in that
+environment before deploying any pipelines.
+
+<Note>
+If you used Pipeline CLI to install your Core Operator in a Kubernetes cluster,
+use Pipeline CLI to create a Core Instance. If you used Helm to install your
+Core Operator in a Kubernetes cluster, use Helm to create a Core Instance.
+
+If you installed your Core Operator in a Linux environment, use Pipeline CLI
+to create a Core Instance.
+</Note>
+
+<Tabs>
+<Tab title="Pipeline CLI" id="create-cli">
+
+1. If you're creating a Core Instance in a Linux environment, set your
+   [Linux environment variables](/pipeline-install/environment-variables).
+
+1. Run the following command to create a new Core Instance:
+
+   ```shell
+   calyptia create core_instance operator --name INSTANCE
+   ```
+
+   Replace _`INSTANCE`_ with the name you'd like to give your new Core Instance.
+
+   To create your Core Instance in a specific [namespace](/pipeline-configure/kubernetes/namespaces),
+   add the `--kube-namespace NAMESPACE` flag, and replace _`NAMESPACE`_ with the
+   namespace where you want to create the Core Instance.
+
+   If you're using custom certificates or your own certificate authority, add the
+   `--no-tls-verify` flag.
+
+</Tab>
+<Tab title="Helm" id="create-helm">
+
+```shell /INSTANCE/ /TOKEN/
+helm install core-instance calyptia/core-instance --set coreInstance=INSTANCE --set cloudToken=TOKEN
+```
+
+Replace the following values:
+
+- _`INSTANCE`_: The name for your new Core Instance.
+- _`TOKEN`_: [Your API token](/pipeline-cli/authenticate) to authenticate with
+   the Telemetry Pipeline backend.
+
+</Tab>
+</Tabs>
+
+## Next steps
+
+After you've created a Core Instance, you can [configure](/pipeline-configure)
+its behavior and begin to [create telemetry pipelines](/pipeline-data/create-modify).
+Additionally, you can view and manage your Core Instances in the
+[Telemetry Pipeline web interface](https://core.calyptia.com/).

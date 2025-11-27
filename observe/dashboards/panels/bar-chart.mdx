@@ -1,0 +1,125 @@
+---
+title: Visualize relative data with bar charts
+'og:description': Create and customize bar chart data visualization panels for Chronosphere Observability Platform dashboards.
+sidebarTitle: Bar chart
+---
+import ChronoctlDashboard from '/snippets/_partials/chronoctl-dashboard.mdx';
+import ClassicPanel from '/snippets/_partials/classic-panels.mdx';
+import PanelQueries from '/snippets/_partials/panel-queries.mdx';
+import DashboardSeriesNaming from '/snippets/_partials/dashboard-series-naming.mdx';
+import DashboardDownsampleTruncate from'/snippets/_partials/dashboard-downsample-truncate.mdx';
+import DashboardUnits from '/snippets/_partials/dashboard-units.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+<ClassicPanel />
+
+A _bar chart_ visualizes numeric data returned by a [query](/investigate/querying).
+The chart depicts a specified value, such as the last numeric value in a time series
+or the result's sum, average, or minimum or maximum value, as a bar.
+
+Using Chronosphere Observability Platform, you can visualize the results of multiple
+queries in a single bar chart panel to visually compare them. This can help you
+quickly compare relative values from related queries, such as resource usage of
+different services, a single service at different points in time, or cumulative
+failure and error counts.
+
+To create a bar chart or learn more about the configuration options common
+to all panels, see [Panels](/observe/dashboards/panels).
+
+## Use a bar chart's tooltip
+
+When you hold the pointer over a bar in a bar chart, Observability Platform displays
+a tooltip that shows the bar's full label and value.
+
+## Bar chart queries
+
+Bar charts use one or more
+[queries](/observe/dashboards/panels#change-a-panels-query) to retrieve data to
+visualize. Bar charts use the following query **Options** to refine the
+displayed information, depending on your **Datasource**:
+
+<Tabs>
+<Tab title="Metrics (Prometheus)">
+
+- <DashboardSeriesNaming />
+- **Type**: The [PromQL query](/investigate/querying/promql#basic-querying)
+  type: **Instant**, or **Range**.
+<DashboardDownsampleTruncate />
+
+</Tab>
+<Tab title="Logs">
+
+<DashboardSeriesNaming />
+
+</Tab>
+</Tabs>
+
+## Configure a bar chart
+
+You can configure a bar chart by [modifying its **Settings**](/observe/dashboards/panels#edit-a-panel).
+
+Any changes you make in the panel's **Settings** tab are reflect immediately in
+the **Preview** pane, but take effect only when you click **Apply** in the **Edit panel**
+interface and then **Save** the dashboard.
+
+Observability Platform doesn't fully support directly editing a panel's JSON
+representation. Instead, configure panels directly in the user interface. Use the JSON
+representation only for managing your configuration as code with tools such as
+[Chronoctl](/tooling/chronoctl) and [Terraform](/tooling/infrastructure/terraform).
+
+### Miscellaneous settings
+
+The **Misc** tab contains these settings:
+
+- **Mode**: Determines whether the panel depicts a bar's numeric value as its literal
+  **Value** or as a **Percentage** of the sum of all bars in the chart.
+- **Sort**: Determines how the bar chart sorts the rendered bars.
+  - **Default** sorts the bars in their original data order.
+  - **Ascending** sorts the bars from the lowest value at the top, to the highest
+      value at the bottom. **Descending** sorts in the opposite direction.
+- **Limit**: The maximum number of returned values.
+
+### Modify units and formatting
+
+The **Unit and formatting** section changes the display of units on the chart.
+
+<DashboardUnits />
+
+### Modify a bar chart's thresholds
+
+The **Thresholds** section in a chart's **Settings** tab defines values
+where Observability Platform renders threshold lines over the chart. You can define
+threshold values as either absolute numeric values or percentiles. Observability
+Platform renders threshold lines as dashed lines.
+
+The threshold's **Mode** defines whether all thresholds use **Absolute** numeric
+values or **Percent** values. Percent values are relative to the Y axis' minimum and
+maximum. Defaults to **Absolute**.
+
+To create a new threshold:
+
+1. Click the plus sign (**+**) in the **Thresholds** section header.
+1. In the field that appears, enter a value where you want Observability Platform to
+   render the threshold line.
+1. Optional: Click the color indicator, depicted as a colored circle, to open a
+   selector where you can choose a color for the threshold line.
+1. Optional: Click the caret (**>**) to expand the threshold definition, and enter text
+   in the **Label** field to display on the chart if the threshold is met. This
+   text displays when you hold the pointer over the area of the chart exceeding the
+   threshold.
+1. In the **Edit panel** dialog, click **Apply** to save your changes.
+1. After you've finished editing the panel, click **Save** on the dashboard to save
+   your changes.
+
+To delete a threshold line, click the caret (**>**) to expand the threshold definition,
+and then click the **<Icon icon="trash" alt="Delete icon"/> Delete** icon
+on its corresponding row of the Thresholds section.
+
+### Modify a bar chart's colors
+
+The **Advanced** tab in a bar chart's **Edit panel** interface contains an **Override**
+section where you can add, remove, and configure colors. You can apply color overrides
+to a specific series or all series that match a
+[regular expression](/investigate/querying/regular-expressions).

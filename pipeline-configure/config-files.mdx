@@ -1,0 +1,180 @@
+---
+title: Pipeline configuration files
+'og:description': Use configuration files to customize your pipelines.
+sidebarTitle: Pipeline configuration files
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+In Chronosphere Telemetry Pipeline, the settings for each pipeline are stored
+inside a dedicated configuration file. These files must follow a standard
+[format](#format), but you can customize their contents to control how your
+pipeline gathers, modifies, and sends data.
+
+<Note>
+Due to Kubernetes [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/)
+storage limitations, the total size of a pipeline and its associated resources
+can't exceed 1&nbsp;MiB. This limit includes the combined size of configuration files,
+[secrets](/pipeline-configure/secrets), [parsers](/pipeline-data/parsers),
+and [any other files](/pipeline-configure/files).
+</Note>
+
+## Modify a pipeline's configuration file
+
+Use one of these methods to modify a pipeline's configuration file.
+
+<Tabs>
+<Tab title="Web interface" id="ui">
+
+When you modify a pipeline by using the Telemetry Pipeline web interface, that
+pipeline's configuration file updates to reflect your changes, even if you didn't
+edit the file directly.
+
+You can also edit configuration files directly in the **Advanced Settings**
+section of the pipeline builder, either by pasting raw YAML into the text field
+or by using **Import** to select a YAML file from your device. If the configuration
+settings you specify are valid, the pipeline builder continuously saves any changes
+you make and updates your pipeline accordingly.
+
+</Tab>
+<Tab title="Pipeline CLI" id="cli">
+
+In [Pipeline CLI](/pipeline-cli), run the following command:
+
+```shell /NAME/ /FILE/
+calyptia update pipeline NAME --config-file FILE
+```
+
+Replace the following values:
+
+- _`NAME`_: The name of the pipeline whose configuration file you want to update.
+- _`FILE`_: The new configuration file to use for that pipeline. This must be a
+  `.yaml` file.
+
+</Tab>
+</Tabs>
+
+## Format
+
+Configuration files follow standard YAML conventions and use the `.yaml` file
+extension. Regardless of a pipeline's individual settings, all configuration
+files adhere to the same core format:
+
+```yaml filename="my-pipeline.yaml"
+pipeline:
+  inputs:
+    - Name: source1
+      setting: value
+      setting: value
+      processors:
+        <...>
+    - Name: source2
+      setting: value
+      setting: value
+      setting: value
+      setting: value
+      processors:
+        <...>
+  outputs:
+    - Name: destination1
+      setting: value
+      processors:
+        <...>
+    - Name: destination2
+      setting: value
+      setting: value
+      setting: value
+      processors:
+        <...>
+```
+
+<Note>
+Configuration files use two spaces per indent, not four.
+</Note>
+
+## Sections
+
+All configuration files include a `pipeline` section, an `inputs` section, and
+an `outputs` section. Additionally, each input or output can contain an associated
+`processors` section.
+
+### Pipeline
+
+The `pipeline` section is the top-level section in a configuration file. It's a
+parent to the `inputs` section and the `outputs` section.
+
+### Inputs
+
+The `inputs` section is a sequence of mappings that contains one or more sources
+of telemetry data. Each mapping corresponds to a single
+[source plugin](/pipeline-data/plugins/source-plugins), and includes
+key/value pairs to configure the settings for that plugin, plus an optional
+`processors` object.
+
+### Outputs
+
+The `outputs` section is a sequence of mappings that contains one or more destinations
+for your telemetry data. Each mapping corresponds to a single
+[destination plugin](/pipeline-data/plugins/destination-plugins), and includes
+key/value pairs to configure the settings for that plugin, plus an optional
+`processors` object.
+
+### Processors
+
+Each `processors` section is a child to one of the mappings within the `inputs`
+section or `outputs` section. These sections contain
+[processing rules](/pipeline-data/processing-rules) to modify the
+telemetry data passing through each input or output.
+
+Because processing rules run separately for different types of telemetry data,
+a `processors` section is grouped into subsections for `logs`, `metrics`, and
+`traces`, where applicable. Each telemetry type subsection includes an
+`actions` object, which is a sequence of mappings that contains one or more
+processing rules and each rule's associated settings.
+
+<Note>
+If an input or output doesn't have processing rules associated with a particular
+type of telemetry data, the subsection for that telemetry type is omitted.
+</Note>
+
+These sections adhere to the following format:
+
+```yaml filename="my-pipeline.yaml"
+pipeline:
+<...>
+      processors:
+        logs:
+          - name: calyptia
+            actions:
+              - type: rule1
+                opts:
+                  setting: value
+                  setting: value
+                  setting: value
+              - type: rule2
+                opts:
+                  setting: value
+                  setting: value
+        metrics:
+        - name: calyptia
+            actions:
+              - type: rule1
+                opts:
+                  setting: value
+                  setting: value
+              - type: rule2
+                opts:
+                  setting: value
+        traces:
+        - name: calyptia
+            actions:
+              - type: rule1
+                opts:
+                  setting: value
+                  setting: value
+              - type: rule2
+                opts:
+                  setting: value
+                  setting: value
+                  setting: value
+```

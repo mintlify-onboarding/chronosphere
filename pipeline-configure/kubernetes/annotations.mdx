@@ -1,0 +1,55 @@
+---
+title: Annotations
+'og:description': Configure Kubernetes annotations in Chronosphere Telemetry Pipeline.
+sidebarTitle: Annotations
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+[Annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/)
+let you attach custom metadata to Telemetry Pipeline resources. These annotations won't
+affect Telemetry Pipeline's behavior.
+
+<Tabs>
+<Tab title="Pipeline CLI" id="annotations-cli">
+
+[Pipeline CLI](/pipeline-cli) lets you specify tolerations for new resources.
+However, you can't use Pipeline CLI to add or modify tolerations for an existing
+resource.
+
+When you create a new resource, add the `--annotations` flag to your operation,
+and include an annotations string.
+
+The string that specifies your annotations must follow this syntax:
+
+```
+annotation1=value1,annotation2=value2
+```
+
+</Tab>
+<Tab title="Helm" id="annotations-helm">
+
+Helm lets you add annotations to new resources, and add or modify annotations
+for existing resources.
+
+To do so, add the following key/value pair to your Helm chart:
+
+```yaml
+calyptiaAnnotations: STRING
+```
+
+Replace _`STRING`_ with the string that specifies your annotations.
+
+The string that specifies your annotations must follow this syntax:
+
+```
+annotation1=value1,annotation2=value2
+```
+
+However, if you're using Helm through the command line, you must escape any
+commas with a backslash (`\`) to prevent Helm from incorrectly splitting the
+string into multiple values. For example,
+`--set calyptiaAnnotations='annotation1=value1\,annotation2=value2'` is valid syntax.
+
+</Tab>
+</Tabs>

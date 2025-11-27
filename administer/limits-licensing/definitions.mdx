@@ -1,0 +1,37 @@
+---
+title: License unit definitions
+'og:description': Learn about licensing unit concepts in Chronosphere Observability Platform.
+sidebarTitle: Definitions
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere Observability Platform uses the following definitions for licensing
+units:
+
+- _Active Time Series_ (`ATS`) is the total number of unique time series, defined
+  as distinct combinations of metric names and labels, measured within a 2.5 hour
+  time window.
+- _Control_ is the volume of data that undergoes transformation and reshaping.
+  Control is measured in `GB` for traces, `GB` for logs, and matched writes for
+  metrics.
+- _Long Term Retention_ is the number of months Chronosphere will retain data at
+  a negotiated resolution.
+- _Matched Writes_ (`mW`) are the number of writes per second being matched for
+  transformation and reshaping. For more information, see
+  [aggregations](/administer/limits-licensing/licensing#aggregations).
+- _Persisted Cardinality_ is the count of unique time series of the
+  persisted writes stored by Chronosphere. For more information, see
+  [persisted cardinality](/administer/limits-licensing/licensing#persisted-cardinality).
+- _Persisted Writes Per Minute_ (`WPM`) is the total count of individual, timestamped
+  data points persisted in a one-minute interval. For more information, see
+  [persisted writes](/administer/limits-licensing/licensing#persisted-writes).
+- _Persisted Writes Per Second_ (`WPS`) is the total count of individual, timestamped
+  data points persisted in a one-second interval.
+- _Persistence_ is the volume of data stored following processing by control.
+  Persistence is measured in `GB` for traces, `GB` for logs, `WPM` for events,
+  and cardinality and resolution for metrics.
+- _Raw Retention_ is the number of days Chronosphere will retain raw data. For more
+  information, see [ingestion limits and retention policies](/administer/limits-licensing/licensing#ingestion-limits-and-retention-policies).
+- _Resolution_ is the ratio of active time series to persisted writes per second.
+- _Time series_ is a set of data points with matching labels.

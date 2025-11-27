@@ -1,0 +1,209 @@
+---
+title: Add agents to a fleet
+'og:description': Learn how to add agents to a fleet in Chronosphere Telemetry Pipeline.
+sidebarTitle: Add agents to a fleet
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+After you've [created a fleet](/fleets#create-a-fleet), you can add
+[supported telemetry agents](/fleets/agent) to that fleet.
+
+<Warning>
+When an agent joins a fleet, that agent's standalone configuration file is
+replaced by the configuration file that governs the entire fleet. Any settings previously
+configured in the standalone configuration file but not
+in the fleet-level configuration file will be permanently overwritten.
+
+Certain settings in an agent's standalone configuration file are necessary part
+of the agent creation process, and can later be overwritten by fleet-level
+settings without issue. However, any text in the original standalone configuration
+file is lost forever, so be sure to save critical key/value information in a separate
+location, or [update the fleet-level configuration file](/fleets#update-a-fleet) accordingly.
+</Warning>
+
+## Add a Fluent Bit agent
+
+> Requires Fluent Bit v2.1.8 or later.
+
+To add a Fluent Bit agent to a fleet:
+
+<Tabs>
+<Tab title="YAML configuration" id="fluent-yaml">
+
+<Note>
+YAML configuration is only supported in Chronosphere Telemetry Pipeline v2.25.0
+or later, and requires Fluent Bit v3.2 or later. Additionally, to use YAML
+configuration files for individual agents in a fleet, the `fleet_config_legacy_format`
+parameter in that fleet's configuration file must be set to `false`.
+</Note>
+
+1. If necessary, [install a new Fluent Bit agent](https://docs.fluentbit.io/manual/installation/getting-started-with-fluent-bit).
+
+1. Update the `customs` section in the configuration file for that agent.
+
+   ```yaml
+   customs:
+     - name: calyptia
+       calyptia_host: HOST
+       api_key: 'KEY'
+       fleet_name: 'NAME'
+       fleet.interval_sec: SECONDS
+       fleet.interval_nsec: NANOSECONDS
+       fleet_config_legacy_format: false
+   ```
+
+    Replace the following values:
+
+   - _`HOST`_: Your Chronosphere hostname. If you don't know your hostname, ask
+   a Chronosphere representative for this value.
+   - _`KEY`_: The [API token](/pipeline-cli/authenticate) you use to
+   authenticate with Telemetry Pipeline.
+   - _`NAME`_: The name of the fleet to which your agent will be added.
+   - _`SECONDS`_: How often, in seconds, this agent should check for configuration
+   updates. If unspecified, defaults to `15`.
+   - _`NANOSECONDS`_: How often, in nanoseconds, this agent should check for
+   configuration updates. If unspecified, defaults to `0`.
+
+1. Run the following command:
+
+   ```shell
+   fluent-bit -c CONFIG
+   ```
+
+   Replace _`CONFIG`_ with the name of the configuration file you updated in the
+   previous step.
+
+</Tab>
+<Tab title="Classic configuration" id="fluent-classic">
+
+1. If necessary, [install a new Fluent Bit agent](https://docs.fluentbit.io/manual/installation/getting-started-with-fluent-bit).
+
+1. Update the `[CUSTOM]` section in the configuration file for that agent.
+
+   ```shell
+   [CUSTOM]
+       Name calyptia
+       Calyptia_Host HOST
+       API_Key KEY
+       Fleet_Name NAME
+       fleet.interval_sec SECONDS
+       fleet.interval_nsec NANOSECONDS
+   ```
+
+    Replace the following values:
+
+    - _`HOST`_: Your Chronosphere hostname. If you don't know your hostname, ask
+   a Chronosphere representative for this value.
+    - _`KEY`_: The [API token](/pipeline-cli/authenticate) you use to
+    authenticate with Telemetry Pipeline.
+    - _`NAME`_: The name of the fleet to which your agent will be added.
+    - _`SECONDS`_: How often, in seconds, this agent should check for configuration
+    updates. If unspecified, defaults to `15`.
+    - _`NANOSECONDS`_: How often, in nanoseconds, this agent should check for
+    configuration updates. If unspecified, defaults to `0`.
+
+1. Run the following command:
+
+   ```shell
+   fluent-bit -c CONFIG
+   ```
+
+   Replace _`CONFIG`_ with the name of the configuration file you updated in the
+   previous step.
+
+</Tab>
+</Tabs>
+
+## Add a Core Agent
+
+> Requires Core Agent v23.4.5 or later.
+
+To add an instance of Core Agent to a fleet:
+
+<Tabs>
+<Tab title="YAML configuration" id="agent-yaml">
+
+<Note>
+YAML configuration is only supported in Chronosphere Telemetry Pipeline v2.25.0 or later,
+and requires Core Agent v25.1.1 or later. Additionally, to use YAML
+configuration files for individual agents in a fleet, the `fleet_config_legacy_format`
+parameter in that fleet's configuration file must be set to `false`.
+</Note>
+
+1. If necessary, [install a new instance of Core Agent](https://docs.calyptia.com/calyptia-for-fluent-bit/installation/getting-started-with-fluent-bit).
+
+1. Update the `customs` section in the configuration file for that agent.
+
+   ```yaml
+   customs:
+     - name: calyptia
+       calyptia_host: HOST
+       api_key: 'KEY'
+       fleet_name: 'NAME'
+       fleet.interval_sec: SECONDS
+       fleet.interval_nsec: NANOSECONDS
+       fleet_config_legacy_format: false
+   ```
+
+    Replace the following values:
+
+    - _`HOST`_: Your Chronosphere hostname. If you don't know your hostname, ask
+   a Chronosphere representative for this value.
+    - _`KEY`_: The [API token](/pipeline-cli/authenticate) you use to
+    authenticate with Telemetry Pipeline.
+    - _`NAME`_: The name of the fleet to which your agent will be added.
+    - _`SECONDS`_: How often, in seconds, this agent should check for configuration
+    updates. If unspecified, defaults to `15`.
+    - _`NANOSECONDS`_: How often, in nanoseconds, this agent should check for
+    configuration updates. If unspecified, defaults to `0`.
+
+1. Run the following command:
+
+   ```shell
+   calyptia-fluent-bit -c CONFIG
+   ```
+
+   Replace _`CONFIG`_ with the name of the configuration file you updated in the
+   previous step.
+
+</Tab>
+<Tab title="Classic configuration" id="agent-classic">
+
+1. If necessary, [install a new instance of Core Agent](https://docs.calyptia.com/calyptia-for-fluent-bit/installation/getting-started-with-fluent-bit).
+
+1. Update the `[CUSTOM]` section in the configuration file for that agent.
+
+   ```shell
+   [CUSTOM]
+       Name calyptia
+       Calyptia_Host HOST
+       API_Key KEY
+       Fleet_Name NAME
+       fleet.interval_sec SECONDS
+       fleet.interval_nsec NANOSECONDS
+   ```
+
+    Replace the following values:
+
+    - _`HOST`_: Your Chronosphere hostname. If you don't know your hostname, ask
+   a Chronosphere representative for this value.
+    - _`KEY`_: The [API token](/pipeline-cli/authenticate) you use to
+    authenticate with Telemetry Pipeline.
+    - _`NAME`_: The name of the fleet to which your agent will be added.
+    - _`SECONDS`_: How often, in seconds, this agent should check for configuration
+    updates. If unspecified, defaults to `15`.
+    - _`NANOSECONDS`_: How often, in nanoseconds, this agent should check for
+    configuration updates. If unspecified, defaults to `0`.
+
+1. Run the following command:
+
+   ```shell
+   calyptia-fluent-bit -c CONFIG
+   ```
+
+   Replace _`CONFIG`_ with the name of the configuration file you updated in the
+   previous step.
+
+</Tab>
+</Tabs>

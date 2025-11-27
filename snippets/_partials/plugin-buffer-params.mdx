@@ -1,0 +1,7 @@
+
+This parameter doesn't have an equivalent setting in the Telemetry Pipeline web
+interface, but you can use it in pipeline configuration files.
+
+| Name | Key | Description | Default |
+| ---- | --- | ----------- | ------- |
+| _none_ | `buffer_max_size` | Sets the maximum [chunk](https://docs.fluentbit.io/manual/administration/buffering-and-storage#chunks) size for buffered data. If a single log exceeds this size, the plugin drops that log. | `4M` |

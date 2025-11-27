@@ -1,0 +1,152 @@
+---
+title: Navigate the Observability Platform interface
+'og:description': Learn how to navigate the Chronosphere Observability Platform to find the functions you need to gain insight into your platforms.
+sidebarTitle: Overview
+---
+import { CollectionNavIcon, ServiceNavIcon } from '/snippets/Icons.jsx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+The Chronosphere Observability Platform user interface guides you to the resources
+you need.
+
+## Personal home page
+
+After you sign in, Observability Platform displays your personal
+[home page](/observe/personal-homepage).
+You can [customize](/observe/personal-homepage#customize-your-home-page) this
+home page to display the information you need the most.
+
+To return to the home page from anywhere in Observability Platform, click the
+Chronosphere icon at the top of the navigation menu.
+
+## Team and collection home pages
+
+Teams and collections have their own _home pages_ populated with links to associated
+resources, and also customizable links and descriptions. For details, see
+[Team and collection home pages](/administer/collections/home).
+
+## Search
+
+Observability Platform provides a global search bar on every page that supports
+searching for teams, collections, dashboards, monitors, services, and SLOs by name.
+To search, click the search bar or use the keyboard shortcut `Control+K`
+(`Command+K` on macOS) to focus on the bar, and then begin typing. Search
+results will appear as you type.
+
+By default, search results include all supported resource types. To toggle a resource
+type's visibility in the results, click its selector at the top of the results list.
+
+The icons in the resource type filters correspond to the icons displayed next to
+each result and identify each result's type. Resources in the results that belong
+to a team or collection also list them beneath the result's name.
+
+## Your account
+
+The interface represents your signed-in account by your first initial in a circle.
+Click your account to open a panel to:
+
+- Select your UI theme.
+- Select the **Time zone** your account uses to display data.
+- Choose your **Clock** display preference: **12-hour** or **24-hour**.
+- Open the **My Account** page, which contains details about your account and your
+  [personal access tokens](/administer/accounts-teams/personal-access-tokens).
+- **Sign Out** of Observability Platform.
+- Confirm your signed-in account's email address and the Observability Platform
+  version number.
+
+## Help and documentation
+
+Click **<Icon icon="circle-question" />** to open a panel containing links to
+these resources:
+
+- The contextual link for the current page's documentation
+- Product documentation
+- [Support portal](https://support.chronosphere.io)
+- [Keyboard shortcuts](#keyboard-shortcuts)
+
+## Feature navigation
+
+The navigation menu contains links to each of its toolsets and functions:
+
+All users:
+
+- **<ServiceNavIcon /> System Overview** links to tools to explore services and
+  service level objectives (SLOs).
+- **<CollectionNavIcon /> Collections** opens a panel with links to home pages for each team and
+  collection, and a link to your personal home page.
+- **<Icon icon="table-cells" /> Dashboards** opens the list of all dashboards.
+- **<Icon icon="bell" /> Alerts** links to tools related to monitors, alerts, and notifications.
+- **<Icon icon="compass" /> Explorers** links to tools to explore metrics, traces,
+  logs, and change events.
+
+Administrators only:
+
+- **<Icon icon="scroll" /> License Overview** opens a page with details about
+  your license usage.
+- **<Icon icon="microscope" /> Analyzers** links to metric and query analysis tools.
+- **<Icon icon="shapes" /> Control** links to metric and trace management tools.
+- **<Icon icon="wrench" /> Platform** links to administrative tools and
+  maintenance views.
+
+## Header navigation
+
+[Dashboards](/observe/dashboards), [service pages](/observe/services/service-pages),
+and [SLOs](/observe/slo) in Observability Platform have a header that displays
+[team ownership](/administer/accounts-teams/teams) and the
+[collection or service that owns](/observe/dashboards#create-a-dashboard) the displayed
+resource. The header also enables searching for other resources owned by the same
+team or collection.
+
+1. In the navigation menu, select either **Dashboards**, **Services**, or **SLOs**.
+1. Click a dashboard, service, or SLO from the table.
+1. Click the dashboard or service name to display the header overview.
+
+    <Frame>
+    <img src="/public/doc-assets/header-nav.png" alt="Select the name to display header nav" width="500" />
+    </Frame>
+
+You can click the team, service, or collection name to go to its overview page.
+
+## Keyboard shortcuts
+
+Many pages in Observability Platform include keyboard shortcuts. Press
+`Control+/` (`Command+/` on macOS) to display the shortcuts for a
+page. Not all pages include shortcuts.
+
+## Mobile-friendly pages
+
+Some pages in Observability Platform have been optimized for use on cell phones and
+other mobile devices. Mobile-friendly pages include Monitors, Dashboards, Services,
+SLOs, Collections, and Teams.
+
+## Chips
+
+Observability Platform uses [chips](https://m2.material.io/components/chips)
+in the web app. Chips are generally used as filters to narrow down the scope of
+searches or queries. [Pinned scopes](/navigate/pinned-scopes) and
+[search](#search) are two examples of pages using chips.
+
+<Frame>
+![Chips in a pinned scope](/public/doc-assets/chip-pinned-scope.png)
+</Frame>
+
+If a chip has a <Icon icon="xmark" /> close icon, you can click the icon to
+remove the chip. Chips without a close icon are pinned scopes that can be deactivated
+or reactivated by clicking the chip.
+
+## Feedback
+
+If you have feedback on Observability Platform, click **<Icon icon="bullhorn" /> Feedback**.
+
+## More information
+
+Click the **<Icon icon="circle-info" /> More information** menu to open a panel containing
+links to these resources:
+
+- [**Chronosphere University**](https://learn.chronosphere.io/) for training courses.
+- **Chronosphere status**: View the Chronosphere service status page.
+- **Release Notes**: View product release notes for Observability Platform, Chronosphere Collector,
+  Chronoctl, or the Chronosphere Terraform provider.
+- **Privacy Policy**: View the [Chronosphere Privacy Notice](https://chronosphere.io/privacy/).

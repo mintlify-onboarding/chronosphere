@@ -1,0 +1,19 @@
+
+Because the Chronosphere API requires authentication, include an API token with your
+`curl` request, as shown in the following example. For more details, see
+[Create an API token](/tooling/api-info#create-an-api-token).
+
+```shell /"TOKEN"/ /INSTANCE/ /METHOD/ /ENDPOINT_PATH/
+export CHRONOSPHERE_API_TOKEN="TOKEN"
+export CHRONOSPHERE_DOMAIN="INSTANCE.chronosphere.io"
+
+curl -H "API-Token: ${CHRONOSPHERE_API_TOKEN}" \
+     -X METHOD "https://${CHRONOSPHERE_DOMAIN}/ENDPOINT_PATH"
+```
+
+Replace the following:
+
+- _`TOKEN`_: Your API token.
+- _`INSTANCE`_: The subdomain name for your organization's Observability Platform instance.
+- _`METHOD`_: The HTTP method to use with the request, such as `GET` or `POST`.
+- _`ENDPOINT_PATH`_: The specific endpoint you want to access.

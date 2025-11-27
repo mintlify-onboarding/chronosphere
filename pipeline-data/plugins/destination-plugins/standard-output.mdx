@@ -1,0 +1,44 @@
+---
+title: Standard output destination plugin
+sidebarTitle: Standard output
+'og:description': Use the Standard output destination plugin.
+---
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Standard output [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `stdout`) lets you output your telemetry data to the standard output
+stream of a command line interface.
+
+If this plugin is active, you can use the
+[**Pipeline Output**](/pipeline-navigate#pipeline-output)
+pane in the Chronosphere Telemetry Pipeline web interface to view the data being
+routed through your pipeline.
+
+<Note>
+When you use **Pipeline Output** while this plugin is active, your telemetry
+data is temporarily cached in the Telemetry Pipeline backend.
+</Note>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics     | Traces      |
+| :---------: | :---------: | :---------: |
+| <YesIcon /> | <YesIcon /> | <YesIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Advanced
+
+| Name       | Key | Description | Default |
+| ---------- | --- | ----------- | ------- |
+| **Format** | `format` | Required. Specifies the data format to be used in the HTTP request body. Accepted values: `json`, `json_lines`, `json_stream`. | `json` |

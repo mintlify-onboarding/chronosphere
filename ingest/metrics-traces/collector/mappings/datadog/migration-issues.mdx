@@ -1,0 +1,72 @@
+---
+title: Datadog migration considerations
+sidebarTitle: Migration considerations
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Datadog uses its own proprietary query language and storage system. Chronosphere is
+based on Prometheus. As you consider moving from Datadog to Chronosphere,
+review the following questions and suggestions as you plan your migration.
+
+## General
+
+- Are you planning to stay on DogStatsD, or move to
+  [Prometheus](https://prometheus.io/) or
+  [Open Telemetry](https://opentelemetry.io/)?
+- How's your cluster defined?
+
+### Metrics
+
+Understanding the metrics you're using and how they're used can help determine
+the time needed to switch from the previous system to Chronosphere.
+
+- Do you have a list of the metrics you are using for dashboards and alerts?
+- How many dashboards do you need to convert?
+  - How many widgets per dashboard?
+  - Determine the breakdown of widget type (visualization) per dashboard.
+- Which dashboards are critical to you and your users?
+
+  You can use [popularity ranking in Datadog](https://docs.datadoghq.com/dashboards/#popularity)
+  to determine this:
+
+  - [Get All Dashboards](https://docs.datadoghq.com/api/latest/dashboards/#get-all-dashboards).
+  - Iterate over these dashboards' IDs: [Get a dashboard](https://docs.datadoghq.com/api/latest/dashboards/#get-a-dashboard).
+- How many monitors do you need to convert?
+  - How do you route alerts in Datadog today?
+      - Dynamic routing based off of labels.
+      - Static routing per monitor.
+  - Which monitors are critical?
+      Monitors/alerts that are going to PagerDuty are often the most critical.
+      Example:
+      [Get All Monitor Details](https://docs.datadoghq.com/api/latest/monitors/#get-all-monitor-details).
+
+## Integrations
+
+Chronosphere integrates with other systems.
+
+- What integrations are you currently using?
+  - What metrics do those integrations use, either ingested or exposed.
+  - How do you use those metrics in your dashboards and alerts?
+    This helps create the correct exporter configuration. For example, configuring
+    [YACE](https://github.com/nerdswords/yet-another-cloudwatch-exporter) to do
+    a sum statistics aggregation versus average gives different results.
+- Do you have a plan for how to ingest the OSS metrics?
+- Get consensus about using OSS Grafana dashboards for OSS metrics, or if you'll need
+  to convert the widgets.
+
+## Custom metrics
+
+You and your users might have created custom metrics for internal applications.
+
+- How many metrics are distributions? Egress costs might be higher for distribution
+  metrics than for other types.
+- Develop an understanding of what your custom metrics are, what they're monitoring,
+  and what labels they have.
+
+## Alerts migration
+
+Alerts and notifications are often critical parts of your observability platform.
+
+- Obtain a list of the existing alerting platforms being used.
+- Create a list of the notification channels in use.

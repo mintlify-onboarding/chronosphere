@@ -1,0 +1,82 @@
+---
+title: Use a GitOps workflow
+sidebarTitle: Gitops workflow
+'og:description': Learn about using GitOps workflows in Observability Platform
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+Chronosphere Observability Platform lets users programmatically update many facets
+of platform configuration using code tools like [Chronoctl](/tooling/chronoctl),
+[Terraform](/tooling/infrastructure/terraform), and the
+[Observability Platform API](/tooling/api-info).
+
+Entities modified by Terraform and Chronoctl are viewable in Observability Platform,
+but can't be modified. Use the **Code Config** tool to review these entities and
+understand working examples. You can copy and modify existing entities instead
+of writing new configurations, which helps developers onboard faster and lets them
+integrate changes into their existing
+[GitOps workflows](https://about.gitlab.com/topics/gitops/).
+
+This tool is available for create, read, update, and delete (CRUD) operations
+for the following entities, and other supported entities:
+
+- [Aggregation rules](/control/shaping/rules)
+- [Dashboards](/observe/dashboards)
+- [Drop rules](/control/shaping/rules/drop-rules)
+- [Monitors](/investigate/alerts/monitors)
+- [Signals](/investigate/alerts/notifications/signals)
+- [Metric pools](/control/shaping/quotas/manage-pools)
+
+## Use the Code Config tool
+
+When adding or editing a supported entity, click the **Code Config** tab to
+view code representations. The displayed code also responds to changes you make
+in the **Visual Editor** tab.
+
+When you modify an entity's properties in the **Visual Editor** tab, click the
+**Code Config** tab to immediately see the updated code representations.
+
+Changes you make in the **Visual Editor** tab don't take effect until you click
+**Save** or apply the code representations using their corresponding tools.
+
+   {/* vale Chronosphere.Spelling = NO */}
+
+1. Sign in to Observability Platform.
+1. Navigate to the section of Observability Platform where you want to make changes.
+1. Select an existing entity, or create a new one.
+1. Click the **Code config** tab or menu link. **Code config** is ususally
+   available in edit screens.
+1. Select the code type:
+    - **Terraform**
+    - **Chronoctl**
+    - **API**
+1. Click **<Icon icon="copy" /> Copy** to copy the file, or
+   **<Icon icon="download" /> Download** to download the file to your computer.
+1. Apply the changes.
+
+   <Tabs>
+   <Tab title="Chronoctl">
+
+   1. Add the definition to a `.yaml` file.
+   1. Use [`chronoctl apply`](/tooling/chronoctl#apply) to apply the changes.
+
+   </Tab>
+   <Tab title="Terraform">
+
+   1. Add the definition to a Terraform file, or create a new Terraform file.
+   1. Run this command to apply the resource:
+
+      ```shell
+      terraform apply
+      ```
+
+   </Tab>
+   <Tab title="API">
+
+   Apply changes through the API by using the [appropriate endpoint](/tooling/api-info).
+
+   </Tab>
+   </Tabs>
+
+   {/* vale Chronosphere.Spelling = YES */}

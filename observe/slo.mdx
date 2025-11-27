@@ -1,0 +1,343 @@
+---
+title: Service level objectives
+'og:description': Learn about service level objectives (SLOs) in Chronosphere Observability Platform.
+sidebarTitle: Overview
+---
+import { ServiceNavIcon} from '/snippets/Icons.jsx';
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+import VersionHistory from '/snippets/_partials/version-history.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+It's critical to understand your services' performance and reliability to ensure
+those services are meeting your business's needs. To do so, you can define and
+communicate your expectations for a service's performance.
+
+In many cases, it's sufficient to define [monitors](/investigate/alerts) that measure
+metrics about a service against a fixed threshold, and to alert those responsible
+for the service when that threshold is exceeded. However, in complex and dynamic
+systems monitors can also be falsely triggered by inconsistent data or fail to
+alert on gradual issues that build up over time.
+
+_Service level objectives_ (SLOs) instead focus on longer-term performance reporting and
+changes in error rates. In an SLO, you define these elements:
+
+- A percentile _objective_ that represents your goal for uptime or error-free operation.
+  For example, your objective for a service might be to maintain 99.95% uptime.
+- An _error budget_, or your tolerance for downtime or errors. This is the inverse
+  of your objective, because it represents the service capacity that can be lost before
+  the service fails its objective. Likewise, changes to your objective also change
+  your error budget. For example, a 99.95% uptime objective also defines a 0.05%
+  error budget.
+- Metrics queries that define _indicators_ of your performance against that objective.
+  For example, you might query for the summed duration of error responses that your
+  service returned to requests, and compare that to the total time the service was
+  running. This creates an _error ratio_, or the percentage of errors against your
+  total.
+- A _time window_ that you'll measure for performance against your objective. Your
+  SLO measures your error or success rates against the total over the time window,
+  such as the last four weeks, to determine whether the service met the objective.
+
+Chronosphere Observability Platform lets you create SLOs you can use to define
+objectives, set queries, and measure and visualize performance over a time window.
+Chronosphere SLOs use a rolling time window to report the ongoing status of a service,
+as opposed to calendar time windows that are fixed to specific dates.
+
+After you've defined your SLO, it then identifies your error or success rate against
+the total over the time window. If the service met your objective in the time window,
+the SLO reports the service is healthy. If not, the SLO reports its objective was
+breached and visualizes the state of metrics before the breach for investigation.
+
+For a high-level overview of planning and designing SLOs, see
+[Design service level objectives](/observe/slo/design). For instructions on how
+to create, update, and delete an SLO, see [Manage service level objectives](/observe/slo/manage).
+
+## Differences from monitors
+
+Although SLOs seem similar to monitors, SLOs provide a more dynamic incident
+detection method that let you trigger alerts based on changes in real user
+experiences, rather than at an arbitrary threshold.
+
+SLOs also provide additional details for more granular notifications:
+
+- SLOs report the _burn rate_ of your error budget, which you can configure to raise
+  alerts when the service is depleting its error budget over a short period within your
+  time window. Burn rate alerts can help you respond to sudden degradations of
+  performance before they breach your SLO, and burn rate visualizations can identify
+  patterns in error rates that might not be as evident when looking only at the
+  service's metrics.
+
+  For example, a burn rate alert can trigger notifications if more than 2% of your
+  error budget is consumed over a one-hour span. You can then respond closer to
+  the beginning of the incident and attempt to prevent the SLO from breaching by
+  investigating the problem and finding a solution. Such a spike in burn rate will
+  also be displayed on the SLO's burn rate chart, which can help you pinpoint when
+  the service degradation started.
+- You can define label-based _dimensions_ to break down your SLO's measurement by
+  time series. This helps you respond to complex services represented by multiple
+  time series by letting you signal for specific series that breach the SLO.
+- You can perform [differential diagnosis](/investigate/analyze/differential-diagnosis/metrics) (DDx)
+  on your SLO's charts to begin correlating concerning patterns in error rates.
+
+## SLO terminology
+
+Service performance is generally defined in these ways:
+
+- Service level agreements (SLA): Contracts between a provider and a client that
+  determine acceptable performance measurements, and the consequences for violating
+  those measurements. An SLA defines the limits and consequences for failures.
+- Service level objectives (SLO): Usually internal targets for specific metrics
+  that the provider aims to meet. These should be as specific as possible and are
+  usually stricter than the SLA. For example, to ensure you meet an SLA to maintain
+  99.95% uptime or respond to an incident in less than two hours, you might define
+  your SLO as meeting a standard of 99.999% uptime or responding to an incident
+  within 60 minutes.
+- Service level indicators (SLI): The measurement being evaluated in an SLO
+  or SLA, often as service uptime, availability, or response success rate. For example,
+  if a SLO is to maintain 99.999% service uptime, the SLI is the service's uptime
+  metric.
+
+For more information about industry-standard SLO terminology, see the
+[Google SRE handbook](https://sre.google/sre-book/service-level-objectives/) and
+[Design service level objectives](/observe/slo/design).
+
+## View overall SLO status
+
+You can view a list of SLOs to identify if any are breaching their limits. You can
+also filter the list to narrow your view to specific keywords, team, or owner.
+
+To view a list of existing SLOs:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**.
+1. Select **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> SLOs**.
+
+To filter the SLO list, use one of these methods:
+
+- Enter text into the **Search SLOs** search field to filter by name
+- Use the **Select an owner** dropdown to filter by the SLO's owning collection
+  or service
+- Use the **Select a team** dropdown to filter by the SLO's assigned team.
+
+The SLO table contains the following information:
+
+- **Status**: The SLO's health, summarized as a status icon. An SLO's health is
+  defined by the alerting status of its monitor or the state of the series measured
+  by the SLO as compared to its error budget.
+
+  | Icon | Description |
+  | ---- | ------------|
+  | <Icon iconType="solid" icon="hexagon-exclamation" color="#ee6c6cff"/> | Has at least one series with an error rate that exceeds the defined critical conditions. |
+  | <Icon iconType="solid" icon="circle-exclamation" color="#ffb249ff"/> |  Has at least one series with an error rate that exceeds the defined warning conditions. |
+  | <Icon iconType="solid" icon="circle-check" color="#59cc8dff"/> | No series are alerting. |
+  | <Icon iconType="solid" icon="bell" color='#a582edff'/> | Alerting is muted. |
+  | <Icon iconType="solid" icon="bell-slash" /> | Alerting is disabled. |
+  | <Icon iconType="solid" icon="ban" /> | No data is available. |
+
+- **Name**: The SLO's name.
+- **Objective**: The objective defined for this SLO.
+- **Alerting Enabled**: Whether or not alerting is enabled for this SLO.
+- **Owner**: The service or collection that owns this SLO.
+- **Team**: The team responsible for the **Owner**.
+- **Source**: This SLO's creation method.
+
+  <InfoTerraformLockout />
+
+The row for each SLO in the list also includes a
+<Icon icon="ellipsis-vertical" /> three vertical dots icon that provides quick access
+to SLO creation, editing, and deletion. Click the icon to select one of the following
+options:
+
+- **Duplicate**: Click to open the SLO [create](/observe/slo/manage) drawer, populated
+  with the information used to create the existing SLO. Configure the new SLO and then
+  click **Save** to create the new SLO.
+- **Edit**: Click to update your SLO using the [create](/observe/slo/manage) drawer.
+- **Delete**: [Delete](/observe/slo/manage) the SLO.
+
+## View an SLO
+
+<Tabs>
+<Tab title="Web" id="view-an-slo-web">
+
+Click the name of any SLO in the list to open its page, which is similar to a dashboard
+and visualizes important metrics related to one or more services.
+
+### SLO menu
+
+An SLO page's menu provides access to features that modify the SLO's behavior:
+
+- **Events**: Click to open the **Display events** drawer. Select the checkboxes for
+  the events you want to display, and then click **Save**.
+- **Mute**: Click to [create a muting rule](/investigate/alerts/muting-rules#create-a-muting-rule)
+  for this SLO. If a muting rule is already active for an SLO, a banner indicates
+  the active muting rule and its expiration.
+
+The menu also includes a link to the <Icon icon="book-open" /> documentation
+and a <Icon icon="ellipsis-vertical" /> three vertical dots icon.
+
+Click the three vertical dots to select one of the following options:
+
+- **Duplicate**: Click to open the SLO [create](/observe/slo/manage) drawer, populated
+  with the information used to create the existing SLO. Configure the new SLO and then
+  click **Save** to create the new SLO.
+- **Edit**: Click to update your SLO using the [create](/observe/slo/manage) drawer.
+- **Version history**: Review previous versions of this SLO's configuration.
+
+  <VersionHistory />
+
+The menu's [time range selector](/navigate/time-ranges) displays the current time range
+applied to the SLO's visualizations and lets you define a new time range. You can
+also select the SLO's time range by clicking and dragging across the time span you
+want to define in any of the SLO's visualization charts.
+
+### SLO details
+
+The **SLO details** section provides a high-level view of the SLO's overall health,
+and indicates whether your SLO is meeting its objective or has breached its target.
+
+- **Alerting status**: The [SLO's status](#view-overall-slo-status).
+- **Availability target**: The SLO's currently defined objective.
+- **[Reporting status](#reporting-status)**: If the SLO is firing alerts, or if
+  its error budgets are depleted or low, Observability Platform displays
+  additional indicators to summarize these major issues.
+
+The following charts visualize performance against the SLO's defined limits:
+
+- **Availability**: Availability results based on the SLI's rate definition.
+- **Error budget**: The SLO's remaining error budget over its defined time window.
+
+As with all charts on the SLO view, hovering over it reveals
+<Icon icon="ellipsis-vertical" /> three vertical dots. When clicked, this provides
+options to open the chart's query in Metrics Explorer, add the chart to a dashboard,
+or investigate it using Metrics DDx. See
+[common panel elements](/observe/dashboards/panels#common-panel-elements) for an
+explanation of the available tools.
+
+#### Reporting status
+
+If an SLO is breached or close to being breached, the SLO page displays a
+**Reporting status** that's otherwise hidden from view. This status contains chips
+for the SLO's firing alerts, depleted error budgets, and error budgets that are close
+to depletion.
+
+If the reporting status is visible for an SLO, you should immediately begin
+investigating the causes for the statuses it reports.
+
+#### SLO alerting
+
+If a low-error-rate SLO alert fires, the alert can continue to fire for up to the
+configured long window for hours after the resolution of the issue that caused the
+alert. The time of alert firing depends on the rate of decrease in the error budget.
+
+#### Series
+
+Use the **Series** subsection's table to search for or select specific series to
+view in the **Availability** and **Error budget** charts. Each row represents a
+time series returned in the SLI's query.
+
+The table has the following columns:
+
+- **Status**: The [SLO status](#view-overall-slo-status) for that series.
+- Columns for labels and values: Each column's header is the name of a label in
+  that series, and its cells contain that label's value for that row's series.
+- **Actual**: The metric's value over the SLO's defined time window.
+- **Error budget**: The SLO's remaining error budget for that series. If the cell's
+  background is red, its value represents a breach of the SLO.
+
+### SLI breakdown
+
+The **SLI breakdown** section consists of charts that visualize your service level indicators,
+which are based on the SLO's definition. For more information, see
+[Create service level objectives](/observe/slo/manage).
+
+These charts include:
+
+- **Total requests**: A visualization of the SLI's [total query](/observe/slo/manage),
+  representing the total requests to the service.
+- **Errors**: A visualization of the SLI's [error query](/observe/slo/manage).
+
+### Burn and error rates
+
+The **Burn/Error rates** section consists of charts that visualize the error budget
+burn rate and the rate of reported errors. Burn rate calculations are based on the
+SLO's definition. For more details, see [Create service level objectives](/observe/slo/manage).
+
+You can adjust the **window** used for visualizations, which can be `1h`, `6h`,
+`1d`, or `3d`.
+
+### Change events
+
+<LimitedAvail />
+
+<Note>
+[Change events](/observe/enable-events/use-events) are required for SLO history.
+</Note>
+
+If this service uses [change events](/observe/enable-events/use-events), those
+events are graphed in this section. This includes events generated by this SLO and
+also events added by other features to connected services.
+
+### SLO information
+
+The **SLO information** section provides a user-defined **Description** of the SLO
+and relevant **Runbook** links, as defined in the [create](/observe/slo/manage) drawer.
+
+**Related queries** depend on features enabled in your tenant. In addition, the SLO
+must be owned by a service, not a collection. When clicked, the links open in a new
+tab and populate the page with a query based on the selected SLO. These links include
+the following:
+
+- **View traces**: When [traces](/overview/types/traces) are enabled, this links to
+  [Trace Explorer](/investigate/querying/traces).
+- **View events**: When [change events](/overview/types/change-events) are enabled,
+  this link opens
+  [Changes Explorer](/observe/enable-events/use-events#view-change-events).
+
+### Ownership
+
+The **Ownership** section displays the SLO's **Owner**, which is a service or collection.
+Its **Policy** links to the SLO's selected
+[notification policy](/investigate/alerts/notifications/policies).
+
+### Labels and annotations
+
+**Labels** are key-value pairs that filter the SLO to specific telemetry. For
+example, you might have a service with a label of `service` and a value of
+`payment-gateway`. These values display sequentially.
+
+**Annotations** are key-value pairs that provide additional information for events.
+
+### Service dashboards
+
+Observability Platform generates a list of **Service dashboards** based on the
+dashboards attached to the service that owns the SLO.
+
+</Tab>
+<Tab title="API" id="view-an-slo-api">
+
+To view a representation of the SLO as a JSON object for the
+[Chronosphere API](/tooling/api-info) in Observability Platform:
+
+1. Follow the steps to edit an SLO to open the **Visual Editor** tab of the **SLO Definition**
+   drawer.
+1. Click the **Code Config** tab.
+1. Click the resource type dropdown, which defaults to **Terraform**, and select
+   **API**.
+
+You can also **<Icon icon="copy" /> Copy** the resource definition
+to your clipboard or **<Icon icon="download" /> Download** it.
+
+To retrieve the JSON representation using the Chronosphere API:
+
+1. [Authenticate to the Chronosphere API](/tooling/api-info).
+1. Retrieve a list of SLOs by making a request to the
+   [`ListSLOs`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ListSLOs) endpoint of the
+   Config API.
+1. Identify the SLO you want to edit by its `slug`.
+1. Retrieve the SLO by making a request to the
+   [`ReadSLO`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ReadSLO) endpoint of the
+   Config API with the SLO's `slug`.
+
+</Tab>
+</Tabs>

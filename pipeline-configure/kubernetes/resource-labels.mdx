@@ -1,0 +1,41 @@
+---
+title: Resource labels
+'og:description': Learn about the labels assigned to Telemetry Pipeline resources.
+sidebarTitle: Resource labels
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Because Chronosphere Telemetry Pipeline is a collection of Kubernetes resources,
+Telemetry Pipeline uses the
+[Kubernetes labeling system](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+to categorize and identify these resources. You can't change these labels yourself,
+but Telemetry Pipeline applies labels consistently across resources, which means you can
+use them to select specific resources while performing Kubernetes operations.
+
+## Label format and types
+
+Telemetry Pipeline resource labels use a key/value pair format separated by an
+equal sign (`key=value`). All resource of the same type receive the same set of
+keys, but certain keys' values contain information unique to a particular
+instance of a resource, like a name or UUID.
+
+## List of resource labels
+
+Each resource in Telemetry Pipeline receives the following labels:
+
+{/* markdownlint-disable MD033 */}
+
+| Resource type                 | Labels |
+| ----------------------------- | ------ |
+| Core Operator pod             | `calyptia.core=core-operator`<br/>`control-plane=controller-manager` |
+| Core Operator metrics service | `calyptia.core=core-operator`<br/>`control-plane=controller-manager` |
+| Core Instance pod             | `app.kubernetes.io/part-of=calyptia` |
+| Core Instance metrics service | _none_ |
+| Pipeline pod                  | `app.kubernetes.io/component=calyptia-core`<br/>`core-pipeline=[PIPELINE NAME]` |
+| Cluster logging pipeline pod  | `app.kubernetes.io/component=calyptia-core`<br/>`core-pipeline=[INSTANCE NAME]-cluster-logging-[UUID]` |
+| Pipeline service              | `app.kubernetes.io/created-by=core-operator`<br/>`app.kubernetes.io/managed-by=core-operator`<br/>`app.kubernetes.io/part-of=calyptia`<br/>`calyptia.core=core-operator` |
+| Health check pod              | `app.kubernetes.io/component=calyptia-core`<br/>`core-pipeline=[INSTANCE NAME]-health-check-[UUID]` |
+| Health check service          | `calyptia.core=core-operator` |
+
+{/* markdownlint-enable MD033 */}

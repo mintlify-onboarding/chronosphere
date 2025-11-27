@@ -1,0 +1,56 @@
+---
+title: Azure Event Hubs destination plugin
+sidebarTitle: Azure Event Hubs
+'og:description': Send pipeline data to Azure Event Hubs.
+---
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+import ExtendedLibrdkafka from '/snippets/_partials/plugin-librdkafka-info.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Azure Event Hubs [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `kafka`, alias: `Azure_Event_Hub`) lets you configure your telemetry
+pipeline to stream your logs and metrics data directly to Azure Event Hubs.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                      | Key | Description | Default |
+| ------------------------- | --- | ----------- | ------- |
+| **Event Hub Namespace**   | `brokers` | Required. The Event Hubs namespace that can be found within the configuration settings. | _none_ |
+| **Event Hub Topic**       | `topics` | Required. The Event Hubs topic to write information to. | _none_ |
+| **Connection String Key** | `rdkafka.sasl.password` | Required. The Event Hubs connection string from within the Connection Access Policy set for the source. | _none_ |
+
+### Advanced
+
+| Name                   | Key | Description | Default |
+| ---------------------- | --- | ----------- | ------- |
+| **Message Key**        | `message_key` | Optional key to store the message. | _none_ |
+| **Message Key Field**  | `message_key_field` | If set, this value indicates the message key. If not set or found in the record, `message_key` will be used (if set). | _none_ |
+| **Timestamp Key**      | `timestamp_key` | Sets the key to store the record timestamp. | _none_ |
+| **Timestamp Format**   | `timestamp_format` | Sets the timestamp format. Accepted values: `double`, `iso8601`. | `double` |
+| **Body Key**           | `body_key` | Specifies the key that contains the body. | _none_ |
+| **Queue Full Retries** | `queue_full_retries` | Telemetry Pipeline queues data into rdkafka library, if for some reason the underlying library can't flush the records the queue might fills up blocking new addition of records. The `queue_full_retries` option set the number of local retries to enqueue the data. The default value is 10 times, the interval between each retry is 1 second. Setting the `queue_full_retries` value to 0 sets an unlimited number of retries. | `10` |
+| **SASL Username**      | `rdkafka.sasl.username` | SASL username. | `$ConnectionString` |
+| **Security Protocol**  | `rdkafka.security.protocol` | This is the security protocol for Azure Event Hub. If you require OAuth or OpenID, open a support ticket prior to changing this setting. | `SASL_SSL` |
+| **SASL Mechanism**     | `rdkafka.sasl.mechanism` | This is the transport mechanism for the SASL connection. | `PLAIN` |
+
+### Extended librdkafka parameters
+
+<ExtendedLibrdkafka/>

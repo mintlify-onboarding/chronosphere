@@ -1,0 +1,57 @@
+---
+title: Analyze query load
+sidebarTitle: Metrics queries
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+Load-intensive queries are a source of slowdowns and can increase time to diagnose
+a problem when one occurs. Queries that are called often, or that have a high load
+can lead to slow response.
+
+Query Analyzer lets users understand the relative load of the automated queries like
+[monitors](/investigate/alerts/monitors) and [recording rules](/control/shaping/rules/recording),
+ordered from most to least problematic. Using this information, users can assess
+whether they need to make modifications to the queries. Query Analyzer uses data from
+the previous day (24 hours UTC) to generate the report.
+
+Queries with a high load can potentially trigger
+[query protections](/administer/limits-licensing/limits/query-limits).
+
+## Use the query analyzer
+
+In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
+**<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Queries**.
+
+Each entry is a single line. Click any line to expand that entry to display the
+entire query.
+
+The table displays the following data:
+
+- **Query Reference:** The name of the recording rule or monitor. For monitors, click
+  the monitor name to go directly to the monitor page.
+- **% Load:** (sortable, default) The percentage of overall query load this query
+  contributes.
+- **Times Called:** (sortable)  The number of times this query was called during
+  the time range.
+- **Query:** The query the monitor or recording rule uses.
+
+The total number of displayed rows follows the chart.
+
+## Find specific data
+
+Use the **Search** box to find exact matches for text in the **Query reference** or
+**Query** fields.
+
+For example, searching for `k8s` searches all references and their queries for that
+string. Although reference names might not include `k8s`, many queried metrics do. A
+recording rule named `server-availability-error-ratio-4w` could include
+`grpc_server_handled_total:without_instance{_k8s_namespace="global"}` in the query,
+matching a search for `k8s`.
+
+When you search for specific data, the display updates:
+
+- The table displays all matching items.
+- The number of rows shows the number of rows that match the search.
+- Summary cards for **Matching Queries**, **% Load**, and **Times Called** display.
+  These cards are a sum total of the rows matching the search criteria.

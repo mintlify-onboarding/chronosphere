@@ -1,0 +1,48 @@
+---
+title: Send GitLab events to Observability Platform
+sidebarTitle: GitLab
+---
+import EventsToken from '/snippets/_partials/events-token.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+To send GitLab events to Chronosphere Observability Platform, create a webhook within
+GitLab and include your API key to authenticate with Observability Platform. For more
+information, refer to
+[Webhooks](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) in the
+GitLab documentation.
+
+## Obtain an API token
+
+Before sending events from GitLab, contact [Chronosphere Support](/support) to
+obtain an API token for use with authenticating your third-party app with
+Observability Platform.
+
+<EventsToken />
+
+## Create a GitLab webhook
+
+To send GitLab events to Observability Platform:
+
+1. In GitLab, [create a webhook](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html#configure-a-webhook-in-gitlab)
+   scoped to your project or group.
+1. In the **URL** field, enter
+   `https://ADDRESS.chronosphere.io/api/v1/data/events/receiver/gitlab`
+
+   Replace _`ADDRESS`_ with your company name prefixed to your Observability Platform
+   instance that ends in `.chronosphere.io`. For example,
+   _`MY_COMPANY`_`.chronosphere.io`.
+1. In the **Secret token** field, enter the API token you obtained from Chronosphere
+   Support.
+1. In the **Trigger** section, select the events to trigger the webhook.
+   Observability Platform supports only **Deployment events** and
+   **Feature flag events**.
+
+   <Warning>
+   If you choose any events other than **Deployment events** or **Feature flag events**,
+      Observability Platform drops the related event data, even though the GitLab interface lets
+      you select other event types.
+   </Warning>
+
+1. Click **Add webhook** to create the webhook.

@@ -1,0 +1,33 @@
+---
+title: Alert notifications
+'og:description': Learn about notifiers and notification policies.
+sidebarTitle: Overview
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+When a monitor generates an alert in Chronosphere Observability Platform, it triggers
+_notifiers_ based on the assigned _notification policy_.
+
+[Notifiers](/investigate/alerts/notifications/notifiers) are the endpoints receiving
+notifications, including where to deliver alerts and who to notify. You can configure
+notifiers to send details of the alert to a channel such as email, PagerDuty, or
+Slack.
+
+Observability Platform also supports unfurling of monitor graphs in
+[Slack](/investigate/alerts/notifications/slack). This integration enables Slack
+users to view or share monitors in Slack channels aimed at mitigating alerts.
+
+[Notification policies](/investigate/alerts/notifications/policies) are rules that determine how
+to route notifications to notifiers based on signals that trigger from monitors.
+Teams own notification policies, and assign them either to a specific monitor or set
+as a default policy for all monitors in a specified collection.
+
+Optionally, you can use [signals](/investigate/alerts/notifications/signals) to create groups of
+notifications. Signals determine how to group alerts, which affects how many
+notifications Observability Platform sends.
+
+To view a history of alerts for a monitor, in the navigation menu select
+**<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**
+and then click the [Alert history](/investigate/alerts/monitors#alert-history) tab
+for the selected monitor.

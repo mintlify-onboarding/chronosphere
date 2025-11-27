@@ -1,0 +1,107 @@
+---
+title: Reduce cardinality
+'og:description': Learn how to reduce metric cardinality.
+sidebarTitle: Overview
+---
+{/* -- dri: Adam Locke -- */}
+
+
+When you're first using Chronosphere Observability Platform, or a new app or service
+comes online, you might see cardinality spikes. Cardinality spikes can occur when:
+
+- A metric or group of metrics has unexpectedly large numbers of labels.
+- A process or service creates many similarly named metrics.
+
+<Tip>
+For more information about cardinality, see
+[What is high cardinality in observability?](https://chronosphere.io/learn/what-is-high-cardinality/)
+on the Chronosphere Blog.
+</Tip>
+
+Cardinality spikes can cause storage and licensing issues. To reduce cardinality, or
+data storage for less important metrics:
+
+1. Find a problematic metric or label.
+1. Review that metric or label's usage.
+1. Decide what to do with it (drop, rollup).
+
+## Find a metric and inspect the associated labels
+
+Observability Platform provides the following tools to help you understand the impact of
+metric growth, identify problematic metrics and labels, and assess the impact of
+existing aggregation rules:
+
+- The [Metric Growth dashboard](/observe/dashboards/chronosphere-managed-dashboards#metric-growth)
+  can includes metrics and labels that have recently increased in cardinality.
+- The [Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer) provides real-time
+  insight into current incoming metrics. Sort metrics by **Unique value** to find
+  potential high cardinality.
+- The [Aggregation Rules UI](/control/shaping/reduce-cardinality/review-aggregation-rules)
+  visualizes existing shaping rules and how they affect your environment. Review
+  these rules to understand their impact.
+
+If you want to reduce the cardinality of a metric, you must first understand the
+targeted metric and its associated labels.
+
+If you have administrative privileges:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
+1. The analyzer defaults to `_name_`. Sort **Label values** by name, or add a
+   **label filter**.
+1. In the **Labels** section, inspect the incoming label keys. The **Unique Values**
+   column shows how many distinct values are incoming for a given label
+   (cardinality), and **Appears In** shows how frequently that label is attached to
+   the metric.
+
+When the number of unique values for a metric is high, that label contributes
+significantly to the cardinality for the metric.
+
+## Review metric and label usage
+
+After identifying a high-cardinality label, you need to understand whether this
+label is meaningful, or if it can be safely removed.
+
+To verify dropping a label is safe, use one of the following methods:
+
+{/* vale off */}
+
+- The [Telemetry Usage Analyzer](/investigate/analyze/usage#high-volume-low-utility-metrics)
+  displays a **Utility score**, providing insight into which metrics users
+  [find important](/investigate/analyze/usage#usage-patterns).
+
+- Chronoctl includes a [search command](/tooling/chronoctl#search) to filter previously
+  defined configurations for references to a metric regular expression. This lets you
+  determine whether a metric is referenced within the organization, and where it's
+  used.
+
+{/* vale on */}
+
+## Remove the identified label
+
+If you identify a label that isn't used in any dashboards or alerts, consider
+reducing or removing the label using these methods:
+
+- Create [drop, mapping, or rollup rules](/control/shaping/rules#reduce-stored-metrics)
+  to reduce stored metrics by aggregating, downsampling, or dropping unneeded metric
+  data.
+- Use the [Recommendations](/control/shaping/reduce-cardinality/recommendations) page
+  to identify metrics and labels with no usage or utility over the past 30 days.
+  Apply the suggested recommendations to reduce the impact on persisted writes and
+  persisted cardinality.
+
+### Validation
+
+For rollup rules, preview the [shaping impact](/control/shaping/reduce-cardinality/shaping-impact) to
+review and confirm your changes before deleting metrics and labels that still matter.
+
+## Post validation tasks
+
+Return to the Live Telemetry Analyzer and search for your metric. If you've used a
+rollup rule, it can take some time before your rolled up metric appears.
+
+For rolled up metrics, it often makes sense to drop raw data if that data isn't
+needed. This reduces cardinality and data storage requirements.
+
+After you've validated your rule, apply the rule using your selected method.

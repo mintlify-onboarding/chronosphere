@@ -1,0 +1,1412 @@
+---
+title: Use monitors to generate alerts and notifications
+'og:description': View and create monitors for alerting.
+sidebarTitle: Overview
+---
+import { CollectionIcon, ServiceIcon} from '/snippets/Icons.jsx';
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import InfoTerraformLockout from '/snippets/_partials/info-terraformlockout.mdx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+import TerraformPlan from '/snippets/_partials/terraformplan.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+One of the reasons to ingest and store time series data is to know when data meets or
+doesn't meet certain criteria. Use Chronosphere Observability Platform alerting to
+generate alerts and notifications from data, whether it's about your system or about
+your usage of Observability Platform itself. Compare your monitor configurations to
+historical data to ensure your thresholds meet your needs.
+
+## View available monitors
+
+Select from the following methods to view and filter monitors.
+
+To query and get detailed information about monitors, see
+[monitor actions](/investigate/alerts/monitors/monitor-actions). To understand
+patterns across alerts,
+[analyze related alerts](/investigate/alerts/monitors/analyze-alerts).
+
+<Tabs>
+<Tab title="Web" id="view-available-monitors-cloud">
+
+To display a list of defined monitors, in the navigation menu select
+**<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+
+The list of monitors displays the status for each monitor next to its title:
+
+| Icon | Description |
+| ---- | ----------- |
+| <Icon iconType="solid" icon="hexagon-exclamation" color="#ee6c6cff"/> | Currently alerting monitor that exceeds the defined critical conditions. |
+| <Icon iconType="solid" icon="circle-exclamation" color="#ffb249ff"/>    | Currently alerting monitor that exceeds the defined warning conditions.  |
+| <Icon iconType="solid" icon="bell-slash" color="#c1a6f8ff" />   | Monitor that's currently muted by an active muting rule.                 |
+| <Icon iconType="solid" icon="circle-check" color="#59cc8dff"/>    | Passing monitor that's not generating alerts.                            |
+
+Use the following methods to filter your monitors:
+
+- Using the **Search monitors** search box (an **OR** filter).
+- By team, using the **Select a team** dropdown.
+- By owner, using the **Select an owner** dropdown. The <CollectionIcon /> icon
+  indicates the monitor is part of a [collection](/administer/collections). The
+  <ServiceIcon /> icon indicates this monitor is part of a service.
+- By notification policy, using the **Select a notification policy** dropdown.
+- By error status:
+  - **All**: Default, displays all monitors.
+  - **Alerting**: Monitors currently in alert status.
+  - **Critical**: Monitors in a critical alert status.
+  - **Muted**: Displays only muted monitors.
+- To filter the table to display only your
+  [favorite monitors](#designate-your-favorite-monitors), enable the
+  **View only my favorites** toggle.
+- **Include connected monitors**: If you filter monitors by owner with the
+  toggle disabled, only monitors owned by that owner are returned. When the toggle
+  is enabled, your filter includes monitors that are connected to that owner, even
+  if they aren't owned by that owner. Connections are based on
+  [collections](/administer/collections/home).
+
+Monitors with defined signals display the <Icon icon="folder-tree" /> file
+tree icon. To view the signals from a displayed monitor, click the name of the
+monitor from the list.
+
+From a monitor's detail page, click the name of a signal from the **Signals** section
+to filter the query results to alerts only from that signal.
+
+To search for a specific monitor:
+
+1. Click the search bar to focus on it, or use the keyboard shortcut
+   `Control+K` (`Command+K` on macOS).
+1. Begin typing any part of the monitor's name.
+1. Optional: Click the filters for all other listed resource types at the top of the
+   search results to remove them and display only monitor.
+1. Click the search result you're interested in, or use the arrow keys to select it
+   and press enter, to go to that monitor.
+
+</Tab>
+<Tab title="Chronoctl" id="view-available-monitors-chronoctl">
+
+To use [Chronoctl](/tooling/chronoctl) to return all monitors, use the
+`chronoctl monitors list` command:
+
+```shell
+chronoctl monitors list
+```
+
+To filter for a specific monitor, add the `slugs` argument to the command:
+
+```shell /SLUG/
+chronoctl monitors list --slugs SLUG
+```
+
+Replace _`SLUG`_ with the slug for the monitor you want to
+display.
+
+[Use the Code Config tool](#use-the-code-config-tool) in Observability Platform to
+view the monitor's Chronoctl YAML representation.
+
+</Tab>
+<Tab title="Terraform" id="view-available-monitors-terraform">
+
+[Use the Code Config tool](#use-the-code-config-tool) in Observability Platform to
+view a monitor's Terraform representation.
+
+</Tab>
+<Tab title="API" id="view-available-monitors-api">
+
+To complete this action with the Chronosphere API, use the
+[`ListMonitors`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ListMonitors) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+When viewing an individual monitor in Observability Platform, the following panels
+provide additional information about the monitor.
+
+### Series legend
+
+The series legend displays labels for all metrics displayed in the graph as either a
+list or table view.
+
+Both views display the label keys and values for each series and include the current
+alert status. The available values passing, warning, and critical.
+
+You can filter the list of the resulting time series with the **Search Series**
+search box.
+
+Click an item in the list to isolate the related line on the graph. To clear the selection,
+click the item again. You can `Control+`click (`Command+`click
+on macOS) to choose multiple items.
+
+### Annotations
+
+The annotations defined for the monitor, such as runbooks, link to related
+dashboards, data links to related traces, and documentation links. See
+[Annotations](/investigate/alerts/monitors/data-model#annotations) for more information.
+
+### Alert history
+
+The **Alert History** tab next to **Monitor Info** displays a history of alerts
+generated by the monitor.
+
+To change the order of the history, click the **Timestamp (UTC)** column header, and
+then click the chevron to toggle display of the JSON payload for an alert.
+
+The page also lets you filter the history by event type, or toggle the scope of the
+Alert history between the currently selected signal or all signals.
+
+<Note>
+There can be up to a five-minute delay between the time an alert for a monitor
+resolves (**Alert resolved**) and the time when a notification is sent indicating the
+alert resolved (**Notification sent (alert resolved)**).
+</Note>
+
+#### Alert event payload
+
+The **Alert History** tab displays the values captured when the alert fired.
+The payload fields are primarily defined in the
+[monitor data model](/investigate/alerts/monitors/data-model).
+
+- `monitorSlug`: The monitor's unique [slug](/investigate/alerts/monitors/data-model#slug).
+- `eventType`: The type of event triggered. Valid alert types are:
+  - Alert triggered
+  - Alert resolved
+  - Notification sent (alert triggered)
+  - Notification failed (alert triggered)
+  - Notification sent (alert resolved)
+  - Notification failed (alert resolved)
+  - Alert muted
+  - Alert unmuted
+- `createdAt`: The time the alert fired.
+- `signal`: See [signals](/investigate/alerts/monitors/data-model#signals). Contains one or
+   more `name` and `value` entries.
+- `details`: Contains `severity` as defined by the
+  [notification policy](/investigate/alerts/notifications/policies) and
+  [`notifier`](/investigate/alerts/notifications/notifiers).
+ `notifier` values contain the notifier `name` and `slug`.
+
+## Create a monitor
+
+Most monitors alert when a value matches a specific condition, such as when an error
+condition defined by the query lasts longer than one minute.
+
+You can also choose to alert when a value doesn't exist, such as when a host stops
+sending metrics and is likely unavailable. This condition triggers only if the
+_entire_ monitor query returns no results. For example, to alert on missing or no
+data, add a `NOT_EXISTS` series condition in the `series_conditions` section of the
+monitor definition:
+
+```yaml
+series_conditions:
+  defaults:
+    critical:
+      conditions:
+        - op: NOT_EXISTS
+          sustain: 60s
+```
+
+To receive alerts when a host stops sending metrics, create a separate monitor for
+each host and scope the monitor query to that host.
+
+### Prerequisites
+
+Before creating a monitor, complete the following tasks:
+
+1. Create a [notifier](/investigate/alerts/notifications/notifiers) to define where to deliver
+   alerts and who to notify.
+1. Create a [notification policy](/investigate/alerts/notifications/policies) to determine how to
+   route notifications to notifiers based on signals that trigger from your monitor.
+   You select the notifier you created for the critical or warning conditions on the
+   notification policy.
+
+### Create monitors
+
+After completing the [prerequisite tasks](#prerequisites), use any of the following
+methods to create a new monitor.
+
+When creating or editing a monitor in Observability Platform, you can simulate and
+test alerts to see how an alert would have performed against historical data. Use
+backtesting to review how your alert would have performed if it had been defined in
+the past.
+
+Chronosphere recommends a query interval minimum of at least 15 seconds. There can be
+a ten second delay between an alert trigger and the notifier activation.
+
+You can create a monitor using one of the following procedures, or you can
+[duplicate an existing monitor](/investigate/alerts/monitors/monitor-actions#duplicate-a-monitor).
+
+<Tabs>
+<Tab title="Web" id="create-a-monitor-cloud">
+
+To add a new monitor:
+
+1. In the navigation menu select one of these locations:
+   - **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+   - **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Collections**,
+     and then select the collection you want to create a monitor for. This can be a
+     standard collection or a [service](/observe/services).
+1. Create the monitor:
+   - From the **Monitors** page, click **Create monitor**. You can also choose
+     **Duplicate monitor** to copy an existing monitor.
+   - From the **Collections** page, in the **Monitors** panel, click **+ Add**.
+1. Enter the information for the monitor based on its [data model](/investigate/alerts/monitors/data-model).
+
+1. Select an **Owner** to organize and filter your monitor. You can select a
+   collection or a service.
+1. Enter a **Monitor Name**, which you can change after creating the monitor. Monitor
+   names are static strings and don't accept label variables, such as `$labels.LABEL_NAME`.
+1. Choose a **Notification Policy** to determine which notification policy to use
+   at a particular alert severity.
+1. Enter **Labels** as key/value pairs to categorize and filter monitors.
+1. In the **Query** section, choose the type of query you want to enter:
+
+   - **Prometheus**: Enter a valid Prometheus query. Click **Edit in Query Builder**
+     to open your query in the [Query Builder](/investigate/querying/metrics/builder), where
+     you can construct, optimize, and debug your query before saving it. After
+     modifying your query, click **Done** to return to the **Add Monitor** page.
+   - **Graphite**: Enter a valid Graphite query.
+   - **Logs**: Enter a valid log query, which must include the
+     [`make-series`](/investigate/querying/query-logs/query-syntax#make-series)
+     operator with a specified `step` size to return data. This operator uses the
+     [`count()`](/investigate/querying/query-logs/query-syntax#count) function by
+     default, but you can specify different operators instead.
+
+     For example, the following query creates a time chart that includes the average for
+     `latencyInSeconds`. The `step` parameter defines the time step for each bucket in
+     [Prometheus time duration format](https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations):
+
+     ```sql
+     severity = "WARNING"
+     | make-series avg(latencyInSeconds) step 15m by severity, service
+     ```
+
+      <Note>
+      If the log query includes a field that contains a period in its name and you
+          want to use signals to group notifications, use an
+          [alias for that field name](/investigate/querying/query-logs/query-syntax#alias-field-names).
+          Otherwise, periods are converted to underscores in the generated visualization.
+      </Note>
+1. Use these options to validate and update your query:
+
+   - Click **Check Query** to validate your query and preview query results. In the
+     query preview, use the following options to understand your query:
+
+     - Toggle **Show thresholds** to display the monitor's defined thresholds.
+     - Select a time range up to the present in the
+       **<Icon icon="clock" /> [time range selector](/navigate/time-ranges)**.
+
+       If your selected time period has too many alerts, or the entire graph appears
+       to display in alerted status, reduce the selected time period. If multiple
+       alerts would have fired simultaneously, only one threshold marker displays.
+       The banner shows the correct number of alerts. For example, if a critical and
+       a warning would fire at the same time, only one alert displays on the graph.
+       The banner shows two alerts would have fired.
+
+   - Click **Open in Explorer** to open your query in
+     [Metrics Explorer](/investigate/querying/metrics/explorer), where you can review
+     your query for syntax errors and make necessary changes.
+
+1. For Prometheus queries, test monitor conditions by reviewing when a monitor would
+   have triggered, based on historical data. The preview reflects existing monitor
+   schedules, signal grouping, and overrides:
+
+   - Use the **Show alert durations** toggle to display the time period over which
+   the alert would have been active.
+   - Toggle **Simulate alerts** to backtest your condition against existing data. You
+     must define at least one condition for alert simulations to work.
+
+      <Note>
+      Alert simulations use existing data, and can't predict future alerts.
+      </Note>
+
+     If your selected query returns too much data, the graph displays an error.
+     Chronosphere recommends selecting shorter time periods for testing, when possible.
+     Alert simulation isn't available outside the
+     [raw data retention period](/administer/limits-licensing/licensing#ingestion-limits-and-retention-policies).
+
+1. Optional: Group alerts based on the results returned from the query by choosing an
+   option in the **Signals** section.
+   [Signals](/investigate/alerts/notifications/signals) use a unique set of labels to
+   create groups of notifications when a monitor alert triggers or resolves.
+
+    <Note>
+    If you select **per signal (multiple alerts)** to generate multiple alerts, enter
+      a label key that differs in name and casing from the label you enter in the
+      **Key** field in the **Labels** section. For example, if you enter `environment`
+      in the **Key** field, you might use `Environments` as the **Label Key** to match
+      on. [Pinned scopes](/navigate/pinned-scopes) can be used as a **Label Key**.
+    </Note>
+
+1. Define a condition and sustain period (duration of time) in the **Conditions**
+   section, and assign the resulting alert a severity (warning or critical). In
+   the **Sustain** field, enter a value followed by an abbreviated unit such as
+   `60s`. Valid units are `s` (seconds), `m` (minutes), `h` (hours), or `d`
+   (days). The dialog also displays the notifiers associated with the monitor for
+   reference.
+
+    <Note>
+    To alert on missing or no data, select **not exists** in the **Alert when value**
+      dropdown.
+    </Note>
+
+1. In the **Resolve** field, enter a time period for the resolve window as a
+   value followed by an abbreviated unit such as `30s`. Valid units are `s`
+   (seconds), `m` (minutes), `h` (hours), or `d` (days).
+1. Add notes for the monitor in the **Annotations** section, such as runbooks,
+   links to related dashboards, data links to related traces, and documentation
+   links.
+1. Click **Save**.
+
+</Tab>
+<Tab title="Chronoctl" id="create-a-monitor-chronoctl">
+
+To create a monitor with [Chronoctl](/tooling/chronoctl):
+
+1. Run the following command to generate a sample monitor configuration you can use
+   as a template:
+
+   ```shell
+   chronoctl monitors scaffold
+   ```
+
+   In the template, `kind: Monitor` defines an individual monitor.
+
+1. With a completed definition, submit it with:
+
+   ```shell /FILE_NAME/
+   chronoctl monitors create -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+See the [Chronoctl monitor examples](#chronoctl-examples) for a completed
+monitor definition.
+
+</Tab>
+<Tab title="Terraform" id="create-a-monitor-terraform">
+
+<TerraformPlan />
+
+To create a monitor with [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file and add the definition by using the
+   `chronosphere_monitor` type, followed by a name in a resource declaration.
+
+1. Run this command to apply the changes:
+
+   ```shell
+   terraform apply
+   ```
+
+See the [Terraform monitor examples](#terraform-examples) for a completed
+monitor resource.
+
+</Tab>
+<Tab title="API" id="create-a-monitor-api">
+
+To complete this action with the Chronosphere API, use the
+[`CreateMonitor`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateMonitor) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+
+#### Chronoctl examples
+
+Use one of the following examples to understand the monitor structure for a Chronoctl
+definition.
+
+<Tabs>
+<Tab title="Chronoctl (Prometheus)" id="chronoctl-example-prometheus">
+
+The following YAML definition consists of one monitor named `Disk Getting Full`. The
+`series_conditions` trigger a warning notification when the disk is 80% full for more
+than 300 seconds, and a critical notification when 90% full for more than 300
+seconds. It groups series into signals based on the `source` and
+`service_environment` label keys.
+
+The `schedule` section indicates that this monitor runs each week on Mondays from
+7:00 to 10:10 and 15:00 to 22:30, and Thursdays from 21:15 through the end of the
+day. All times are in UTC.
+
+<Note>
+If you define `label_names` in the `signal_grouping` section, enter a label name that
+differs in name and casing from the label you enter in the `labels` section. For
+example, if you enter `environment` as a key in the `labels` section, you might use
+`Environments` in the `label_names` section.
+</Note>
+
+```yaml
+api_version: v1/config
+kind: Monitor
+spec:
+    # Required name of the monitor. Can be modified after the monitor is created.
+    name: Disk Getting Full
+    # PromQL query. If set, you can't set graphite_query.
+    prometheus_query: max(disk:last{measurement="used_percent"}) by (source, service_environment, region)
+    # Annotations are visible in notifications generated by this monitor.
+    # You can template annotations with labels from notifications.
+    annotations:
+        key_1: "{{ $labels.job }}"
+    # Slug of the collection the monitor belongs to.
+    collection_slug: loadgen
+    # Optional setting for configuring how often alerts are evaluated.
+    # Defaults to 60 seconds.
+    interval_secs: 60
+    # Labels are visible in notifications generated by this monitor,
+    # and can be used to route alerts with notification overrides.
+    labels:
+        key_1: kubernetes_cluster
+    # Optional notification policy used to route alerts generated by the monitor.
+    notification_policy_slug: custom-notification-policy
+    schedule:
+        # The timezone of the time ranges.
+        timezone: UTC
+        weekly_schedule:
+            monday:
+                active: ONLY_DURING_RANGES
+                # The time ranges that the monitor is active on this day. Required if
+                # active is set to ONLY_DURING_RANGES.
+                ranges:
+                    - # End time in the in format "<hour>:<minute>", such as "15:30".
+                      end_hh_mm: "15:00"
+                      # Start time in the in format "<hour>:<minute>", such as "15:30".
+                      start_hh_mm: "10:10"
+            tuesday:
+                active: NEVER
+            wednesday:
+                active: NEVER
+            thursday:
+                active: ONLY_DURING_RANGES
+                # The time ranges that the monitor is active on this day. Required if
+                ranges:
+                # active is set to ONLY_DURING_RANGES.
+                    - # End time in the in format "<hour>:<minute>", such as "15:30".
+                      end_hh_mm: "24:00"
+                      # Start time in the in format "<hour>:<minute>", such as "15:30".
+                      start_hh_mm: "21:15"
+            friday:
+                active: NEVER
+            saturday:
+                active: NEVER
+            sunday:
+                active: NEVER
+    # Conditions evaluated against each queried series to determine the severity of each series.
+    series_conditions:
+        defaults:
+            critical:
+                # List of conditions to evaluate against a series.
+                # Only one condition must match to assign a severity to a signal.
+                conditions:
+                   # To alert on missing or no data, change the value for `op` to `NOT_EXISTS`.
+                    - op: GT
+                    # How long the op operation needs to evaluate for the condition
+                    # to evaluate to true.
+                    sustain_secs: 300
+                    # The value to compare to the metric value using the op operation.
+                    value: 60
+                    # How long the operation needs to evaluate false to resolve
+                    resolve_sustain: 60
+            warn:
+                # List of conditions to evaluate against a series.
+                # Only one condition must match to assign a severity to a signal.
+                conditions:
+                    - op: GT
+                    # How long the op operation needs to evaluate for the condition
+                    # to evaluate to true.
+                    sustain_secs: 300
+                    # The value to compare to the metric value using the op operation.
+                    value: 30
+                    # How long the operation needs to evaluate false to resolve
+                    resolve_sustain: 60
+    # Defines how the set of series from the query are split into signals.
+    signal_grouping:
+        label_names:
+            - source
+            - service_environment
+            # If true, each series will have its own signal and label_names can't be set.
+        signal_per_series: false
+```
+
+</Tab>
+<Tab title="Chronoctl (logs)" id="chronoctl-example-logs">
+
+The following YAML definition consists of one monitor named
+`Kubernetes errors in production us-west`. The `series_conditions` trigger a warning
+notification when the disk is 80% full for more than 300 seconds, and a critical
+notification when 90% full for more than 300 seconds. It groups series into signals
+based on the `source` and `service_environment` label keys.
+
+The `schedule` section indicates that this monitor runs each week on Mondays from
+7:00 to 10:10 and 15:00 to 22:30, and Thursdays from 21:15 through the end of the
+day. All times are in UTC.
+
+<Note>
+If you define `label_names` in the `signal_grouping` section, enter a label name that
+differs in name and casing from the label you enter in the `labels` section. For
+example, if you enter `environment` as a key in the `labels` section, you might use
+`Environments` in the `label_names` section.
+</Note>
+
+```yaml
+api_version: v1/config
+kind: Monitor
+spec:
+    # Required name of the monitor. Can be modified after the monitor is created.
+    name: Kubernetes errors in production us-west
+    # Logging query to return data for.
+    logging_query: severity = "ERROR" AND kubernetes.cluster_name = "production-us-west" | make-series by service
+    # Annotations are visible in notifications generated by this monitor.
+    # You can template annotations with labels from notifications.
+    annotations:
+        key_1: "{{ $labels.job }}"
+    # Slug of the collection the monitor belongs to.
+    collection_slug: production-team
+    # Optional setting for configuring how often alerts are evaluated.
+    # Defaults to 60 seconds.
+    interval_secs: 60
+    # Labels are visible in notifications generated by this monitor,
+    # and can be used to route alerts with notification overrides.
+    labels:
+        key_1: kubernetes_cluster
+    # Optional notification policy used to route alerts generated by the monitor.
+    notification_policy_slug: custom-notification-policy
+    schedule:
+        # The timezone of the time ranges.
+        timezone: UTC
+        weekly_schedule:
+            monday:
+                active: ONLY_DURING_RANGES
+                # The time ranges that the monitor is active on this day. Required if
+                # active is set to ONLY_DURING_RANGES.
+                ranges:
+                    - # End time in the in format "<hour>:<minute>", such as "15:30".
+                      end_hh_mm: "15:00"
+                      # Start time in the in format "<hour>:<minute>", such as "15:30".
+                      start_hh_mm: "10:10"
+            tuesday:
+                active: NEVER
+            wednesday:
+                active: NEVER
+            thursday:
+                active: ONLY_DURING_RANGES
+                # The time ranges that the monitor is active on this day. Required if
+                ranges:
+                # active is set to ONLY_DURING_RANGES.
+                    - # End time in the in format "<hour>:<minute>", such as "15:30".
+                      end_hh_mm: "24:00"
+                      # Start time in the in format "<hour>:<minute>", such as "15:30".
+                      start_hh_mm: "21:15"
+            friday:
+                active: NEVER
+            saturday:
+                active: NEVER
+            sunday:
+                active: NEVER
+    # Conditions evaluated against each queried series to determine the severity of each series.
+    series_conditions:
+        defaults:
+            critical:
+                # List of conditions to evaluate against a series.
+                # Only one condition must match to assign a severity to a signal.
+                conditions:
+                   # To alert on missing or no data, change the value for `op` to `NOT_EXISTS`.
+                    - op: GT
+                    # How long the op operation needs to evaluate for the condition
+                    # to evaluate to true.
+                    sustain_secs: 300
+                    # The value to compare to the metric value using the op operation.
+                    value: 60
+                    # How long the operation needs to evaluate false to resolve
+                    resolve_sustain: 60
+            warn:
+                # List of conditions to evaluate against a series.
+                # Only one condition must match to assign a severity to a signal.
+                conditions:
+                    - op: GT
+                    # How long the op operation needs to evaluate for the condition
+                    # to evaluate to true.
+                    sustain_secs: 300
+                    # The value to compare to the metric value using the op operation.
+                    value: 30
+                    # How long the operation needs to evaluate false to resolve
+                    resolve_sustain: 60
+    # Defines how the set of series from the query are split into signals.
+    signal_grouping:
+        label_names:
+            - source
+            - service_environment
+            # If true, each series will have its own signal and label_names can't be set.
+        signal_per_series: false
+```
+
+</Tab>
+</Tabs>
+
+#### Terraform examples
+
+Use one of the following examples to understand the monitor structure for a Terraform
+resource.
+
+<Tabs>
+<Tab title="Terraform (Prometheus)" id="terraform-example-prometheus">
+
+The following Terraform resource creates a monitor that Terraform refers to by
+`infra`, and with a human-readable name of `Infra Example monitor`.
+
+The `schedule` section runs this monitor each week on Mondays from 7:00 to 10:10 and
+15:00 to 22:30, and Thursdays from 21:15 through the end of the day. All times are
+UTC, and Observability Platform won't run this monitor during the rest of the week.
+
+<Note>
+If you define `label_names` in the `signal_grouping` section, enter a label name
+that differs in name and casing from the label you enter in the `labels` section.
+For example, if you enter `environment` as a key in the `labels` section, you
+might use `Environments` in the `label_names` section.
+</Note>
+
+```ruby
+resource "chronosphere_monitor" "infra" {
+  name = "Infra Example monitor"
+
+  # Reference to the collection the alert belongs to.
+  collection_id = chronosphere_collection.infra.id
+
+  # Override the notification policy.
+  # By default, uses the policy from the collection_id.
+  notification_policy_id = chronosphere_collection.infra_testing.id
+
+  # Arbitrary set of labels to assign to the alert.
+  labels = {
+    "priority" = "sev-1"
+  }
+
+  # Arbitrary set of annotations to include in alert notifications.
+  annotations = {
+    "runbook" = "http://default-runbook"
+  }
+
+  # Interval at which to evaluate the monitor, for example 15s, 30s, or 60s.
+  # Defaults to 60s.
+  interval = "30s"
+
+  query {
+    # PromQL query to evaluate for the alert.
+    # Alternatively, you can use graphite_expr instead.
+    prometheus_expr = "sum (rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (app, grpc_service, grpc_method)"
+  }
+
+  # The remaining examples are optional signals specifying how to group the
+  # series returned from the query.
+
+  # No signal_grouping clause = Per monitor
+  # signal_grouping with label_names set = Per signal for labels set
+  # signal_grouping with signal_per_series set to true = Per series
+
+  signal_grouping {
+    # Set of labels names used to split series into signals.
+    # Each unique combination of labels results in its own signal.
+    label_names = ["app", "grpc_service"]
+
+    # As an alternative to label_names, signal_per_series creates an alert for
+    # every resulting series from the query.
+    # signal_per_series = true
+  }
+
+  # Container for the conditions determining the severity of each series from the query.
+  # The highest severity series of a signal determines that signal's severity.
+  series_conditions {
+    # Condition assigning a warn threshold for series above a certain threshold.
+    condition {
+      # Severity of the condition, which can be "warn" or "critical".
+      severity = "warn"
+
+      # Value to compare against each series from the query result.
+      # For EXISTS or NOT_EXISTS operators, value must be set to zero or may be omitted.
+      value = 5.0
+
+      # Operator to use when comparing the query result versus the threshold.
+      # Valid values can be one of GT, LT, LEQ, GEQ, EQ, NEQ, EXISTS, NOT_EXISTS.
+      op = "GT"
+
+      # Amount of time the query needs to fail the condition check before
+      # an alert is triggered. Must be an integer. Accepts one of s (seconds), m
+      # (minutes), or h (hours) as units. Optional.
+      sustain = "240s"
+
+      # Amount of time the query needs to no longer fire before resolving. Must be
+      # an integer. Accepts one of s (seconds), m (minutes), or h (hours) as units.
+      resolve_sustain = "60s"
+
+    }
+
+    condition {
+      severity = "critical"
+      value    = 10.0
+      op       = "GT"
+      sustain  = "120s"
+      resolve_sustain = "60s"
+    }
+
+    # Multiple optional overrides can be defined for different sets of conditions
+    # to series with matching labels.
+    override {
+      # One or more matchers for labels on a series.
+      label_matcher {
+        # Name of the label
+        name = "app"
+
+        # How to match the label, which can be "EXACT_MATCHER_TYPE" or
+        # "REGEXP_MATCHER_TYPE".
+        type = "EXACT_MATCHER_TYPE"
+
+        # Value of the label.
+        value = "dbmon"
+      }
+
+      condition {
+        severity = "critical"
+        value    = 1.0
+        op       = "GT"
+        sustain  = "60s"
+      }
+    }
+  }
+
+# If you define a schedule, Observability Platform evaluates the monitor only during
+# the specified time ranges. The monitor is inactive during all unspecified
+# time ranges.
+# If you define an empty schedule, Observability Platform never evaluates the monitor.
+  schedule {
+    # Valid values: Any IANA timezone string
+    timezone = "UTC"
+
+    range {
+      # Time range for the monitor schedule. Valid values for day can be full
+      # day names, such as "Sunday" or "Monday".
+      # Valid time values must be specified in the range of 00:00 to 24:00.
+      day   = "Monday"
+      start = "07:00"
+      end   = "10:10"
+    }
+
+    range {
+      day   = "Monday"
+      start = "15:00"
+      end   = "22:30"
+    }
+
+    range {
+      day   = "Thursday"
+      start = "21:15"
+      end   = "24:00"
+    }
+  }
+}
+```
+
+</Tab>
+
+<Tab title="Terraform (logs)" id="terraform-example-logs">
+
+The following Terraform resource creates a monitor that Terraform refers to by
+`k8s_production`, and with a human-readable name of
+`Kubernetes errors in production us-west`.
+
+The `schedule` section runs this monitor each week on Mondays from 7:00 to 10:10 and
+15:00 to 22:30, and Thursdays from 21:15 through the end of the day. All times are
+UTC, and Observability Platform won't run this monitor during the rest of the week.
+
+<Note>
+If you define `label_names` in the `signal_grouping` section, enter a label name
+that differs in name and casing from the label you enter in the `labels` section.
+For example, if you enter `environment` as a key in the `labels` section, you
+might use `Environments` in the `label_names` section.
+</Note>
+
+```ruby
+resource "chronosphere_monitor" "k8s_production" {
+  name = "Kubernetes errors in production us-west"
+
+  # Reference to the collection the alert belongs to.
+  collection_id = chronosphere_collection.k8s_production.id
+
+  # Override the notification policy.
+  # By default, uses the policy from the collection_id.
+  notification_policy_id = chronosphere_collection.k8s_testing.id
+
+  # Arbitrary set of labels to assign to the alert.
+  labels = {
+    "priority" = "sev-1"
+  }
+
+  # Arbitrary set of annotations to include in alert notifications.
+  annotations = {
+    "runbook" = "http://default-runbook"
+  }
+
+  # Interval at which to evaluate the monitor, for example 15s, 30s, or 60s.
+  # Defaults to 60s.
+  interval = "30s"
+
+  query {
+    # Logging query to evaluate.
+    logging_query = "severity='ERROR' AND kubernetes.cluster_name='production-us-west' | make-series by service"
+  }
+
+  # The remaining examples are optional signals specifying how to group the
+  # series returned from the query.
+
+  # No signal_grouping clause = Per monitor
+  # signal_grouping with label_names set = Per signal for labels set
+  # signal_grouping with signal_per_series set to true = Per series
+
+  signal_grouping {
+    # Set of labels names used to split series into signals.
+    # Each unique combination of labels results in its own signal.
+    label_names = ["app", "grpc_service"]
+
+    # As an alternative to label_names, signal_per_series creates an alert for
+    # every resulting series from the query.
+    # signal_per_series = true
+  }
+
+  # Container for the conditions determining the severity of each series from the query.
+  # The highest severity series of a signal determines that signal's severity.
+  series_conditions {
+    # Condition assigning a warn threshold for series above a certain threshold.
+    condition {
+      # Severity of the condition, which can be "warn" or "critical".
+      severity = "warn"
+
+      # Value to compare against each series from the query result.
+      # For EXISTS or NOT_EXISTS operators, value must be set to zero or may be omitted.
+      value = 5.0
+
+      # Operator to use when comparing the query result versus the threshold.
+      # Valid values can be one of GT, LT, LEQ, GEQ, EQ, NEQ, EXISTS, NOT_EXISTS.
+      op = "GT"
+
+      # Amount of time the query needs to fail the condition check before
+      # an alert is triggered. Must be an integer. Accepts one of s (seconds), m
+      # (minutes), or h (hours) as units. Optional.
+      sustain = "240s"
+
+      # Amount of time the query needs to no longer fire before resolving. Must be
+      # an integer. Accepts one of s (seconds), m (minutes), or h (hours) as units.
+      resolve_sustain = "60s"
+
+    }
+
+    condition {
+      severity = "critical"
+      value    = 10.0
+      op       = "GT"
+      sustain  = "120s"
+      resolve_sustain = "60s"
+    }
+
+    # Multiple optional overrides can be defined for different sets of conditions
+    # to series with matching labels.
+    override {
+      # One or more matchers for labels on a series.
+      label_matcher {
+        # Name of the label
+        name = "app"
+
+        # How to match the label, which can be "EXACT_MATCHER_TYPE" or
+        # "REGEXP_MATCHER_TYPE".
+        type = "EXACT_MATCHER_TYPE"
+
+        # Value of the label.
+        value = "dbmon"
+      }
+
+      condition {
+        severity = "critical"
+        value    = 1.0
+        op       = "GT"
+        sustain  = "60s"
+      }
+    }
+  }
+
+# If you define a schedule, Observability Platform evaluates the monitor only during
+# the specified time ranges. The monitor is inactive during all unspecified
+# time ranges.
+# If you define an empty schedule, Observability Platform never evaluates the monitor.
+  schedule {
+    # Valid values: Any IANA timezone string
+    timezone = "UTC"
+
+    range {
+      # Time range for the monitor schedule. Valid values for day can be full
+      # day names, such as "Sunday" or "Monday".
+      # Valid time values must be specified in the range of 00:00 to 24:00.
+      day   = "Monday"
+      start = "07:00"
+      end   = "10:10"
+    }
+
+    range {
+      day   = "Monday"
+      start = "15:00"
+      end   = "22:30"
+    }
+
+    range {
+      day   = "Thursday"
+      start = "21:15"
+      end   = "24:00"
+    }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+## Edit a monitor
+
+Select from the following methods to edit monitors.
+
+<InfoTerraformLockout />
+
+<Tabs>
+<Tab title="Web" id="edit-a-monitor-cloud">
+
+To edit a monitor:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Click the name of the monitor you want to edit.
+1. In the action menu, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and select **Edit monitor**. This opens a sidebar where
+   you can edit the monitor's properties.
+1. Make your edits, and then click **Save**. Refer to the
+   [monitor data model](/investigate/alerts/monitors/data-model) for specific definitions.
+
+</Tab>
+<Tab title="Chronoctl" id="edit-a-monitor-chronoctl">
+
+To edit a monitor using [Chronoctl](/tooling/chronoctl):
+
+1. [View the monitor's Chronoctl YAML](#view-available-monitors).
+1. Modify its properties and apply the changes with the same process as
+   [creating a monitor](#create-a-monitor). Chronoctl updates the monitor's
+   properties if it has the same slug.
+
+You can also use the following process if you already have a definition file:
+
+1. Update the monitor's definition file.
+1. Run the following command to submit the changes:
+
+   ```shell /FILE_NAME/
+   chronoctl monitors update -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+You can also use the Code Config tool to view the monitor's Chronoctl YAML
+representation. For details, see [Use the Code Config tool](#use-the-code-config-tool).
+
+</Tab>
+<Tab title="Terraform" id="edit-a-monitor-terraform">
+
+To edit a monitor using [Terraform](/tooling/infrastructure/terraform):
+
+1. Create or edit a Terraform file that updates the resource's existing properties.
+1. Run this command to apply the changes:
+
+   ```shell
+   terraform apply
+   ```
+
+You can also use the Code Config tool to view the monitor's Terraform representation.
+For details, see [Use the Code Config tool](#use-the-code-config-tool).
+
+</Tab>
+<Tab title="API" id="edit-a-monitor-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateMonitor`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateMonitor) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+### Use the Code Config tool
+
+When adding or editing a monitor, you can click the **Code Config** tab to view code
+representations of a monitor for [Terraform](/tooling/infrastructure/terraform),
+[Chronoctl](/tooling/chronoctl), and the [Chronosphere API](/tooling/api-info). The displayed code
+also responds to changes you make in the **Visual Editor** tab.
+
+When you modify monitor properties in the **Visual Editor** tab, you can click the
+**Code Config** tab to immediately see the updated code representations. This ability
+lets you use the **Visual Editor** tab to modify monitor properties and view the code representations
+expressed as Terraform resources, Chronoctl YAML, or API-compatible JSON.
+
+Changes you make in the **Visual Editor** tab don't take effect until you click
+**Save** or apply the code representations using their corresponding tools.
+
+<Note>
+If you manage a monitor using Terraform, you _must_ use Terraform to apply any
+changes.
+</Note>
+
+#### Change code representation
+
+To change the code representation format:
+
+1. Click the **Code Config** tab.
+1. Click the format dropdown. The dropdown defaults to the format of the tool that
+   manages the resource, such as Terraform.
+1. Select the format you want to use. You can then take several additional actions:
+
+   - To copy the viewed code representation to your clipboard, click
+     **<Icon icon="copy" /> Copy**.
+   - To save the viewed code representation to a file, click **<Icon icon="download" /> Download**.
+   - To view a diff of unsaved changes you've made to a monitor, click **View Diff**.
+     This button is available only if you've changed the monitor in the **Visual Editor**
+     tab but haven't saved your changes.
+
+     This Git-style diff of changes replaces the **Copy** and **Download** buttons
+     with a toggle between **Unified** and **Split** diff styles, and the **View Diff**
+     button with a **Hide Diff** button that returns you to the code representation
+     view.
+
+     You can also view unchanged lines in the context of the diff by clicking
+     **Expand X lines** inside the diff.
+
+### Override a monitor alert
+
+You can override the default conditions that define when an alert triggers for a
+monitor. This override is similar to
+[overriding a notification policy](/investigate/alerts/notifications/policies#override-notification-policy-defaults)
+that routes a notification to a notifier other than the specified default.
+
+On a monitor, you can specify a condition override to use a separate threshold for
+certain series. For example, a monitor might have a default threshold of `>100` but
+you specify an override threshold of `>50` where the label key/value pair is
+`cluster=production`.
+
+You can specify any label as a matcher for a monitor condition override. If no
+override matches the defined conditions, Observability Platform applies the default
+conditions. Additionally:
+
+- Overrides must specify at least one matcher, and meet every matcher condition to
+  apply the override.
+- Observability Platform evaluates overrides in the listed order. When an override
+  matches, the remaining overrides and defaults are ignored.
+- Overrides don't inherit any properties from the default conditions. For example, if
+  the default policy route specifies `warn` and `critical` notifiers but the override
+  specifies only `critical` notifiers, the notifier doesn't send `warn`
+  notifications.
+
+<InfoTerraformLockout />
+
+To specify a monitor alert override:
+
+<Tabs>
+<Tab title="Web" id="override-monitor-cloud">
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Click the name of the monitor you want to specify an override for.
+1. In the action menu, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and select **Edit monitor**. This opens a sidebar where
+   you can edit the monitor's properties.
+1. In the **Condition Override** section, click the plus icon <Icon icon="plus" />
+   to display the override fields.
+1. Select **Exact** or **Regex** as the matcher type, and enter the key/value pair
+   to match on for the override.
+1. Select **Critical** or **Warn** as the override severity.
+1. Define the match condition, and enter a value and sustain duration.
+1. Click **Save** to apply the override changes.
+
+</Tab>
+<Tab title="Terraform" id="override-monitor-terraform">
+
+1. Use [Terraform](/tooling/infrastructure/terraform) to add an override
+   to the resource's existing properties and apply the changes.
+1. Run this command to apply the changes:
+
+   ```shell
+   terraform apply
+   ```
+
+The following Terraform HCL definition adds monitor overrides that match on specific labels,
+and associate either a `warn` or `critical` alert based on the matching key/value
+pairs.
+
+```text
+series_conditions {
+  condition {
+    severity = "critical"
+    op       = "GT"
+    value    = 20
+    sustain  = "180s"
+    resolve_sustain = "180s"
+  }
+
+  condition {
+    severity = "warn"
+    op       = "GT"
+    value    = 10
+    sustain  = "180s"
+  }
+
+  override {
+    label_matcher {
+      type  = "EXACT_MATCHER_TYPE"
+      name  = "namespace"
+      value = "production"
+    }
+
+    label_matcher {
+      type  = "EXACT_MATCHER_TYPE"
+      name  = "container"
+      value = "k8s_prod"
+    }
+
+    condition {
+      severity = "critical"
+      op       = "GT"
+      value    = 50
+      sustain  = "180s"
+    }
+
+    condition {
+      severity = "warn"
+      op       = "GT"
+      value    = 40
+      sustain  = "180s"
+    }
+  }
+
+  override {
+    label_matcher {
+      type  = "EXACT_MATCHER_TYPE"
+      name  = "container"
+      value = "billing_svc"
+    }
+
+    condition {
+      severity = "critical"
+      op       = "GT"
+      value    = 30
+    }
+
+    condition {
+      # only one of these conditions needs to be met
+      severity = "critical"
+      op       = "GT"
+      value    = 25
+      sustain  = "360s"
+    }
+  }
+}
+```
+
+Based on the previous override, the following descriptions explain how incoming
+series impact alerting conditions for the monitor:
+
+- The following series doesn't match any override conditions, so the default alert
+  conditions apply:
+
+  ```yaml
+  {namespace="production", container="gateway", job="gateway-scraper"} 5
+  ```
+
+- The following series matches the `warn` condition for the first override, so the
+  alert uses a `warn` notifier:
+
+  ```yaml
+  {namespace="production", container="k8s_prod", job="gateway-scraper"} 45
+  ```
+
+- The following series matches the `critical` condition defined in the override, so the
+  alert uses a `critical` notifier:
+
+  ```yaml
+  {namespace="foo3", container="bar", job="gateway-scraper"} 27
+  ```
+
+</Tab>
+</Tabs>
+
+## Delete a monitor
+
+Select from the following methods to delete monitors.
+
+<InfoTerraformLockout />
+
+<Tabs>
+<Tab title="Web" id="deleting-a-monitor-ui">
+
+To delete a monitor:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Monitors**.
+1. Click the name of the monitor you want to delete.
+1. In the action menu, click the <Icon icon="ellipsis-vertical" />
+   three vertical dots icon and select **Edit monitor**.
+1. In the **Edit Monitor** dialog, click the <Icon icon="ellipsis-vertical" /> three
+   vertical dots icon and select **Delete**.
+
+</Tab>
+<Tab title="Chronoctl" id="deleting-a-monitor-chronoctl">
+
+To delete a monitor with [Chronoctl](/tooling/chronoctl), use the `chronoctl monitors delete`
+command:
+
+```shell /SLUG/
+chronoctl monitors delete SLUG
+```
+
+Replace _`SLUG`_ with the slug of the monitor you want to delete.
+
+For example, to delete a monitor with the slug `infra-example-monitor`:
+
+```shell
+chronoctl monitors delete infra-example-monitor
+```
+
+</Tab>
+<Tab title="Terraform" id="deleting-a-monitor-terraform">
+
+<TerraformDel />
+
+</Tab>
+<Tab title="API" id="deleting-a-monitor-api">
+
+To complete this action with the Chronosphere API, use the
+[`DeleteMonitor`](https://docs.chronosphere.io/tooling/api-info/definition/operations/DeleteMonitor) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Use annotations with monitors
+
+Create annotations for monitors that link to dashboards, runbooks, related documents,
+and [trace metrics](/investigate/querying/create-links/),
+which lets you provide direct links for your on-call engineers to help diagnose
+issues.
+
+You can reference Prometheus Alertmanager variables in annotations with the
+`{{.VARIABLE_NAME }}` syntax. Annotations can access monitor labels by using
+variables with the `{{ .CommonLabels.LABEL }}` pattern, and from the alerting metric
+with the `{{ .Labels.LABEL }}` pattern. In both patterns, replace _`LABEL`_ with
+the label's name.
+
+<Note>
+To reference labels in Alertmanager variables, you must include those labels in the
+alerting time series. Otherwise, the resulting notifier won't display any information
+for the variables you specify.
+</Note>
+
+The following examples include annotations with variables based on a template. See the
+[Alertmanager documentation](https://prometheus.io/docs/alerting/0.22/notifications/)
+for a reference list of alerting variables and templating functions.
+
+<Tabs>
+<Tab title="Web" id="use-monitor-annotations-cloud">
+
+To add annotations to a monitor:
+
+1. [Create a monitor](#create-a-monitor).
+1. In the **Annotations** section, add a description for your annotation in the
+   **Key** field, and text or links in the **Value** field. For example, you might
+   add the following key/value pairs as annotations:
+
+   | Key         | Value                                                                                                                     |
+   | ----------- | ------------------------------------------------------------------------------------------------------------------------- |
+   | summary     | Instance `{{$labels.instance}}` is down                                                                                   |
+   | description | Container `{{ $labels.namespace }}`/`{{ $labels.pod }}`/`{{ $labels.container }}` terminated with `{{ $labels.reason }}`. |
+   | runbook     | `http://default-runbook`                                                                                                  |
+
+</Tab>
+<Tab title="Chronoctl" id="use-monitor-annotations-chronoctl">
+
+To add annotations to a monitor:
+
+1. Define the resource definition for your monitor, and add an `annotations` section:
+
+   ```yaml
+   api_version: v1/config
+   kind: Monitor
+   spec:
+     # Required name of the monitor. Can be modified after the monitor is created.
+     name: Instance is down
+     # PromQL query. If set, you can't set graphite_query.
+     prometheus_query: up{env="prod", instance="kubernetes", exported_job="JOB123"} ==0
+     # Annotations are visible in notifications generated by this monitor.
+     # You can template annotations with labels from notifications.
+     annotations:
+       summary: 'Instance {{$labels.instance}} is down'
+       description: 'Container {{ $labels.namespace }}/{{ $labels.pod }}/{{ $labels.container }} terminated with {{ $labels.reason }}.'
+       runbook: 'http://default-runbook'
+   ```
+
+1. Apply the changes:
+
+   ```shell /FILE_NAME/
+   chronoctl apply -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of your notifier YAML file.
+
+</Tab>
+<Tab title="Terraform" id="use-monitor-annotations-terraform">
+
+To add annotations to a monitor:
+
+1. Create a monitor with Terraform by using the `chronosphere_monitor` type followed
+   by a name in a resource declaration:
+
+   ```ruby
+   resource "chronosphere_monitor" "instance_down" {
+     name = "Instance down"
+
+     # Reference to the collection the alert belongs to
+     collection_id = chronosphere_collection.infra.id
+
+     # Override the notification policy.
+     # By default, uses the policy from the previously stated collection_id.
+     notification_policy_id = chronosphere_collection.infra_testing.id
+
+     # Arbitrary set of labels to assign to the alert
+     labels = {
+       "priority" = "sev-1"
+     }
+
+     # Arbitrary set of annotations to include in alert notifications
+     annotations = {
+       "summary": "Instance {{$labels.instance}} is down"
+       "description": "Container {{ $labels.namespace }}/{{ $labels.pod }}/{{ $labels.container }} terminated with {{ $labels.reason }}."
+       "runbook": "http://default-runbook"
+     }
+   ...
+   ```
+
+1. In the `annotations` section, define the annotations for your monitor.
+1. Run `terraform apply` to create the monitor resource:
+
+   ```shell
+   terraform apply
+   ```
+
+</Tab>
+</Tabs>
+
+## Designate your favorite monitors
+
+You can designate certain monitors as your [favorites](/navigate/favorites). Observability Platform
+lists your favorite monitors on your personal home page and prioritizes them in
+global search results.

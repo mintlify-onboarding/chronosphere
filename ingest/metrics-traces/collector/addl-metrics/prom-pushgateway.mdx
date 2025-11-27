@@ -1,0 +1,102 @@
+---
+title: Pushgateway ingestion
+'og:description': Learn how to configure and use the Prometheus Pushgateway to collect metrics.
+sidebarTitle: Prometheus Pushgateway
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Scraping metrics is preferred whenever possible, but you can use the Prometheus
+Pushgateway for ephemeral jobs such as batch, AWS Lambda, or Google Cloud
+Functions that the Collector couldn't scrape otherwise.
+
+As of v0.98.0, the Collector provides an HTTP endpoint that's compatible with the
+[Prometheus Pushgateway](https://github.com/prometheus/pushgateway), with the
+following caveats:
+
+- The open source Prometheus Pushgateway is a cache for metrics. Because the
+  Collector is a proxy, it forwards metric payloads to the Chronosphere backend
+  instead of caching metrics. This distinction means:
+  - HTTP `DELETE` requests aren't supported.
+  - HTTP `PUT` and `POST` requests are semantically the same.
+  - The Query API, or `GET` requests, aren't supported.
+- Neither the Prometheus Pushgateway nor the Collector support any aggregation.
+- The Collector only supports GZIP compressed payloads. Snappy-compressed payloads
+  aren't supported.
+- Transport Layer Security (TLS) isn't supported. All traffic to the Collector is in
+  plain text, but traffic to the Chronosphere backend is always encrypted.
+
+Adhere to the following best practices when using the Prometheus Pushgateway
+with the Collector:
+
+- Ensure that at least one of the labels are unique to the instance of the calling
+  job so that time series don't collide. If the label IDs are sufficiently high in
+  cardinality, you might want to aggregate the labels.
+- Push metrics periodically, ideally when a job shuts down.
+- Run Collectors as sidecars (where all traffic is over `localhost`), or as a formal
+  Kubernetes service.
+
+To enable the Prometheus Pushgateway for the Collector, modify the Collector
+configuration file and add the following lines:
+
+```yaml
+# This will register an HTTP endpoint on the listenerAddress for the Collector.
+push:
+  pushgateway:
+    enabled: true
+```
+
+## Examples
+
+The following examples show how to send traffic with the Prometheus Pushgateway to
+the Collector, assuming that the listen address is running on port `3030`.
+
+### Using curl
+
+When running this `curl` command, replace `<collector-ip>` with the IP address of your
+Collector.
+
+```shell
+curl --data-binary @- http://<collector-ip>:3030/pushgateway/metrics/job/some_job/job_id/my_unique_id <<EOF
+# TYPE some_metric counter
+some_metric{label="val1"} 42
+# TYPE another_metric gauge
+# HELP another_metric Just an example.
+another_metric 2398.283
+EOF
+```
+
+If you want to use `localhost` instead of the IP address for a Collector that's
+running locally (such as for testing purposes), you need to enable port forwarding
+first. If your Collector is running as a Kubernetes DaemonSet or as a Kubernetes
+Deployment, run the following command to enable port forwarding, where
+`<chronocollector-pod-name>` is the name of the Kubernetes pod where the Collector is
+running:
+
+```shell
+kubectl port-forward <chronocollector-pod-name> 3030
+```
+
+You can then run the previous `curl` command and use `localhost` instead of the
+Collector IP address.
+
+### Using the Prometheus Pushgateway client
+
+```go
+import (
+    "github.com/prometheus/client_golang/prometheus"
+    "github.com/prometheus/client_golang/prometheus/push"
+)
+
+func main() {
+    registry := prometheus.NewRegistry()
+
+    // Push metrics on shutdown.
+    defer func() {
+        // The address can be replaced with a Kubernetes Service name,
+        // however, the URL must end in /pushgateway.
+        push.New("http://localhost:3030/pushgateway", "my_job").
+            Grouping("job_id", "my_unique_id").Gatherer(registry).Push()
+    }()
+}
+```

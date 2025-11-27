@@ -1,0 +1,460 @@
+---
+title: Visualize dashboard contents with panels
+sidebarTitle: Overview
+'og:description': Create and customize data visualization panels for Chronosphere Observability Platform dashboards.
+---
+import ChronoctlDashboard from '/snippets/_partials/chronoctl-dashboard.mdx';
+import ClassicPanel from '/snippets/_partials/classic-panels.mdx';
+import PanelQueries from '/snippets/_partials/panel-queries.mdx';
+
+{/* -- dri: Lynette Miles -- */}
+
+
+_Panels_ allow you to visualize, filter, and transform the results of a query.
+[Standard dashboards](/observe/dashboards) provide visualizations designed to work
+with other Chronosphere Observability Platform features, such as Metrics Explorer.
+
+Panels react to the time range set for a dashboard, and can be dynamically customized
+by using [dashboard variables](/observe/dashboards/customization/dashboard-variables).
+
+<ClassicPanel />
+
+## Common panel elements
+
+All panels consist of common settings and features. You can add these during
+panel creation, or edit them at a later time.
+
+- **Name**: The panel's configured name.
+- **Group**: The panel group that contains the panel.
+- **Description**: A description of the panel displayed when holding the pointer over
+  an Information icon.
+- **Type**: A panel's [_type_](#panel-types) defines its visualization method or
+  content. By default, new panels are the
+  [Time Series Chart](/observe/dashboards/panels/time-series-chart) type.
+- **<Icon icon="link-simple" alt="Link icon"/> Links**: An icon that reveals any links
+  configured for the panel.
+- **<Icon icon="up-right-and-down-left-from-center" alt="Expand arrow icon"/> Expand**: Expands the
+  panel to a the full width and height of the browser for a more detailed view.
+- **<Icon icon="ellipsis-vertical" alt="Options icon"/> Options**: Opens a menu
+  of panel-related actions, depending on the panel type.
+  - **Edit panel**: Used to update the panel.
+  - **Open in Metrics Explorer**: Click to open a new tab using the panel's queries
+    in [Metrics Explorer](/investigate/querying/metrics/explorer). When opening
+    Metrics Explorer from this link, **Resolution** settings carry over.
+  - **Copy as link**: Copy a link directly to this panel. When used, the link
+    opens the panel in full-screen mode.
+  - **Copy as image**: Copy the panel as an image to the operating system clipboard.
+  - **Export as PNG**: Download the panel as a PNG file. The filename matches the
+    panel name.
+  - **Add to dashboard**: Copy this panel to another dashboard. Select an existing
+    dashboard or create a new one.
+  - **Analyze anomaly (DDx)**: On time series panels, use this link to open the
+    [metrics differential diagnosis](/investigate/analyze/differential-diagnosis/metrics)
+    page with the panel's query.
+  - **Inspect panel**: Review statistics about the panel's query or queries.
+
+Panels can also have additional options presented in tabs of the **Edit panel** interface.
+Most panels provide these tabs:
+
+- **Query**: Observability Platform uses results from
+  [queries](#change-a-panels-query) to populate the panel's visualization.
+- **Settings**: Configuration options for the selected panel type.
+- **Links**: [Links](#add-links-to-a-panel) associated with the panel, which can
+  optionally use variables provided by Observability Platform related to the panel or
+  dashboard.
+- **JSON**: An editable, automatically updated
+  [JSON representation](/observe/dashboards/panels/json-representation) of the panel's
+  configuration.
+
+## Create panels in a dashboard
+
+To add and use panels in a dashboard, you must first
+[create a dashboard](/observe/dashboards#create-a-dashboard) or select an existing
+dashboard to which you'll add the panel.
+
+Each panel in a dashboard belongs to a
+[_panel group_](/observe/dashboards/customization/layouts#add-a-panel-group-to-a-dashboard),
+which is a container of one or more panels.
+If a dashboard doesn't have any panel groups, Observability Platform creates one
+for you when you add a panel.
+
+<Tabs>
+<Tab title="Web" id="add-panels-to-a-dashboard-cloud">
+
+To add a panel to a standard dashboard with no existing panel groups:
+
+1. Open the dashboard. You can
+   [view a list of all dashboards](/observe/dashboards#view-dashboards) or select
+   from a [list of dashboards in a collection](/administer/collections/home).
+1. Click **<Icon icon="pencil" alt="Edit icon"/> Edit** on the dashboard.
+1. Click **<Icon icon="chart-column" alt="Panel icon"/> Panel**.
+1. In the **Add Panel** interface that appears, provide a **Name** for the new panel.
+1. Optional: Configure the panel based on the [panel options](#common-panel-elements) and
+   [panel type](#panel-types) you want to use.
+1. Click **Add** to add the panel or **Cancel** to discard it.
+
+To add a new panel to a panel group:
+
+1. In the panel group to which you want to add a panel, click the
+   **<Icon icon="chart-column" alt="Add panel to group icon"/> Add panel to group**
+   icon.
+1. In the **Add Panel** interface that appears, provide a **Name** for the new panel.
+1. Click **Add** to add the panel or **Cancel** to discard it.
+
+Panels aren't permanently added to a dashboard until you save all changes to
+the dashboard by clicking **Save** on the dashboard.
+
+You can save a new panel to a dashboard with as little as a name, then edit
+it later to configure it and add or modify queries.
+
+</Tab>
+<Tab title="Chronoctl" id="add-a-time-series-chart-to-a-dashboard-chronoctl">
+
+<ChronoctlDashboard />
+
+</Tab>
+</Tabs>
+
+### Panel types
+
+For details about these settings or unique features in a panel type, see its
+documentation. The panel types available for visualizing data include:
+
+- [**Time Series Chart**](/observe/dashboards/panels/time-series-chart): A line
+or bar chart representation of time series data returned by the panel's queries.
+- [**Bar Chart**](/observe/dashboards/panels/bar-chart): A bar chart representation
+  of data returned by the panel's queries.
+- [**Heat Map**](/observe/dashboards/panels/heat-map): The density of data points
+  across ranges of values returned by a query, visualized by colors that represent
+  the magnitude of data for each range of values.
+- [**Stat Chart**](/observe/dashboards/panels/stat-chart): A stat chart visualizes
+  statistic numbers returned by a query.
+- [**Gauge Chart**](/observe/dashboards/panels/gauge-chart): A value for each data
+  point returned by a query, visualized as a configurable gauge depicting a minimum
+  and maximum range and configurable thresholds.
+- [**Markdown**](/observe/dashboards/panels/markdown): Renders defined Markdown
+  text.
+- [**Table**](/observe/dashboards/panels/markdown): Presents the data returned by
+  the query as a customizable table.
+- [**Pie Chart**](/observe/dashboards/panels/pie-chart): A pie chart representation
+  of data returned by the panel's queries.
+- [**Distribution Chart**](/observe/dashboards/panels/distribution-chart): A
+  visualization of histograms by bucket.
+- [**Service Topology**](/observe/dashboards/panels/service-topology): View trace
+  data related to this dashboard.
+
+<PanelQueries />
+
+## View panel information
+
+The **Inspect panel** drawer presents information about your panel. Panel inspection
+isn't valid for Markdown or Service Topology panels.
+
+### Overview
+
+The **Overview** tab displays statistics about the performance of your query or queries.
+Overview details vary depending on the [panel type](#panel-types). All panels have
+the following options:
+
+- **Number of queries**: How many queries the panel uses to generate the
+  visualization.
+- **Query type**: The type of query, which is related to the panel type.
+- **Longest request duration**: The longest response time for a query request.
+
+Time series charts have these additional statistics:
+
+- **Interval step size**: The query [interval size](/observe/dashboards/customization/intervals).
+- **Number of series**: The number of time series returned.
+- **Max data points per series**: The maximum number of data points returned per series.
+- **Total number of data points**: Number of data points returned by the query.
+
+Table charts have these additional statistics:
+
+- **Number of table rows**: For table charts, the number of rows in the table.
+- **Number of table columns**: For table charts, the number of columns in the table.
+
+Bar, stat, gauge, pie, and distribution charts have this additional statistic:
+
+- **Number of series (single value)**: The number of series returned.
+
+### Queries
+
+The **Queries** tab displays details for each query used to generate the panel. Each
+query has its own informational box, such as **Query 1** and **Query 2**. Each query
+has the following entries:
+
+- **Query**: The query you entered, including any
+  [variables](/observe/dashboards/customization/dashboard-variables) used.
+- **Raw Query**: The actual query used to retrieve data, which translates variables
+  into real values.
+
+## Edit a panel
+
+You can customize the features of each panel in a dashboard and edit the queries
+used to populate it.
+
+<Tabs>
+<Tab title="Web" id="edit-panels-on-a-dashboard-cloud">
+
+To edit a panel in a standard dashboard:
+
+1. Open the dashboard. You can
+   [view a list of all dashboards](/observe/dashboards#view-dashboards) or select
+   from a [list of dashboards in a collection](/administer/collections/home).
+1. Click **Edit** for the dashboard.
+1. Click **Edit** for the panel you want to edit.
+1. In the **Edit panel** interface that appears, configure the panel based on the
+   [panel options](#common-panel-elements) and [panel type](#panel-types) you want to
+   use.
+1. Click **Apply** to apply the changes or **Cancel** to discard them.
+
+After you've finished editing panels, click **Save** on the dashboard to save your
+changes.
+
+</Tab>
+<Tab title="Chronoctl">
+
+<ChronoctlDashboard />
+
+</Tab>
+</Tabs>
+
+### Change a panel's type
+
+You can change the type of panel at any time.
+
+<Tabs>
+<Tab title="Web" id="change-a-panels-type-cloud">
+
+To change a panel's type:
+
+1. Open the panel's editor.
+1. Click the **Type** dropdown.
+1. Select a panel type.
+1. Click **Apply** to save any panel type changes and exit the panel editor.
+
+</Tab>
+<Tab title="Chronoctl">
+
+<ChronoctlDashboard />
+
+</Tab>
+</Tabs>
+
+### Change a panel's query
+
+Queries populate panels with data to visualize. Use one of the following methods
+to create a query:
+
+- In the **Code** tab, write your own query or paste a known query.
+- Use the **Builder** tab to create a query using the
+  [query builder](/investigate/querying/metrics/query-builder).
+
+<Tabs>
+<Tab title="Web" id="change-a-panels-query-cloud">
+
+You can change the query a panel uses when the data doesn't match your needs.
+
+1. Open the panel's editor.
+1. Select the **Query** tab.
+1. Optional:
+    - Change the **Resolution** of a query. This setting controls the maximum
+      data points per series. Options are:
+      - **Low**: Prioritizes query performance over accuracy.
+      - **Medium**: (Default) Balances performance and accuracy.
+      - **High**: Uses more data points to provide more precise results, but might have
+        degraded performance.
+      - **Custom**: Set a custom step size. If you select **Custom**, you must enter a
+        **Custom resolution** with [time units](/overview/concepts/time-units). For
+        example, `30m`. This field supports duration
+        [variables](/observe/dashboards/customization/dashboard-variables). For more
+        details, see [Dashboard query interval and resolution](/observe/dashboards/customization/intervals).
+      - Change the **Time preference**:
+        - Toggle **Use dashboard time**.
+        - Add a **Relative time override**. You can use custom variables in the
+          override if they're duration-based.
+1. Select a **Datasource** for the query. This selection determines the syntax you
+   can enter. For example, selecting **Metrics (Prometheus)** accepts
+   [PromQL syntax](/investigate/querying/promql), whereas selecting **Logs** accepts
+   [Chronosphere log syntax](/investigate/querying/query-logs/query-syntax).
+1. Enter expressions for the query you want to edit.
+
+   The visualization preview changes as you edit the query. If the query doesn't
+   return any data, the visualization preview doesn't indicate any changes. If the
+   query or results return an error, an icon appears next to the panel name.
+1. Optional: Add a **Series alias** to define the name displayed for the series
+   in the panel's tooltip and legend.
+
+    <Note>
+    If you select a **Logs** query that includes a field which contains a period (`.`)
+      in its name (such as `k8s.namespace`), and you want to use signals to group
+      notifications, use an
+      [alias for that field name](/investigate/querying/query-logs/query-syntax#alias-field-names).
+      Otherwise, periods are converted to underscores in the generated visualization.
+    </Note>
+
+1. Optional: Change the **Resolution** of a query. This setting controls the maximum
+   data points per series. Options are:
+   - **Low**: Prioritizes query performance over accuracy.
+   - **Medium**: (Default) Balances performance and accuracy.
+   - **High**: Uses more data points to provide more precise results, but might have
+     degraded performance.
+   - **Custom**: Set a custom step size. If you select **Custom**, you must enter a
+     **Custom resolution** with [time units](/overview/concepts/time-units). For
+     example, `30m`. This field supports duration
+     [variables](/observe/dashboards/customization/dashboard-variables).
+
+     Lower resolutions will return results faster, but can reduce data spikes due to
+     [downsampling](/control/shaping/downsampling). If you find
+     you're missing spikes at **Low** resolution, changing to **High** resolution
+     or using an aggregation function like `max_over_time` can help. See
+     [Disappearing spikes when increasing the range​](https://chronosphere.io/learn/understanding-promql-and-its-quirks/#Disappearing%20spikes%20when%20increasing%20the%20range%E2%80%8B)
+     in the Chronosphere blog for a detailed explanation.
+1. Optional: Add additional queries by clicking **Add query**.
+1. Optional: Hide a visualized query by clicking **Hide query**, or show a hidden
+   query by clicking **Show query**.
+1. Change a query's **Options** based on the [panel type](#panel-types).
+1. Click **Apply** to save any query changes and exit the panel editor.
+
+For details about writing queries, read the [querying documentation](/investigate/querying).
+
+You can use [dashboard variables](/observe/dashboards/customization/dashboard-variables)
+in a query to let dashboard users dynamically customize them without modifying
+the query itself.
+
+If you include a dashboard variable that doesn't exist, Observability Platform notifies
+you of the missing variable in the query editor and includes a link of the variable
+name that automatically creates and configures the suggested variable.
+
+</Tab>
+<Tab title="Chronoctl">
+
+<ChronoctlDashboard />
+
+</Tab>
+</Tabs>
+
+### Add links to a panel
+
+To add links to a panel:
+
+1. Open the panel's editor.
+1. Click **Links**.
+1. Click **Add link**.
+1. Choose a **Link type**, and then configure it:
+   <Tabs>
+   <Tab title="Dashboard" id="dashboard-link">
+   If you select **Dashboard**:
+
+   1. Click the **Select dashboard** box and choose a dashboard.
+   1. Select or clear the following options:
+      - **Include current time range**
+      - **Include current variable values**
+   </Tab>
+   <Tab title="Link" id="link-link">
+   If you select **Link**:
+
+   1. Enter a **Name** for the link, which the panel uses for the link's text.
+   1. Enter a **URL** for the link's destination.
+
+      You can include dashboard variables in the URL. Chronosphere includes available
+      variables in the link insertion dialog.
+
+   </Tab>
+   </Tabs>
+
+1. Click **Save link** to save the link.
+
+### View a panel's JSON
+
+To view the JSON for a single panel:
+
+1. Open the panel's editor.
+1. Select the **JSON** tab.
+
+### Exit the panel editor
+
+To save changes to a panel and exit the panel editor, click **Apply**.
+
+To exit the panel editor without saving changes, click **Cancel**.
+
+## Delete a panel
+
+To delete a panel:
+
+1. Open the dashboard you want to change.
+1. In the panel you want to delete, click the <Icon icon="trash" />**Delete**
+  icon.
+1. Click **Delete** to confirm or **Cancel** to go back.
+
+## Save changes to a dashboard
+
+Changes made to panels in a dashboard aren't saved until you save all changes to
+the dashboard, even after applying the changes to the panels in the **Edit panel** interface.
+
+To save changes to a dashboard's panels and layout from the dashboard view, click
+**Save**.
+
+## Copy a panel to a dashboard
+
+Make a copy of a panel in an existing dashboard or copy a panel to another dashboard by
+using one of the these methods:
+
+To copy a panel to any dashboard using keyboard shortcuts:
+
+1. Open a dashboard.
+1. Click the panel you want to copy.
+1. Press `Control+C` (`Command+C` on macOS) to copy the panel to
+   the clipboard.
+1. Open the target dashboard.
+1. Click a panel group to select it. If you don't select a group, the panel pastes
+   into the last panel group on the page.
+1. Press `Control+V` (`Command+V` on macOS) to paste the panel into
+   the dashboard. The panel uses the same configuration as it had on the origin
+   dashboard.
+1. Click **Save** to save the updated dashboard.
+
+To customize your panel while copying a panel to another dashboard, or a new,
+personal dashboard:
+
+1. Open a dashboard.
+1. On the panel you want to copy, click the <Icon icon="ellipsis-vertical" />three dots
+   icon, and then select **Add to dashboard**.
+1. In the **Add a dashboard** dialog, enter the following information:
+   - A **Panel name**: The dialog populates with the name of the panel you selected.
+     Keep this name, or update the field with a new name.
+   - Choose an option for **Select an existing dashboard**:
+     <Tabs>
+     <Tab title="Leave blank">
+     Leave **Select an existing dashboard** blank to create a new dashboard. The
+     dashboard will be added to your personal collection. If you don't have a
+     personal collection, one will be created for you.
+
+     1. Click **Create new dashboard**.
+     1. The dialog updates with the following fields:
+        - **Dashboard name**: The name defaults to `[Quick Dash]: USER_ID - TIMESTAMP`
+          where:
+          - _`USER_ID`_ is your username.
+          - _`TIMESTAMP`_ is the date and time you clicked the **Add to dashboard**
+            button.
+        - **Owner**: Optional: Select an owner for the dashboard.
+     </Tab>
+     <Tab title="Select an existing dashboard">
+     If you select an existing dashboard, the panel is added to the selected
+     dashboard.
+
+     Select a **Panel group** to add the panel to.
+     </Tab>
+     </Tabs>
+1. Optional: Update the **Preview**.
+1. Click **Add to dashboard** when you're finished.
+1. The message `Panel successfully added to dashboard. Go to dashboard.` displays.
+   Click the **Go to dashboard** link to view the dashboard.
+
+## Undo the previous action
+
+When you paste a copied panel or delete a panel, a message confirming your action
+displays in the bottom-left corner of the dashboard. This message summarizes the
+action you took (for example: `Pasted panel: test 2`). Next to the message is an
+**Undo <Icon icon="rotate-left" />** link. If you have unintentionally pasted or
+deleted the panel, click the **Undo** link to restore the panel to its previous state.

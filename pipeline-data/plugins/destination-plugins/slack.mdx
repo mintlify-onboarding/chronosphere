@@ -1,0 +1,36 @@
+---
+title: Slack destination plugin
+sidebarTitle: Slack
+'og:description': Send pipeline data to Slack.
+---
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Slack [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `slack`) lets you configure your telemetry pipeline to send specific
+types of data or events to your Slack channels, such as error alerts, system
+status updates, or performance metrics.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                      | Key | Description | Default |
+| ------------------------- | --- | ----------- | ------- |
+| **Slack Webhook Address** | `webhook` | Absolute address of the webhook provided by Slack. | `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX` |

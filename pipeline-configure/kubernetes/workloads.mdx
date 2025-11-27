@@ -1,0 +1,99 @@
+---
+title: Workloads
+'og:description': Learn about different workload types in Chronosphere Telemetry Pipeline.
+sidebarTitle: Workloads
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+In Chronosphere Telemetry Pipeline, you can use the PipelineKind attribute
+to specify [workload](https://kubernetes.io/docs/concepts/workloads/controllers/)
+types for pipelines.
+
+Pipelines can run as the following workload types:
+
+- **[Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)**:
+  A pipeline run as a Deployment has a configurable number of
+  [replica Pods](/pipeline-configure/scaling). If you don't specify a workload type,
+  new pipelines run as Deployments by default.
+- **[StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)**:
+  A pipeline run as a StatefulSet has a configurable number of replica Pods, similar to
+  a Deployment pipeline, but each Pod has persistent data storage and a stable identity.
+- **[DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)**:
+  A pipeline run as a DaemonSet adds a Pod to every node in the Kubernetes
+  cluster where it's deployed.
+
+## Set a pipeline's workload type
+
+To set the workload type for a new pipeline, use the `--kind` flag in
+[Pipeline CLI](/pipeline-cli):
+
+```shell /INSTANCE/ /PIPELINE/ /WORKLOAD/
+calyptia create pipeline \
+--core-instance INSTANCE \
+--name PIPELINE \
+--kind WORKLOAD
+```
+
+Replace the following:
+
+- _`INSTANCE`_: The name of your Core Instance.
+- _`PIPELINE`_: The name to give your new pipeline.
+- _`WORKLOAD`_: The workload type for your pipeline. Possible values: `deployment`,
+  `statefulSet`, or `daemonSet`.
+
+<Note>
+After you create a pipeline, you can't change its workload type.
+</Note>
+
+### Additional settings for StatefulSet pipelines
+
+There are several additional settings unique to StatefulSet pipelines, including
+one required setting:
+
+```shell /CLASS/ /POLICY1/ /POLICY2/
+--storage-class CLASS \
+--pvc-retention-policy-when-scaled POLICY1 \
+--pvc-retention-policy-when-deleted POLICY2
+```
+
+- _`CLASS`_: Required. The [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
+  to use for each Pod's [PersistentVolume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
+  After you set this value for a StatefulSet pipeline, you can't modify it.
+- _`POLICY1`_: Specifies whether Kubernetes should retain or delete the
+  [PersistentVolumeClaim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
+  (PVC) associated with each affected Pod if the StatefulSet pipeline is scaled down.
+  Possible values: `Retain` (default) and `Delete`. To use this flag, you must
+  be running Kubernetes v1.32 or newer and must enable the `StatefulSetAutoDeletePVC`
+  feature gate in Kubernetes.
+- _`POLICY2`_: Specifies whether Kubernetes should retain or delete each Pod's PVC
+  if the StatefulSet pipeline is deleted. Possible values: `Retain` (default)
+  and `Delete`. To use this flag, you must be running Kubernetes v1.32 or newer
+  and must enable the `StatefulSetAutoDeletePVC` feature gate in Kubernetes.
+
+<Note>
+If you're using Kubernetes v1.31 or earlier, you can't set the `--pvc` flags to
+specify how Kubernetes handles PVC cleanup because older versions of Kubernetes
+don't handle PVC cleanup. Instead, Telemetry Pipeline handles the cleanup process by
+deleting PVCs for deleted pipelines and retaining PVCs for scaled-down pipelines.
+
+If you're using Kubernetes v1.32 or later but don't enable the `StatefulSetAutoDeletePVC`
+feature gate, or if you attempt to set the `--pvc` flags in Kubernetes v1.31 or earlier,
+neither Kubernetes nor Telemetry Pipeline handles PVC cleanup. In this scenario,
+all PVCs persist until you delete them manually.
+</Note>
+
+For example, the following command creates a StatefulSet pipeline named `my-pipeline`
+associated with a Core Instance named `my-instance`. It uses a StorageClass named
+`standard`, and Telemetry Pipeline will retain PVCs for any scaled-down pods but delete
+all PVCs if the pipeline is deleted.
+
+```shell
+calyptia create pipeline \
+--core-instance my-instance \
+--name my-pipeline \
+--kind statefulSet \
+--storage-class standard \
+--pvc-retention-policy-when-scaled Retain \
+--pvc-retention-policy-when-deleted Delete
+```

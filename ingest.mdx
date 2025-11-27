@@ -1,0 +1,76 @@
+---
+title: Ingest telemetry data
+'og:description': Use control mechanisms to manage the telemetry data you ingest into Chronosphere Observability Platform.
+sidebarTitle: Overview
+---
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Before you can use Chronosphere Observability Platform to view and manage your
+telemetry data (of whatever type), you need to get that data into Observability
+Platform.
+
+```mermaid
+flowchart LR
+  accTitle: Chronosphere Observability Platform architecture diagram
+  accDescr: Architecture diagram that shows the flow of data from a customer's environment into the Control Plane in the Chronosphere Observability Platform, and then out to third party incident management and alerting software.
+  subgraph "Chronosphere"
+    cp((Chronosphere\nObservability Platform))
+  end
+  subgraph "Customer Environment"
+    inf(Infrastructure/\nApplications) -- Metrics --> coll
+    inf(Infrastructure/\nApplications) -- Traces --> coll
+    inf -- Events ---> cp
+    inf -- Logs --> cp
+    inf -- Logs --> pipe(Telemetry Pipeline\nor existing pipeline)
+    pipe --> cp
+    coll(Chronosphere or\nOpenTelemetry \nCollector) --> cp
+  end
+
+  click coll "/ingest/metrics-traces"
+  click pipe "/pipelines"
+
+  classDef platform fill:#2fbf71,stroke-width:2px,stroke:#2fbf71,color:#FFFFFF,font-weight:bold;
+  class cp,coll,pipe platform
+```
+
+Observability Platform supports multiple methods to ingest telemetry data, which
+depend on which type of data you want to ingest:
+
+| Ingestion method        | Change events | Logs | Metrics | Traces |
+| ----------------------- | :-----------: | :--: | :-----: | :----: |
+| [Chronosphere Collector](/ingest/metrics-traces/collector) | <NoIcon /> | <NoIcon /> | <YesIcon /> | <YesIcon /> |
+| [OpenTelemetry Collector](/ingest/metrics-traces/otel)     | <NoIcon /> | <YesIcon /> | <YesIcon /> | <YesIcon /> |
+| [Telemetry Pipeline](/pipelines) or Core Agent             | <NoIcon /> | <YesIcon /> | <NoIcon /> | <NoIcon /> |
+| [Existing pipeline](/ingest/logs)                          | <NoIcon /> | <YesIcon /> | <NoIcon /> | <NoIcon /> |
+| [Direct to Observability Platform](/ingest/third-party)    | <YesIcon /> | <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+After ingesting telemetry data, you can use the control mechanisms that Observability
+Platform provides to [control costs](/control) and ensure you're ingesting only the
+data you care about.
+
+## Ingestion models
+
+Chronosphere utilizes _push_ and _pull_ models of ingestion, depending on the data
+collected and the method of ingestion.
+
+| Telemetry type | Push | Pull |
+| -------------- | :--: | :--: |
+| Metrics        | <YesIcon /> | <YesIcon /> |
+| Traces         | <YesIcon />| <NoIcon /> |
+| Logs           | <YesIcon /> | <YesIcon /> |
+
+_Pull_ models, like the Chronosphere Collector, scrape telemetry data from external
+sources and pull it in. These metrics have consistent reporting intervals.
+
+_Push_ models, like tracing, send telemetry data to Chronosphere, which is then
+processed. These metrics can have a broad spectrum of reporting frequency, from large
+bursts of data to long periods with no data reporting.
+
+The ingestion model depends on the telemetry data source. Metrics pushed to
+Observability Platform can have [latency delays](/ingest/metrics-traces/gcp#metrics-availability)
+or [sparse time series](/investigate/querying/metrics/troubleshooting#sparse-time-series) which can
+result in unexpected query results.

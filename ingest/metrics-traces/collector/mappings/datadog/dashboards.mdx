@@ -1,0 +1,41 @@
+---
+title: Dashboard widgets
+sidebarTitle: Recreate widgets
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Some Datadog widgets have corollaries in Chronosphere which can be recreated in
+[Dashboards](/observe/dashboards) using panels. Use the following sections
+to help recreate some previously used visuals.
+
+## Stacked bar graph
+
+To create a stacked bar graph similar to the Datadog widget:
+
+1. In the Chronosphere web interface, create a
+   [dashboard panel](/observe/dashboards/panels#add-panels-to-a-dashboard).
+1. Under **Visualization**, click **Graph**.
+1. Scroll to the **Display** section.
+1. Use the toggle to disable **Lines**.
+1. Use the toggle to enable **Stacks**.
+1. Under **Hover tooltip**, set the **Sort order** to `decreasing`.
+1. Click **Apply** to review your changes, or click **Save** to finish.
+
+## Top list
+
+To create a top list:
+
+1. In the Chronosphere web interface, create a
+   [dashboard panel](/observe/dashboards/panels#add-panels-to-a-dashboard).
+1. Under **Visualization**, click **Table**.
+1. At the bottom of the page, click the **Transform** tab.
+1. Click **Reduce**.
+1. Change these values:
+    - **Mode:** `Series to rows`
+    - **Calculations:** `Total`
+1. Click **Add transformation** and then add the following values:
+    - Sort by
+    - **Field:** `Total`
+    - **Reverse:** `Enable`
+1. Click **Apply** to review your changes, or click **Save** to finish.

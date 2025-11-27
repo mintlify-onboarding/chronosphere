@@ -1,0 +1,69 @@
+---
+title: Confluent Cloud source plugin
+sidebarTitle: Confluent Cloud
+'og:description': Use the Confluent Cloud source plugin.
+---
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+import SourceStyle from '/snippets/_partials/source-pull.mdx';
+import BufferParams from '/snippets/_partials/plugin-buffer-params.mdx';
+import ExtendedLibrdkafka from '/snippets/_partials/plugin-librdkafka-info.mdx';
+import LibrdkafkaBuffer from '/snippets/_partials/plugin-librdkafka-buffer.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Confluent Cloud [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `kafka`, alias: `confluent_cloud`) lets you retrieve data from Confluent
+Cloud and ingest it into a telemetry pipeline.
+
+<SourceStyle/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs | Metrics | Traces |
+| :--: | :-----: | :----: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                                  | Key | Description | Default |
+| ------------------------------------- | --- | ----------- | ------- |
+| **Confluent Cloud Bootstrap Servers** | `brokers` | Required. The Confluent Cloud bootstrap found within the configuration settings. | `[YOUR_BOOTSTRAP_SERVER].confluent.cloud:9092` |
+| **Confluent Cloud Topic**             | `topics` | Required. The Confluent Cloud topic to read information from. | _none_ |
+| **Confluent Cloud API Key**           | `rdkafka.sasl.username` | Your Confluent Cloud API key. | _none_ |
+| **Confluent Cloud API Secret**        | `rdkafka.sasl.password` | Required. Your Confluent Cloud API secret. | _none_ |
+
+### Advanced
+
+| Name                        | Key | Description | Default |
+| --------------------------- |-----|-------------|---------|
+| **Minimum Queued Messages** | `rdkafka.queued.min.messages` | The minimum number of messages per topic and partition that Telemetry Pipeline tries to maintain in the local consumer queue. | `10` |
+| **Session Timeout (ms)**    | `rdkafka.session.timeout.ms` | How long Telemetry Pipeline waits before terminating a session connection. | `45000` |
+| **Security Protocol**       | `rdkafka.security.protocol` | The security protocol for Azure Event Hub. If you require OAuth or OpenID, contact Chronosphere Support. | `SASL_SSL` |
+| **SASL Mechanism**          | `rdkafka.sasl.mechanism` | The transport mechanism for the SASL connection. | `PLAIN` |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Other
+
+<BufferParams/>
+
+### Extended librdkafka parameters
+
+<ExtendedLibrdkafka/>
+
+<LibrdkafkaBuffer/>

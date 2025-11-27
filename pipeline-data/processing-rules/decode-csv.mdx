@@ -1,0 +1,166 @@
+---
+title: Decode CSV
+'og:description': Learn about the decode CSV processing rule in Chronosphere Telemetry Pipeline.
+sidebarTitle: Decode CSV
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The decode CSV [processing rule](/pipeline-data/processing-rules) transforms log data
+from CSV format to JSON. Depending on whether you specify header information, the
+resulting JSON object includes either a set of key/value pairs or an array
+that splits comma-separated values into individual strings. Additionally, the
+resulting output always includes a string of the original CSV log data.
+
+## Configuration parameters
+
+<Params />
+
+| Name                      | Key | Description | Default |
+| ------------------------- | --- | ----------- | ------- |
+| **Source key**            | `src` | Required. The key to store your original CSV log entry. Don't change this setting from its default value. | `log` |
+| **Destination key**       | `dst` | Required. The key to store your transformed JSON data. Don't change this setting from its default value. | `decoded_csv` |
+| **Parse header** checkbox | `parseHeader` | Indicates whether the first entry in your CSV data contains headers. If selected, the decode CSV rule uses these headers as keys to store the values of subsequent rows of data. | Not selected |
+| **Preset header**         | `header` | A list of headers to use as keys for storing the values of each row's data. Use a comma to separate the names of your headers, but don't use spaces between each name. This list must contain the same number of headers as there are columns of data. For example, if your CSV logs contain seven columns of data, you must specify seven header names to use as keys. | _none_ |
+| **Comment**               | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+<Note>
+If you enable both **Parse header** and **Preset header**, the **Parse header**
+setting takes precedence. For best results, enable one setting at a time rather
+than using both simultaneously.
+</Note>
+
+## Examples
+
+Using the decode CSV rule lets you turn CSV-stored log data into a more traditional
+log format for storage and analysis.
+
+### Without headers
+
+If you don't specify header information, this rule transforms CSV data into an
+array. For example, given this sample CSV data:
+
+```text
+2023-03-28T09:08:41.64283645Z,3,30,purchase
+2023-03-28T09:08:42.643343109Z,4,10,purchase
+2023-03-28T09:08:48.643600498Z,1,50,click
+2023-03-28T09:08:50.643773688Z,5,40,purchase
+2023-03-28T09:08:51.643932272Z,1,30,purchase
+2023-03-28T09:08:56.644080944Z,2,40,click
+2023-03-28T09:09:03.64425954Z,3,30,click
+2023-03-28T09:09:03.644317046Z,1,20,view
+2023-03-28T09:09:10.64447719Z,2,50,purchase
+2023-03-28T09:09:17.644810963Z,2,10,view
+2023-03-28T09:09:20.644994805Z,1,50,view
+```
+
+A processing rule with the **Source key** value `log` and the **Destination key**
+value `decoded_csv` returns the following result:
+
+```json
+{"log":"2023-03-28T09:08:41.64283645Z,3,30,purchase","decoded_csv":["2023-03-28T09:08:41.64283645Z","3","30","purchase"]}
+{"log":"2023-03-28T09:08:42.643343109Z,4,10,purchase","decoded_csv":["2023-03-28T09:08:42.643343109Z","4","10","purchase"]}
+{"log":"2023-03-28T09:08:48.643600498Z,1,50,click","decoded_csv":["2023-03-28T09:08:48.643600498Z","1","50","click"]}
+{"log":"2023-03-28T09:08:50.643773688Z,5,40,purchase","decoded_csv":["2023-03-28T09:08:50.643773688Z","5","40","purchase"]}
+{"log":"2023-03-28T09:08:51.643932272Z,1,30,purchase","decoded_csv":["2023-03-28T09:08:51.643932272Z","1","30","purchase"]}
+{"log":"2023-03-28T09:08:56.644080944Z,2,40,click","decoded_csv":["2023-03-28T09:08:56.644080944Z","2","40","click"]}
+{"log":"2023-03-28T09:09:03.64425954Z,3,30,click","decoded_csv":["2023-03-28T09:09:03.64425954Z","3","30","click"]}
+{"log":"2023-03-28T09:09:03.644317046Z,1,20,view","decoded_csv":["2023-03-28T09:09:03.644317046Z","1","20","view"]}
+{"log":"2023-03-28T09:09:10.64447719Z,2,50,purchase","decoded_csv":["2023-03-28T09:09:10.64447719Z","2","50","purchase"]}
+{"log":"2023-03-28T09:09:17.644810963Z,2,10,view","decoded_csv":["2023-03-28T09:09:17.644810963Z","2","10","view"]}
+{"log":"2023-03-28T09:09:20.644994805Z,1,50,view","decoded_csv":["2023-03-28T09:09:20.644994805Z","1","50","view"]}
+```
+
+This rule copied each row of CSV data to the `log` key and used the comma-separated
+row values to create the `decoded_csv` array.
+
+### With preset headers
+
+If you specify header information in the **Preset header** setting, CSV data
+becomes a series of key/value pairs. For example, given this sample CSV data:
+
+```text
+2023-03-28T09:08:41.64283645Z,3,30,purchase
+2023-03-28T09:08:42.643343109Z,4,10,purchase
+2023-03-28T09:08:48.643600498Z,1,50,click
+2023-03-28T09:08:50.643773688Z,5,40,purchase
+2023-03-28T09:08:51.643932272Z,1,30,purchase
+2023-03-28T09:08:56.644080944Z,2,40,click
+2023-03-28T09:09:03.64425954Z,3,30,click
+2023-03-28T09:09:03.644317046Z,1,20,view
+2023-03-28T09:09:10.64447719Z,2,50,purchase
+2023-03-28T09:09:17.644810963Z,2,10,view
+2023-03-28T09:09:20.644994805Z,1,50,view
+```
+
+A processing rule with the **Source key** value `log`, the **Destination key**
+value `decoded_csv`, and the **Preset header** value `time,user,page,result`
+returns the following result:
+
+```json
+{"log":"2023-03-28T09:08:41.64283645Z,3,30,purchase","decoded_csv":{"result":"purchase","user":"3","time":"2023-03-28T09:08:41.64283645Z","page":"30"}}
+{"log":"2023-03-28T09:08:42.643343109Z,4,10,purchase","decoded_csv":{"result":"purchase","user":"4","time":"2023-03-28T09:08:42.643343109Z","page":"10"}}
+{"log":"2023-03-28T09:08:48.643600498Z,1,50,click","decoded_csv":{"result":"click","user":"1","time":"2023-03-28T09:08:48.643600498Z","page":"50"}}
+{"log":"2023-03-28T09:08:50.643773688Z,5,40,purchase","decoded_csv":{"result":"purchase","user":"5","time":"2023-03-28T09:08:50.643773688Z","page":"40"}}
+{"log":"2023-03-28T09:08:51.643932272Z,1,30,purchase","decoded_csv":{"result":"purchase","user":"1","time":"2023-03-28T09:08:51.643932272Z","page":"30"}}
+{"log":"2023-03-28T09:08:56.644080944Z,2,40,click","decoded_csv":{"result":"click","user":"2","time":"2023-03-28T09:08:56.644080944Z","page":"40"}}
+{"log":"2023-03-28T09:09:03.64425954Z,3,30,click","decoded_csv":{"result":"click","user":"3","time":"2023-03-28T09:09:03.64425954Z","page":"30"}}
+{"log":"2023-03-28T09:09:03.644317046Z,1,20,view","decoded_csv":{"result":"view","user":"1","time":"2023-03-28T09:09:03.644317046Z","page":"20"}}
+{"log":"2023-03-28T09:09:10.64447719Z,2,50,purchase","decoded_csv":{"result":"purchase","user":"2","time":"2023-03-28T09:09:10.64447719Z","page":"50"}}
+{"log":"2023-03-28T09:09:17.644810963Z,2,10,view","decoded_csv":{"result":"view","user":"2","time":"2023-03-28T09:09:17.644810963Z","page":"10"}}
+{"log":"2023-03-28T09:09:20.644994805Z,1,50,view","decoded_csv":{"result":"view","user":"1","time":"2023-03-28T09:09:20.644994805Z","page":"50"}}
+```
+
+This rule copied each row of CSV data to the `log` key and assigned each row's
+comma-separated values to a series of key/value pairs in `decoded_csv`.
+
+### With parsed headers
+
+If you enable the **Parse header** setting, CSV data becomes a series of key/value
+pairs with keys based on the parsed header row. For example, given this sample
+CSV data:
+
+```text
+timestamp,user_id,page_id,action
+2023-03-28T09:08:41.64283645Z,3,30,purchase
+2023-03-28T09:08:42.643343109Z,4,10,purchase
+2023-03-28T09:08:48.643600498Z,1,50,click
+2023-03-28T09:08:50.643773688Z,5,40,purchase
+2023-03-28T09:08:51.643932272Z,1,30,purchase
+2023-03-28T09:08:56.644080944Z,2,40,click
+2023-03-28T09:09:03.64425954Z,3,30,click
+2023-03-28T09:09:03.644317046Z,1,20,view
+2023-03-28T09:09:10.64447719Z,2,50,purchase
+2023-03-28T09:09:17.644810963Z,2,10,view
+2023-03-28T09:09:20.644994805Z,1,50,view
+```
+
+A processing rule with the **Source key** value `log`, the **Destination key**
+value `decoded_csv`, and the **Parse header** value enabled returns the
+following result:
+
+```json
+{"log":"2023-03-28T09:08:41.64283645Z,3,30,purchase","decoded_csv":{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":"3","action":"purchase","page_id":"30"}}
+{"log":"2023-03-28T09:08:42.643343109Z,4,10,purchase","decoded_csv":{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":"4","action":"purchase","page_id":"10"}}
+{"log":"2023-03-28T09:08:48.643600498Z,1,50,click","decoded_csv":{"timestamp":"2023-03-28T09:08:48.643600498Z","user_id":"1","action":"click","page_id":"50"}}
+{"log":"2023-03-28T09:08:50.643773688Z,5,40,purchase","decoded_csv":{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":"5","action":"purchase","page_id":"40"}}
+{"log":"2023-03-28T09:08:51.643932272Z,1,30,purchase","decoded_csv":{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":"1","action":"purchase","page_id":"30"}}
+{"log":"2023-03-28T09:08:56.644080944Z,2,40,click","decoded_csv":{"timestamp":"2023-03-28T09:08:56.644080944Z","user_id":"2","action":"click","page_id":"40"}}
+{"log":"2023-03-28T09:09:03.64425954Z,3,30,click","decoded_csv":{"timestamp":"2023-03-28T09:09:03.64425954Z","user_id":"3","action":"click","page_id":"30"}}
+{"log":"2023-03-28T09:09:03.644317046Z,1,20,view","decoded_csv":{"timestamp":"2023-03-28T09:09:03.644317046Z","user_id":"1","action":"view","page_id":"20"}}
+{"log":"2023-03-28T09:09:10.64447719Z,2,50,purchase","decoded_csv":{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":"2","action":"purchase","page_id":"50"}}
+{"log":"2023-03-28T09:09:17.644810963Z,2,10,view","decoded_csv":{"timestamp":"2023-03-28T09:09:17.644810963Z","user_id":"2","action":"view","page_id":"10"}}
+{"log":"2023-03-28T09:09:20.644994805Z,1,50,view","decoded_csv":{"timestamp":"2023-03-28T09:09:20.644994805Z","user_id":"1","action":"view","page_id":"50"}}
+```
+
+This rule treated the first row of CSV data as a set of headers, then created a
+series of key/value pairs from subsequent rows by using header names as keys.
+This rule also copied each row of CSV data to the `log` key, except for the row
+that contained header names.
+
+## Related rules
+
+For a processing rule with the opposite effect, see
+[encode CSV](/pipeline-data/processing-rules/encode-csv).

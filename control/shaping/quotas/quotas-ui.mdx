@@ -1,0 +1,142 @@
+---
+title: View allocated pools
+sidebarTitle: View pools
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+The **Metrics Quotas** page displays existing metrics pools, the
+persisted writes quota allocated to each pool, and the amount of persisted writes
+quota consumed by each pool.
+
+Teams can use this information to understand which pools are consuming quota and
+how much, which pools are at risk of being limited, and how each pool has
+prioritized its traffic to ensure that only lower priority data drops if the
+system exceeds its limit while a pool is over its quota.
+
+Select from the following methods to view your metrics pools.
+
+<Tabs>
+<Tab title="Web" id="view-pools-cloud">
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Metrics Quotas**.
+1. Use the **Sort by** menu to change the display order. A summary of **All Pools**
+   always display at the top of the list.
+1. Use the **Search** box to find a specific pool.
+1. Select a **Time Range** to display.
+1. Select a pool name to view data specific to that pool. The **Default Pool** is the
+   pool containing all otherwise unassigned metrics.
+
+Hold the pointer over any sparkline chart to display a dialog with data specific to
+that day and time. Click the dialog to pin it.
+
+</Tab>
+<Tab title="Chronoctl" id="view-pools-chronoctl">
+
+To list your existing metrics pools using [Chronoctl](/tooling/chronoctl), use the
+`chronoctl resource-pools read` command:
+
+```shell
+chronoctl resource-pools read
+```
+
+</Tab>
+<Tab title="API" id="view-pools-api">
+
+To complete this action with the Chronosphere API, use the
+[`ReadResourcePools`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ReadResourcePools) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## All Pools
+
+When viewing **All Pools**, you can see system-wide persisted writes quota
+consumption and the pools consuming the highest percentage of their assigned quotas.
+
+The upper portion of this page displays persisted writes statistics across all pools:
+
+- **Limit** total for persisted writes, in data points per second (DPPS).
+- **Average** persisted writes in DPPS.
+- **Current** percentage of usage versus your limit.
+- **Total over time** is a graph of the change over time in the overall consumption
+  of quota, as a percentage of total quota.
+
+The **All Pools** page includes additional charts and statistics:
+
+- **Overall limit and consumption by pool** is a stacked-area sparkline chart of
+  individual pools and how much quota they're consuming. Use this chart to compare
+  pools and better understand which of them are using the most resources. Hold the
+  pointer over the chart to view the number of data points contributed by each pool
+  at that time.
+- **Quota consumption by pool** graphs detail the assigned limits and current
+  consumption of that limit for each pool. If one of your pools exceeds its limit,
+  but the overall quota consumption is still 100%, the pool exceeding the limit
+  continues to collect data normally. Hold the pointer over a graph to see incoming
+  data points and the quota limit.
+
+  When the system exceeds the persisted writes limit, Chronosphere Observability
+  Platform enforces the limit by dropping data from pools over their quota.
+- **License overage state** shows the volume of metrics dropped for each pool that's
+  in a penalty state. Any pool that exceeds the persisted writes license capacity
+  displays in this chart.
+
+## Select a pool
+
+Click a pool name to view data specific to that pool. The pool's page includes the
+percentage of persisted writes the selected pool consumes, and overall quota
+consumption against the total persisted writes limit.
+
+Each pool page also includes the following details about the pool's quota usage:
+
+- **Top persisted writes by service** can help determine which services configured in
+  this pool generate the most writes.
+- **Persisted writes trends by service** displays the current percentage of total
+  quota this pool is using, and a graph tracking the usage of the time range.
+- **Quota consumption** tracks the consumption of quota in DPPS, against the limit.
+- **Traffic priority**: Displays traffic priority in a box chart that shows which
+  priorities have the most traffic, based on
+  [priority definitions](/control/shaping/quotas/manage-pools).
+
+In addition to any named metric pools you define, all instances have a
+**Default pool**. You can set the quota for the default pool, but not the name or
+match criteria. The default pool matches any metric that isn't matched by another
+pool. New metrics that don't match defined pools get assigned to the
+**Default pool**.
+
+### License overage dropped metrics
+
+If the aggregate usage exceeds the
+[Persisted Writes Capacity limit](/administer/limits-licensing/licensing#persisted-writes), the pools
+exceeding their defined quotas are penalized. In this penalty state, Observability
+Platform can start dropping data points.
+
+During a penalty period, the **License overage dropped metrics** pane displays the
+total volume of dropped metrics for each pool, and the associated priority of high,
+medium, and low. Use these graphs to identify when Observability Platform started
+dropping metrics. You can then create [drop rules](/control/shaping/rules/drop-rules)
+to drop incoming metrics and create
+[aggregation rules](/control/shaping/reduce-cardinality/review-aggregation-rules) to reduce persisted writes.
+
+### Quota Configuration Values
+
+This table lists all the label **Values** matching the pool configuration. and how
+much DPPS each contributes to the pool quota. In the **Default pool**, new metrics
+have the **<Icon icon="palette" /> New** indicator.
+
+### Quotas for the Histogram Metrics License
+
+Observability Platform offers limited support of metric quotas for metrics that
+consume [Histogram Metrics License](/administer/limits-licensing/licensing) capacity. The percentage
+quota defined for a pool applies to both Standard and Histogram Metrics.
+
+For example, when you allocate a 30% quota to a pool, the pool's quota is 30% of your
+Standard Metrics License's persisted writes and 30% of your Histogram Metrics
+License's persisted writes. However, the Metrics Quotas UI doesn't provide usage
+information for the Histogram Metrics License's persisted writes.

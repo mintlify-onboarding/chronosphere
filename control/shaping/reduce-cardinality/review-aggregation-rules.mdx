@@ -1,0 +1,182 @@
+---
+title: Review aggregation rules
+'og:description': Use the Aggregation Rules page to review your aggregation rules.
+sidebarTitle: Review rules
+---
+{/* -- dri: Adam Locke -- */}
+
+
+The Aggregation Rules page is a centralized location in Chronosphere Observability
+Platform to review all of your [rollup](/control/shaping/rules) and
+[mapping](/control/shaping/rules/mapping) rules.
+
+In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and
+then select **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Aggregation Rules**.
+
+## Search for a rule
+
+Use the **Search rules** field to find a particular rule or group of rules. You
+can search by:
+
+- **Name**
+- **Filter**
+- `mapping`, `roll-up`, `keep`, or `discard`
+
+Aggregation rules display in a table. Click a column name to sort the table by that column.
+
+## Table display
+
+The **Table Settings** button enables you to change the displayed columns. Select a
+checkbox to add a column, clear the checkbox to remove it. Clear the checkbox for a
+group to remove all columns in the group.
+
+The following columns are available for display:
+
+- **Name:** (*default*) The rule name and aggregation rule type (rollup or mapping).
+- **Slug Name:** The unique slug name of the rule.
+- **Rule Configuration**: This group contains details about the rule.
+  - **Filter:** (*default*) Specifies the names of the metrics or labels the rule
+    matches. Filters can include both Prometheus and Graphite metrics.
+  - **Label Policy:** (*default*) Indicates whether a rollup rule is discarding
+    specific label names (exclude by) as indicated by the **Discard** label, or
+    explicitly keeping specific label names (group by) as indicated by the **Keep**
+    label.
+  - **Drop Raw:** (*default*) Displays `true` when dropping raw values, or `false` when
+    retaining them.
+  - **Metric Name:** (*default*) The output metric's name.
+  - **Interval:** Amount of time between aggregated data points. For example, `15s`
+    indicates a 15 second pause between each data storage attempt.
+  - **Metric type:** The [type of metric](/control/shaping/types).
+  - **Operation:** The
+    [aggregation operation](/control/shaping/rules#supported-aggregation-operations)
+    in use.
+- [**Shaping Impact:**](#shaping-impact) Data relating to rule efficiency.
+- **Last Modified:** (*default*) The last time this rule was updated.
+- **Mode:** The mode the rule is in. Either **Preview** or **Enabled**.
+
+For more detail, visit
+[Fields for rollup rules](/control/shaping/rules/rollup#fields-for-rollup-rules).
+
+### Shaping impact
+
+Use _shaping impact_ data to manage your traffic shape, by highlighting the benefits
+of the Control Plane and providing more transparency around the individual impact of
+existing rules.
+
+The following columns explain the **Shaping Impact** of a rule:
+
+- **Matched Writes:** The number of writes per second matched or ingested
+  into the Observability Platform aggregation tier.
+- **Rule Efficiency:** A measure of how effective the rule is in aggregating incoming
+  data points, expressed as a percentage reduction in data points per seconds from
+  incoming to aggregated data.
+- **Persisted Impact:** The change in total persisted data points per second as a
+  result of the rule.
+- **Matched Impact:** The percentage of the matched writes license used by the rule.
+- **Output Metric Utility Score:** An aggregate number that indicates the relative
+  usefulness of the output metric, determined by the number of **References**,
+  **Executions**, and unique users. A higher score means users include the output
+  metric in their workflows. To learn more, refer to
+  [Telemetry Usage Analyzer](/investigate/analyze/usage).
+
+Some ways you can use shaping impact are:
+
+- Reduce persisted data
+
+  To reduce persisted data in your system, look for rules that have low utility, but
+  add persisted data. Use the **Least Valuable (by Persisted Write)** sort to find
+  rules to change or remove.
+
+- Clean up ineffective rules
+
+  To optimize rules, review rules that aren't aggregating data effectively or don't
+  match incoming data points. Sort by **Least Effective** to find rules to change or
+  remove.
+
+## Sort your data
+
+Next to the search box is the sorting menu. These sort options let you view your
+least or most valuable rules, determined using the underlying shaping impact metrics
+and your unique needs. By default, rules sort by **Least Effective**.
+
+- **Least Valuable (by Matched Impact):** Find rules that have high matched writes,
+  but low output metric utility.
+- **Most Valuable (by Matched Impact):** Find rules that have low matched writes
+  and high output metric utility.
+- **Least Valuable (by Persisted Write):** Find rules that add to the persisted
+  data in the system and have low output metric utility.
+- **Most Valuable (by Persisted Write):** Find rules that conserve persisted
+  data in the system and have high output metric utility.
+- **Least Effective:** Find rules that either aren't aggregating data effectively or
+  don't match any incoming data points.
+- **Most Effective:** Find rules that are aggregating data effectively.
+- **Manual:** Displays when the user clicks a specific shaping impact column
+  to sort by.
+
+## Add aggregation rules
+
+Click **Create Aggregation Rule** to display the
+[rollup rules creation dialog](/control/shaping/rules/rollup#create-a-rollup-rule-cloud).
+Use the procedure to create a new rollup rule.
+
+## Inspector panel
+
+The inspector panel contains tools to help you analyze your metrics and
+rules. Click any rule to open the panel.
+
+### Shaping impact graphs
+
+The **Shaping impact** tab displays historical graphs that show how your rules
+performed during the selected time frame:
+
+- **Matched Writes:** The raw number of incoming data points per second (DPPS) matching
+  the rule.
+- **Rule Efficiency:** The effectiveness of the rule in aggregating incoming data
+  points. This graph displays the percentage reduction in retained data for the
+  selected rule, and a raw number of **DPPS conserved**.
+- **System Persisted Impact:** The change in total persisted data points per
+  second as a result of the rule. This graph displays the percentage reduction in
+  retained overall data for the selected rule, and a raw number of **DPPS
+  added** or **DPPS conserved**.
+- **Matched Impact:** The percentage of the matched writes license used by the rule.
+
+Hold the pointer over a graph to display the specific data at point in the graph.
+Click and drag in the graph to narrow your search to a specific time range.
+
+Use the time selector menu to change the period displayed on the graph. Time ranges
+from the **Last 5 minutes** up to the **Last 14 days**, or you can select a
+**Custom time range**.
+
+To select a custom time range:
+
+1. Select a specific date and time from the picker, or manually enter a
+  **Start Time** and **End Time** in the format `YYYY-MM-DD HH:MM:SS`.
+1. Click **Apply** to update the graph, or **Cancel** to close the picker.
+
+Click <Icon icon="arrow-rotate-right" /> **Refresh** to reload the graphs with the most
+recent data.
+
+### Rule configuration
+
+Click the **Configuration** tab to display the definition used to create the rule.
+Select **API**, **Chronoctl**, or **Terraform** to set the type of definition
+displayed.
+
+You can copy the definition to your clipboard for use with creating or updating a
+rule using normal creation methods.
+
+### Analyze incoming metrics or labels
+
+You can analyze the incoming data for a specific metric. Select a rule from the
+list, and then click **View Incoming Metrics**. The
+[Live Telemetry Analyzer](/investigate/analyze/telemetry-analyzer) displays,
+[actively profiling](/investigate/analyze/telemetry-analyzer)
+the selected metric or value.
+
+### Edit aggregation rules
+
+Click **Edit** to display the
+[rollup rules creation dialog](/control/shaping/rules/rollup#create-a-rollup-rule-cloud).
+The dialog is pre-populated with the selected rule's details. You can make changes,
+and then copy the new configuration file and apply it to your system to update the
+rule using Terraform or Chronoctl.

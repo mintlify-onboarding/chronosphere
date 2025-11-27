@@ -1,0 +1,63 @@
+---
+title: Tracing ingest limits
+sidebarTitle: Traces
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere uses the following ingest limits for tracing data. If you exceed one or
+more of these limits, Chronosphere truncates or rejects the data depending on the
+limit itself. Exceeding a limit indicates that you might need to modify your
+client-side instrumentation, or implement head or tail
+[sampling rules](/control/sampling) to drop data that you don't want to
+persist.
+
+The following limits are in increasing order of granularity from most granular to
+most broad.
+
+## Invalid tags
+
+Chronosphere limits the size of a tag to 200 bytes for any span. Chronosphere accepts
+and processes the first 200 bytes and truncates any additional bytes. The related
+span and trace aren't otherwise impacted by this limit.
+
+## Invalid spans
+
+If the start time of a span is greater than 10 minutes before or after the current
+time, Chronosphere marks the span as invalid and drops it. The parent trace isn't
+impacted, provided that the other spans in the trace have valid start times.
+
+## Invalid traces
+
+Chronosphere persists individual traces with 100,000 spans or fewer. If a trace has
+more than 100,000 spans, Chronosphere rejects the trace and all included spans.
+
+Although Chronosphere rejects invalid tracing data, you can view rejected data in the
+Trace Control Plane, or by querying the
+`chrono_trace_dropped_volume_in_bytes_count` metric. You can also
+[create a monitor](/investigate/alerts/monitors#create-a-monitor) for this metric and generate
+notifications when tracing data is rejected. The following query returns invalid
+trace data by reason, such as when a span is too far in the past:
+
+```shell
+sum(rate(chrono_trace_dropped_volume_in_bytes_count[5m])) by (reason) > 0
+```
+
+## Pod limits
+
+Chronosphere limits data ingest to 2 GB per minute for each Kubernetes pod that
+handles data ingest. Chronosphere scales these pods automatically to handle current
+traffic, and imposes this limit to protect against sudden traffic surges to a single
+pod. Your tenant might have anywhere from two to 100 pods at any given time,
+depending on current load. The total ingest limit in one minute depends on the number
+of pods in use times the 2 GB per minute for each pod.
+
+## System limits
+
+Chronosphere scales as rapidly as possible to manage sudden changes in trace data
+volume. However, sudden spikes might trigger surge protections that drop trace data
+until more resources are available. This system limit allows the majority of normally
+observed data fluctuation patterns and guarantees the reliability of the Chronosphere
+trace ingestion pipeline in the case of unexpected volume changes. Trace data volume
+exceeding this limit is visible in the Trace Control Plane as a metric tracking
+volume of traces dropped due to limiting.

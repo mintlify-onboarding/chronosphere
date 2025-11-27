@@ -1,0 +1,86 @@
+---
+title: Change events
+'og:description': Learn about how to use change events to understand what changed in your environment.
+sidebarTitle: Change events
+---
+{/* -- dri: Adam Locke -- */}
+
+
+When on-call engineers respond to an issue, they need to understand what changed,
+where the change occurred, and when the change happened. These insights are critical
+to investigating and remediating issues when they arise.
+
+Changes Explorer displays _change events_ to create a comprehensive view of all
+changes in your environment. Each change event describes a change within your
+environment or Chronosphere Observability Platform tenant at a specific time so you
+can answer questions like _When did a particular service deploy last?_ or
+_Which alerts triggered in the last week?_
+
+Change events provide an additional layer of meaning. A specific set of changes
+might occur at the system level, but can be further differentiated by
+[category, type, and source](/observe/enable-events/use-events#categorize-change-events-intentionally).
+For example, a system-level change can be categorized as a deploy, alert, or
+infrastructure event. Within a specific category, you can differentiate events. For
+example, within the infrastructure category, you can add a type such as network
+change, storage modification, or security update to distinguish these events.
+
+Learn about interacting with [change events](/overview/types/change-events) in
+Observability Platform.
+
+```mermaid
+---
+title: Change events by type
+---
+classDiagram
+  class System
+  style System fill:#EA4747,color:#FFFFFF;
+
+  class Infrastructure
+  style Infrastructure fill:#EA4747,color:#FFFFFF;
+  Infrastructure: Network change
+  Infrastructure: Storage change
+  Infrastructure: Kubernetes change
+
+  class ThirdP["Third party"]
+  style ThirdP fill:#EA4747,color:#FFFFFF;
+  ThirdP: PaaS issue
+  ThirdP: Stripe issue
+
+  class Alerts
+  style Alerts fill:#EA4747,color:#FFFFFF;
+  Alerts: Monitor triggered
+  Alerts: Muting rule stopped
+
+  class FFlags["Feature flags"]
+  style FFlags fill:#EA4747,color:#FFFFFF;
+  FFlags: New feature enabled
+
+  class Deploys
+  style Deploys fill:#EA4747,color:#FFFFFF;
+  Deploys: New code deployed
+
+  System <|-- Infrastructure
+  System <|-- ThirdP
+  System <|-- Alerts
+  System <|-- FFlags
+  System <|-- Deploys
+
+  class Workload
+  style Workload fill:#FF9D1C,color:#FFFFFF;
+
+  class Broadcasts
+  style Broadcasts fill:#FF9D1C,color:#FFFFFF;
+  Broadcasts: New customer onboarding
+  Broadcasts: Marketing event
+  Broadcasts: Sporting event start
+
+  Workload <|-- Broadcasts
+
+  class Observability
+  style Observability fill:#60E684,color:#000000;
+
+  class Chronosphere
+  style Chronosphere fill:#60E684,color:#000000;
+
+  Observability <|-- Chronosphere
+```

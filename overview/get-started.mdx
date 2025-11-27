@@ -1,0 +1,160 @@
+---
+title: Get started with Observability Platform
+'og:description': Learn about some common paths to complete tasks in Chronosphere Observability Platform
+sidebarTitle: Get started
+---
+import { ServiceNavIcon } from '/snippets/Icons.jsx';
+
+To get started with Observability Platform:
+
+- Open your browser, [authenticate](/overview/authenticating), and sign in.
+- View your [home page](/observe/personal-homepage) and navigate directly to your
+  favorite resources, or your most recently used ones.
+- Locate [dashboards](/observe) to view the health and performance of services that
+  matter to your team.
+- Investigate [monitors](/investigate/alerts) and configure alerts to generate
+  notifications about important data.
+- Write [queries](/investigate/querying) to search for pertinent telemetry data, and
+  help identify issues during on-call triage.
+- Explore [services](/observe/services) to view queries and data visualizations
+  related services you care about.
+- Learn what metrics are available in the [Metrics Catalog](/investigate/querying/metrics/metrics-catalog).
+
+## Administrators
+
+Administrators and expert users are often the first adopters of observability
+software. New users might not understand what they need to know, or how to find and
+solve problems. Administrators can create helpful and curated experiences for
+incoming developers and other users.
+
+Administrators know how their users are organized - what teams they're on, who's
+responsible for what functions, and so on.
+
+ <Columns cols={1}>
+  <Card horizontal icon="shield"
+    title="Manage users, teams, and tokens to control access to Observability Platform"
+    href="/administer"
+  />
+</Columns>
+
+At the same time, you need to ingest data to observe. Observability Platform ingests
+metrics, traces, and logs, meeting a variety of telemetry coverage needs.
+
+ <Columns cols={1}>
+  <Card horizontal icon="paper-plane"
+    title="Send your telemetry data to Observability Platform for monitoring"
+    href="/ingest"
+  />
+</Columns>
+
+After data is flowing to Observability Platform, create dashboards, alerts, and
+services to monitor your data.
+
+ <Columns cols={1}>
+  <Card horizontal icon="dashboard"
+  title="Use dashboards to customize detailed views into specific data"
+  href="/observe/dashboards"
+  />
+  <Card horizontal icon="bell"
+  title="Create alerts to make your DevOps and observability teams aware of problems"
+  href="/investigate/alerts"
+  />
+
+  <Card horizontal icon={<ServiceNavIcon />} title="Discover services for end to end
+  views" href="/administer/service-discovery"
+  />
+</Columns>
+
+Use the provided command-line interfaces, infrastructure as code tools, and APIs for
+interacting with the Observability Platform and Telemetry Pipeline products. These
+tools include Terraform, Chronoctl, and supported APIs.
+
+ <Columns cols={1}>
+  <Card horizontal icon="robot"
+    title="Use the provided tools to interact programatically with Chronosphere"
+    href="/tooling-overview"
+  />
+</Columns>
+
+Take control of your telemetry data to keep costs predictable and manageable as your
+business scales, and help teams manage their data effectively by reducing the amount
+of available information. When you optimize your telemetry data, on-call engineers
+can find the data they need to solve problems faster.
+
+ <Columns cols={1}>
+  <Card horizontal icon="shapes"
+    title="Identify and eliminate telemetry data that isn't used"
+    href="/control"
+  />
+</Columns>
+
+## Developers
+
+Troubleshooting issues can be time consuming and difficult when you don't know where
+to start or how to find the data you need.
+
+You can query and analyze all of your data to help identify issues and determine
+which services are causing latency. Use these capabilities in conjunction with
+monitors and alerts during incident response when you're trying to identify the
+source of an issue.
+
+ <Columns cols={1}>
+  <Card horizontal icon="magnifying-glass-plus"
+    title="Investigate issues in your services and environment"
+    href="/investigate"
+  />
+</Columns>
+
+Mark resources as favorites to display them in your
+[personal homepage](/observe/personal-homepage) so they're readily available whenever
+you sign in.
+
+ <Columns cols={1}>
+  <Card horizontal icon="star"
+  title="Favorite consistently used resources for ease of navigation"
+  href="/navigate/favorites"
+  />
+  </Columns>
+
+PromQL is a complex query language, and users don't necessarily want to spend time
+learning it while they're solving problems.
+
+ <Columns cols={1}>
+  <Card horizontal icon="database"
+    title="Use the Query Builder to reduce time spent building PromQL queries"
+    href="/investigate/querying/metrics/query-builder"
+    />
+</Columns>
+
+Dashboards provide information on the telemetry and services important to you. Your
+administrator might create dashboards for you, or you can create your own with the
+data you need the most.
+
+ <Columns cols={1}>
+  <Card horizontal icon="table-cells-columns"
+  title="Use dashboards to customize detailed views into specific data"
+  href="/observe/dashboards"
+  />
+</Columns>
+
+Chronosphere Lens gives you visibility into the health and performance of your
+applications by ingesting metrics, traces, logs, and change events that you can
+observe using services, dashboards, and service level objectives (SLOs).
+
+ <Columns cols={1}>
+  <Card horizontal icon="display"
+    title="Use services, dashboards, and SLOs to gain visibility into your environments"
+    href="/observe"
+  />
+</Columns>
+
+Some filters can follow you across pages as you dig into issues and narrow down
+where problems lie.
+
+ <Columns cols={1}>
+  <Card horizontal icon="telescope"
+  title="Use Pinned scopes if you have specific filters you need across multiple
+  pages"
+  href="/navigate/pinned-scopes"
+  />
+</Columns>

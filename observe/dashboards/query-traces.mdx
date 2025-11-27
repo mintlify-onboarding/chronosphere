@@ -1,0 +1,96 @@
+---
+title: Query traces in dashboards
+'og:description': Learn how to query traces from within a Chronosphere Observability Platform dashboard.
+sidebarTitle: Query traces
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Viewing a dashboard can provide insights such as spikes in memory usage, CPU
+utilization, and other metrics that help identify issues in your system. When
+troubleshooting problems, context matters. Knowing whether relevant trace data exists
+for an existing problem that's visualized in your dashboard can help decrease Mean
+Time To Repair (MTTR).
+
+Rather than leave your dashboard to explore traces, you can bring trace data to where
+you need it and discover traces from any dashboard in your Chronosphere
+Observability Platform tenant.
+
+You must first [enable trace querying](#enable-trace-querying) on each dashboard
+from where you want to query traces. After enabling this feature, you can
+[query traces from a dashboard](#query-traces-from-a-dashboard).
+
+<Note>
+To view trace data in dashboards, your organization must purchase
+[distributed tracing](https://chronosphere.io/platform/distributed-tracing/)
+and have it enabled in your tenant.
+</Note>
+
+## Enable trace querying
+
+Before you can query traces from a dashboard, you must enable the trace query
+feature, which adds a **Query traces** button in your dashboard. After enabling the
+feature, you can click this button to display a dialog for querying traces directly
+from the dashboard.
+
+To enable trace querying from a dashboard:
+
+1. In the navigation menu select
+   **<Icon icon="table-cells" alt="Dashboards"/> Dashboards**.
+
+   Alternatively, you can [search for a dashboard](/observe/dashboards#view-dashboards)
+   from anywhere in Observability Platform.
+
+1. Select the dashboard where you want to enable queries for trace data.
+1. Click **<Icon icon="gear" alt="Settings icon"/> Settings**, and then click
+   **General** to display the dashboard settings.
+1. In the **Dashboard settings** page, in the **Select a tag** field, type and
+   then select **tracing-context**.
+1. Click **Apply**, and then click **Save** in your dashboard.
+
+The **Query traces** button displays at the top of your dashboard. You can now click
+that button to query traces.
+
+## Query traces from a dashboard
+
+After [enabling trace querying](#enable-trace-querying), you can display a query
+builder and search traces directly from a dashboard where trace querying is active.
+
+To search traces from a dashboard:
+
+1. In the dashboard where you [enabled trace querying](#enable-trace-querying), click
+   **Query traces** to open the **Traces** drawer.
+1. In the **Query builder**, enter a service, operation, tag, or combination of those
+   criteria to query trace data.
+
+   For more information about how to construct a trace query, see
+   [Search and filter trace data](/investigate/querying/traces).
+
+1. Select a filter to apply to your query. For example, you can choose to filter the
+   query results to only traces where the selected service or operation contains an
+   error.
+
+1. Click **Run** to run the defined query. The **Query builder** section collapses,
+   and the timeline graph updates based on the query results.
+
+   The time window displays the last 24 hours by default. You can query data up to 30
+   days in the past.
+
+   <Note>
+   If you click **Run** without defining any criteria in the query, results display
+      for all traces in the last 24 hours.
+   </Note>
+
+1. Explore the results of your trace query. When selecting one of these options,
+   Observability Platform applies the context from your query to Trace Explorer:
+
+   - **View trace details**: To open the full trace details for an individual trace
+     in Trace Explorer, click any trace in the table.
+
+   - **Explore queries**: To open the defined query in Trace Explorer, click
+     **Open in Trace Explorer**.
+
+   - **Differential diagnosis**: To identify trends and scan through all related tags
+     and values in the defined query, click **Differential diagnosis**. See
+     [Differential diagnosis](/investigate/analyze/differential-diagnosis/traces)
+     for more information.

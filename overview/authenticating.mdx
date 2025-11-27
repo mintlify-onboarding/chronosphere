@@ -2,75 +2,115 @@
 title: Authenticate with Observability Platform as a user
 sidebarTitle: Sign in
 ---
+{/* -- dri: Garrett Guillotte -- */}
 
-To access Chronosphere Observability Platform, a user must first use their user account to authenticate. User accounts can authenticate interactively by signing in, or non-interactively by using a personal access token.
 
-For details about how to create and manage user accounts as an administrator, see [User accounts](/administer/accounts-teams/user-accounts). To authenticate a service with Observability Platform, see [Service accounts](/administer/accounts-teams/service-accounts).
+To access Chronosphere Observability Platform, a user must first use their user
+account to authenticate. User accounts can authenticate interactively by signing in,
+or non-interactively by using a personal access token.
+
+For details about how to create and manage user accounts as an administrator, see
+[User accounts](/administer/accounts-teams/user-accounts). To authenticate a service
+with Observability Platform, see [Service accounts](/administer/accounts-teams/service-accounts).
 
 ## Sign in interactively
 
-Observability Platform administrators can configure their organization to use a single sign-on (SSO) provider for authentication, or to use an email address and password, or to offer both methods to users.
+Observability Platform administrators can configure their organization to use a
+single sign-on (SSO) provider for authentication, or to use an email address and
+password, or to offer both methods to users.
 
-Regardless of the method, use one of these supported web browsers to access your organization’s login page for Observability Platform:
+{/* vale Chronosphere.WordList = NO */}
 
-* Google Chrome
-* Mozilla Firefox
-* Apple Safari
-* Brave
+Regardless of the method, use one of these supported web browsers to access your
+organization's login page for Observability Platform:
 
-For example, if the domain name of your organization’s Observability Platform tenant is `example.chronosphere.io`, go to `https://example.chronosphere.io/login`.
+- Google Chrome
+- Mozilla Firefox
+- Apple Safari
+- Brave
+
+For example, if the domain name of your organization's Observability Platform tenant
+is `example.chronosphere.io`, go to `https://example.chronosphere.io/login`.
+
+{/* vale Chronosphere.WordList = YES */}
 
 ### Use single sign-on
 
 Observability Platform supports several SSO providers, including:
 
-* Okta
-* Duo
-* Azure Active Directory
-* Google Suite
+- Okta
+- Duo
+- Azure Active Directory
+- Google Suite
 
-As an administrator, contact [Chronosphere Support](/support) to enable a service on your account, or if you need to add another provider.
+As an administrator, contact [Chronosphere Support](/support) to enable a service on
+your account, or if you need to add another provider.
 
 To sign in if your organization has enabled SSO:
 
-1. Click **Log in with Single Sign On** on the login page. This redirects you to your SSO provider.
-2. Authenticate with your SSO provider. If successful, this redirects you back to Observability Platform.
+1. Click **Log in with Single Sign On** on the login page. This redirects you to
+   your SSO provider.
+1. Authenticate with your SSO provider. If successful, this redirects you back to
+   Observability Platform.
 
-If an SSO user can’t sign in, email [support@chronosphere.io](mailto:support@chronosphere.io) or contact Chronosphere Support.
+If an SSO user can't sign in, email
+[support@chronosphere.io](mailto:support@chronosphere.io) or contact Chronosphere
+Support.
 
 ### Use an email and password
 
-When an administrator in your organization requests a user account for you, Observability Platform sends an invitation email containing instructions and a link to create your account to the address they provided.
+When an administrator in your organization requests a user account for you,
+Observability Platform sends an invitation email containing instructions and a link
+to create your account to the address they provided.
 
-For details about how to create and manage user accounts as an administrator, see [User accounts](/administer/accounts-teams/user-accounts).
+For details about how to create and manage user accounts as an administrator, see
+[User accounts](/administer/accounts-teams/user-accounts).
 
 To create your user account after you receive your invitation email:
 
-1. Click the invitation link you received from your account administrator. This opens the Signup page.
-2. Enter your account details, including a password.
-3. Click Sign Up. This sends a verification email to your address.
-4. Open the verification email when it arrives.
-5. Click the link inside the email.
-6. After verification, sign in to your account from the login URL.
+1. Click the invitation link you received from your account administrator. This
+   opens the **Signup** page.
+1. Enter your account details, including a password.
+1. Click **Sign Up**. This sends a verification email to your address.
+1. Open the verification email when it arrives.
+1. Click the link inside the email.
+1. After verification, sign in to your account from the login URL.
 
-If your organization hasn’t enabled SSO authentication, you must enter your email address and password at the login page to access your user account.
+If your organization hasn't enabled SSO authentication, you must enter your email
+address and password at the login page to access your user account.
 
-After you sign in, Observability Platform redirects you to your organization’s home page.
+After you sign in, Observability Platform redirects you to your organization's home
+page.
 
 ### Reset your password
+
 <Note>
-    If you have any problems signing in, contact [Chronosphere Support](/support).
+If you have any problems signing in, contact [Chronosphere Support](/support).
 </Note>
 
 If you forget your password, you can reset it from the login page.
 
 1. Click the **FORGOT PASSWORD?** link on the login page.
-2. Enter your email address.
-3. Click **Reset Password**. This sends the password reset email, which can take a few minutes to deliver. If you don’t receive the email after a few minutes, examine your email client’s spam filter.
-4. Follow the instructions in the email to reset your password.
+1. Enter your email address.
+1. Click **Reset Password**. This sends the password reset email, which can take a
+   few minutes to deliver. If you don't receive the email after a few minutes,
+   examine your email client's spam filter.
+1. Follow the instructions in the email to reset your password.
 
-To confirm if a user has an account, have a user who can sign in to Observability Platform. In the navigation menu, click  Go to Admin and then select  Platform > Users to ensure an account exists for the user’s email address. If there’s no account, have an administrator invite the user. For details, see [User accounts](/administer/accounts-teams/user-accounts).
+To confirm if a user has an account, have a user who can sign in to Observability
+Platform. In the navigation menu, click
+**<Icon icon="shield-user" /> Go to Admin** and then select
+**<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Users**
+to ensure an account exists for the user's email address. If there's no account, have
+an administrator invite the user. For details, see
+[User accounts](/administer/accounts-teams/user-accounts).
 
 ## Authenticate with a personal access token
 
-To access Observability Platform with your user account while using non-interactive tools, such as [Chronoctl](/tooling/chronoctl) and [Terraform](/tooling/infrastructure/terraform), or to access [Chronosphere APIs](/tooling/api-info) or [Prometheus API](/tooling/prometheus-api), you can use a personal access token. For details, see [Personal access tokens](/administer/accounts-teams/personal-access-tokens).
+To access Observability Platform with your user account while using non-interactive
+tools, such as [Chronoctl](/tooling/chronoctl) and
+[Terraform](/tooling/infrastructure/terraform),
+or to access [Chronosphere APIs](/tooling/api-info) or
+[Prometheus API](/tooling/prometheus-api),
+you can use a personal access token. For details, see
+[Personal access tokens](/administer/accounts-teams/personal-access-tokens).

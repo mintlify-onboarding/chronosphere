@@ -1,0 +1,26 @@
+---
+title: Change event limits
+sidebarTitle: Events
+---
+{/* -- dri: Adam Locke -- */}
+
+
+In addition to using Chronosphere Observability Platform, you can use the
+[CreateEvent API](https://docs.chronosphere.io/tooling/api-info/data_definition/operations/CreateEvent)
+to create change events. This API can ingest 300 change events per minute, per block
+in a single tenant. The total request size must be less than 1&nbsp;MB.
+
+## Change event fields
+
+The CreateEvent API accepts the following fields with the stated limits:
+
+| Field            | Description | Required | Validation | Configurable | Failure |
+| ---------------- | ----------- | -------- | ---------- | ------------ | ------- |
+| `title`          | Brief description of the change event. | Yes | Maximum of 100 characters. | No | Error |
+| `source`         | Identifies where the data originated. | Yes | Maximum of 50 characters. | No | Error |
+| `category`       | Informs Observability Platform about the kind of change event. | Yes | Must be one of:<br />`"alerts"`<br />`"broadcasts"`<br />`"chronosphere"`<br />`"deploys"`<br />`"feature_flags"`<br />`"infrastructure"`<br />`"third_party"` | Yes | Error |
+| `happened_at`    | Indicates when the change event occurred, which defaults to `now` if unset. | No | Must be a Unix epoch timestamp.<br /><br />Can be set only to 24 hours before or after the current time. | Yes, with a restart | Error |
+| `type`           | Differentiates change events within a particular `category` or `source`. | Yes | Maximum of 50 characters. | No | Error |
+| `labels`         | Key values associated with a change event. | No | Maximum of 200 labels (key/value pairs) per event.<br /><br /> - Keys: Maximum of 500 characters.<br /> - Values: Maximum of 5,000 characters. | No | Error |
+| `payload_json`   | Payload associated with a change event. | No | Maximum of 100,000 characters. | No | - |
+| `payload_object` | Payload associated with a change event, if the original event was in key/value format. | No | Maximum of 100,000 characters. | No | - |

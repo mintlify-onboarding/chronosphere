@@ -1,0 +1,155 @@
+---
+title: Accounts and teams
+'og:description': Chronosphere Observability Platform lets you manage user accounts, roles, and team permissions for streamlined access and collaboration.
+sidebarTitle: Overview
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Chronosphere Observability Platform identifies users and services by their
+_accounts_. As an administrator, you can organize accounts into _teams_ and define
+those teams' permissions.
+
+- A [_user account_](/administer/accounts-teams/user-accounts)
+  represents a user's identity in Observability Platform.
+- A [_service account_](/administer/accounts-teams/service-accounts)
+  represents a service's identity in Observability Platform.
+- A [_team_](/administer/accounts-teams/teams) organizes accounts into
+  groups and defines permissions for sensitive management and administrative
+  operations.
+
+Add accounts to teams based on the permissions you want grant to those accounts. For
+example, to make a user or service account an _administrator_, assign it to a team
+that has the SysAdmin role. This grants the account access to special Observability
+Platform features, including team and account management and assignment.
+
+## View accounts and teams
+
+<Tabs>
+<Tab title="Web - accounts" id="view-accounts-cloud">
+
+In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
+**<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Users**.
+
+The left-hand column lists all accounts. The list includes icons for
+additional context about each entry type:
+
+| Icon                                      | Description |
+| :---------------------------------------: | ----------- |
+| <Icon icon="user" />             | An active user account. |
+| <Icon icon="robot" />              | A service account. |
+| <Icon icon="circle-minus" /> | An invited user who's yet to confirm their account. |
+| <Icon icon="circle-xmark" /> | A deactivated user account. |
+
+A <Icon icon="key" /> **System Administrator** icon to the right of an entry
+indicates either a team that has the System Administrator (SysAdmin) role, or
+a user or service account that's a member of a team with that role.
+
+To view details about an account, select its name from the list. To filter by
+account name, enter part or all of the account's name in the **Search** field.
+To filter by account type or status, click the <Icon icon="filter" />
+filter icon.
+
+When you select an account, Observability Platform displays the account's team
+**Memberships** and **Recent User Actions**.
+
+If your user account belongs to a team with the SysAdmin role, this view also
+provides options to add or remove the account from teams.
+
+</Tab>
+<Tab title="Web - teams" id="view-accounts-cloud">
+
+In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
+**<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
+
+The table lists all teams by name and other details about their configuration:
+
+- **Role**: The role granted to all accounts in the team. The SysAdmin role
+  grants administrative privileges.
+- **Source**: The source of this team's configuration. **UI** teams are
+  configured in Observability Platform and can be edited in the app by users with
+  the SysAdmin role. **Terraform** teams are configured exclusively through
+  Terraform.
+- **Description**: A description of the team.
+
+To view a team's [home page](/administer/collections/home), click
+its name in the list. If your user account is part of a team with the SysAdmin
+role, you can edit the team's name, role, description, links, and membership
+from its home page.
+
+</Tab>
+<Tab title="Chronoctl" id="view-accounts-and-teams-chronoctl">
+
+You can use [Chronoctl](/tooling/chronoctl) to list teams and their member accounts.
+This output includes the email address associated with each account. If an account's
+email address is an alphanumeric Observability Platform
+slug at the `serviceaccount.chronosphere.io` domain, that
+member is a [service account](/administer/accounts-teams/service-accounts). Other
+email addresses represent user accounts.
+
+<Note>
+To view accounts and teams with Chronoctl, you must authenticate as a user
+that belongs to a team with the SysAdmin role, or as an unrestricted
+[service account](/administer/accounts-teams/service-accounts).
+</Note>
+
+To list each team and its member accounts in separate YAML documents with
+[Chronoctl](/tooling/chronoctl), use the `teams list` command. You can also use
+this output as a template for updating each team separately using Chronoctl.
+
+```shell
+chronoctl teams list
+```
+
+The output contains YAML documents separated by three dashes (`---`). Each document
+contains one team and any of its member accounts.
+
+For example, this output lists a team named _Control team_ with one user account
+and one service account as members, and a second team named _DBAs_ with two
+user account members:
+
+```yaml
+api_version: v1/config
+kind: Team
+spec:
+  slug: control-team
+  name: Control team
+  user_emails:
+    - adam@example.com
+    - 4a5842df-4179-47c7-bcc0-d1e6589caaf0@serviceaccount.chronosphere.io
+---
+api_version: v1/config
+kind: Team
+spec:
+  slug: dbas
+  name: DBAs
+  user_emails:
+    - adam@example.com
+    - betty@example.com
+```
+
+</Tab>
+<Tab title="API" id="list-teams-api">
+
+To list all teams with the Chronosphere API, use the
+[`ListTeams`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ListTeams) endpoint.
+
+To view a single team, use the
+[`ReadTeams`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ReadTeams) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Grant System Administrator (SysAdmin) privileges to a team
+
+A user account that's a member of a [team](/administer/accounts-teams/teams) with
+the `SysAdmin` role has administrative access to Observability Platform features,
+including the abilities to create teams and user accounts, assign users to teams,
+and define team permissions.
+
+For instructions about assigning roles to a team, see
+[Add a role to a team](/administer/accounts-teams/teams#add-a-role-to-a-team).

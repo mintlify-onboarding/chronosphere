@@ -1,0 +1,73 @@
+---
+title: Pods and containers
+'og:description': Configure Kubernetes Pods and containers in Chronosphere Telemetry Pipeline.
+sidebarTitle: Pods and containers
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Chronosphere Telemetry Pipeline uses [Pods](https://kubernetes.io/docs/concepts/workloads/pods/)
+and [containers](https://kubernetes.io/docs/concepts/containers/) to manage different
+components of Telemetry Pipeline.
+
+## Pods
+
+Use the information in this section to perform operations related to Pods.
+
+### Specify pipeline Pod termination time
+
+You can specify how long Kubernetes should wait before forcefully terminating the
+Pod that runs a pipeline. To do so, add the following flag to a `create pipeline`
+or `update pipeline` command:
+
+```shell /VALUE/
+calyptia {create|update} pipeline --termination-grace-period-seconds VALUE
+```
+
+Replace _`VALUE`_ with a non-negative integer, which represents a time in seconds.
+If unspecified, the default value is `30`.
+
+For more information, see the `terminationGracePeriodSeconds`
+entry in the [Kubernetes API documentation](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#pod-v1-core).
+
+## Containers
+
+Use the information in this section to perform operations related to containers.
+
+### Configure container lifecycle
+
+You can configure a pipeline container to execute certain actions in response to
+lifecycle events. To do so, add the following flag to a `create pipeline` or
+`update pipeline` command:
+
+
+```shell /JSON/
+calyptia {create|update} pipeline --lifecycle JSON
+```
+
+Replace _`JSON`_ with a JSON object that contains your lifecycle settings. You can
+also pass an empty JSON object (`{}`) to remove any existing lifecycle settings.
+
+For more information, see the `Lifecycle` entry in the
+[Kubernetes API documentation](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#lifecycle-v1-core).
+
+### View `from-cloud` and `to-cloud` container logs
+
+Each [Core Instance](/pipelines/concepts#core-instance) Pod includes two containers
+that synchronize pipeline resources.
+
+- The `from-cloud` container receives updates from the Telemetry Pipeline
+backend and pushes those updates to your Kubernetes cluster.
+- The `to-cloud` container sends information about changes within
+your cluster to the Telemetry Pipeline backend.
+
+You can use the following kubectl command to view logs from each of these containers:
+
+```shell /POD/ /CONTAINER/
+kubectl logs POD CONTAINER
+```
+
+Replace the following values:
+
+- _`POD`_: The name of the Core Instance Pod.
+- _`CONTAINER`_: Either `from-cloud` or `to-cloud`.

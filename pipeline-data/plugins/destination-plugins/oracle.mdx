@@ -1,0 +1,100 @@
+---
+title: Oracle Log Analytics destination plugin
+sidebarTitle: Oracle
+'og:description': Send pipeline data to Oracle Log Analytics.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Oracle Log Analytics [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `oracle_log_analytics`) lets you configure your telemetry pipeline to
+output log data to Oracle Log Analytics.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name                            | Key | Description | Default |
+| ------------------------------- | --- | ----------- | ------- |
+| **Configuration File Location** | `config_file_location` | Required. The location of the configuration file containing OCI authentication details. See [SDK and CLI Configuration File](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/sdkconfig.htm#SDK_and_CLI_Configuration_File) for steps on generating the configuration file. | `~/.oci/config` |
+| **Profile Name**                | `profile_name` | Required. OCI Config Profile Name to be used from the configuration file. | `DEFAULT` |
+| **Namespace**                   | `namespace` | Required. OCI Tenancy Namespace in which the collected log data is to be uploaded. | _none_ |
+| **Proxy**                       | `proxy` | Defines a proxy. Must be in the format `http://host:port`. Supports the HTTP protocol only. | _none_ |
+
+### Advanced
+
+| Name                     | Key | Description | Default |
+| ------------------------ | --- | ----------- | ------- |
+| **OCI Config in Record** | `oci_la_log_group_id` | Optional. If set to `true`, the following `oci_la_*` parameters are read from the record itself instead of the output plugin configuration. Accepted values: `true`, `false`. | `false` |
+| **OCI Log Group ID**     | `oci_la_log_group_id` | Required. The OCID of the Logging Analytics Log Group where the logs must be stored. | _none_ |
+| **OCI Log Source Name**  | `oci_la_log_source_name` | Required. The Logging Analytics Source that must be used to process the log records. | _none_ |
+| **OCI Entity ID**        | `oci_la_entity_id` | The entity type of the Logging Analytics Entity. | _none_ |
+| **OCI Log Path**         | `oci_la_log_path` | Specifies the original location of the log files. | _none_ |
+| **OCI Global Metadata**  | `oci_la_global_metadata` | Specifies additional global metadata along with original log content to Logging Analytics. The format is `key value`. This option can be set multiple times. | _none_ |
+| **OCI Metadata**         | `oci_la_metadata` | Specifies additional metadata for a log event along with original log content to Logging Analytics. The format is `key value`. This option can be set multiple times. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />
+
+## Example
+
+The following YAML configuration defines a Fluent Bit input and an Oracle Log
+Analytics output.
+
+```yaml
+pipeline:
+  inputs:
+    - Name: forward
+      alias: Fluent_Bit
+      port: "5170"
+      tls.verify: on
+      tls.debug: "1"
+      tag: forward.0dd7a9e7-ed46-4c31-bbd3-40e8b607f501
+  outputs:
+    - Name: oracle_log_analytics
+      config_file_location: ~/.oci/config
+      profile_name: DEFAULT
+      namespace: NAMESPACE
+      proxy: http://host:port
+      oci_la_log_group_id: log_group_id
+      oci_la_log_source_name: REST API
+      oci_la_entity_id: entity
+      oci_la_entity_type: entity_type
+      oci_la_log_path: log_path
+      oci_la_global_metadata:
+        - key1 value1
+      oci_la_metadata:
+        - key2 value2
+      tls: true
+      tls.verify: on
+      tls.debug: "1"
+      net.keepalive: true
+      net.keepalive_idle_timeout: 30s
+      net.connect_timeout: 10s
+      net.connect_timeout_log_error: true
+      net.keepalive_max_recycle: "2000"
+      Match_Regex: .{0,}
+```

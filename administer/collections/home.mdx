@@ -1,0 +1,178 @@
+---
+title: Team and collection home pages
+sidebarTitle: Team and collection home pages
+---
+import { CollectionIcon, CollectionNavIcon} from '/snippets/Icons.jsx';
+import TerraformDel from '/snippets/_partials/terraformdel.mdx';
+
+{/* -- dri: Garrett Guillotte -- */}
+
+
+Each [*team*](/administer/accounts-teams/teams) and
+[*collection*](/administer/collections) provides a *home*
+page that lists its associated resources.
+
+These pages provide an overview of alerting [monitors](/investigate/alerts/monitors)
+and their statuses, links to associated [dashboards](/observe/dashboards),
+and additional context about the team or collection.
+
+## View a home page
+
+To go to a team's or collection's home page:
+{/* vale off */}
+
+{/* "my" is in the UI and unavoidable */}
+
+1. In the navigation menu exit the **Admin** menu (if needed, click
+   **<Icon icon="arrow-right-from-bracket" /> Exit Admin**) and select
+   **<CollectionNavIcon /> Collections**. Chronosphere Observability Platform first
+   lists collections associated with teams to which you belong under
+   **My Teams & Collections**, then under **All Teams & Collections** lists each
+   <Icon icon="users" /> team and the <CollectionIcon /> collections
+   it's responsible for.
+1. Click a team or collection to view its home page.
+
+{/* vale on */}
+
+### Alerting monitors
+
+The **Monitors** section includes a table that lists any
+[monitors](/investigate/alerts/monitors) associated with this team or
+collection that are reporting alerts. The table's columns provide pertinent details
+and links to each monitor:
+
+- **Status:** The table lists any monitors associated with the team or collection
+  that have active alerts, sorted by descending severity from
+  <Icon icon="hexagon-exclamation" /> critical to
+  <Icon icon="circle-exclamation" /> warning levels.
+
+  Monitors not reporting alerts, including fully muted monitors, aren't listed here.
+  To view all monitors associated with this team or collection, click the section's
+  **View all monitors** link.
+
+- **Name:** Each alerting monitor's name is a link to its **Monitor Info** view.
+
+- **Alerting For:** This indicates the duration since the monitor triggered the
+  alert.
+
+- **Notification Policy:** When viewing a collection, each alerting monitor links to
+  its [notification policy](/investigate/alerts/notifications/policies).
+
+- **Collection:** When viewing a team, each alerting monitor links to its associated
+  collection home page.
+
+#### Create a monitor
+
+To create a monitor from a team's or collection's homepage, click the **+ Add**
+button in the homepage's Monitors section. This opens the **Add Monitor** panel.
+For more information, see
+[Create a monitor](/investigate/alerts/monitors#create-a-monitor-cloud).
+
+### Dashboards
+
+The **Dashboards** section links to the first 10 dashboards associated with this
+team or collection in alphabetical order. To view all associated dashboards, click
+**View all dashboards**.
+
+Team home pages exclusively show links to each dashboard's associated collection.
+
+#### Create a dashboard
+
+To create a dashboard from a team's or collection's homepage, click the **+ Add**
+button in the homepage's Dashboards section. This opens the **Add Dashboard** modal.
+For more information, see
+[Create a dashboard](/observe/dashboards#create-a-dashboard-cloud).
+
+### Manage connected resources
+
+You can connect collections to monitors and dashboards which are owned by another
+collection or service.
+
+To connect a monitor or dashboard to a service from a collection's home page:
+
+1. Next to **Monitors** or **Dashboards**, click **Manage**.
+1. Select **Connections**.
+1. Add or remove a
+  [connected resource](/observe/services/service-pages#connected-resources).
+
+### Collections
+
+Team home pages have a **Collections** section that links to each collection
+associated with the team, and includes text from the collection's description if
+available.
+
+#### Create a collection
+
+To create a collection from a team's homepage, click the **+ Add** button in the
+homepage's Collections section. This opens the **Add Collection** modal. For more
+information, see
+[Create a collection](/administer/collections#create-a-collection-cloud).
+
+### Notification policies
+
+Team home pages have a **Notification Policies** section that links to each
+notification policy associated with the team.
+
+### Links
+
+The **Links** section contains links added to a team or collection home. These links
+can point to any `http` or `https` URL.
+
+### Description
+
+Teams and collections can have a text description that's displayed in the
+**Description** section of their home pages. This description can also appear in
+other lists that include teams or collections, or when listing them in
+[Chronoctl](/tooling/chronoctl).
+
+### Team members
+
+A team's home page also lists all team members sorted by their
+[account's](/administer/accounts-teams) email address. The list
+indicates accounts with administrative access by listing **Admin** with their email
+address. Service accounts have an email address consisting of its
+slug followed by `@serviceaccount.chronosphere.io`.
+
+## Edit a home page
+
+Each home page generates its content based on its team's or collection's associations
+with other resources. To update those associations, see the documentation for those
+resources.
+
+### Teams
+
+To edit a team's name, description, or membership, see [Teams](/administer/accounts-teams/teams).
+Editing these details requires
+[administrative access](/administer/accounts-teams/user-accounts#grant-system-administrator-sysadmin-privileges-to-users).
+
+### Collections
+
+To edit a collection's name, description, or team association, see
+[Collections](/administer/collections).
+
+<Note>
+Although you can click the **<Icon icon="pencil" /> Edit Collection** button in a collection's
+  home page and view its name and description, you must use Terraform to update these
+  details.
+</Note>
+
+### Links
+
+To add links to the **Links** section:
+
+1. Go to the team's or collection's home page.
+1. Click **<Icon icon="pencil" /> Edit Team** or
+   **<Icon icon="pencil" /> Edit Collection**.
+1. Under **Team Links** or **Collection Links**, click **+ Add**.
+1. Enter a **Link Name** and **URL**.
+1. Click **Save**.
+
+To remove links from the **Links** section:
+
+1. Go to the team's or collection's home page.
+1. Click **<Icon icon="pencil" /> Edit Team** or
+   **<Icon icon="pencil" /> Edit Collection**.
+1. Under **Team Links** or **Collection Links**, click **+ Add**.
+1. Click the <Icon icon="trash" /> delete button next to the link you want to
+   delete.
+1. Click **Save**.

@@ -1,0 +1,55 @@
+---
+title: Install Core Agent on macOS
+'og:description': Learn how to install Core Agent on macOS
+sidebarTitle: Install on macOS
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+In Chronosphere Telemetry Pipeline, you can use [fleets](/fleets) to manage instances
+of Core Agent. Use this guide to install Core Agent on macOS.
+
+## Supported architectures
+
+Core Agent supports both x86-64 and Apple Silicon M1 architectures.
+
+## Dependencies
+
+For macOS installations, Core Agent has the following general dependencies:
+
+- libc
+- libsasl
+- libsystemd
+- libyaml
+- OpenSSL
+- zlib
+
+## Install
+
+Use these steps to install Core Agent:
+
+1. Either download the latest `.pkg` file from the
+   [Core Agent downloads page](https://calyptia-lts-release-standard.s3.amazonaws.com/index.html),
+   or run the following command:
+
+   ```shell /VERSION/
+   wget https://calyptia-lts-release-standard.s3.amazonaws.com/macos/VERSION/calyptia-fluent-bit-VERSION-apple.pkg
+   ```
+
+   Replace both instances of _`VERSION`_ with the
+   [latest version of Core Agent](/fleets/agent/version-equivalents).
+
+1. Run the following command to install Core Agent:
+
+   ```shell /VERSION/
+   sudo installer -pkg calyptia-fluent-bit-VERSION-apple.pkg -target /usr/local/bin/
+   ```
+
+   Replace _`VERSION`_ with the
+   [latest version of Core Agent](/fleets/agent/version-equivalents).
+
+1. Run the following command to test whether your installation was successful:
+
+   ```shell
+   calyptia-fluent-bit -i dummy -o stdout -f 1
+   ```

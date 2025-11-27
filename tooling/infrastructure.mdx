@@ -1,0 +1,98 @@
+---
+title: Infrastructure-as-code tools
+'og:description': Use the provided infrastructure-as-code tools for managing your Chronosphere Observability Platform resources.
+sidebarTitle: Overview
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere provides infrastructure-as-code tools for managing your Chronosphere
+Observability Platform resources. Use these tools to provision and manage your
+infrastructure as configuration files deployed across the cloud.
+
+Chronosphere offers the following infrastructure-as-code tools:
+
+- [Terraform provider](/tooling/infrastructure/terraform)
+- [Pulumi provider](/tooling/infrastructure/pulumi)
+
+## Supported resources
+
+You can manage the following resources on your Observability Platform instance with
+the Terraform or Pulumi providers.
+
+Use the following examples as a basis for creating resources:
+
+- **Terraform**: Chronosphere Terraform provider
+  [GitHub repository](https://github.com/chronosphereio/terraform-provider-chronosphere/tree/main/examples)
+- **Pulumi**: Chronosphere Pulumi Provider
+  [API docs](https://www.pulumi.com/registry/packages/chronosphere/api-docs/)
+
+### Access
+
+The following resources relate to providing access to Observability Platform.
+
+| Resource | Terraform | Pulumi |
+| -------- | --------- | ------ |
+| Service accounts | [Service accounts](/administer/accounts-teams/service-accounts#create-a-service-account) | [Service accounts](https://www.pulumi.com/registry/packages/chronosphere/api-docs/serviceaccount/) |
+| Teams | [Teams](/administer/accounts-teams/teams#create-a-team) | [Teams](https://www.pulumi.com/registry/packages/chronosphere/api-docs/team/) |
+
+### Alert
+
+The following resources relate to configuring alerts, monitors, and Service Level
+Objectives (SLOs) in Observability Platform.
+
+| Resource | Terraform | Pulumi |
+| -------- | --------- | ------ |
+| Monitors | [Monitors](/investigate/alerts/monitors) | [Monitors](https://www.pulumi.com/registry/packages/chronosphere/api-docs/monitor/) |
+| Notification policies | [Notification policies](/investigate/alerts/notifications/policies) | [Notification policies](https://www.pulumi.com/registry/packages/chronosphere/api-docs/notificationpolicy/) |
+| Discard notifier| [Discard notifier](/investigate/alerts/notifications/notifiers/discard) | [Discard notifier](https://www.pulumi.com/registry/packages/chronosphere/api-docs/blackholealertnotifier/) |
+| Email notifier| [Email notifier](/investigate/alerts/notifications/notifiers/email) | [Email notifier](https://www.pulumi.com/registry/packages/chronosphere/api-docs/emailalertnotifier/) |
+| incident.io notifier| [incident.io notifier](/investigate/alerts/notifications/notifiers/incident) | _none_ |
+| Opsgenie notifier| [Opsgenie notifier](/investigate/alerts/notifications/notifiers/opsgenie) | [Opsgenie notifier](https://www.pulumi.com/registry/packages/chronosphere/api-docs/opsgeniealertnotifier/) |
+| PagerDuty notifier| [PagerDuty notifier](/investigate/alerts/notifications/notifiers/pagerduty) | [PagerDuty notifier](https://www.pulumi.com/registry/packages/chronosphere/api-docs/pagerdutyalertnotifier/) |
+| Slack notifier| [Slack notifier](/investigate/alerts/notifications/notifiers/slack) | [Slack notifier](https://www.pulumi.com/registry/packages/chronosphere/api-docs/slackalertnotifier/) |
+| SLOs | [SLOs](/observe/slo) | _none_ |
+| VictorOps notifier| [VictorOps notifier](/investigate/alerts/notifications/notifiers/victorops) | [VictorOps notifier](https://www.pulumi.com/registry/packages/chronosphere/api-docs/victoropsalertnotifier/) |
+| Webhook notifier| [Webhook notifier](/investigate/alerts/notifications/notifiers/webhook) | [Webhook notifier](https://www.pulumi.com/registry/packages/chronosphere/api-docs/webhookalertnotifier/) |
+
+### Control
+
+The following resources relate to controlling data in Observability Platform.
+
+| Resource | Terraform | Pulumi |
+| -------- | --------- | ------ |
+| Behaviors | [Behaviors](/control/sampling/behaviors) | _none_ |
+| Budgets | [Budgets](/control/consumption/budgeting) | _none_ |
+| Datasets | [Datasets](/control/sampling/datasets) | [Datasets](https://www.pulumi.com/registry/packages/chronosphere/api-docs/dataset/) |
+| Drop rules | [Drop rules](/control/shaping/rules/drop-rules) | [Drop rules](https://www.pulumi.com/registry/packages/chronosphere/api-docs/droprule/) |
+| Head sampling rules | [Head sampling rules](/control/sampling/head-sampling) | [Head sampling rules](https://www.pulumi.com/registry/packages/chronosphere/api-docs/tracejaegerremotesamplingstrategy/) |
+| Mapping rules | [Mapping rules](/control/shaping/rules/mapping) | [Mapping rules](https://www.pulumi.com/registry/packages/chronosphere/api-docs/mappingrule/) |
+| Metric pools | [Metric pools](/control/shaping/quotas/manage-pools) | _none_ |
+| Parsers | [Parsers](/control/consumption/shape-logs/parse-logs) | _none_ |
+| Partitions | [Partitions](/control/consumption/partitions) | _none_ |
+| Recording rules | [Recording rules](/control/shaping/rules/recording) | [Recording rules](https://www.pulumi.com/registry/packages/chronosphere/api-docs/recordingrule/) |
+| Rollup rules | [Rollup rules](/control/shaping/rules/rollup) | [Rollup rules](https://www.pulumi.com/registry/packages/chronosphere/api-docs/rolluprule/) |
+| Tail sampling rules | [Tail sampling rules](/control/sampling/tail-sampling) | [Tail sampling rules](https://www.pulumi.com/registry/packages/chronosphere/api-docs/tracetailsamplingrules/) |
+| Trace metrics | [Trace metrics](/control/sampling/trace-metrics) | [Trace metrics](https://www.pulumi.com/registry/packages/chronosphere/api-docs/tracemetricsrule/) |
+
+### Ingest
+
+The following resources relate to ingesting data to Observability Platform.
+
+| Resource | Terraform | Pulumi |
+| -------- | --------- | ------ |
+| AWS CloudWatch | [AWS CloudWatch](/ingest/metrics-traces/aws-cloudwatch-metric-stream) | _none_ |
+| Azure metrics | [Azure metrics](/ingest/metrics-traces/azure) | _none_ |
+| GCP metrics integrations | [GCP metrics integrations](/ingest/metrics-traces/gcp#set-up-google-cloud-integration) | [GCP metrics integrations](https://www.pulumi.com/registry/packages/chronosphere/api-docs/gcpmetricsintegration/) |
+| OTel metrics ingestion | [OTel metrics ingestion](/ingest/metrics-traces/otel/otel-ingest-config) | [OTel metrics ingestion](https://www.pulumi.com/registry/packages/chronosphere/api-docs/otelmetricsingestion/) |
+
+### Visualize
+
+The following resources relate to visualizing data in Observability Platform.
+
+| Resource | Terraform | Pulumi |
+| -------- | --------- | ------ |
+| Collections | [Collections](/administer/collections) | [Collections](https://www.pulumi.com/registry/packages/chronosphere/api-docs/collection/) |
+| Dashboards | [Dashboards](/observe/dashboards) | [Dashboards](https://www.pulumi.com/registry/packages/chronosphere/api-docs/dashboard/) |
+| Derived labels | [Derived labels](/investigate/querying/metrics/derived-telemetry/derived-labels) | [Derived labels](https://www.pulumi.com/registry/packages/chronosphere/api-docs/derivedlabel/) |
+| Derived metrics | [Derived metrics](/investigate/querying/metrics/derived-telemetry/derived-metrics) | [Derived metrics](https://www.pulumi.com/registry/packages/chronosphere/api-docs/derivedmetric/) |

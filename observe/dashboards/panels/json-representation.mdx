@@ -1,0 +1,93 @@
+---
+title: JSON representation format
+sidebarTitle: JSON representation
+'og:description': Create and customize data visualization panels for Chronosphere dashboards.
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+Panels are part of the JSON representation of the Chronosphere dashboard that contains
+them. In a JSON representation of a dashboard, Chronosphere models a time series
+chart panel as a `plugin` of `"kind": "TimeSeriesChart"`.
+
+This is the minimal representation of a time series chart panel, which results in
+an empty panel with no name, no defined query, and default settings:
+
+```json
+{
+  "kind": "Panel",
+  "spec": {
+    "display": {
+      "name": ""
+    },
+    "plugin": {
+      "kind": "TimeSeriesChart",
+      "spec": {}
+    },
+    "queries": [],
+    "links": []
+  }
+}
+```
+
+As an example, this is the panel representation for visualizing jobs in your Chronosphere
+instance by cardinality, as used by the Cardinality Overview
+[Chronosphere-managed dashboard](/observe/dashboards/chronosphere-managed-dashboards):
+
+```json
+{
+  "kind": "Panel",
+  "spec": {
+    "display": {
+      "name": "Top $topX jobs by cardinality | Namespace: $namespace"
+    },
+    "plugin": {
+      "kind": "TimeSeriesChart",
+      "spec": {
+        "legend": {
+          "mode": "List",
+          "position": "Bottom",
+          "values": []
+        },
+        "visual": {},
+        "y_axis": {
+          "unit": {
+            "abbreviate": true,
+            "kind": "Decimal"
+          }
+        }
+      }
+    },
+    "queries": [
+      {
+        "kind": "DataQuery",
+        "spec": {
+          "plugin": {
+            "kind": "PrometheusTimeSeriesQuery",
+            "spec": {
+              "query": "topk($topX, cardinality_estimate({namespace=~\"$namespace\", job!=\"\"}) by (job))",
+              "series_name_format": "{{job}}"
+            }
+          }
+        }
+      }
+    ],
+    "links": []
+  }
+}
+```
+
+It uses [dashboard variables](/observe/dashboards/customization/dashboard-variables) to define how many
+jobs to render and from which namespace.
+
+To summarize, this JSON representation:
+
+- Defines a panel (`"kind": "Panel"`).
+- Defines the panel's name (`spec.display.name`), including
+  [dashboard variables](/observe/dashboards/customization/dashboard-variables) (`$topX`, `$namespace`).
+- Adds a legend (`plugin.spec.legend`) and defines it as a `List` oriented to the
+  `Bottom` of the chart.
+- Configures the Y axis (`spec.plugin.spec.y_axis`) to use abbreviated
+  (`"abbreviate": true`) `Decimal` units.
+- Defines a `PrometheusTimeSeriesQuery` and a series alias (`series_name_format`)
+  for the returned time series, using dashboard variables.

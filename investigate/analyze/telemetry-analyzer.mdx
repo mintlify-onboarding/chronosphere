@@ -1,0 +1,245 @@
+---
+title: Analyze live traffic metrics
+sidebarTitle: Incoming metrics
+---
+{/* -- dri: Adam Locke -- */}
+
+
+The Live Telemetry Analyzer provides a real-time view of incoming metrics grouped by
+label, and their relative frequency. This view helps you understand how often your
+applications emit metrics, troubleshoot spikes in ingest rates, and ensure that the
+Chronosphere Collector is aware of particular metrics. Use the metrics telemetry
+analyzer as a first step in identifying opportunities to reduce the overall volume of
+metrics.
+
+<Note>
+Chronosphere Observability Platform adaptively adjusts the metrics sampling rate
+based on the current workload. This behavior means that not all metrics are
+immediately visible in the Live Telemetry Analyzer.
+</Note>
+
+{/* vale off */}
+{/* This vale test is bad. */}
+
+<Tip>
+[See a demo of the live telemetry analyzer.](https://app.teamwalnut.com/player/?demoId=bc370030-8fed-44bd-a261-6328bac9a00c&screenId=b6aa4c42-4aa8-48fd-9a2a-23d3553263c9&showGuide=true&showGuidesToolbar=false&showHotspots=true&source=app)
+</Tip>
+
+{/* vale on */}
+
+## Capture and analyze live profiling data
+
+To use the metrics telemetry analyzer to capture live profiling data:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and
+   then select
+   **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
+1. Click either the **Metrics** or **Traces** tab, depending on the data you want to
+   profile.
+1. Click **Capture live data** to begin gathering statistics for data that
+   Observability Platform accepted for matching. Two tables display with the
+   following columns:
+
+    - **Unique Values:** Number of unique values for the respective label key.
+    - **Appears In:** The percentage of metrics you're viewing that have the matching
+      label key.
+    - **Avg. DPPS:** Average data points per second (DPPS), calculated over the
+      previous 15 seconds.
+    - **Current DPPS:** Current data points per second.
+
+    You can make changes to the [groupings and filters](#group-and-filter-metrics)
+    while profiling.
+
+1. To modify the displayed data, select an option from the **Data phase** menu to
+   show data in [different stages](#ingestion-stages-and-phases) along the pathway
+   from ingestion to persistence.
+
+   For example, select **Rejected by drop rule** to view all data that Observability
+   Platform dropped because of a configured drop rule.
+1. To display data for a specific pool only, select a pool from the **Pool** menu to
+   choose a specific [metric pool](/control/shaping/quotas/quotas-ui).
+
+   Use the **Priority** menu to narrow the filter to a specific pool priority.
+
+To filter on specific labels, start typing a label name in the **Add Label Filter**
+text box, choose from an autocomplete list of labels, and then add a value to filter
+for a specific label.
+
+### Analyze metrics
+
+When analyzing traffic, use the following methods to help narrow your analysis and
+find the information you need:
+
+- Review the metric names that generate the most data points per second
+  (**Avg. DPPS** or **Current DPPS**). If those metrics are unfamiliar to you or are
+  expensive, these might be candidates to
+  [roll up](/control/shaping/rules/rollup)
+  or [drop](/control/shaping/rules/drop-rules).
+- Ensure your drop and rollup rules are working as expected by reviewing your
+  rolled up metrics, or ensuring that a dropped metric no longer displays.
+- [Group metrics](#group-and-filter-metrics) by job to identify the specific scrape
+  jobs generating the most metrics. Filter for each job, and analyze the job's
+  individual metrics to find opportunities for reduction. Metrics from the same job
+  are often used together, letting you investigate metrics from a single job more
+  quickly.
+- Review individual clusters, or data-plane versus control-plane clusters to optimize
+  specific areas.
+- Review metrics isolated to single environments. For example, metrics available only
+  in development or production environment metrics. These are likely to have different
+  metric workload shapes from each other.
+
+### Ingestion stages and phases
+
+Chronosphere profiles metrics in the ingestion and persistence stages, both of which
+include several phases.
+
+**Ingestion:** Metrics sent directly from the Chronosphere Collector. Ingestion
+includes these phases:
+
+- **Received:** Not selectable.
+- **Rejected By Drop Rule:** Toggle metrics dropped due to
+  [drop rules](/control/shaping/rules/drop-rules). This option is
+  relevant only for the Ingestion phase.
+- **Rejected by Ingest limit:** Metrics that dropped due to exceeding the ingestion
+  or persistence phase rate limit.
+- **Accepted for Matching:** Metrics which aren't dropped prior to ingestion.
+
+**Persistence:** Metrics sent to the database. This stage includes aggregated
+metrics and the following phases:
+
+- **Rejected by Persist limit:** Metrics not sent to permanent storage due
+  to persistence limits.
+- **Accepted for Storage:** Metrics sent to storage.
+- **Stored:** Not selectable.
+
+### Special request metadata
+
+The Live Telemetry Analyzer generates rows for the following special non-label
+request metadata. This special non-label request metadata is available in the Live
+Telemetry Analyzer and for matching in rollup rules, but isn't stored.
+
+The following label keys display for all incoming metrics:
+
+- `__metric_type__` displays on the incoming metric's
+  [Chronosphere metric type](/control/shaping/types#observability-platform-types).
+  Valid values are `cumulative_counter`, `delta_counter`, `gauge`, or
+  `measurement`. This is the recommended method for determining an incoming
+  metric's type.
+- `__metric_source__` displays on the incoming metric's [source format](/control/shaping/types#supported-formats).
+  Valid values are `carbon`, `chrono_gcp`, `cloudwatch_metric_stream`, `dogstatsd`,
+  `open_metrics`, `open_telemetry`, `prometheus`, `signalfx`, `statsd`, or `wavefront`.
+
+When ingesting data with Prometheus, the following label keys display:
+
+- `__m3_prom_type__` displays the incoming metric's
+  [Prometheus metric type](/control/shaping/types#prometheus).
+  Valid values are `counter`, `gauge`, `histogram`, `gauge_histogram`, `summary`,
+  `info`, `state_set`, or `quantile`.
+
+When ingesting data with OpenTelemetry, the following label keys display:
+
+- `__otel_type__` displays the incoming metric's
+  [OpenTelemetry metric type](/control/shaping/types#opentelemetry).
+  Valid values are `sum`, `monotonic_sum`, `gauge`, `histogram`, `exp_histogram`, or
+  `summary`.
+- `__otel_temporality__` displays the incoming metric's
+  [OpenTelemetry temporality](/control/shaping/types#opentelemetry). Valid values are
+  `delta` or `cumulative`.
+- DEPRECATED: `__m3_type__` displays on the incoming metric's legacy M3 type, if any.
+  Valid values are `counter`, `gauge`, or `timer`.
+
+## Group and filter metrics
+
+The initial view displays two tables, which list all labels for all metrics. The
+**Labels** table lists all labels collected during the capture.
+
+Use the **Search** text box to find a specific label. The **Search** text box filters
+as you type, reducing the label list displayed. Live Telemetry Analyzer uses
+[glob syntax](/investigate/querying/glob-syntax).
+
+<Note>
+Observability Platform glob syntax doesn't support using two asterisks where one of
+them is in the middle of a string. For example, `*k8s*staging` isn't valid.
+</Note>
+
+Select the checkbox next to any label to filter the **Label Values** table by the
+selected value.
+
+The right table shows the **Label Values**. Click a label value to add it to
+the **Add Label Filter** text box.
+
+Filter both tables by adding label `key:value` pairs to the **Add Label Filter**
+field by selecting them from the table on the left, or type in the field. Typing in
+the field displays a **Label** and **Value** text box. The **Label** field displays a
+matching list of label keys as you type. Select an option from the list at any time.
+Click the <Icon icon="check" /> check icon when finished. Click any label value
+to edit it.
+
+Click the arrow in any of the columns to sort by that data to help interpret the
+results. For example, a high total percentage in the **Appears In** column with low
+unique values gives you a high-level breakdown of where to attribute metrics. You can
+also sort by the **Unique Values** column, which helps identify high-cardinality
+labels.
+
+Consider the following metrics as an example:
+
+```text
+sign_up{location="placeA"}
+sign_up{location="placeB"}
+login{version="v0.1.0"}
+```
+
+With these metrics, the Live Telemetry Analyzer generates three rows, based on the
+three labels: `__name__`, `location`, and `version`. Because every metric has a
+`__name__` label, the percentage for that label is 100%. There are only two unique
+values for `__name__`, which are `sign_up` and `login`, causing the **Unique Values**
+column to display `2`. Only two metrics have the `location` label, which is `66%`,
+and there are two unique values for this label (`placeA` and `placeB`). The same
+applies for `version`.
+
+| Label Keys   | Unique Values | Appears In |
+|--------------|---------------|------------|
+| `__name__`   | 2             | 100%       |
+| `location`   | 2             | 66%        |
+| `version`    | 1             | 33%        |
+
+## Identify rules that generate metrics
+
+When using the Live Telemetry Analyzer, you can view which metrics were rejected by a
+drop rule or impacted by an aggregation rule. You can also view the specific rollup
+rule or drop rule that caused a metric to be aggregated or dropped. Use this
+information to help understand why metrics are missing, and why results are formatted
+in a particular way. You can also click the rule name to go directly to the rule in
+Observability Platform.
+
+The Live Telemetry Analyzer displays only the first rule that affects the metric,
+because many rules can impact an individual metric.
+
+To understand which drop rules are dropping certain metrics:
+
+1. In the **Data phase** menu, select **Rejected by drop rule**.
+1. Under the **Labels** section, select the `__drop_rule_slug__` label.
+
+   The drop rule slug names display in the **Label values** table.
+1. Click the **<Icon icon="arrow-up-right-from-square" />** arrow icon to navigate directly to the
+   drop rule that caused the metrics to be dropped.
+
+To understand which aggregation rules are producing aggregated metrics:
+
+1. In the **Data phase** menu, select **Accepted for storage**.
+1. Under the **Labels** section, select the `__rollup_rule_slug__` label.
+
+   The aggregation rule slug names display in the **Label values** table.
+1. Click the **<Icon icon="arrow-up-right-from-square" />** arrow icon to navigate directly to the
+   aggregation rule that produced the aggregated metric.
+
+## Troubleshoot missing metrics
+
+If metrics don't display when running the Live Telemetry Analyzer:
+
+- Examine the filters to ensure they're not dropping the metrics you're searching
+  for.
+- Review the **Collectors** dashboard and ensure metrics are being scraped by the
+  [Collectors](/ingest/metrics-traces/collector).
+- See [metric limits](/administer/limits-licensing/limits/metric-limits) for more
+  information.

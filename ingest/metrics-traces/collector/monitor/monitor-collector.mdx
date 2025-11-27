@@ -1,0 +1,174 @@
+---
+title: Monitor the Collector
+sidebarTitle: Monitor Collector
+---
+{/* -- dri: Garrett Guillotte -- */}
+
+
+If Collectors are unreachable, the self-scraping metrics might not reach
+Chronosphere. In these cases, you can
+[create a monitor](/investigate/alerts/monitors#create-a-monitor) for the
+`kube-state-metrics` key to examine the health of a Collector.
+
+This method of monitoring the Collector assumes that you're scraping
+`kube-state-metrics`, and that your Collectors typically report as expected.
+
+<Note>
+The following examples assume that Collector pod names include the `chronocollector`
+prefix.
+</Note>
+
+## DaemonSet Collector is unavailable
+
+You can create a monitor for the following `kube-state-metrics` to determine whether
+a Collector running as a DaemonSet is unavailable.
+
+### Pods are unavailable
+
+Monitor the following metrics to help determine whether DaemonSet pods are
+unavailable.
+
+```text
+(kube_daemonset_status_number_unavailable{daemonset="chronocollector"} * on (instance, host_ip, cluster) group_left(pod) kube_pod_info{pod=~"chronocollector.+", pod_ip!="", created_by_kind="DaemonSet"}) > 0
+
+(kube_daemonset_status_desired_number_scheduled{daemonset="chronocollector"} * on (instance, host_ip, cluster) group_left(pod) kube_pod_info{pod=~"chronocollector.+", pod_ip!="", created_by_kind="DaemonSet"} - on (pod) kube_daemonset_status_number_available{daemonset="chronocollector"} * on (instance, host_ip, cluster) group_left(pod) kube_pod_info{pod=~"chronocollector.+", pod_ip!="", created_by_kind="DaemonSet"}) > 0
+```
+
+### Pod is restarting
+
+Monitor the following metrics to help determine if a `kube-state-metrics` Collector
+pod is restarting. The following query reviews the past five minutes to return any
+pod restarts for the `kube_pod_container_status_restarts_total` metric:
+
+```text
+rate(kube_pod_container_status_restarts_total{pod=~"chronocollector.+"}[5m]) > 0
+```
+
+### Container is restarting
+
+A container might restart for various reasons. For example, the Collector containers
+could be stuck in a crash loop due to a failed deployment, or there might be underlying
+platform issues. You can examine the service container logs to help determine what caused
+a container to restart, and also review the `kube_pod_container_status_terminated_reason`
+metrics.
+
+Create a monitor with the following query to return the rate of increase of the
+`kube_pod_container_status_restarts_total` metric over the past 15 minutes. This
+metric is helpful for detecting container restarts:
+
+```text
+increase(kube_pod_container_status_restarts_total{container=~"chronocollector"}[15m])
+```
+
+### Drops in the number of scraped targets
+
+A significant drop in the number of scrape targets can indicate issues with the
+Collector, or with the metric endpoints themselves.
+
+Create a monitor with the following query to calculate the percentage of active
+targets the Collector is scraping for a given instance. The query divides the rate of
+change in the number of active targets over the past hour by the maximum number of
+active targets over the past 24 hours:
+
+```text
+sum by (instance) (delta(chronocollector_k8s_gatherer_sink_targets_active{job=~".*chronocollector.*"}[1h] offset 1m))/
+sum by (instance) (max_over_time(chronocollector_k8s_gatherer_sink_targets_active{job=~".*chronocollector.*"}[1h] offset 24h)) * 100
+```
+
+### Calculate scrape latency
+
+Create a monitor with the following query to calculate scrape latency. The query
+calculates the P99 latency for scrapes of `chronocollector_scrape_latency_bucket`
+metric values grouped by `job` and `le` labels:
+
+```text
+histogram_quantile(0.99, sum by(job, le) (rate(chronocollector_scrape_latency_bucket{job=~".*chronocollector.*"}[1m])))
+```
+
+### Detect error rates
+
+Create a monitor with the following query to detect Collector error rates. The query
+calculates the error rate of the Collector within a one-minute period:
+
+```text
+1 - (sum by (instance) (rate(chronocollector_gateway_push_errors{job=~".*chronocollector.*"}[1m])))/(sum by (instance) (rate(chronocollector_gateway_push_errors{job=~".*chronocollector.*"}[1m])) + sum by (instance) (rate(chronocollector_gateway_push_success{job=~".*chronocollector.*"}[1m])))
+```
+
+The output is a value between `0` and `1` that represents the error rate as a percentage
+of the total rate for the `chronocollector` job over the specified period. A value
+closer to `0` indicates a lower error rate, while a value closer to `1` indicates a
+higher error rate.
+
+{/* vale Chronosphere.Titles = NO */}
+
+## Deployment Collector is unavailable
+
+When Chronosphere Collector actively scrapes metrics, it continuously generates
+an `up` metric for each target. This metric serves as a heartbeat for the Collector;
+if the `up` metric is unavailable, the Collector can't scrape `kube-state-metrics`,
+which means `kube-state-metrics` can't indicate the Collector's health.
+
+To track the `up` metric,
+[create a monitor](/investigate/alerts/monitors#create-a-monitor) that
+generates a notification if this metric is unavailable.
+
+```shell
+up{instance=~"chronocollector-ksm"} > 0
+```
+
+## Track network egress
+
+To assess the effects of compression and egress configuration changes, you can monitor
+the egress traffic from the Chronosphere Collector to Observability Platform's ingestion
+endpoints.
+
+To track the egress traffic in gigabytes over a 24-hour period, use the following
+query:
+
+```shell
+sum(increase(chronocollector_gateway_push_bytes{}[1d])) / (1024^3)
+```
+
+## Troubleshoot metric ingestion
+
+If the Chronosphere Collector can't start or scrape metrics, use the following methods
+to troubleshoot issues. These steps assume that you're running the Collector in a
+Kubernetes environment.
+
+1. Review the Collector logs for errors. Run the following command to view the
+   Collector logs:
+
+   ```shell
+   kubectl logs ds/chronocollector
+   ```
+
+   For example, the following error indicates the scrape timeout is too low for the
+   job default of `10s`:
+
+   ```text
+   {"level":"info","ts":1578154502.096278,"msg":"","level":"debug","scrape_pool":"collector","target":"http://0.0.0.0:9100/metrics","msg":"Scrape failed","err":"Get http://0.0.0.0:9100/metrics: context deadline exceeded"}
+   ```
+1. If the logs don't provide any insights, ensure the API token and gateway
+  address exist as a secret in the Kubernetes cluster:
+
+   ```shell
+   kubectl get secrets
+   ```
+1. If there's no output to your terminal, a Secret doesn't exist. Create a Secret
+  using `kubectl`:
+
+  ```shell
+  kubectl create secret generic chronosphere-secret \
+    --from-literal=api-token=API_TOKEN \
+    --from-literal=address=ADDRESS
+  ```
+
+  Replace the following:
+
+  - _`API_TOKEN`_: The API token generated from your service account.
+  - _`ADDRESS`_: Your company name prefixed to your Chronosphere instance that
+    ends in `.chronosphere.io:443`. For example, _`MY_COMPANY`_`.chronosphere.io:443`.
+
+1. Ensure annotations are properly configured in each of the Pods you want to scrape.
+   Refer to [Collector Kubernetes annotations](/ingest/metrics-traces/collector/discover#kubernetes-annotations)
+   for more details.

@@ -1,0 +1,473 @@
+---
+title: Observability Platform licensing
+'og:description': Learn about licensing concepts and retention periods in Chronosphere Observability Platform.
+sidebarTitle: Licensing
+---
+{/* -- dri: Adam Locke -- */}
+
+
+Chronosphere uses the following terms when describing licensing concepts and usage
+in Chronosphere Observability Platform.
+
+To track your telemetry usage against your licensing quotas, use **License Overview**.
+Chronosphere provides this overview to monitor data usage against your licensing
+quotas. Use the overview charts to help identify usage trends across data types and
+proactively manage data usage to avoid exceeding your organization's licensing
+limits.
+
+## License overview
+
+The **License Overview** is available in your Observability Platform tenant. In
+the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and
+then select **<Icon icon="scroll" /> License Overview**.
+
+The **License Overview** page consists of these sections, selectable by tab:
+
+<Tabs>
+<Tab title="Consumption">
+
+The **Consumption** tab tracks your consumption for each telemetry type, compared
+to your license limits. These statistics display across two selectable tabs for
+**Snapshot** and overall **Trends**:
+
+- The **Snapshot** is an overview of your current license usage. When selected,
+  the page displays each licensing statistic as a percentage of your contract
+  limit, along with a graph for that statistic over a pre-selected time period.
+
+- The **Trends** page explains how your license usage has changed over the selected
+  time period, grouped and graphed by telemetry type.
+
+License dimensions currently exceeding capacity highlight in red, and licenses close to
+exceeding capacity are orange.
+
+</Tab>
+<Tab title="Contract">
+
+The **Contract** tab is a view of your license limits, which are defined in your
+contract with Chronosphere.
+
+**Contract** breaks out your metrics licenses by limit type, with graphs for your
+license versus your capacity. This page also shows your
+[ingestion limits and retention policies](#ingestion-limits-and-retention-policies).
+
+</Tab>
+</Tabs>
+
+Hold the pointer over a graph to display the <Icon icon="ellipsis-vertical" /> three
+vertical dots icon. Select this icon to display a menu where you can select a
+relevant Observability Platform tool for to use for detailed analysis. See
+[common panel elements](/observe/dashboards/panels#common-panel-elements) for an
+explanation of the available tools.
+
+### Tracing licenses
+
+Use the **License Overview** to track trace consumption against your license quotas:
+
+- On the **Snapshot** page, the **Traces consumption** section displays aspects of
+  **Processed** and **Persisted** tracing data, measured in bytes. These include:
+
+  - Daily average rates per second
+  - Month-to-date cumulative trends
+
+  For most users, the processed and persisted consumption rates are for the current
+  month. If your organization uses consumption-based pricing, then the processed and
+  persisted bytes are measured against your contract to date.
+
+- On the **Trends** page, you can view trace consumption trends in higher resolution.
+  If your organization uses consumption-based pricing, a secondary graph displays the
+  cumulative consumption trends over the past seven days.
+- On the **Contract** page, view your [limits and retention policies](#traces-license-limits).
+
+You can also view tracing license information in the
+[Tracing License Consumption](/observe/dashboards/chronosphere-managed-dashboards#tracing-licensing-information)
+dashboard.
+
+### Events licenses
+
+Use the **License Overview** to track events consumption against your license quotas:
+
+- On the **Snapshot** page, the **Events consumption** graph for **Persisted Capacity**
+  displays the percentage of events consumed against your events license capacity.
+- On the **Trends** page, you can view event consumption trends in higher resolution.
+  The **Persisted capacity** limit displays the number of events that can persist per
+  minute in your tenant.
+
+  This limit is enforced and can incur penalties if exceeded. In certain circumstances,
+  this limit can exceed the license limit temporarily. The **Capacity limit** displays
+  the number of events that can persist per minute, as defined by your the license in
+  your contract with Chronosphere.
+
+  The current consumption percentage displays a decimal ratio of persisted data
+  against your per-minute license limit for the selected time period. This value is
+  calculated by dividing the persisted events per minute by the number of events that
+  can persist per minute, defined by the license limit. Use this information to
+  understand the relationship between your persisted data consumption and the defined
+  license limit.
+- On the **Contract** page, view your [limits and retention policies](#change-events-policies).
+
+### Logs licenses
+
+Use the **License Overview** page to track log consumption against your license
+quotas:
+
+- On the **Snapshot** page, the **Logging consumption** section displays the
+  following panels and graphs:
+
+  - Percentage of persisted writes and processed writes consumed against your full
+    licensing contract.
+  - Elapsed time against your full contract. Compare the percentage of persisted
+    writes and processed writes consumption against the time elapsed to understand
+    your true consumption rate.
+  - Daily persisted and processed log data over the past 30 days.
+  - Cumulative trend of persisted data and processed data against the license limit,
+    over the life of your licensing contract.
+- On the **Trends** page, you can view log consumption trends in higher resolution.
+  Trends display for the last seven days by default. The **Persisted** limit displays
+  the number of logs that can persist per minute in your tenant.
+- On the **Contract** page, view your [limits and retention policies](#logs-license-limits).
+
+You can also view log license information in the
+[Logging License Consumption](/observe/dashboards/chronosphere-managed-dashboards#logging-license-consumption)
+dashboard.
+
+### Capacity limits
+
+Capacity limits indicate your maximum license capacity for metrics data in
+Observability Platform. Exceeding your capacity limits incurs penalties, which can
+result in dropped metrics. Dropped metrics can affect dashboards, alerts, and other
+reports.
+
+The license limit indicates your contractual system license with Chronosphere.
+
+The capacity and license limits display [**License Overview**](#license-overview)
+**Contracts page**. These limits are broken down into individual limit graphs:
+
+- **Persisted writes**
+- **Matched writes**
+- **Persisted cardinality**
+- **Histogram persisted writes**
+- **Histogram matched writes**
+- **Histogram persisted cardinality**
+
+### Ingestion limits and retention policies
+
+_Retention policies_ define the amount of time Observability Platform retains
+telemetry data. Contact [Chronosphere Support](/support) to configure the intervals
+used for your system. These policies might be based on your contract or license.
+
+View retention policies in your [**License Overview**](#license-overview)
+**Contract** page.
+
+_Ingestion limits_ define the amount of raw data Observability Platform can ingest.
+
+#### Metrics
+
+Your system's **Metrics Ingest Retention Policies** might look like:
+
+- Five days for raw data, and resolutions of 15, 30, and 60 seconds.
+- 120 days for one-minute data.
+- 180 days for one-hour data.
+- 1,825 days for 24-hour data.
+
+Metrics rules use the existing, configured set of intervals in rule definitions.
+
+#### Change events policies
+
+Change events have a default retention policy of 90 days. This value is fixed and
+can't be altered. For information about ingest limits for change events, see
+[Change event limits](/administer/limits-licensing/limits/event-limits).
+
+The **Contract** page also displays the **Persisted capacity per minute** and the
+**Persisted license per minute** for events.
+
+#### Traces license limits
+
+The **Contract** page displays your license limits for **Persisted Writes** and
+**Matched Writes**, and your **Traces Ingest Retention Policies**.
+
+Traces have a default retention policy of 30 days of raw data.
+
+#### Logs license limits
+
+The **Contract** page displays your **Persisted Logs Limit** and
+**Logs ingest retention policies**.
+
+Logs have a default retention policy of 30 days of raw data.
+
+## Metric license types
+
+Observability Platform defines two types of metric licenses: the
+**Standard Metrics License** and **Histogram Metrics License**.
+
+### Standard Metrics License
+
+The Standard Metrics License measures aggregations, persisted writes, and persisted
+cardinality license consumption for the following Observability Platform metric
+types:
+
+- Cumulative counter
+- Delta counter
+- Gauge
+
+<Note>
+Because Observability Platform aggregates and persists legacy Prometheus histograms
+and OpenTelemetry explicit bucket layout histograms as cumulative or delta counters,
+these metrics consume Standard Metrics License capacity.
+</Note>
+
+### Histogram Metrics License
+
+The Observability Platform histogram metric type supports both OpenTelemetry
+exponential histograms and Prometheus native histograms.
+
+The Histogram Metrics License measures aggregations, persisted writes, and persisted
+cardinality license consumption for the following Observability Platform metric
+types:
+
+- Cumulative exponential histogram
+- Delta exponential histogram
+
+Use the [**License Overview**](#license-overview) **Trends** page to observe
+histogram persisted writes, matched writes, and persisted cardinality in the
+**Metrics consumption trends** graph.
+
+## Aggregations
+
+Your license usage is determined by your database writes.
+
+<Tabs>
+
+<Tab title="Matched writes" id="matched-writes">
+
+_Matched writes_ are the number of writes per second being matched for transformation
+and reshaping by the Observability Platform aggregation tier.
+
+The aggregator counts the number of data points matched into each aggregator rule,
+whether [rollup](/control/shaping/rules/rollup) or downsampling. If a data point
+matches one rule, that's one matched write. If a data point matches two rules, that's
+two matched writes. The sum of the matched data points per rule equals the total
+matched writes for the aggregator.
+[Recording rules](/control/shaping/rules/recording) aren't considered an aggregation
+rule for the purpose of counting matched writes.
+
+A high level formula for this limit is:
+
+```text
+Sum (number of data points matched per-rule)
+```
+
+Writes also depend on your
+[Collector scrape interval](/ingest/metrics-traces/collector/discover/scrape-configuration#global-scrape-configuration).
+Reducing the scrape interval produces fewer writes, but can reduce visibility.
+
+See your current **Matched Writes** level in the
+[**License Overview**](#license-overview) **Snapshot** in the **Metrics Consumption**
+section. On the **Trends** page, review usage over time in the
+**Metrics Consumption Trends** graph.
+
+If your organization exceeds 100% of their Matched Writes Capacity Limit, data that
+would otherwise match aggregation rules is dropped. The data that drops depends on
+your [metric pool allocations](/control/shaping/quotas/manage-pools), and the
+[priority](/control/shaping/quotas/define-pools#configure-priority) set for each pool.
+
+</Tab>
+
+<Tab title="Processed writes (legacy)" id="legacy-writes">
+
+<Note>
+After July 2023, Chronosphere transitioned to using the newer licensing concept
+matched writes to measure aggregation workload. Matched writes is a simpler
+measurement that's easier to break down and forecast. Previously, Chronosphere
+measured aggregation workload in processed writes.
+</Note>
+
+The amount of data points processed per second in the Observability Platform
+aggregator tier.
+
+In general, the coordinator evaluates rollup rules, drop rules, and downsampling
+and sends the resulting traffic to the aggregator.
+
+The aggregator then counts the number of data points received and multiplies them by
+a specific factor, because an aggregation rule (a `counter` operation) is
+occasionally processed multiple times.
+
+A high level formula for this limit is:
+
+```text
+(Number of aggregation downsampling metrics * 1)
++ (Number of aggregated rollup rules metrics * 2)
++ (Number of additional aggregator operations on multi stage aggregations)
+```
+
+The multiplier could be higher if the writes written are non-Prometheus or StatsD
+traffic.
+
+</Tab>
+
+</Tabs>
+
+## Persisted writes
+
+The number of persisted writes to the Observability Platform database consists of the
+following:
+
+```text
+(Number of unaggregated, raw data points written to the database)
++ (Number of aggregated data points written to the database)
++ (Number of non-Prometheus non-rolled up aggregated data points written to the database)
+```
+
+If you exceed 100% of your Persisted Writes Capacity limit, data points might be
+dropped.
+
+[Quotas](/control/shaping/quotas) determine the data which drops first. You can split
+the total system-persisted writes per second into per-pool quota allocations. Pools
+generally align with groups or teams, depending on your internal organization. Read
+more about [configuring quotas](/control/shaping/quotas/manage-pools). If you set up
+per-pool quotas, you can review the quotas in a dedicated dashboard.
+
+To improve and enhance performance, stability, and features, Observability Platform
+adds time series to your database. These data points aren't counted against your
+license quota.
+
+You can review your current usage in the **Persisted writes** graph on the
+[**License Overview**](#license-overview) **Snapshot** page, in the
+**Metrics consumption** section. To see changes over time, select **Trends**, and
+review the **Metrics consumption trends** graph.
+
+## Persisted cardinality
+
+[Matched writes](#aggregations) and [persisted writes](#persisted-writes) measure the
+count of data points at any given moment in time. Persisted cardinality operates
+differently, because it's a _cumulative_ measure that calculates the sum of the
+unique time series of the persisted writes that Observability Platform stores, seen
+over the last 2.5 hours only.
+
+Because this measure is cumulative, changes you make to reduce persisted cardinality
+won't be immediately reflected as a decrease in the persisted cardinality
+consumption percentage. For example, you can use
+[rollup rules](/control/shaping/rules/rollup) to downsample and aggregate metrics
+before they're stored. However, inactive time series don't expire until they stop
+counting towards the rolling window, so changes aren't reflected until 2.5 hours
+after the series was last seen by Observability Platform.
+
+Read more about [how persisted cardinality limits work](#how-persisted-cardinality-limits-work),
+and then learn about how you can
+[manage persisted cardinality limits](#manage-persisted-cardinality-limits) and
+[avoid persisted cardinality limits](#avoid-persisted-cardinality-limits).
+
+To see persisted cardinality license usage changes over time, in the
+[**License overview**](#license-overview) select **Trends**, and review the
+**Metrics consumption trends** graph.
+
+### How persisted cardinality limits work
+
+Persisted cardinality is comparable to a leaky bucket. Over time, new series can be
+added until the bucket is full. When the bucket is at maximum capacity, there's no
+space for new time series, so they're rejected. When existing time series expire,
+they make room for new series.
+
+In the following example, the persisted cardinality capacity is five unique time
+series. The animated image shows the lifecycle of six, unique time series (A, B, C,
+D, E, and F) as new data points are added, and as other data points expire.
+
+<Frame>
+![Animated image showing data points being introduced. When the persisted cardinality limit is reached, no more time series are accepted.](/public/doc-assets/cardinality-data-flow.gif)
+</Frame>
+
+As data points are introduced, they're either accepted or rejected based on whether
+the persisted cardinality bucket is full (reached maximum capacity), and whether the
+related time series already exists in the bucket:
+
+- If the bucket is at maximum capacity and the series already exists, the data point
+is accepted.
+- If the bucket is at maximum capacity and the series doesn't exist, the series is
+rejected.
+
+The following table shows how data points A3, E1, and F1 are processed, based on the
+bucket status:
+
+| Data point | Status                               | Description                          |
+|------------| ------------------------------------ | ------------------------------------ |
+| A3         | <Icon iconType="solid" icon="circle-check" color="#59cc8dff" alt="Accepted"/> | Time series A is in the bucket, so data point A3 is accepted. |
+| E1         | <Icon iconType="solid" icon="circle-check" color="#59cc8dff" alt="Accepted"/> | Time series E isn't in the bucket, but the bucket has space for one more time series, so data point E1 is accepted in time series E. |
+| F1         | <Icon iconType="solid" icon="hexagon-exclamation" color="#ee6c6cff" alt="Rejected"/> | Time series F isn't in the bucket, and the bucket is at capacity, so data point F1 is rejected. |
+
+Over time, data points expire based on when they entered the bucket. When data points
+exceed the 2.5 hour window, they're excluded from the persisted cardinality bucket.
+
+In the example, data points A1 and D1 expired, so they're excluded from the bucket.
+When data point C1 expires, it's also excluded. Because data point C1 is the last
+data point in time series C, the entire series is removed, making space for a new
+time series in the bucket.
+
+| Data point | Status                               | Description                          |
+|------------| ------------------------------------ | ------------------------------------ |
+| A1         | <Icon iconType="solid" icon="hexagon-exclamation" color="#ffb249ff" alt="Expired"/> | Data point A1 expired, so it's excluded from the bucket. |
+| D1         | <Icon iconType="solid" icon="hexagon-exclamation" color="#ffb249ff"  alt="Expired"/> | Data point A1 expired, so it's excluded from the bucket. |
+| C1         | <Icon iconType="solid" icon="hexagon-exclamation" color="#ffb249ff"  alt="Expired"/> | Data point C1 is expiring, so it's excluded from the bucket. |
+
+### Manage persisted cardinality limits
+
+If your organization exceeds 100% of their Persisted Cardinality Capacity Limit, data
+points for any new time series not seen in the last 2.5 hours will be dropped until
+you're under this limit. Data points for existing time series will continue to be
+persisted.
+
+Series that are more stable or regularly emitted aren't at risk of being dropped
+because they're always in the system, and aren't categorized as new series. For
+example, series that don't change any labels are considered more stable.
+
+To fully resolve a penalty period, the rate of new series must be less than the rate
+of expiring series. The higher the differential between these rates, the faster the
+penalty resolves.
+
+To manage persisted cardinality limits:
+
+- Review the
+  [Persisted Cardinality Quotas](/observe/dashboards/chronosphere-managed-dashboards#persisted-cardinality-quotas)
+  dashboard, the
+  [Usage Dashboard](/observe/dashboards/chronosphere-managed-dashboards#usage-dashboard)
+  and the
+  [Metric Growth](/observe/dashboards/chronosphere-managed-dashboards#metric-growth)
+  dashboard to understand the source of cardinality growth.
+- Create [drop rules](/control/shaping/rules/drop-rules) and
+  [aggregation rules](/control/shaping/rules) like mapping rules and rollup rules to
+  roll away sources of growth. Old series remain in the cardinality window for 2.5
+  hrs.
+- Use the [Recommendations](/control/shaping/reduce-cardinality/recommendations) page
+  to help identify metrics and labels with no usage or utility over the past 30 days.
+  You can then create drop rules and rollup rules based on the recommendations.
+
+The 2.5 hour expiration window is a rolling window, which means the constant rate of
+expiring series makes room for an equal rate of new series to be added. This behavior
+means the penalty period you experience can be much shorter than 2.5 hours.
+
+Queries with time ranges that overlap with penalty periods can produce inconsistent
+or partial results due to the dropping of time series during those periods.
+
+### Avoid persisted cardinality limits
+
+Leverage quotas to isolate the impact penalty to specific metrics. For example, if quotas
+ensure only `low_priority` metrics are dropped, queries that don't match
+`low_priority` metrics are guaranteed to be unaffected even if the time range
+overlaps with a penalty period.
+
+Use the following tools and techniques to avoid hitting persisted cardinality limits:
+
+- Review the
+  [Persisted Cardinality Quotas](/observe/dashboards/chronosphere-managed-dashboards#persisted-cardinality-quotas)
+  dashboard, the
+  [Usage Dashboard](/observe/dashboards/chronosphere-managed-dashboards#usage-dashboard)
+  and the
+  [Metric Growth](/observe/dashboards/chronosphere-managed-dashboards#metric-growth)
+  dashboard to understand the source of cardinality growth.
+- Learn about different methods to [reduce cardinality](/control/shaping/reduce-cardinality).
+- Proactively create [drop rules](/control/shaping/rules/drop-rules) and
+  [aggregation rules](/control/shaping/rules) like mapping rules and rollup rules
+  ahead of potential overages to evict older time series and make room for new ones.
+- Proactively define [thresholds](/control/shaping/quotas/define-pools#pool-thresholds)
+  on individual pools to better manage persisted cardinality.
+- If your organization knows which new metrics services are generating, try to
+  control the rate that new series are introduced through smaller, more incremental
+  deploys.

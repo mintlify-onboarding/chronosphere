@@ -1,0 +1,56 @@
+---
+title: Fluentd source plugin
+sidebarTitle: Fluentd
+'og:description': Use the Fluentd source plugin.
+---
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+import SourceStyle from '/snippets/_partials/source-push.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Fluentd [source plugin](/pipeline-data/plugins/source-plugins)
+(name: `forward`, alias: `Fluentd`) lets you ingest data from your Fluentd
+instances into a telemetry pipeline.
+
+<SourceStyle/>
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name     | Key | Description | Default |
+| -------- | --- | ----------- | ------- |
+| **Port** | `port` | Required. The TCP port used for listening for incoming messages. | `5170` |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced
+
+| Name     | Key | Description | Default |
+| -------- | --- | ----------- | ------- |
+| **Memory Buffer Limit** | `mem_buf_limit` | For pipelines with the Deployment or DaemonSet [workload](/pipeline-configure/kubernetes/workloads) type only. Sets a limit for how much buffered data the plugin can write to memory, which affects [backpressure](/pipeline-configure/backpressure). This value must follow Fluent Bit's rules for [unit sizes](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/unit-sizes). If unspecified, no limit is enforced. | _none_ |
+
+## Configuring Fluentd to send data to Telemetry Pipeline
+
+You can configure Fluentd to send data to Chronosphere Telemetry Pipeline by using the `out_forward`
+Fluentd plugin.
+
+For more information, visit the [Fluentd documentation](https://docs.fluentd.org/output/forward).

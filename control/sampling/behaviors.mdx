@@ -1,0 +1,512 @@
+---
+title: Use trace behaviors with datasets
+'og:description': Use behaviors in Chronosphere Observability Platform to set sampling rules for your trace datasets without writing fine-grained sampling rules.
+sidebarTitle: Behaviors
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import BehaviorsManage from '/snippets/_partials/behaviors-manage.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Controlling the tracing data you process and persist is necessary to manage your
+license consumption.
+
+After creating [datasets](/control/sampling/datasets), you can apply trace
+_behaviors_ to set sampling rates for your datasets without needing to write
+fine-grained sampling rules. Although datasets are the underpinning of behaviors, the
+behaviors themselves let you change the sampling rates of one or more datasets from
+either the Chronosphere Observability Platform app or by using Chronoctl.
+
+## Get started with behaviors
+
+Create the right datasets for your organization and then use behaviors to manage the
+data that those datasets generate. Use the built-in [behavior types](#trace-behavior-types)
+to control sampling rates and apply them across datasets.
+
+Observability Platform includes an unassigned dataset you can use for
+experimentation. The baseline behavior is mapped to the unassigned dataset by
+default, which lets you start sending traces to Observability Platform with
+pre-configured sampling rules based on best practices. As you learn about how the
+unassigned dataset generates data, create additional datasets for each of your
+individual services.
+
+As you learn more about your trace data, you can
+[edit facets of the baseline behavior](#customize-your-sampling-strategy) to modify
+your sampling strategy and more clearly define which traces to drop and which to
+keep. In most cases, you want to assertively drop less interesting, lower-value
+traces and keep more interesting, higher-value traces. In the Observability Platform
+app, you can quickly modify the baseline sampling strategy and apply it across one or
+more datasets.
+
+Trace behaviors implement head sampling rules by default, which means you need only
+set the percentage at which you want to keep processed data. For example, if you set
+the head sampling rate to 100%, you're keeping 100% of traces. If you don't set a
+behavior for a dataset, Observability Platform uses defined
+[tail sampling](/control/sampling/tail-sampling) rules. However, you can use trace
+datasets and behaviors without needing to write tail sampling rules.
+
+<Note>
+To specify a sample rate for head sampling in the baseline behavior, you must
+instrument [head sampling](/control/sampling/head-sampling) first. Chronosphere
+supports the OpenTelemetry JaegerRemoteSampler head sampling standard.
+
+Explicitly-defined [head sampling rules](/control/sampling/head-sampling#create-head-sampling-rules)
+take precedence over head sampling rules defined by a behavior. To use behavioral
+head sampling, [edit the baseline behavior](#edit-the-baseline-behavior) to define a
+head sampling strategy, and then remove your existing head sampling rules.
+</Note>
+
+Behaviors are part of the Trace Control Plane, which also includes datasets and head
+and tail sampling rules. You need administrative access to use the Trace Control
+Plane.
+
+## Trace behavior types
+
+Trace behaviors can be one of the following types:
+
+- **Baseline behavior**: Sample data in your datasets using data-driven best
+  practices. Select which facets to apply to your low-value and high-value trace
+  data, and modify the criteria as you learn more about the characteristics of your
+  trace data.
+
+  The baseline behavior is mostly proactive, and helps to identify what trace data to
+  bring into Observability Platform and what data to drop.
+
+- **Allow behavior**: Sample your data at 100% to allow all traces.
+
+  The allow behavior can be both proactive and reactive. For example, you might want
+  more high-fidelity data during a deploy to catch any issues (proactive), or allow
+  all traces from a specific service or operation when debugging issues (reactive).
+
+- **Deny behavior**: Sample your data at 0% to block all traces.
+
+  The deny behavior can be both proactive and reactive. For example:
+
+  - Proactive: drop all traces from a service because the data isn't needed.
+  - Reactive: stop traces from a dataset that's currently generating too much data so
+    you don't exceed your license limit.
+
+## View behaviors
+
+You can view and filter available trace behaviors using Observability Platform, and
+return the trace behavior definition using Chronoctl.
+
+<Tabs>
+<Tab title="Web" id="view-behaviors-cloud">
+
+To view trace behaviors:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. Select the **Behaviors** tab to view the baseline, allow, and deny behaviors,
+   including which datasets each behavior type currently applies to. The dataset
+   match criteria displays the dataset definition the behavior operates on.
+1. Select the individual behavior you want to view details for:
+
+   - **Allow**: Displays the assignment history for the datasets where the allow
+     behavior is currently active, and the datasets where this behavior ended.
+   - **Deny**: Displays the assignment history for the datasets where the deny
+     behavior is currently active, and the datasets where this behavior ended.
+   - **Baseline**: Displays head and tail sampling statistics for the baseline
+     behavior when it was active for any datasets. The assignment history displays
+     the datasets where the baseline behavior is currently active, and the
+     datasets where this behavior ended.
+
+     You can [edit the baseline behavior](#customize-your-sampling-strategy) to
+     change the tail sampling methodology and modify the facets that define which
+     traces to drop and keep.
+
+</Tab>
+<Tab title="Chronoctl" id="view-behaviors-chronoctl">
+
+To use [Chronoctl](/tooling/chronoctl) to return the trace behavior definition, use the
+`chronoctl trace-behavior-config read` command:
+
+```shell
+chronoctl trace-behavior-config read
+```
+
+The definition includes the main behavior and override behavior assignments for each
+of your datasets, and also displays the dataset shaping order. See the
+[Manage assigned behaviors](#manage-assigned-behaviors) section of this page for more
+information about assigning behaviors to datasets.
+
+See the [Chronoctl behavior example](/control/sampling/datasets#chronoctl-behavior-example)
+for a completed behavior definition.
+
+</Tab>
+<Tab title="API" id="view-behaviors-api">
+
+To complete this action with the Chronosphere API, use the
+[`ReadTraceBehaviorConfig`](https://docs.chronosphere.io/tooling/api-info/definition/operations/ReadTraceBehaviorConfig)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Manage assigned behaviors
+
+You can manage the assigned behaviors for a dataset on two levels:
+
+<BehaviorsManage />
+
+Select from the following methods to assign behaviors to a dataset.
+
+<Tabs>
+<Tab title="Web" id="assign-a-behavior-cloud">
+
+<Note>
+If a behavior isn't currently assigned to a dataset, you must
+[assign behaviors](/control/sampling/datasets#assign-behaviors) to the dataset by
+selecting a dataset from the **Overview** tab of Trace Control Plane.
+</Note>
+
+To assign behaviors to a dataset:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. Click the **Behaviors** tab, and then click the name of the behavior you want to
+   manage.
+1. On the **Behavior Details** page, locate the dataset you want to manage behaviors
+   for, click the <Icon icon="ellipsis-vertical" /> three vertical dots icon, and select
+   **Manage behaviors**.
+
+   <Note>
+   The selected behavior must be assigned to a dataset to manage it from the
+      **Behaviors** tab of Trace Control Plane.
+   </Note>
+
+1. On the **Manage behaviors** page, in the **Main layer** pane, select a main
+   behavior from the dropdown.
+1. Optional: In the **Override layer** pane, select an override behavior and choose
+   the override start and end time, and select a duration for how long the
+   override remains active.
+1. Select a shaping order for your main behavior. Shaping order is in decreasing
+   priority, so a behavior in position one takes precedence over a behavior in
+   position three.
+
+   The shaping order section indicates the percentage of overlap between datasets so
+   you can better understand the impact to traces in other datasets.
+
+1. Click **Save** to save the behavior definition for your dataset.
+
+</Tab>
+<Tab title="Chronoctl" id="assign-a-behavior-chronoctl">
+
+<Note>
+If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
+parameter to generate a template for a specific resource type:
+
+```shell
+chronoctl trace-behavior-config scaffold
+```
+
+You can redirect the results (using the redirection operator `>`) to a file for
+editing.
+</Note>
+
+To assign a behavior with [Chronoctl](/tooling/chronoctl):
+
+1. Run the following command to generate a sample behavior configuration you can use
+   as a template:
+
+   ```shell
+   chronoctl trace-behavior-config scaffold
+   ```
+
+   In the template, `kind: TraceBehaviorConfig` defines an individual dataset.
+
+1. With a completed definition, submit it with:
+
+   ```shell
+   chronoctl trace-behavior-config create -f FILE_NAME
+   ```
+
+   Replace _`FILE_NAME`_ with the name of the YAML definition file you want to use.
+
+See the [Chronoctl behavior example](/control/sampling/datasets#chronoctl-behavior-example)
+for a completed behavior definition.
+
+</Tab>
+<Tab title="API" id="assign-a-behavior-api">
+
+To complete this action with the Chronosphere API, use the
+[`UpdateTraceBehaviorConfig`](https://docs.chronosphere.io/tooling/api-info/definition/operations/UpdateTraceBehaviorConfig)
+endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>
+
+## Preview behaviors
+
+When viewing a dataset in Observability Platform, you can select a different behavior
+from the active behavior and preview its effects on the data volume of the selected
+dataset. This lets you temporarily preview a behavior to understand its
+impact before assigning it. On-call engineers can use this feature to show that a
+temporary override won't consume your organization's entire tracing license, which
+can let an administrator promote the preview behavior with confidence.
+
+When you preview a behavior, it runs for up to seven days or until you stop the
+preview. Preview behaviors don't shape datasets until you promote them. When
+promoted, preview behaviors inherit the same shaping order as your active behaviors.
+If no behaviors are active for the selected dataset for which you're previewing a
+behavior, the shaping order defaults to one, which is the highest priority.
+
+<Note>
+If you use datasets with tail sampling rules but have no active behaviors, any
+behaviors that you preview will default to shaping order `1` until you assign
+behaviors to your datasets.
+</Note>
+
+To preview behaviors:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. On the **Overview** tab, select the dataset you want to preview a behavior for.
+1. On the selected dataset page, under **Preview behavior**, select the behavior you
+   want to preview.
+1. Click **Start** to start the preview.
+
+   The preview starts running, and the volume license consumption charts display a
+   dotted line indicating the effect of the preview if it's promoted. It can take up
+   to two minutes before the dotted line displays on each of the charts.
+
+   <Note>
+   You might need to zoom in on the graphs to the current day or the last few minutes
+      for the dotted line to display.
+   </Note>
+
+1. To stop the preview, click **Stop**.
+
+When previewing a behavior, an administrator can promote it. To promote the preview
+behavior, click **Promote** and then select one of these options:
+
+- **Main**: sets the preview behavior as the primary behavior for the dataset.
+- **Override**: sets the preview behavior as a temporary override for the main
+  behavior.
+
+## Customize your sampling strategy
+
+You can edit the facets of the baseline behavior to modify the tail sampling strategy
+you want to apply to your datasets. There are two main parts of the tail sampling
+strategy with different facets you can modify: drop less interesting, low-value
+traces and keep more interesting, high-value traces.
+
+- _Less interesting traces_ might be ones that denote success. These traces indicate
+  that your app is working as designed, but you likely don't need to keep most of
+  them.
+- _More interesting traces_ might be error traces, which indicate an issue that
+  requires attention. Keeping more interesting traces helps when you're debugging
+  issues and need to identify the source of the problem.
+
+There are several facets you can configure:
+
+- **Failed traces**: Traces containing root spans that have a status set to `Error`,
+  as defined by the OpenTelemetry
+  [span status](https://opentelemetry.io/docs/concepts/signals/traces/#span-status).
+- **Small traces**: Traces with very few spans that often indicate repeated messages
+  about successful operations or incomplete instrumentation.
+- **Large traces**: Traces that are difficult to parse because of their large size,
+  and which are rarely used in incident debugging due to a high ratio of noise to
+  signal. These traces also consume a large amount of the persistence budget.
+- **Slow traces**: Traces that take a long time to complete, which can indicate
+  issues in a related operation or service.
+- **Fast traces**: Traces that complete very quickly, which can be either repeated
+  messages about successful operations or incomplete traces.
+
+Although each part of the baseline sampling strategy includes a set of facets by
+default, you can move facets from the low-value section to the high-value section,
+and the reverse. You can select the number of spans to keep, the duration for slow
+and fast traces, and the sampling rate for each facet.
+
+This flexibility lets you shape your sampling strategy as you learn more about your
+trace data and determine what information is valuable to your organization, and what
+isn't. You can disable some of the facets if you don't want to use them in your
+baseline strategy.
+
+For example, you don't want to keep most of your successful traces because you know
+they're successful, and you want to sample only a portion of your very small traces.
+In the **Default** section of the sampling strategy, you set the sample rate to 0.1%,
+and then set the sample rate for small traces to 10%.
+
+In the high-value section of the sampling strategy, you define the criteria for the
+traces you want to keep. The facets for this part of the strategy might include
+failed traces, large traces, and slow traces.
+
+When you assign your customized baseline behavior to a dataset, Observability
+Platform applies the following match criteria in order:
+
+1. All traces in the dataset get matched against the behavior's low-value trace
+   criteria. If a trace meets one or more of these criteria, the lowest possible
+   sample rate applies.
+1. All remaining traces in the dataset get matched against the high-value trace
+   criteria. If a trace meets one or more of these criteria, the highest possible
+   sampling rate applies.
+1. If a trace doesn't match either of these criteria, the sample rate specified
+   in the **Default** section applies.
+
+When viewing [span details](/investigate/querying/traces/features#span-details) in
+Trace Explorer, use the `tail_sampling_rate` tag on the root span of the trace to
+determine the tail sampling rate for the entire trace. The rate can be in a range of
+`0` to `1`, expressed as a decimal percentage. For example, a `tail_sampling_rate` of
+`0.01` equates to 1 percent, whereas a value of `0.25` equates to 25 percent. In the
+**Span details** section of Trace Explorer, use this tag in conjunction with the
+`behavior_dataset_slug` tag to understand which [dataset](/control/sampling/datasets)
+a trace inherits its sampling rate from.
+
+### Edit the baseline behavior
+
+<Note>
+You can edit facets of the baseline behavior using the Observability Platform app
+only.
+</Note>
+
+To edit the baseline behavior:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. Click the **Behaviors** tab, and then click the **Baseline** behavior.
+1. On the **Behavior details** panel, click **Edit**.
+1. On the **Edit baseline behavior** panel, define your sampling methodology:
+
+   - **Head sampling**: Specify the sample rate for head sampling to capture only a
+     portion of possible traces from originating services.
+
+      <Note>
+      To specify a sample rate for head sampling in the baseline behavior, you must
+         instrument [head sampling](/control/sampling/head-sampling) first.
+      </Note>
+
+   - **Tail sampling**: Specify the sample rate for each of the facets to drop
+     low-value traces and keep high-value traces. Enable which facets to include in
+     your tail sampling strategy, and specify a sampling rate for each facet.
+
+     Specific sample rates depend on how your organization configures individual
+     services. The following recommendations are based on best practices observed
+     across many organizations:
+
+     - **Large traces**: Set the number of spans to sample to `10,000`, and set a
+       sample rate percentage of `25` or less. Some organizations might set the
+       number of spans to sample closer to `3,000` and set the sample rate percentage
+       to `5`.
+     - **Slow traces**: Set the minimum duration threshold to `5` seconds and set a
+       sample rate between `80` percent and `100` percent.
+     - **Failed traces**: Set the sample rate between `80` percent and `100` percent
+       to ensure that a repository of interesting error information is available for
+       engineers investigating a problem.
+     - **Small traces**: Set the number of spans to sample to `2`, and set a sample
+       rate percentage of `50` or less.
+     - **Fast traces**: Set the maximum duration threshold to `0.00001` seconds and
+       set a sample rate percentage of `50` or less.
+
+     To move facets between the low-value and high-value sections of the tail
+     sampling strategy, click the left **<Icon icon="chevron-left" />** or right
+     **<Icon icon="chevron-right" />** arrow for each facet you enable.
+
+   - **Default**: Set the sample rate percentage to a mid-range value, such as `50`.
+     If a trace doesn't match the low or high-value criteria, then the sample rate
+     specified in the **Default** section applies.
+
+1. Click **Save** to save the changes to your baseline behavior.
+
+### Create custom behaviors
+
+Chronosphere provides specific [trace behavior types](#trace-behavior-types) your
+organization can use to define your sampling strategy for trace datasets. These
+behaviors let you determine which traces to drop and which to keep across assigned
+datasets.
+
+As you learn more about your trace data, you can create custom behaviors and set
+different tail sampling rates for individual datasets. Custom behaviors let you
+modify behaviors for each dataset, ensuring that you're spending the highest portion
+of your budget on the most critical and relevant data.
+
+To create a custom behavior, you duplicate the baseline behavior, define the tail
+sampling rules to apply, and set a default sampling rate for the behavior. You can
+then assign the custom behavior to a dataset.
+
+<Note>
+After creating a custom behavior, you can duplicate that behavior rather than
+duplicating the baseline behavior.
+</Note>
+
+To create a custom behavior:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. Click the **Behaviors** tab, and take one of the following actions to display the
+   **Duplicate behavior** dialog:
+
+   - In the **Chronosphere managed behaviors** section, in the row for the
+     **Baseline** behavior, click **<Icon icon="copy" /> Duplicate**.
+   - Click the **Baseline** behavior, and then on the **Baseline** page, click
+     **<Icon icon="copy" /> Duplicate**.
+1. On the **Duplicate behavior** panel, enter a name and description for your custom
+   behavior. Observability Platform generates a slug based
+   on the name you enter. You can modify the slug to any alphanumeric combination,
+   but special characters aren't supported.
+1. Modify the tail sampling attributes to reflect the traces you want to drop or
+   keep. See [edit the baseline behavior](#edit-the-baseline-behavior) for
+   recommendations based on best practices observed across many organizations.
+1. Set the default sample rate percentage. If a trace doesn't match the low or
+   high-value tail sampling attributes you defined, then the default sample rate
+   applies.
+1. Click **Save**.
+
+After creating a custom behavior, you can
+[assign the behavior](/control/sampling/datasets#assign-behaviors) to a dataset.
+
+### Modify custom behaviors
+
+After [creating a custom behavior](#create-custom-behaviors), you can modify its
+attributes. For example, you might want to modify the tail sampling strategy of a
+behavior as you learn more about the dataset the behavior is assigned to.
+
+To modify a custom behavior:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. Click the **Behaviors** tab, and take one of the following actions to display the
+   **Edit behavior** dialog:
+
+   - In the **Custom behaviors** section, in the row for the behavior you want to
+     modify, click **<Icon icon="pencil" /> Edit**.
+   - Click the behavior you want to modify, and then on the selected behavior page,
+     click **<Icon icon="pencil" /> Edit**.
+1. Modify the tail sampling attributes to reflect the traces you want to drop or
+   keep. See [edit the baseline behavior](#edit-the-baseline-behavior) for
+   recommendations based on best practices observed across many organizations.
+1. Click **Save**.
+
+### Delete custom behaviors
+
+To delete a behavior that's assigned to one or more datasets, you must first assign
+all active and scheduled datasets to a different behavior. Observability Platform
+won't let you delete a behavior that's assigned to a dataset.
+
+To delete a custom behavior:
+
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
+   and then select
+   **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
+1. Click the **Behaviors** tab, and take one of the following actions to display the
+   **Delete behavior** dialog:
+
+   - In the **Custom behaviors** section, in the row for the behavior you want to
+     delete, click **<Icon icon="trash" /> Delete**.
+   - Click the behavior you want to delete, and then on the selected behavior page,
+     click **<Icon icon="trash" /> Delete**.
+1. On the **Delete behavior** confirmation dialog, click **Delete**.
+
+Observability Platform deletes the custom behavior.

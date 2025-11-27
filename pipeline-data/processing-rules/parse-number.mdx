@@ -1,0 +1,84 @@
+---
+title: Parse number
+'og:description': Learn about the parse number processing rule in Chronosphere Telemetry Pipeline.
+sidebarTitle: Parse number
+---
+import Params from '/snippets/_partials/processing-rule-params.mdx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The parse number [processing rule](/pipeline-data/processing-rules) uses a regular
+expression to transform a key's value from a string to a number.
+
+## Configuration parameters
+
+<Params />
+
+| Name                      | Key | Description | Default |
+| ------------------------- | --- | ----------- | ------- |
+| **Key**          | `key` | Required. The key whose value contains a number to parse. | _none_ |
+| **Regex**        | `regex` | Required. The regular expression for extracting numbers from the value of **Key**. | `[+-]?([0-9]+([.][0-9]*)?\|[.][0-9]+)` |
+| **Numeric base** | `base` | Required. The base system of the number stored in **Key**. As part of the parsing process, this rule converts each number from its original base system to decimal. | `10` |
+| **Comment**      | `comment` | A custom note or description of the rule's function. This text is displayed next to the rule's name in the **Actions** list in the processing rules interface. | _none_ |
+
+## Examples
+
+Using the parse number process rule lets you extract numeric data from a string,
+which makes it possible to perform math operations on that data.
+
+### Decimal
+
+For example, given these sample logs:
+
+```json
+{"timestamp":"2023-03-28T09:08:41.64283645Z","user_id":3,"action":"purchase","price":"$057.99"}
+{"timestamp":"2023-03-28T09:08:42.643343109Z","user_id":4,"action":"purchase","price":"$173.28"}
+{"timestamp":"2023-03-28T09:08:50.643773688Z","user_id":5,"action":"purchase","price":"$004.72"}
+{"timestamp":"2023-03-28T09:08:51.643932272Z","user_id":1,"action":"purchase","price":"$096.65"}
+{"timestamp":"2023-03-28T09:09:10.64447719Z","user_id":2,"action":"purchase","price":"$020.11"}
+```
+
+A processing rule with the **Key** value `price`, the **Regex** value
+`[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)`, and the **Numeric base** value `10` returns
+the following result:
+
+```json
+{"user_id":3,"price":57.99,"timestamp":"2023-03-28T09:08:41.64283645Z","action":"purchase"}
+{"user_id":4,"price":173.28,"timestamp":"2023-03-28T09:08:42.643343109Z","action":"purchase"}
+{"user_id":5,"price":4.72,"timestamp":"2023-03-28T09:08:50.643773688Z","action":"purchase"}
+{"user_id":1,"price":96.65,"timestamp":"2023-03-28T09:08:51.643932272Z","action":"purchase"}
+{"user_id":2,"price":20.11,"timestamp":"2023-03-28T09:09:10.64447719Z","action":"purchase"}
+```
+
+This rule transformed the value of each `price` key from a string to a number, and
+discarded non-numeric characters and leading zeroes contained in the original string.
+
+### Binary
+
+You can also the **Numeric base** setting to parse numbers in other base formats,
+like binary. For example, given these sample logs:
+
+```json
+
+{"node":"1001010100010110"}
+{"node":"1001000001100010"}
+{"node":"1011010010011110"}
+{"node":"1101010111111011"}
+{"node":"0000000011011000"}
+```
+
+A processing rule with the **Key** value `node`, the **Regex** value
+`[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)`, and the **Numeric base** value `2` returns
+the following result:
+
+```json
+{"node":38166}
+{"node":36962}
+{"node":46238}
+{"node":54779}
+{"node":216}
+```
+
+This rule transformed the value of each `node` key from a string to a number,
+then converted that number from binary to decimal.

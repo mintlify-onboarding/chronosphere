@@ -1,0 +1,56 @@
+---
+title: Ingest, filter, and overlay change events
+'og:description': Learn about interacting with change events in Chronosphere Observability Platform.
+sidebarTitle: Change events
+---
+{/* -- dri: Adam Locke -- */}
+
+
+[Change events](/overview/concepts/change-events) provide an additional layer of
+meaning to your telemetry data. Use the following documentation to learn about how to
+interact with change events in Chronosphere Observability Platform.
+
+## Ingest
+
+Observability Platform supports ingesting third-party events, which display as change
+events within Changes Explorer, and as change events on dashboards, traces, and
+services, and query results for monitors.
+
+ <Columns cols={1}>
+  <Card horizontal icon="paper-plane"
+    title="Ingest data"
+    titleBackgroundColor="#ff9d1c"
+    titleTextColor="#FFFFFF"
+    href="/ingest/third-party"
+  />
+</Columns>
+
+## Filter
+
+Learn how to filter change events in Changes Explorer to narrow your search focus and
+identify changes that matter when you're trying to understand the root cause of an
+issue.
+
+ <Columns cols={1}>
+  <Card horizontal icon="magnifying-glass-plus"
+    title="Filter data"
+    titleBackgroundColor="#ff9d1c"
+    titleTextColor="#FFFFFF"
+    href="/investigate/querying/filter-events"
+  />
+</Columns>
+
+## Observe
+
+On-call engineers can enable and overlay change events on panels in Observability
+Platform to provide additional context that helps correlate events with system and
+service anomalies, allowing for quicker identification of incident cause.
+
+ <Columns cols={1}>
+  <Card horizontal icon="display"
+    title="Observe data"
+    titleBackgroundColor="#ff9d1c"
+    titleTextColor="#FFFFFF"
+    href="/observe/enable-events"
+  />
+</Columns>

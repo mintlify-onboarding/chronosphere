@@ -1,0 +1,128 @@
+---
+title: Files
+'og:description': Add files to pipelines in Chronosphere Telemetry Pipeline.
+sidebarTitle: Files
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+In addition to the [YAML configuration file](/pipeline-configure/config-files)
+that govern a pipeline's settings, you can optionally add other kinds of files
+to pipelines, such as [parsers](/pipeline-data/parsers), certificates, and
+[custom Lua](/pipeline-data/processing-rules/custom-lua) scripts.
+
+<Note>
+Due to Kubernetes [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/)
+storage limitations, the total size of a pipeline and its associated resources
+can't exceed 1&nbsp;MiB. This limit includes the combined size of
+[configuration files](/pipeline-configure/config-files), [secrets](/pipeline-configure/secrets),
+[parsers](/pipeline-data/parsers), and any other files.
+</Note>
+
+## Add a file to a pipeline
+
+To add a file to a pipeline, use one of these methods:
+
+<Tabs>
+<Tab title="Web interface" id="add-file-pipeline-ui">
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Open the project that contains the pipeline that you want to add a file to.
+1. Go to **Core Instances**, then click the name of the Core Instance associated
+   with the pipeline that you want to add a file to.
+1. Under **Data Pipelines**, click the name of the pipeline that you want to add
+   a file to.
+1. Click <Icon icon="square-pen" />&nbsp;**Advanced Settings**.
+1. Under **Pipeline Files**, click **Upload File**.
+1. Use one of these methods to upload a file:
+   - Click **Select File** to choose a file from your device.
+   - Enter a value in **File name** field and add content to the large text field to create
+   a new file with that name and content.
+1. Optional: To encrypt your file, select the **Encrypt file** checkbox.
+1. Click **Upload File**.
+
+</Tab>
+<Tab title="Pipeline CLI" id="add-file-pipeline-cli">
+
+Run the following [Pipeline CLI](/pipeline-cli) command:
+
+```shell
+calyptia create pipeline_file --pipeline PIPELINE --file FILEPATH
+```
+
+Replace the following:
+
+- _`PIPELINE`_: The name or [unique ID](/pipeline-configure/metadata#get-pipeline-ids)
+  of your pipeline.
+- _`FILEPATH`_: The path to the file to add, relative to your current directory.
+
+To encrypt your file, add the `--encrypt-files` flag.
+
+</Tab>
+</Tabs>
+
+## Add a file to a Core Instance
+
+<Note>
+Adding a file to a Core Instance doesn't circumvent the 1&nbsp;MiB resource limit
+for pipelines. If you add a file to a Core Instance, that file becomes a resource
+for every pipeline associated with that Core Instance, which increases the resource
+utilization for each pipeline accordingly.
+</Note>
+
+You can also add a file to a [Core Instance](/pipelines/concepts#core-operators-and-core-instances),
+which makes that file available to all pipelines associated with that Core Instance. To do
+so, use one of these methods:
+
+<Tabs>
+<Tab title="Web interface" id="add-file-instance-ui">
+
+1. Sign in to [Telemetry Pipeline](https://core.calyptia.com/).
+1. Open the project that contains the Core Instance that you want to add a file to.
+1. Go to **Core Instances**, then click the name of the Core Instance that
+   you want to add a file to.
+1. Click <Icon icon="square-pen" />&nbsp;**Advanced Settings**.
+1. Under **Pipeline Files**, click **Upload File**.
+1. Use one of these methods to upload a file:
+   - Click **Select File** to choose a file from your device.
+   - Enter a value in **File name** field and add content to the large text field to create
+   a new file with that name and content.
+1. Optional: To encrypt your file, select the **Encrypt file** checkbox.
+1. Click **Upload File**.
+
+</Tab>
+<Tab title="Pipeline CLI" id="add-file-instance-cli">
+
+Run the following [Pipeline CLI](/pipeline-cli) command:
+
+```shell
+calyptia create core_instance_file --core-instance INSTANCE --file FILEPATH
+```
+
+Replace the following:
+
+- _`INSTANCE`_: The name of your Core Instance.
+- _`FILEPATH`_: The path to the file to add, relative to your current directory.
+
+To encrypt your file, add the `--encrypt-files` flag.
+
+</Tab>
+</Tabs>
+
+## Reference a file
+
+After you've added a file to a pipeline, you can reference it in a
+pipeline's [configuration file](/pipeline-configure/config-files) by using the
+following variable:
+
+```text
+{{ files.FILENAME }}
+```
+
+Replace _`FILENAME`_ with the name of your file.
+
+## File encryption
+
+For encrypted files, Telemetry Pipeline uses RSA‑OAEP encryption with a 2048-bit key.
+Files are unencrypted by default, but you can choose to encrypt a file when you
+add to it a pipeline or Core Instance.

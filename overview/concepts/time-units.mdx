@@ -1,28 +1,45 @@
 ---
 title: Time units
+'og:description': Standard time units used by Chronosphere Observability Platform
+sidebarTitle: Time units
 ---
+{/* -- dri: Lynette Miles -- */}
 
-Chronosphere Observability Platform supports a range of standard *time units*:
 
-| Unit         | Abbreviation  |
-| ------------ | ------------- |
-| Nanoseconds  | `ns`          |
-| Microseconds | `mu`          |
-| Milliseconds | `ms`          |
-| Seconds	   | `s`           |
-| Minutes	   | `m`           |
-| Hours	       | `h`           |
-| Days         | `d`           |
-| Weeks        | `w`           |
-| Months	   | `M`           |
-| Years	       | `y`           |
+Chronosphere Observability Platform supports a range of standard _time units_:
+
+| Unit         | Abbreviation |
+|--------------|--------------|
+| Nanoseconds  | `ns`           |
+| Microseconds | `mu`           |
+| Milliseconds | `ms`           |
+| Seconds      | `s`            |
+| Minutes      | `m`            |
+| Hours        | `h`            |
+| Days         | `d`            |
+| Weeks        | `w`            |
+| Months       | `M`            |
+| Years        | `y`            |
 
 The abbreviations for minutes (`m`) and months (`M`) are case-sensitive.
 
-Additionally, times that use 12-hour clocks designate morning hours with `AM` and evening hours with `PM`. These abbreviations prefer uppercase and don’t use periods.
+Additionally, times that use 12-hour clocks designate morning hours with `AM` and
+evening hours with `PM`. These abbreviations prefer uppercase and don't use periods.
 
-Certain features, such as [dashboard time ranges](/observe/dashboards/customization/time-ranges), display only second and larger units and automatically convert units accordingly. For example, dashboard time ranges automatically convert a manually entered custom time range of `1ms` to `0.001 seconds`.
+Certain features, such as
+[dashboard time ranges](/observe/dashboards/customization/time-ranges), display
+only second and larger units and automatically convert units accordingly. For example,
+dashboard time ranges automatically convert a manually entered custom time range
+of `1ms` to `0.001 seconds`.
 
-Observability Platform also automatically converts units in certain display-only contexts. For example, [dashboard panels](/observe/dashboards/panels) might convert the numeric values of data points depending on the unit type you designate in a panel’s Unit > Time setting and the context of that value.
+Observability Platform also automatically converts units in certain display-only
+contexts. For example, [dashboard panels](/observe/dashboards/panels) might convert
+the numeric values of data points depending on the unit type you designate in a
+panel's **Unit <span aria-label="and then">></span> Time** setting and the context
+of that value.
 
-If you select the `Nanoseconds` unit, Observability Platform interprets a numeric value of 120 for a data point as `120` nanoseconds and displays it as `120ns`. However, if you select `Days` as the time unit, Observability Platform interprets the same value as 120 days, converts it to the larger unit of months, and displays it as `4 months`.
+If you select the `Nanoseconds` unit, Observability Platform interprets a numeric
+value of `120` for a data point as 120 nanoseconds and displays it as `120ns`. However,
+if you select `Days` as the time unit, Observability Platform interprets the same
+value as 120 days, converts it to the larger unit of months, and displays it as
+`4 months`.

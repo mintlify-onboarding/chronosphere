@@ -1,0 +1,110 @@
+---
+title: Create PromQL queries with the query builder
+sidebarTitle: Query Builder
+'og:description': Learn how to use the Query Builder to find and analyze data.
+---
+{/* -- dri: Lynette Miles -- */}
+
+
+Creating PromQL queries from scratch can take time. To help with
+the task, Chronosphere includes a tool you can use to construct PromQL queries.
+
+<Warning>
+The query builder supports only Prometheus metrics and [PromQL](/investigate/querying/promql).
+</Warning>
+
+The query builder is available in [Metrics Explorer](/investigate/querying/metrics/explorer)
+and when building [queries in dashboards](/observe/dashboards/panels#change-a-panels-query).
+
+To open the tool, click **Builder** when writing a query in Observability Platform.
+Any changes you make will update your original query.
+
+You can add [comments](/navigate/comments) to annotate metrics with information to
+signify importance, help other users to understand usage context, and turn informal
+knowledge into institutional knowledge that can be used across your organization.
+
+## Builder
+
+The builder contains fields that represent key parts of a PromQL query. As you type
+in the search boxes for each field, the builder suggests metric names, label names,
+label values, and function names.
+
+### Create the query
+
+Use the text boxes to add values which create the PromQL query:
+
+1. Click the **Select a metric** box next to **Metric**. A list of selectable
+   metrics opens. Choose a metric, or search for one.
+
+   When reviewing a metric for selection, an additional window opens to the side
+   of the search menu. This window displays:
+
+   - The [type of metric](/control/shaping/types) (for example, gauge).
+   - A **Description**. Click the **<Icon icon="pencil" /> pencil** icon
+     to add or edit a description and then click **Save**.
+   - A list of **Labels** this metric has.
+   - To [add a comment](/navigate/comments) to a metric, click **Add comment**.
+   - A link to open the [**Telemetry Usage Analyzer**](/investigate/analyze/telemetry-analyzer).
+
+1. To add **Filters**, click the **No filters** box. A filter is a **Label** and
+   **Value** pair that selects a subset of the data. Click the
+   **<Icon icon="check" /> check** icon to add the filter.
+
+   To add another filter, click the **<Icon icon="plus" /> plus** icon.
+
+1. In the **Aggregation** menu, you will see options depending on the type of metric.
+
+   If you chose a gauge metric or a counter metric (cumulative counter or delta counter),
+   select from the following options:
+
+   - `Sum`
+   - `Average`
+   - `Min`
+   - `Max`
+
+   If you chose a histogram metric (cumulative exponential histogram, delta
+   exponential histogram, or classic histogram), select from the following options:
+
+   - `Percentile`
+   - `Average`
+   - `Count`
+
+   Then, select the one or more labels to group **by**.
+
+1. In the **Rollup** menu, you will see additional functions depending on the type of metric.
+
+   After you select a metric, the builder checks for type information.
+   If the type is available, it applies the most appropriate **Rollup** option.
+   If the type isn't available, you must manually select an option.
+
+   Chronosphere recommends the following settings:
+
+   - Cumulative counter or cumulative exponential histogram: Use `rate` or `increase`.
+   - Delta counter or delta exponential histogram: Use `sum_per_second` or `sum_over_time`.
+   - Gauge: Don't use any of these functions.
+
+1. Click **Run** to run the query. If the graph is in a [dashboard](/observe/dashboards),
+   the graph updates as you make changes.
+
+For additional query options, see
+[Time series chart queries](/observe/dashboards/panels/time-series-chart#time-series-chart-queries).
+
+#### Remove values
+
+To clear any field, click **<Icon icon="xmark" /> close** icon at the end of
+the field.
+
+To reset to the default value, click the field value and then click **Reset**.
+
+### Query actions
+
+Additional actions are available to help build the query you need. These actions vary
+depending on where you accessing the query builder from, such as from Metrics Explorer,
+or from within a dashboard panel.
+
+- **DDx**: Use [Differential Diagnosis](/investigate/analyze/differential-diagnosis/metrics)
+  for metrics to review your query for correlated labels and values.
+- **Browse metrics**: Open a dialog box where you can search for a specific metric.
+  Click a metric name to view details for that metric.
+- **Format**: In [dashboard panels](/observe/dashboards/panels) this action formats
+  the query.

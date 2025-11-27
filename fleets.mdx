@@ -1,0 +1,177 @@
+---
+title: Fleets
+'og:description': Learn about fleet management in Chronosphere Telemetry Pipeline.
+sidebarTitle: Overview
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Fleets in Chronosphere Telemetry Pipeline let you manage all of your
+[telemetry agents](/fleets/agent), including Fluent Bit and Core Agent, from a single,
+centralized location. By grouping multiple agents under the banner of a unified
+fleet, you can perform batch operations across an entire fleet, instead of
+individually configuring dozens or hundreds of telemetry agents.
+
+Some of the benefits of using fleets in Telemetry Pipeline are:
+
+- Fleets streamline the process of managing telemetry agents deployed in
+  different locations, machines, or environments.
+- Because all agents within a fleet share the same configuration settings, you
+  can maintain consistent behavior between a large number of agents and roll out
+  changes accordingly.
+- Updates are pulled from an HTTP endpoint rather than pushed directly to each
+  agent, which gives you more control over your fleet's network settings and
+  eliminates the need to open a hole in your firewall.
+
+## View your fleets
+
+Select from the following methods to view your available fleets.
+
+<Tabs>
+<Tab title="Web" id="ui-view">
+
+To view all of your available fleets using the [Telemetry Pipeline web interface](https://core.calyptia.com/),
+in the navigation menu select **<Icon icon="grid" /> Fleets**.
+
+</Tab>
+<Tab title="Pipeline CLI" id="cli-view">
+
+To view all of your available fleets using [Pipeline CLI](/pipeline-cli), run
+the following command:
+
+```shell
+calyptia get fleets
+```
+
+To view the information about a single fleet, run the following command:
+
+```shell /NAME/
+calyptia get fleet NAME
+```
+
+Replace _`NAME`_ with the name of the fleet you want to view.
+
+For more information about the subcommands, including their usage and accepted flags,
+see the Pipeline CLI command line help:
+
+```shell
+calyptia get fleets --help
+```
+
+</Tab>
+</Tabs>
+
+## Create a fleet
+
+Select from the following methods to create a fleet.
+
+<Tabs>
+<Tab title="Web" id="ui-create">
+
+To create a new fleet using the Telemetry Pipeline user interface:
+
+1. Sign in to the [Telemetry Pipeline web interface](https://core.calyptia.com/).
+1. Open the project where you want to create a fleet.
+1. In the navigation menu select **<Icon icon="grid" /> Fleets**, then click
+   **Create new fleet**.
+1. In **Set the name of the Fleet**, enter a name for your new fleet. The fleet name
+   must be between eight and 15 characters in length.
+1. Click **Next**.
+1. In the **Agent Type** menu, select either **Fluent Bit** or **Core Agent**.
+1. Use the corresponding instructions to update your Core Agent or Fluent Bit
+   configuration.
+1. Click **Save and deploy**.
+
+</Tab>
+<Tab title="Pipeline CLI" id="cli-create">
+
+To create a fleet using [Pipeline CLI](/pipeline-cli), run the following command:
+
+```shell /NAME/ /FILE_NAME/
+calyptia create fleet --name NAME --config-file FILE
+```
+
+Replace the following:
+
+- _`NAME`_: The name for your new fleet.
+- _`FILE_NAME`_: The Fluent Bit or Core Agent configuration file to create your
+  fleet.
+
+For more information about the subcommand, including its usage and accepted flags,
+see the Pipeline CLI command line help:
+
+```shell
+calyptia create fleet --help
+```
+
+</Tab>
+</Tabs>
+
+## Update a fleet
+
+Select from the following methods to update a fleet.
+
+<Tabs>
+<Tab title="Web" id="ui-update">
+
+To update a fleet:
+
+1. In the navigation menu select **<Icon icon="grid" /> Fleets**.
+1. Find the fleet you want to update in the list of fleets, and click its
+   **<Icon icon="gear" /> Edit** icon.
+1. Click **Settings** and make any needed changes.
+1. Click **Save and deploy**.
+
+</Tab>
+<Tab title="Pipeline CLI" id="cli-update">
+
+To update a fleet using [Pipeline CLI](/pipeline-cli), run the following command:
+
+```shell
+calyptia update fleet
+```
+
+For more information about the subcommand, including its usage and accepted flags,
+see the Pipeline CLI command line help:
+
+```shell
+calyptia update fleets --help
+```
+
+</Tab>
+</Tabs>
+
+## Delete a fleet
+
+Select from the following methods to delete a fleet.
+
+<Tabs>
+<Tab title="Web" id="ui-delete">
+
+To delete a fleet:
+
+1. In the navigation menu select **<Icon icon="grid" /> Fleets**.
+1. Find the fleet you want to delete in the list of fleets, and click its
+   **<Icon icon="trash" /> Delete** icon.
+1. To permanently delete the fleet, click **Delete**.
+
+</Tab>
+<Tab title="Pipeline CLI" id="cli-delete">
+
+To delete a fleet using [Pipeline CLI](/pipeline-cli), run the following command:
+
+```shell /NAME/
+calyptia delete fleet NAME
+```
+
+Replace _`NAME`_ with the name of the fleet you want to delete.
+
+For more information about the subcommand, including its usage and accepted flags,
+see the Pipeline CLI command line help:
+
+```shell
+calyptia delete fleet --help
+```
+
+</Tab>
+</Tabs>

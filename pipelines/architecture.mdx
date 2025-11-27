@@ -2,27 +2,85 @@
 title: Chronosphere Telemetry Pipeline architecture
 sidebarTitle: Architecture
 ---
+{/* -- dri: Alexa Kreizinger -- */}
 
-This guide describes several aspects of the architecture of Chronosphere Telemetry Pipeline.
 
-## Overall architecture
+Chronosphere Telemetry Pipeline uses different components to create, modify, and
+run pipelines.
 
-This diagram shows the overall architecture of Telemetry Pipeline.
+```mermaid
+    flowchart TB
+  accTitle: Telemetry Pipeline architecture diagram
+  accDescr: An diagram of Telemetry Pipeline architecture.
+  subgraph cluster ["Kubernetes or K3s cluster"]
+    direction TB
+    subgraph namespace [Namespace]
+        direction TB
+    operator(Core Operator)
+    CRDs@{shape: lined-cylinder, label: "Pipeline<br>custom<br>resources"}
+    instance(Core Instance)
+    operator-."watches"-.->CRDs
+    instance--"creates and<br>updates"---->CRDs
+        subgraph daemonset ["Pipeline (DaemonSet)"]
+            pod3([Pod])
+        end
+        subgraph statefulset ["Pipeline (StatefulSet)"]
+            pod4([Pod])
+            pod5([Pod])
+        end
+        subgraph deployment ["Pipeline (Deployment)"]
+            pod1([Pod])
+            pod2([Pod])
+        end
+    operator--"creates and <br>modifies"--->deployment
+    operator--"creates and <br>modifies"--->statefulset
+    operator--"creates and <br>modifies"--->daemonset
+    end
+  end
+    subgraph chronosphere [Chronosphere]
+        backend[Telemetry Pipeline<br>backend]
+        frontend[Telemetry Pipeline<br>web interface]
+        frontend --"modifies"-->backend
+    end
+  instance<-."syncs<br>status"-..->backend
+  instance--"fetches<br>config"--->backend
+  backend ~~~ CLI((Pipeline CLI)) --"modifies"--> backend
+  CLI ~~~ backend
+  CLI --"modifies"--> instance
 
-<Note>
-    All data is processed within your environment, virtual private cloud, or your infrastructure. The only data sent to Telemetry Pipeline are configuration files and metrics.
-</Note>
+style namespace stroke:#5a78c4,stroke-dasharray: 5 5
 
-<Frame>
-    <img className="block dark:hidden" src="/images/21.png" />
-    <img className="hidden dark:block" src="/images/22.png" />
-</Frame>
+classDef greenFill stroke:#60E684,fill:#2FBF71,stroke-width:2px,color:#FFFFFF
+class pod1,pod2,pod3,pod4,pod5,frontend,backend greenFill;
 
-## Core Operator architecture
+classDef greenLine stroke:#60E684,stroke-width:2px
+class pod1,pod2,pod3,pod4,pod5 greenLine;
 
-This diagram shows the architecture of [Core Operators and Core Instances](/pipelines/concepts#core-operators-and-core-instances) in Telemetry Pipeline.
+classDef blueFill fill:#5a78c4,stroke-width:2px,color:#FFFFFF
+class daemonset,deployment,statefulset,CLI blueFill;
 
-<Frame>
-    <img className="block dark:hidden" src="/images/31.png" />
-    <img className="hidden dark:block" src="/images/32.png" />
-</Frame>
+classDef blueLine stroke:#5a78c4,stroke-width:2px
+class cluster,daemonset,deployment,statefulset,chronosphere,CLI blueLine;
+```
+
+Telemetry Pipeline is built on Kubernetes. You can either
+[install Telemetry Pipeline](/pipeline-install) in an existing Kubernetes cluster
+or in a Linux environment. If you install Telemetry Pipeline in a Linux environment,
+the installer automatically deploys a K3s cluster, then installs Telemetry Pipeline
+components in that cluster.
+
+Each Telemetry Pipeline installation includes a Core Operator, which is a
+[Kubernetes operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+that creates and modifies pipelines. A different component called a Core Instance
+creates and updates the custom resources that the Core Operator uses when it creates
+or modifies pipelines. The Core Instance also syncs the status of your cluster
+with the Telemetry Pipeline backend.
+
+Each pipeline is a workload that runs within your cluster and contains one or more Pods.
+By default, pipelines run as
+[Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/),
+but other [workload types](/pipeline-configure/kubernetes/workloads) are supported as well.
+
+You can use [Pipeline CLI](/pipeline-cli) and the
+[Telemetry Pipeline web interface](https://core.calyptia.com/) to configure your
+Telemetry Pipeline installation and to create and modify pipelines.

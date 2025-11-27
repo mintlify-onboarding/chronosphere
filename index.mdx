@@ -1,29 +1,71 @@
 ---
 title: Chronosphere documentation
-sidebarTitle: "Chronosphere Docs"
+'og:description': Learn about the various aspects of the Chronosphere documentation.
 ---
+{/* -- dri: Adam Locke -- */}
+
 
 Select your Chronosphere product to view its product documentation.
 
-<CardGroup cols={2}>
+ <Columns cols={1}>
   <Card
-    title="Chronosphere Observability Platform"
-    href="/overview"
-  >
-    A SaaS-based observability and monitoring platform made for cloud-native infrastructures.
+  title="Chronosphere Observability Platform"
+  titleBackgroundColor="#28a561"
+  titleTextColor="#FFFFFF"
+  href="/overview"
+  icon={<img
+    src="/public/doc-assets/chronosphere_logo_icon.png"
+    alt="Chronosphere logo"
+    width="30"
+    height="80"
+    />}>
+
+    A SaaS-based observability and monitoring platform made for cloud-native
+    infrastructures.
 
     Monitor telemetry data across your entire system to identify and solve issues.
 
-    Minimize impact and downtime for your app and your users while controlling what data you pay for.
+    Minimize impact and downtime for your app and your users while controlling what
+    data you pay for.
   </Card>
   <Card
-    title="Chronosphere Telemetry Pipeline"
-    href="/pipelines"
-  >
+  title="Chronosphere Telemetry Pipeline"
+  titleBackgroundColor="#705DA0"
+  titleTextColor="#FFFFFF"
+  href="/pipelines"
+  icon={<img
+    src="/public/doc-assets/pipeline_logo_icon.png"
+    alt="Chronosphere logo"
+    width="30"
+    height="80"
+    />}>
+
     An observability pipeline platform for routing and processing telemetry data.
 
-    Integrate with your existing observability tools to send logs, metrics, and traces from any source to any destination.
+    Integrate with your existing observability tools to send logs, metrics, and
+    traces from any source to any destination.
 
-    Connect to these sources and destinations through a variety of built-in integration plugins.
+    Connect to these sources and destinations through a variety of built-in
+    integration plugins.
   </Card>
-</CardGroup>
+  <Card
+  title="Tools"
+  titleBackgroundColor="#ff9d1c"
+  titleTextColor="#FFFFFF"
+  href="/tooling-overview"
+  icon={<img
+    src="/public/doc-assets/marketing-wrench-computer-icon.png"
+    alt="Chronosphere logo"
+    width="30"
+    height="80"
+    />}>
+
+    Use the provided tools to programmatically interact with Chronosphere entities.
+
+    Observability Platform includes the Chronoctl command line interface (CLI),
+    while Telemetry Pipeline includes the Pipeline CLI.
+
+    Other tools for Observability Platform include APIs, infrastructure as code
+    tools like Terraform, and the Prometheus API.
+  </Card>
+</Columns>

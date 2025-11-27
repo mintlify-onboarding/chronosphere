@@ -1,0 +1,37 @@
+---
+title: Vivo destination plugin
+sidebarTitle: Vivo
+'og:description': Send pipeline data to Vivo.
+---
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Vivo [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `http`, alias: `vivo`) lets you configure your telemetry pipeline to send
+your telemetry data to a remote HTTP endpoint exposed by Vivo Exporter.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics     | Traces      |
+| :---------: | :---------: | :---------: |
+| <YesIcon /> | <YesIcon /> | <YesIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Advanced
+
+| Name          | Key | Description | Default |
+| ------------- | --- | ----------- | ------- |
+| **Vivo Host** | `host` | Required. IP address or hostname of the target HTTP Server. | `calyptia-vivo` |
+| **Port**      | `port` | Required. TCP port of the target HTTP Server. | `5489` |
+| **URI**       | `uri` | Required. Specifies an optional HTTP URI for the target web server. For example, `/something`. | `/sink` |
+| **Format**    | `format` | Required. Specifies the data format to be used in the HTTP request body. Accepted values: `json`, `json_lines`, `json_stream`. | `json` |

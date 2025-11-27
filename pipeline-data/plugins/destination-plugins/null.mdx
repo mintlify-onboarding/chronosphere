@@ -1,0 +1,30 @@
+---
+title: Null destination plugin
+sidebarTitle: Null
+'og:description': Use the null destination plugin.
+---
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+Null is a type of data destination that lets you discard your telemetry data without
+writing it to any external storage or output destination. The Null
+[destination plugin](/pipeline-data/plugins/destination-plugins) (name: `"null"`)
+is a tool for testing or debugging purposes when you want to simulate a data
+flow without actually writing data to disk or sending it to an external system.
+
+With the Null destination plugin, you can configure your pipeline to discard any
+telemetry data that passes through it, ensuring that the data isn't saved or
+transmitted to any external system. This can be used for verifying the configuration
+of your pipeline or for troubleshooting issues in your data processing workflow. The
+Null destination plugin can help you avoid unnecessary data storage or network
+traffic.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics     | Traces      |
+| :---------: | :---------: | :---------: |
+| <YesIcon /> | <YesIcon /> | <YesIcon /> |

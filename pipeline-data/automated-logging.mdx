@@ -1,0 +1,68 @@
+---
+title: Automated Kubernetes logging
+'og:description': Use Chronosphere Telemetry Pipeline to route logs from a Kubernetes cluster.
+sidebarTitle: Automated Kubernetes logging
+---
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+You can use automated logging to route Kubernetes data through Chronosphere
+Telemetry Pipeline. Automated logging pulls logs from services running inside the
+Kubernetes cluster where you deployed a Core Instance, then sends those logs to
+one or more destinations.
+
+## Enable automated logging
+
+To enable automated logging in Telemetry Pipeline:
+
+1. Sign in to the [Telemetry Pipeline web interface](https://core.calyptia.com/).
+1. Open the project that contains the Core Instance where you want to set up
+   automated logging.
+1. Go to **Core Instances**, then click the name of the Core Instance where you'd
+   like to set up automated logging.
+1. Next to **Kubernetes Namespaces**, click the
+   <Icon icon="chevron-down" alt="Expand"/>&nbsp;icon, then click **Automate logging**.
+1. In the dialog that appears, select one of the available
+   [destinations](/pipeline-data/plugins/destination-plugins)
+   to determine where your logs will be sent.
+1. Configure the settings for your chosen destination plugin, then click **Save**.
+
+## Modify automated logging settings
+
+<Note>
+If you're trying to modify these settings immediately after enabling automated logging
+in a Core Instance, you might need to refresh your browser to make these menus
+appear.
+</Note>
+
+After you've set up automated logging, you can add additional destinations to
+your Core Instance or adjust the settings for any existing destinations. To
+modify automated logging settings in Telemetry Pipeline:
+
+1. Sign in to the [Telemetry Pipeline web interface](https://core.calyptia.com/).
+1. Open the project that contains the Core Instance whose automated logging settings
+   you want to modify.
+1. Go to **Core Instances**, then click the name of the Core Instance whose
+   automated logging settings you want to modify.
+1. Under **Kubernetes Namespaces**, click any item in the **Destinations** list.
+   This opens the pipeline builder.
+1. Use the pipeline builder to modify your Kubernetes sources, destination plugins,
+   or [processing rules](/pipeline-data/processing-rules#add-processing-rules-to-your-pipeline).
+
+## Disable automated logging
+
+<Warning>
+If you disable automated logging, any destination settings you've configured
+will be deleted permanently. To re-enable automated logging, you'll need to reconfigure
+your destination settings.
+</Warning>
+
+To disable automated logging in Telemetry Pipeline:
+
+1. Sign in to the [Telemetry Pipeline web interface](https://core.calyptia.com/).
+1. Open the project that contains the Core Instance where you want to disable
+   automated logging.
+1. Go to **Core Instances**, then click the name of the Core Instance where you'd
+   like to disable automated logging.
+1. Next to **Kubernetes Namespaces**, click
+   **Disable&nbsp;<Icon icon="pause" />**.

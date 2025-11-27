@@ -1,0 +1,50 @@
+---
+title: Azure Blob Storage destination plugin
+sidebarTitle: Azure Blob Storage
+'og:description': Send pipeline data to Azure Blob Storage.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The Azure Blob Storage [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `azure_blob`) lets you store your logs, metrics, and other data types
+directly in your Azure Blob Storage account.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### Required
+
+| Name                           | Key | Description | Default |
+| ------------------------------ | --- | ----------- | ------- |
+| **Azure Storage Account Name** | `account_name` | Required. Azure Storage account name. | _none_ |
+| **Azure Storage Shared Key**   | `shared_key` | Required. Specifies the Azure Storage Shared Key to authenticate against the service. | _none_ |
+| **Container Name**             | `container_name` | Required. The name of the container that will contain the blobs. | _none_ |
+| **Path**                       | `path` | Optional path to store your blobs. If your blob name is `myblob`, you can specify sub-directories where to store it using path. Setting a path to `/logs/kubernetes` will store your blob in `/logs/kubernetes/myblob`. | _none_ |
+| **Blob Type**                  | `blob_type` | Specifies the blob type. Accepted values: `appendblob`, `blockblob`. | `appendblob` |
+| **Auto Create Container**      | `auto-create-container` | If `container_name` doesn't exist in the remote service, enabling this option handles the exception and auto-creates the container. Accepted values: `on`, `off`. | `on` |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

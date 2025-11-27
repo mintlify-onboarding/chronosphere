@@ -1,0 +1,157 @@
+---
+title: Create an Opsgenie notifier
+'og:description': Create an Opsgenie notifier with Chronosphere Observability Platform, Chronoctl, or Terraform.
+sidebarTitle: Opsgenie
+---
+import ApiAuthReq from '/snippets/_partials/api-auth-req.mdx';
+import ChronoctlCreate from '/snippets/_partials/chronoctlnotifiers.mdx';
+import TerraformCreate from '/snippets/_partials/terraformcreate.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+Before you create an Opsgenie notifier, generate an API key. Refer to the
+[Opsgenie documentation](https://docs.opsgenie.com/docs/api-integration) for
+instructions.
+
+You can use [variables](/investigate/alerts/notifications/notifiers#use-variables-in-notifiers)
+in your notifiers.
+
+
+<Tabs>
+<Tab title="Web" id="opsgenie-notifier-cloud">
+
+To create an Opsgenie notifier:
+
+1. In the navigation menu select
+   **<Icon icon="bell" /> Alerts <span aria-label="and then">></span> Notifiers**.
+1. Click **Create notifier**.
+1. Enter a descriptive name for the notifier.
+1. Select **Opsgenie** as the type of notifier you want to create.
+1. In the **API Key** field, enter the value of your Opsgenie API key.
+1. In the **API URL** field, enter the following URL, which is called as a `POST`
+   request:
+
+   ```text
+   https://api.opsgenie.com/
+   ```
+1. Optional: Select **Notify when resolved** to send a resolved alert notification.
+1. Click **Save**.
+
+</Tab>
+<Tab title="Chronoctl" id="opsgenie-notifier-chronoctl">
+
+<ChronoctlCreate />
+
+1. Define the resource definition for your Opsgenie notifier:
+
+   ```yaml /NAME/ /SLUG/ /API_KEY/ /API_URL/
+   api_version: v1/config
+   kind: Notifier
+   spec:
+     name: NAME
+     slug: SLUG
+     skip_resolved: true
+     opsGenie:
+       - api_key: 'API_KEY'
+         api_url: API_URL
+   ```
+
+   Replace the following:
+
+   - _`NAME`_: A descriptive name, such as `test-opsgenie`.
+   - _`SLUG`_: A unique identifier, such as `test-opsgenie`.
+   - _`API_KEY`_: Your OpsGenie API key.
+   - _`API_URL`_: Your OpsGenie API URL.
+
+1. Enter your Opsgenie API key in the `api_key` field.
+1. Enter the following URL in the `api_url` field:
+
+   ```text
+   https://api.opsgenie.com/
+   ```
+
+1. Apply the changes:
+
+   ```shell /FILE_NAME/
+   chronoctl apply -f FILE_NAME.yaml
+   ```
+
+   Replace _`FILE_NAME`_ with the name of your notifier YAML file.
+
+</Tab>
+
+<Tab title="Terraform" id="opsgenie-terraform">
+
+To create an Opsgenie notifier:
+
+1. Create a Opsgenie notifier with Terraform by using the
+   `chronosphere_opsgenie_alert_notifier` type followed by a name in a resource
+   declaration:
+
+   ```ruby
+   resource "chronosphere_opsgenie_alert_notifier" "opsgenie_notifier" {
+     name = "Opsgenie Notifier"
+
+     # Optional slug of the Opsgenie notifier.
+     slug = "opsgenie-notifier"
+
+     ## Notifier-specific required configuration
+     # Detailed definitions can be found at: https://prometheus.io/docs/alerting/latest/configuration/#opsgenie_config
+     api_key = "your-api-key"
+
+     ## Notifier-specific optional configurations
+     api_url     = "your-api-url"
+     message     = "custom message"
+     description = "description"
+     source      = "source"
+     tags        = ["tag-1", "tag-2"]
+     note        = "note"
+     priority    = "P1"
+
+     details = {
+       "first_detail" = "interesting detail"
+     }
+
+     # Can have multiple responders.
+     responder {
+      # Set one of the [id, name, username] fields
+       name = "Productivity Platform - Compute"
+       type = "TEAM" # Or: USER, ESCALATION, SCHEDULE
+     }
+
+     ## (Optional) Base configuration common to all notifiers
+     send_resolved = true # The default value
+
+     ## (Optional) HTTP configuration common to HTTP notifiers
+     basic_auth_username = "username"
+     basic_auth_password = "strong+p@ssword"
+     # Can use bearer_token instead of basic auth
+     proxy_url                = "https://my-proxy-url"
+     tls_insecure_skip_verify = false
+   }
+   ```
+
+1. Enter your Opsgenie API key in the `api_key` field.
+1. Enter the following URL in the `api_url` field:
+
+   ```text
+   https://api.opsgenie.com/
+   ```
+
+1. Run `terraform apply` to create the notifier resource:
+
+   ```ruby
+   terraform apply
+   ```
+
+</Tab>
+<Tab title="API" id="opsgenie-API">
+
+To complete this action with the Chronosphere API, use the `ops_genie` object in the
+[`CreateNotifier`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateNotifier) endpoint.
+
+<ApiAuthReq />
+
+</Tab>
+</Tabs>

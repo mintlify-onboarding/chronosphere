@@ -1,0 +1,35 @@
+---
+title: Overlay and enable change events
+'og:description': Overlay and enable change events in Observability Platform to understand what changed in your environment.
+sidebarTitle: Overview
+---
+{/* -- dri: Adam Locke -- */}
+
+
+When investigating issues, on-call engineers can enable and overlay _change events_ on
+[dashboards](/observe/enable-events/dashboards),
+[traces](/observe/enable-events/traces), and
+[services](/observe/enable-events/services). This additional context helps correlate
+events with system and service anomalies in real-time, allowing for quicker
+identification of incident cause.
+
+[Change events](/overview/concepts/change-events) can also display in the
+**Query Results** for individual monitors. When on-call engineers click links in
+Observability Platform notifications, they're directed to the **Monitors** page for
+the related alert. On-call engineers can
+[display change events for a monitor](/investigate/alerts/monitors/monitor-actions#display-change-events)
+using predefined filter configurations, or define queries using advanced filtering to
+display the events they want to visualize. This capability helps to determine issues
+before the alert triggered, such as code deploy and audit log events.
+
+On-call engineers can also [create change events](/observe/enable-events/use-events)
+from Chronosphere Observability Platform or with the Chronosphere API. This feature
+lets on-call engineers create relevant change events, such as a broadcast to inform
+other users of upcoming maintenance, or create third-party change events in addition
+to the predefined change event categories.
+
+<Note>
+To overlay change events, your organization must purchase
+[change event tracking](https://chronosphere.io/platform/change-event-tracking/)
+and have it enabled in your tenant.
+</Note>

@@ -1,0 +1,61 @@
+---
+title: CrowdStrike destination plugin
+sidebarTitle: Crowdstrike
+'og:description': Send pipeline data to CrowdStrike.
+---
+import AdvancedNetwork from '/snippets/_partials/pipeline-advanced-networking.mdx';
+import {NoIcon} from '/snippets/_partials/no-icon.jsx';
+import SecurityTls from '/snippets/_partials/pipeline-security-tls.mdx';
+import {YesIcon} from '/snippets/_partials/yes-icon.jsx';
+
+{/* -- dri: Alexa Kreizinger -- */}
+
+
+The CrowdStrike [destination plugin](/pipeline-data/plugins/destination-plugins)
+(name: `http`, alias: `Humio`) lets you configure your telemetry pipeline to
+send data from any of your sources to the CrowdStrike LogScale platform.
+
+## Supported telemetry types
+
+This plugin for Chronosphere Telemetry Pipeline supports these telemetry types:
+
+| Logs        | Metrics    | Traces     |
+| :---------: | :--------: | :--------: |
+| <YesIcon /> | <NoIcon /> | <NoIcon /> |
+
+## Configuration parameters
+
+Use the parameters in this section to configure your plugin. The Telemetry Pipeline
+web interface uses the values in the **Name** column to describe the parameters.
+Items in the **Key** column are the YAML keys to use in
+[pipeline configuration files](/pipeline-configure/config-files).
+
+### General
+
+| Name        | Key | Description | Default |
+| ----------- | --- | ----------- | ------- |
+| **Host**    | `host` | Required. IP address or hostname of the LogScale Server. | `cloud.community.humio.com` |
+| **Port**    | `port` | Required. TCP port of the targeted HTTP server. | `443` |
+| **Headers** | `header` | Add the LogScale Ingest Token after the `Bearer`. You can add more than one header. | _none_ |
+
+### Advanced
+
+| Name                 | Key | Description | Default |
+| -------------------- | --- | ----------- | ------- |
+| **URI**              | `uri` | Required. Specifies an optional HTTP URI for the target web server. | `/api/v1/ingest/json` |
+| **Format**           | `format` | Required. Specifies the data format to be used in the HTTP request body. Accepted values: `json`, `json_lines`, `json_stream`. | `json` |
+| **Compress**         | `compress` | Sets the payload compression mechanism. Accepted values: `gzip`, _none_. | _none_ |
+| **HTTP Proxy**       | `proxy` | Specifies an HTTP Proxy. The expected format of this value is `http://host:port`. | _none_ |
+| **JSON Date Format** | `json_date_format` | Specifies the format of the date. Accepted values: `double`, `epoch`, `iso8601` (for example, `2018-05-30T09:39:52.000681Z`), `java_sql_timestamp` (for example, `2018-05-30 09:39:52.000681`, which can be used with AWS Athena). | `iso8601` |
+| **JSON Date Key**    | `json_date_key` | Specifies the name of the date field in output. | `_time` |
+| **Body Key**         | `body_key` | Specifies the key that contains the body. | _none_ |
+| **Header Tag**       | `header_tag` | Sets an HTTP header whose value is the tag of the record. | _none_ |
+| **Header Key**       | `headers_key` | Specifies the key that contains the headers. | _none_ |
+
+### Security and TLS
+
+<SecurityTls />
+
+### Advanced Networking
+
+<AdvancedNetwork />

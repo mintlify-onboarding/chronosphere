@@ -1,0 +1,87 @@
+---
+title: Service exploration
+'og:description': Learn about how to use services and traces to find issues.
+sidebarTitle: Service exploration
+---
+import { ServiceNavIcon } from '/snippets/Icons.jsx';
+import LimitedAvail from '/snippets/_partials/limited-avail.mdx';
+
+{/* -- dri: Adam Locke -- */}
+
+
+<LimitedAvail />
+
+The [Services](/observe/services) page provides efficient views into your services to
+help you discover ways of exploring your data. You can link directly to tracing data
+related to a specific service from the **Services** page. Chronosphere Observability
+Platform automatically generates these links to help you monitor services and
+connected telemetry.
+
+<Note>
+The number of listed services in Trace Explorer might not match services listed in
+the [service list](/observe/services#understand-the-services-table) due to
+[service discovery jobs and merge rule configuration](/administer/service-discovery).
+</Note>
+
+1. In the navigation menu select
+   **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> Services**.
+
+1. In the list of services, your **Deployer Service** has a currently alerting
+   monitor that exceeds the defined critical conditions.
+
+1. Select the **Deployer Service** to display its individual service page.
+
+1. In dependency map, in the **Trends** dropdown, select **Errors**.
+
+   You notice that the edge for this service has downstream errors. From here, you
+   can investigate trace data in Trace Explorer.
+
+1. Click the outgoing edge for the **Deployer Service** to display a panel with
+   statistics about this edge.
+
+1. In the panel containing edge information, next to **Requests**, click the
+   <Icon icon="ellipsis-vertical" /> more icon to display these options:
+
+   When you select one of these options, Observability Platform applies the context
+   defined in the service page:
+
+   - **View in Trace Explorer** opens Trace Explorer with the selected service
+     context. You can further refine the query to identify issues.
+   - **Differential Diagnosis** opens the **Differential Diagnosis** tab in a drawer
+     with the selected service. Use this information to
+     [identify trends](/investigate/analyze/differential-diagnosis/traces) and immediately
+     scan through all related tags and values to pinpoint the exact `tag:value` pairs
+     most closely correlated with suspicious behavior.
+
+1. Select **Trace Explorer** to open Trace Explorer.
+
+1. In the **Trace Explorer** page, in the **Span statistics** section, select **Leaf Errors**
+   in the **Metric** dropdown menu to highlight services that include error spans
+   with no failing child spans.
+
+   These errors are the deepest errors within a request flow, and are often the
+   reason why an entire trace fails.
+
+1. In the sparklines chart, you notice spikes in errors for the `gatewayauth`
+   service.
+
+1. In the **Metric** dropdown, select **Leaf errors** to focus on the root cause of
+   the issues.
+
+1. In the **Group by** field, enter **Operation** so that you're grouping results by
+   both Service and Operation.
+
+   In the **Span statistics** table, you see that the `auth.Auth/Authenticate` operation
+   of the `gatewayauth` has the most leaf errors.
+
+1. Click the **gatewayauth** service to add it and the `auth.Auth/Authenticate`
+   operation to your search filter.
+
+1. At the top of the page, click <Icon icon="link-simple" /> **Copy link** to copy a link
+   with the defined filter criteria that you can share with team owning that owns the
+   `gatewayauth` service.
+
+You identified the service and operation with the most leaf errors and can send a
+contextual link to the team responsible for that service. By focusing on leaf errors,
+you located the root issue impacting related traces and can provide that context to
+the owning team.
