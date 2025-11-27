@@ -190,13 +190,13 @@ Platform provides contains a data link for each of the included panels. Data lin
 dashboards use [Observability Platform parameters](#data-link-parameters) to refer to
 series fields, labels, and values.
 
-<Info>
+<Note>
 Before creating a data link from a dashboard, you must
 [create custom variables](/observe/dashboards/customization/dashboard-variables)
 to use in your link. For example, create a `metric` variable that you can reference
 as `${metric}`. Pair this variable with the `d_metricname` parameter and reference
 the variable in your data link as `d_metricname=${metric}`.
-</Info>
+</Note>
 
 - **Traces**: Use the following URL as the basis for creating a data link to trace
   data from a dashboard:
@@ -239,7 +239,7 @@ To create a data link from a dashboard:
 1. On your dashboard screen, click **Save** to save your changes.
 
 After saving your data link, click any point in the chart you created a link for,
-click the <Icon icon="link" /> link icon, and then click the link name to view the
+click the <Icon icon="link-simple" /> link icon, and then click the link name to view the
 contextual link to your data.
 
 ### Data link parameters
@@ -293,11 +293,11 @@ The following examples show both the encoded and decoded URLs for a query in Log
 Explorer to help explain the syntax and how to replace parameter values with
 variables.
 
-<Info>
+<Note>
 To improve readability, each of the following examples uses carriage returns. If you
 copy any examples, remove these characters before including them in a span link so
 the URL is valid.
-</Info>
+</Note>
 
 The following URL defines an encoded query from Logs Explorer. This query includes
 the following parameters:

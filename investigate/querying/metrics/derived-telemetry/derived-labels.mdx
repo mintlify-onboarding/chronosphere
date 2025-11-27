@@ -154,12 +154,12 @@ completed derived label definition.
 The following definition examples show how to format equivalent derived label
 definition in Chronoctl, Terraform, and the Observability Platform API.
 
-<Info>
+<Note>
 These examples include derived [metric labels](#use-derived-labels-for-metrics)
 and [span tags](#use-derived-labels-for-traces) in the same definition. However,
 it's possible to create a definition that only contains derived metric labels,
 or that only contains derived span tags.
-</Info>
+</Note>
 
 <Tabs>
 <Tab title="Chronoctl" id="definition-example-chronoctl">
@@ -439,13 +439,13 @@ and map directly to the derived label name.
 The `value_glob` and `source_value_globs` parameters support
 [glob syntax](/investigate/querying/glob-syntax).
 
-<Info>
+<Note>
 It's not possible to create a derived metric label from the names or
 values of a different derived label. Each `source_label` parameter in your
 definitions must reference a persisted, non-derived label name, and each
 `source_value_globs` parameter must reference persisted, non-derived label
 values.
-</Info>
+</Note>
 
 After you define a derived metric label, you can reference that new label in
 [Metrics Explorer](/investigate/querying/metrics/explorer) queries in the
@@ -1066,11 +1066,11 @@ The `label_name` parameter determines the name of the derived span tag,
 and the `source_tag` parameters specify which source tags to map to this
 derived span tag.
 
-<Info>
+<Note>
 It's not possible to create a derived span tag from a different derived span
 tag. Each `source_tag` parameter in your definitions must reference a persisted,
 non-derived span tag.
-</Info>
+</Note>
 
 After you define a derived span tag, you can reference that new span tag in
 [Trace Explorer](/investigate/querying/traces/features) queries in the same way

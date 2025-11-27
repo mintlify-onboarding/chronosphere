@@ -58,7 +58,7 @@ Select from the following methods to view your available drop rules.
 
 To view drop rules:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and
    then select **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Drop Rules**.
 1. Use the **Search rules** text box to find a specific rule. This search looks for
    any text in any rule.
@@ -107,10 +107,10 @@ Drop rules have these definition limitations:
   allowed.
 - Each rule `name` must be unique.
 
-<Info>
+<Note>
 After creating a drop rule, it takes roughly one minute for the rule to take effect.
 Wait at least one minute after creating a drop rule before making updates to it.
-</Info>
+</Note>
 
 A metric that matches any drop rule is dropped, regardless of overlap with drop rules
 created using other methods. For example, if a metric matches a drop rule created
@@ -138,7 +138,7 @@ Select from the following methods to create a drop rule.
 
 To create a drop rule, you must have administrative privileges:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Drop Rules**.
 
@@ -172,10 +172,10 @@ To create a drop rule, you must have administrative privileges:
 
    In combination, this logic leads to a drop rule where `!a==A || !b==B --> a!=A || b!=B`.
 
-    <Info>
+    <Note>
     Comma-separated lists can't include spaces after commas. Rules with a space after
       a comma don't evaluate.
-    </Info>
+    </Note>
 
 1. To define a [value-based drop rule](/control/shaping/rules/drop-rules#define-a-value-based-drop-rule),
    choose **0** or **1** in the **Select drop value** menu.
@@ -449,9 +449,9 @@ value of `production`. This drop rule also applies if the `env` label isn't set.
 }
 ```
 
-<Info>
+<Note>
 A label with an empty value is the same as a label that isn't present.
-</Info>
+</Note>
 
 {/* vale off */}
 Use an asterisk `*` in the `value_glob` field to match metrics with a particular
@@ -483,10 +483,10 @@ with a value of `api` that doesn't also have an `env` label.
 }
 ```
 
-<Info>
+<Note>
 Observability Platform glob syntax doesn't support using two asterisks where one of
 them is in the middle of a string. For example, `*k8s*staging` isn't valid.
-</Info>
+</Note>
 
 ### Define a value-based drop rule
 
@@ -603,7 +603,7 @@ Select from the following methods to disable a drop rule.
 To disable an existing drop rule in Observability Platform, you must have
 administrative privileges:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Drop Rules**.
 1. Select the rule you want to disable from the list.

@@ -17,11 +17,11 @@ panels based on those interactive queries, and lists the status of related monit
 On the [Services](/observe/services) page in Chronosphere Observability
 Platform, click any service's **Name** to see that service's detail page.
 
-<Info>
+<Note>
 Service pages are part of the [Services](/observe/services) feature and might not be
 available in your app. For information about enabling this feature in your environment,
 contact [Chronosphere Support](/support).
-</Info>
+</Note>
 
 ## Edit service information
 
@@ -92,14 +92,14 @@ Observability Platform includes the following default components:
 - Istio
 - OTel HTTP server metrics
 
-<Info>
+<Note>
 To enable links to Logs Explorer from your service pages, contact
 [Chronosphere Support](/support) and provide the following information:
 
 - The name of your organization from your Observability Platform URL. For example,
   _`MY_COMPANY`_`.chronosphere.io:443`.
 - The field name in your log data that refers to your service.
-</Info>
+</Note>
 
 ## Visualization panels
 
@@ -110,8 +110,8 @@ with queries for commonly tracked metrics.
   **Network Usage** for all pods with metrics tagged for this service.
 - **RPC** panels visualize **Requests per second**, **Errors per second**, and
   **Duration P99** (slowest request in the 99th percentile of requests). Panels with
-  an <Icon icon="triangle-exclamation" style={{ color: 'rgb(255, 178, 73)' }} alt="Yellow alert outline"/>
-  alert have truncated queries. Panels with a <Icon icon="circle-exclamation" style={{ color: 'rgb(238, 108, 108)' }} alt="Red warning exclamation"/>
+  an <Icon icon="triangle-exclamation" color="#ffb249ff" alt="Yellow alert outline"/>
+  alert have truncated queries. Panels with a <Icon icon="circle-exclamation" iconType="solid" color="#ee6c6cff" alt="Red warning exclamation"/>
   warning use a query which took too long.
 
 ### Filter metrics
@@ -161,10 +161,10 @@ Activating the toggle updates the service's graphs to display annotation marks
 the pointer over an annotation mark to display additional information about the
 event, such as the occurrence time, and global filters this event matches.
 
-<Info>
+<Note>
 **Kube Deploy Events** is the only metric configured to use annotations with
 services. To configure additional metrics, contact Chronosphere support.
-</Info>
+</Note>
 
 ### Filter panels
 
@@ -199,11 +199,11 @@ explanation of the available tools.
 
 ## Display change events
 
-<Info>
+<Note>
 To overlay change events, your organization must purchase
 [change event tracking](https://chronosphere.io/platform/change-event-tracking/)
 and have it enabled in your tenant.
-</Info>
+</Note>
 
 You can enable [change events](/observe/enable-events/services) to
 display them on panels for each of your services. This capability lets you visualize
@@ -211,11 +211,11 @@ changes in your environment relative to a specific service.
 
 ## Dependency map
 
-<Info>
+<Note>
 To view dependency maps for trace data in service pages, your organization must
 purchase [distributed tracing](https://chronosphere.io/platform/distributed-tracing/)
 and have it enabled in your tenant.
-</Info>
+</Note>
 
 When receiving an alert about your service, you need to identify and fix the issue as
 quickly as possible. If the issue isn't with your service, you want to inform the
@@ -244,9 +244,9 @@ with a triple arrow indicates a larger trend than an edge with a single arrow:
 
 | Arrow type | Icon                                                    | Indication                        |
 |:-----------|:--------------------------------------------------------|:----------------------------------|
-| Single     | ![Single arrow icon](/public/doc-assets/request-up-low.svg)    | Change of 0% up to 5%             |
-| Double     | ![Double arrow icon](/public/doc-assets/request-up-medium.svg) | Change greater than 5%, up to 15% |
-| Triple     | ![Triple arrow icon](/public/doc-assets/request-up-high.svg)   | Change greater than 15%           |
+| Single     | <img className="my-0" src="/public/doc-assets/request-up-low.svg" alt="Single arrow icon"/>    | Change of 0% up to 5%             |
+| Double     | <img className="my-0" src="/public/doc-assets/request-up-medium.svg" alt="Double arrow icon"/>  | Change greater than 5%, up to 15% |
+| Triple     | <img className="my-0" src="/public/doc-assets/request-up-high.svg" alt="Triple arrow icon"/>  | Change greater than 15%           |
 
 The thickness of edges correlate with request volume. The thicker the edge, the
 higher the request volume.
@@ -377,7 +377,7 @@ For some instances, you can use the Observability Platform app to create or edit
 
 To add a dashboard or monitor to a service, with the service as the owner:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**,
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**,
    then select
    **<ServiceNavIcon /> System Overview <span aria-label="and then">></span> Services**.
 1. Select a service.

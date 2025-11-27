@@ -15,10 +15,10 @@ one of the following options to configure authentication:
 - Use [OAuth](https://oauth.net/2/). To use the Chronosphere MCP server with OAuth,
   your MCP client must support OAuth.
 
-  <Info>
+  <Note>
   OAuth authentication with the Chronosphere MCP server has been tested with the
     following MCP clients only.
-  </Info>
+  </Note>
 
 The following steps explain how to authenticate with popular AI-powered code editors.
 After authenticating, you can use the LLM features in your code editor to interact
@@ -62,11 +62,11 @@ as a
      recommends storing your API token in a separate file or Kubernetes Secret and
      calling it using an environment variable, such as `$API_TOKEN`.
 
-    <Info>
+    <Note>
     To authenticate using OAuth instead of a Chronosphere API token, omit the
       `--header` flag. You can also use the `/mcp` command to authenticate with OAuth
       authentication.
-    </Info>
+    </Note>
 
 1. Test your connection with the Chronosphere MCP server:
 
@@ -105,10 +105,10 @@ file to include the Chronosphere MCP server remote endpoint.
      recommends storing your API token in a separate file or Kubernetes Secret and
      calling it using an environment variable, such as `$API_TOKEN`.
 
-    <Info>
+    <Note>
     To authenticate using OAuth instead of a Chronosphere API token, omit the
       `headers` section from the configuration.
-    </Info>
+    </Note>
 
 1. Save and close the `mcp.json` file.
 1. Refresh the MCP server settings in Cursor.

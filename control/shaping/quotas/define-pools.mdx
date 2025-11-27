@@ -267,11 +267,11 @@ medium-priority series that exceed the threshold.
 
 ### Configure pool thresholds
 
-<Info>
+<Note>
 Configuring pool thresholds is supported only in Terraform and the
 [`CreateResourcePools`](https://docs.chronosphere.io/tooling/api-info/definition/operations/CreateResourcePools)
 endpoint of the [Chronosphere API](/tooling/api-info).
-</Info>
+</Note>
 
 To determine the threshold values for each pool, use the
 [Persisted Cardinality Quotas dashboard](/observe/dashboards/chronosphere-managed-dashboards#persisted-cardinality-quotas)
@@ -326,14 +326,14 @@ After making changes, use the
 to track which pools are approaching or exceeding defined thresholds, identify where
 drops are occurring, and view which priority levels are affected.
 
-<Info>
+<Note>
 After updating definitions for priorities or pools, only new inbound time series
 adhere to the new rules immediately. Any existing, inactive series that were already
 attributed to a changed pool might continue to count towards your cardinality limit
 until they naturally expire in the 150 minute rolling window. This means that it
 might take 150 minutes for cardinality per pool and per priority to accurately
 reflect counts.
-</Info>
+</Note>
 
 #### Pool thresholds example
 

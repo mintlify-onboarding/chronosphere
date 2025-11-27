@@ -161,10 +161,10 @@ endpoint is disabled by default.
 Using EndpointSlices significantly reduces the amount of load on the Kubernetes API
 server.
 
-<Info>
+<Note>
 If you modify a Collector manifest, you must
 [update it in the cluster and restart the Collector](/ingest/metrics-traces/collector/configure#modify-the-collector-manifest).
-</Info>
+</Note>
 
 ## Discover and scrape `kube-state-metrics`
 
@@ -283,11 +283,11 @@ discovery:
     endpointsDiscoveryEnabled: true
 ```
 
-<Info>
+<Note>
 In this configuration, you can deploy the Collector as a DaemonSet, which installs
 the Collector on the master nodes that run the Kubernetes API Server so the Collector
 can scrape it.
-</Info>
+</Note>
 
 ### Discover API Server metrics with the jobs service
 

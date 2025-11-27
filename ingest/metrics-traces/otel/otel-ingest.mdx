@@ -13,19 +13,19 @@ You can configure the [OpenTelemetry Collector](https://opentelemetry.io/docs/co
 to send metric and tracing data to Chronosphere Observability Platform. You must send
 all traffic over HTTPS.
 
-<Check>
+<Tip>
 To learn more about OpenTelemetry, see
 [What is OpenTelementry?](https://chronosphere.io/learn/what-is-opentelemetry/)
 on the Chronosphere Blog.
-</Check>
+</Tip>
 
 Observability Platform accepts OpenTelemetry Protocol (OTLP) metrics from
 OpenTelemetry Collectors by using the gRPC OTLP Exporter.
 
-<Info>
+<Note>
 Chronosphere recommends not sending OTLP metrics directly from the OpenTelemetry
 Client SDK.
-</Info>
+</Note>
 
 This procedure adds each configuration section separately. For a complete file,
 which you can modify as needed, see the

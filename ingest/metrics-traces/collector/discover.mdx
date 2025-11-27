@@ -15,21 +15,21 @@ to scrape Prometheus metrics from:
 Using `ServiceMonitors` or Kubernetes annotations (or a combination of both) are
 recommended for most deployments.
 
-<Info>
+<Note>
 Use push-based collection mechanisms for use cases where jobs can't be scraped
 automatically, such as AWS Lambda, Google Cloud Functions, or ephemeral batch jobs.
-</Info>
+</Note>
 
 ## ServiceMonitors
 
 `ServiceMonitors` are a custom resource definition (CRD) you can use to define scrape
 configurations and options in a separate Kubernetes resource.
 
-<Info>
+<Note>
 Discovery is scoped to the targets on the local node by default, which requires you
 to deploy the Collector as a [DaemonSet](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector)
 for this method of service discovery.
-</Info>
+</Note>
 
 ### Prerequisites
 
@@ -42,9 +42,9 @@ Helm chart:
 kubectl apply -f https://raw.githubusercontent.com/prometheus-community/helm-charts/e46dc6360b6733299452c8fd65d304004484de79/charts/kube-prometheus-stack/crds/crd-servicemonitors.yaml
 ```
 
-<Info>
+<Note>
 Chronosphere supports only fields in version 0.44.1 of the Prometheus Operator.
-</Info>
+</Note>
 
 ### Enable ServiceMonitor discovery
 
@@ -113,11 +113,11 @@ changes:
      `serviceMonitorsEnabled` and `endpointsDiscoveryEnabled` to be set to `true`.
      EndpointSlices use less resources than Endpoints.
 
-      <Info>
+      <Note>
       EndpointSlices are available with Chronosphere Collector v0.85.0 or later and
           Kubernetes v1.21 or later. Chronosphere Collector v0.104.0 and later exclusively
           use EndpointSlices and ignore the `useEndpointSlices` setting.
-      </Info>
+      </Note>
    - `podMatchingStrategy`: Determines how to use ServiceMonitors and annotations when
      discovering targets. Accepts the following settings for _`VALUE`_:
      - `all`: Allows any and all scrape jobs to be registered for a single pod.
@@ -136,9 +136,9 @@ changes:
      Each item in the `additionalPodMatching` array must specify a `labelSelector`
      or `fieldSelector` to filter which Pods to watch.
 
-      <Info>
+      <Note>
       Additional Pod matching requires Chronosphere Collector v0.113.0 or later.
-      </Info>
+      </Note>
 
      - `labelSelector`: Matches Pods where a label value matches the name of the
        Node on which the Collector Pod DaemonSet instance is running. Define the
@@ -291,11 +291,11 @@ but lack access to Pod information. For example, if you want to:
 - Discover and scrape `kube-state-metrics`, which listen to the Kubernetes API server
   and generate metrics about deployments, nodes, and pods.
 
-<Info>
+<Note>
 If you're monitoring endpoints but don't have access to Pod information, the
 `ServiceMonitor` can't use the `TargetPort` attribute to target the endpoint and
 must instead use the `Port` attribute.
-</Info>
+</Note>
 
 In these cases, run the Collector as a [Kubernetes Deployment](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-using-a-deployment)
 with a single instance, and set the `allowSkipPodInfo` attribute to `true`.
@@ -313,11 +313,11 @@ cluster, or cause duplicate scrapes.
 
 ## Kubernetes annotations
 
-<Info>
+<Note>
 Discovery is scoped to the targets on the local node by default, which requires you
 to deploy the Collector as a [DaemonSet](/ingest/metrics-traces/collector/install/kubernetes)
 for this method of service discovery.
-</Info>
+</Note>
 
 For the Collector to start scraping the Pods in a Kubernetes cluster, set the
 following `annotations` on each Pod in the cluster:
@@ -377,19 +377,19 @@ command:
 kubectl apply -f path/to/manifest.yml
 ```
 
-<Info>
+<Note>
 If you modify a Collector manifest, you must
 [update it in the cluster and restart the Collector](/ingest/metrics-traces/collector/configure#modify-the-collector-manifest).
-</Info>
+</Note>
 
 ## Prometheus service discovery
 
-<Info>
+<Note>
 If using Prometheus service discovery within Kubernetes,
 [deploy a single Collector as a Kubernetes Deployment](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-using-a-deployment)
 per cluster. This is to avoid every Collector instance duplicating scrapes to all
 endpoints defined in the Prometheus service discovery configuration.
-</Info>
+</Note>
 
 To enable Prometheus service discovery, set `discovery.prometheus.enabled` to `true`
 in the Collector config. Provide the list of scrape configs in the

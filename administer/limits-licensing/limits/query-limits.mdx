@@ -96,9 +96,9 @@ The Metrics Query Capacity dashboard displays the number of selectors consumed a
 dropped against the limit per second. For more information about selectors, see the
 [Prometheus documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/#time-series-selectors).
 
-<Info>
+<Note>
 The selectors per second query limit can't be increased.
-</Info>
+</Note>
 
 ##### Reduce selectors per second query load
 
@@ -301,11 +301,11 @@ To disable or re-enable query truncation:
 1. Click the **Truncate expensive query results** toggle.
 1. Click **Done**.
 
-<Info>
+<Note>
 Disabling query truncation causes expensive queries to take longer to load and can
 result in timeouts (no results returned for a single query), or might cause the
 browser to crash.
-</Info>
+</Note>
 
 <Frame>
 ![query truncation options](/public/doc-assets/query_truncation_options.png)
@@ -341,12 +341,12 @@ users. Current database query scale protections are:
   can retrieve: 300,000
 - Standard data points a query can retrieve: 200,000,000
 
-  <Info>
+  <Note>
   For Chronosphere
     [histograms](/investigate/querying/promql#querying-histogram-metric-types),
     the query limit depends on the number of buckets containing data within a
     histogram.
-  </Info>
+  </Note>
 
 The data points needed to satisfy the query's time requirement are calculated as:
 

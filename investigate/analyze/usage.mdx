@@ -27,9 +27,9 @@ metrics you can add to the system to help boost valuable signal.
 The Telemetry Usage Analyzer supports Prometheus metrics, and translates
 OpenTelemetry metrics to align with the Prometheus format.
 
-<Info>
+<Note>
 The Telemetry Usage Analyzer doesn't support StatsD or Graphite data sources.
-</Info>
+</Note>
 
 To retrieve utility score data programmatically and from the command line, use
 Chronoctl or the Chronosphere API. You can return utility score data by metric and
@@ -42,7 +42,7 @@ Select one of the following methods to view metrics usage data.
 <Tabs>
 <Tab title="Web" id="view-metrics-data-web">
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
    **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Usage**.
 1. Click either **Group by metric** or **Group by label** to display usage data
    [grouped by metrics or labels](#metrics-and-labels-data).
@@ -124,7 +124,7 @@ make better decisions about how to shape your data.
 After analyzing a metric or label, you can view the summary information and then
 investigate [usage details](#view-usage-details) for more details.
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
    **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Usage**.
 
 1. Click either **Group by metric** or **Group by label** to display usage data
@@ -154,7 +154,7 @@ about the selected metric or label.
 Each metric and each label associated with a metric has **Usage Details** you can
 view in Telemetry Analyzer.
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
    **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Usage**.
 
 1. Click either **Group by metric** or **Group by label** to display usage data
@@ -282,7 +282,7 @@ which can have multiple references in its group.
   different numbers of unique users have different utility scores. Metrics with more
   unique users have a higher utility score.
 
-  <Info>
+  <Note>
   Utility scores match specific metric names or labels when calculating, and not by
     regular expression. This means that metrics with wildcards in the name aren't
     included in the calculation of the utility score. For example, if you include a
@@ -296,7 +296,7 @@ which can have multiple references in its group.
     Including a metric with a wildcard in the name in queries, dashboards, aggregation
     rules, monitors, and other areas that support regular expressions can result in a
     utility score of zero in Telemetry Usage Analyzer.
-  </Info>
+  </Note>
 
   The formula used to calculate the utility score is
   `Utility score = (number of references)+(number of executions * %(unique users/total users))`.
@@ -344,7 +344,7 @@ the Telemetry Usage Analyzer. Rollup rules are a type of aggregation rule that h
 reduce the cardinality footprint of your metrics by dropping raw data to eliminate
 unneeded labels.
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
    **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Metrics Usage**.
 
 1. Click either **Group by metric** or **Group by label** to display usage data

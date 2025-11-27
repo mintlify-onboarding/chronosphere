@@ -6,11 +6,11 @@ sidebarTitle: Scaling and replicas
 {/* -- dri: Alexa Kreizinger -- */}
 
 
-<Info>
+<Note>
 The information on this page applies to pipelines with the Deployment or
 StatefulSet [workload type](/pipeline-configure/kubernetes/workloads), but not
 pipelines with the DaemonSet workload type.
-</Info>
+</Note>
 
 Chronosphere Telemetry Pipeline uses replica pods to scale pipelines. Each pipeline
 needs at least one replica to function. If a pipeline has more than one replica,
@@ -24,10 +24,10 @@ to automatically add and remove replicas in response to utilization changes.
 
 Use one of the following methods to set a fixed number of replicas for your pipelines:
 
-<Info>
+<Note>
 For replica counts with a volume over 100&nbsp;TB a day, contact
 [Chronosphere Support](/support) prior to scaling up to ensure stability.
-</Info>
+</Note>
 
 <Tabs>
 <Tab title="Web interface" id="autoscaling-ui">

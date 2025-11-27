@@ -37,10 +37,10 @@ The list of monitors displays the status for each monitor next to its title:
 
 | Icon | Description |
 | ---- | ----------- |
-| <Icon icon="hexagon-exclamation" style={{ color: 'rgb(238, 108, 108)' }}/> | Currently alerting monitor that exceeds the defined critical conditions. |
-| <Icon icon="circle-exclamation" style={{ color: 'rgb(255, 178, 73)' }}/>    | Currently alerting monitor that exceeds the defined warning conditions.  |
-| <Icon icon="bell-slash" style={{ color: 'rgb(193, 166, 248)' }}/>   | Monitor that's currently muted by an active muting rule.                 |
-| <Icon icon="circle-check" style={{ color: 'rgb(89, 204, 141)' }}/>    | Passing monitor that's not generating alerts.                            |
+| <Icon icon="hexagon-exclamation" color="#ee6c6cff"/> | Currently alerting monitor that exceeds the defined critical conditions. |
+| <Icon icon="circle-exclamation" color="#ffb249ff"/>    | Currently alerting monitor that exceeds the defined warning conditions.  |
+| <Icon icon="bell-slash" color="#c1a6f8ff" />   | Monitor that's currently muted by an active muting rule.                 |
+| <Icon icon="circle-check" color="#59cc8dff"/>    | Passing monitor that's not generating alerts.                            |
 
 Use the following methods to filter your monitors:
 
@@ -155,11 +155,11 @@ then click the chevron to toggle display of the JSON payload for an alert.
 The page also lets you filter the history by event type, or toggle the scope of the
 Alert history between the currently selected signal or all signals.
 
-<Info>
+<Note>
 There can be up to a five-minute delay between the time an alert for a monitor
 resolves (**Alert resolved**) and the time when a notification is sent indicating the
 alert resolved (**Notification sent (alert resolved)**).
-</Info>
+</Note>
 
 #### Alert event payload
 
@@ -280,12 +280,12 @@ To add a new monitor:
      | make-series avg(latencyInSeconds) step 15m by severity, service
      ```
 
-      <Info>
+      <Note>
       If the log query includes a field that contains a period in its name and you
           want to use signals to group notifications, use an
           [alias for that field name](/investigate/querying/query-logs/query-syntax#alias-field-names).
           Otherwise, periods are converted to underscores in the generated visualization.
-      </Info>
+      </Note>
 1. Use these options to validate and update your query:
 
    - Click **Check Query** to validate your query and preview query results. In the
@@ -315,9 +315,9 @@ To add a new monitor:
    - Toggle **Simulate alerts** to backtest your condition against existing data. You
      must define at least one condition for alert simulations to work.
 
-      <Info>
+      <Note>
       Alert simulations use existing data, and can't predict future alerts.
-      </Info>
+      </Note>
 
      If your selected query returns too much data, the graph displays an error.
      Chronosphere recommends selecting shorter time periods for testing, when possible.
@@ -329,13 +329,13 @@ To add a new monitor:
    [Signals](/investigate/alerts/notifications/signals) use a unique set of labels to
    create groups of notifications when a monitor alert triggers or resolves.
 
-    <Info>
+    <Note>
     If you select **per signal (multiple alerts)** to generate multiple alerts, enter
       a label key that differs in name and casing from the label you enter in the
       **Key** field in the **Labels** section. For example, if you enter `environment`
       in the **Key** field, you might use `Environments` as the **Label Key** to match
       on. [Pinned scopes](/navigate/pinned-scopes) can be used as a **Label Key**.
-    </Info>
+    </Note>
 
 1. Define a condition and sustain period (duration of time) in the **Conditions**
    section, and assign the resulting alert a severity (warning or critical). In
@@ -344,10 +344,10 @@ To add a new monitor:
    (days). The dialog also displays the notifiers associated with the monitor for
    reference.
 
-    <Info>
+    <Note>
     To alert on missing or no data, select **not exists** in the **Alert when value**
       dropdown.
-    </Info>
+    </Note>
 
 1. In the **Resolve** field, enter a time period for the resolve window as a
    value followed by an abbreviated unit such as `30s`. Valid units are `s`
@@ -431,12 +431,12 @@ The `schedule` section indicates that this monitor runs each week on Mondays fro
 7:00 to 10:10 and 15:00 to 22:30, and Thursdays from 21:15 through the end of the
 day. All times are in UTC.
 
-<Info>
+<Note>
 If you define `label_names` in the `signal_grouping` section, enter a label name that
 differs in name and casing from the label you enter in the `labels` section. For
 example, if you enter `environment` as a key in the `labels` section, you might use
 `Environments` in the `label_names` section.
-</Info>
+</Note>
 
 ```yaml
 api_version: v1/config
@@ -543,12 +543,12 @@ The `schedule` section indicates that this monitor runs each week on Mondays fro
 7:00 to 10:10 and 15:00 to 22:30, and Thursdays from 21:15 through the end of the
 day. All times are in UTC.
 
-<Info>
+<Note>
 If you define `label_names` in the `signal_grouping` section, enter a label name that
 differs in name and casing from the label you enter in the `labels` section. For
 example, if you enter `environment` as a key in the `labels` section, you might use
 `Environments` in the `label_names` section.
-</Info>
+</Note>
 
 ```yaml
 api_version: v1/config
@@ -660,12 +660,12 @@ The `schedule` section runs this monitor each week on Mondays from 7:00 to 10:10
 15:00 to 22:30, and Thursdays from 21:15 through the end of the day. All times are
 UTC, and Observability Platform won't run this monitor during the rest of the week.
 
-<Info>
+<Note>
 If you define `label_names` in the `signal_grouping` section, enter a label name
 that differs in name and casing from the label you enter in the `labels` section.
 For example, if you enter `environment` as a key in the `labels` section, you
 might use `Environments` in the `label_names` section.
-</Info>
+</Note>
 
 ```ruby
 resource "chronosphere_monitor" "infra" {
@@ -819,12 +819,12 @@ The `schedule` section runs this monitor each week on Mondays from 7:00 to 10:10
 15:00 to 22:30, and Thursdays from 21:15 through the end of the day. All times are
 UTC, and Observability Platform won't run this monitor during the rest of the week.
 
-<Info>
+<Note>
 If you define `label_names` in the `signal_grouping` section, enter a label name
 that differs in name and casing from the label you enter in the `labels` section.
 For example, if you enter `environment` as a key in the `labels` section, you
 might use `Environments` in the `label_names` section.
-</Info>
+</Note>
 
 ```ruby
 resource "chronosphere_monitor" "k8s_production" {
@@ -1053,10 +1053,10 @@ expressed as Terraform resources, Chronoctl YAML, or API-compatible JSON.
 Changes you make in the **Visual Editor** tab don't take effect until you click
 **Save** or apply the code representations using their corresponding tools.
 
-<Info>
+<Note>
 If you manage a monitor using Terraform, you _must_ use Terraform to apply any
 changes.
-</Info>
+</Note>
 
 #### Change code representation
 
@@ -1305,11 +1305,11 @@ variables with the `{{ .CommonLabels.LABEL }}` pattern, and from the alerting me
 with the `{{ .Labels.LABEL }}` pattern. In both patterns, replace _`LABEL`_ with
 the label's name.
 
-<Info>
+<Note>
 To reference labels in Alertmanager variables, you must include those labels in the
 alerting time series. Otherwise, the resulting notifier won't display any information
 for the variables you specify.
-</Info>
+</Note>
 
 The following examples include annotations with variables based on a template. See the
 [Alertmanager documentation](https://prometheus.io/docs/alerting/0.22/notifications/)

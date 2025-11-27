@@ -190,9 +190,9 @@ To complete this action with the Chronosphere API, use the
 </Tab>
 </Tabs>
 
-<Info>
+<Note>
 To create [global notifiers](#global-notifiers), contact [Chronosphere Support](/support).
-</Info>
+</Note>
 
 ## Edit a notifier
 
@@ -269,9 +269,9 @@ To complete this action with the Chronosphere API, use the
 </Tab>
 </Tabs>
 
-<Info>
+<Note>
 To edit [global notifiers](#global-notifiers), contact [Chronosphere Support](/support).
-</Info>
+</Note>
 
 ## Delete a notifier
 
@@ -319,9 +319,9 @@ To complete this action with the Chronosphere API, use the
 </Tab>
 </Tabs>
 
-<Info>
+<Note>
 To delete [global notifiers](#global-notifiers), contact [Chronosphere Support](/support).
-</Info>
+</Note>
 
 ## Notifications for alerts in third-party services
 
@@ -330,11 +330,11 @@ resolves in third-party services, such as PagerDuty and VictorOps. You can choos
 not send notifications by configuring the specified parameter in the Chronoctl YAML
 definition or Terraform resource for your notifier.
 
-<Info>
+<Note>
 If you create a notifier with Observability Platform, notifications are never sent
 when an alert resolves. You can modify this behavior only for notifiers created using
 Chronoctl, Terraform, or the Chronosphere API.
-</Info>
+</Note>
 
 <Tabs>
 <Tab title="Chronoctl" id="resolve-alerts-in-third-party-services-chronoctl">
@@ -402,10 +402,10 @@ Similarly, you can reference monitor-defined annotations by using the
 `{{ .CommonAnnotations.ANNOTATION }}` pattern, replacing _`ANNOTATION`_ with
 the monitor annotation's name.
 
-<Info>
+<Note>
 If your monitor query includes a label that generates different annotation values,
 then annotations won't be included in `CommonAnnotations` or `CommonLabels`.
-</Info>
+</Note>
 
 See the
 [Alertmanager documentation](https://prometheus.io/docs/alerting/0.22/notifications/)

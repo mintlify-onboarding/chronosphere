@@ -122,10 +122,10 @@ kubernetes:
     annotationsPrefix: ${KUBERNETES_PROCESSOR_ANNOTATIONS_PREFIX:"prometheus.io/"}
 ```
 
-<Info>
+<Note>
 If you modify a Collector manifest, you must
 [update it in the cluster and restart the Collector](/ingest/metrics-traces/collector/configure#modify-the-collector-manifest).
-</Info>
+</Note>
 
 ### Scrape multiple ports
 
@@ -170,10 +170,10 @@ jobs:
       enableCompression: BOOLEAN
 ```
 
-<Info>
+<Note>
 The `name` value must be unique across all scrape configurations, and must match the
 job name set in the annotations. For example, `prometheus.io/job`.
-</Info>
+</Note>
 
 For example, to change the `scrapeInterval` to `1m` and create a relabeling rule that
 changes the name of the label `code` to `status_code` for the `api` job, add the
@@ -194,10 +194,10 @@ jobs:
           targetLabel: status_code
 ```
 
-<Info>
+<Note>
 If you modify a Collector manifest, you must
 [update it in the cluster and restart the Collector](/ingest/metrics-traces/collector/configure#modify-the-collector-manifest).
-</Info>
+</Note>
 
 ### Differences between `relabel` and `metricRelabels`
 

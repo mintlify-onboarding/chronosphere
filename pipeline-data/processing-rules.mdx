@@ -82,14 +82,14 @@ is applied only to its specified telemetry type. For example, if you create a
 processing rule for metrics, this rule won't affect any logs or traces that
 pass through your pipeline, even if those logs or traces contain a matching key.
 
-<Info>
+<Note>
 When raw log data passes through at least one processing rule, the data
 receives a new `log` field for each event. This `log` field lets you treat each event
 as a single unit of data.
 
 Structured log data such as JSON doesn't receive a `log` field
 because you can already break structured data into discrete events.
-</Info>
+</Note>
 
 ### Regex engines
 
@@ -142,11 +142,11 @@ For example, given the following JSON object:
 The expression `$kubernetes.pod_name` resolves to `mypod-0`, and the expression
 `$kubernetes.labels[0]` resolves to `"app": "myapp"`.
 
-<Info>
+<Note>
 If the name of a field or parent object contains periods, wrap the name in
 quotes. For example, to access the field `k8s.pod.uid` inside the object
 `attributes`, use the expression `$attributes."k8s.pod.uid"`.
-</Info>
+</Note>
 
 ## Add processing rules to your pipeline
 
@@ -184,9 +184,9 @@ quotes. For example, to access the field `k8s.pod.uid` inside the object
    **Save and Deploy**&nbsp;<Icon icon="chevron-right" /> to save
    your pipeline settings.
 
-<Info>
+<Note>
 Use the toggle next to a processing rule to enable or disable that rule.
-</Info>
+</Note>
 
 ## Use pipeline logs as preview input data
 
@@ -200,12 +200,12 @@ automatically fetches the latest logs from that pipeline. You can also manually
 fetch logs from eligible pipelines to use as preview input data in the processing
 rules playground or when editing any other pipelines.
 
-<Info>
+<Note>
 To be an eligible preview input source, a pipeline must be active and must include
 the [Standard output](/pipeline-data/plugins/destination-plugins/standard-output)
 destination plugin. This plugin is necessary because Chronosphere can't access
 the telemetry data that passes through your pipelines without it.
-</Info>
+</Note>
 
 To use a pipeline's logs as preview input data, choose an eligible pipeline from the
 **Select pipeline** drop-down menu, then click **Get Latest Logs**. This takes a

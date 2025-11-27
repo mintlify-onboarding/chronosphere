@@ -1,5 +1,5 @@
 
-<Info>
+<Note>
 [Environment variable expansions](/ingest/metrics-traces/collector/configure#environment-variable-expansion) and
   [Prometheus relabel rule](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) regular expression capture group references can use the same syntax.
   For example, `${1}` is valid in both contexts.
@@ -7,4 +7,4 @@
   If your relabel configuration uses Prometheus relabel rule regular expression capture
   group references, and they are in the `${1}` format, escape the syntax by adding an
   extra `$` character to the expression such as `$${1}`.
-</Info>
+</Note>

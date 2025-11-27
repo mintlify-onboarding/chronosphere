@@ -153,12 +153,12 @@ To edit a new or existing monitor:
      | make-series avg(latencyInSeconds) step 15m by severity, service
      ```
 
-      <Info>
+      <Note>
       If the log query includes a field that contains a period in its name and you
           want to use signals to group notifications, use an
           [alias for that field name](/investigate/querying/query-logs/query-syntax#alias-field-names).
           Otherwise, periods are converted to underscores in the generated visualization.
-      </Info>
+      </Note>
 1. Use these options to validate and update your query:
 
    - Click **Check Query** to validate your query and preview query results. In the
@@ -188,9 +188,9 @@ To edit a new or existing monitor:
    - Toggle **Simulate alerts** to backtest your condition against existing data. You
      must define at least one condition for alert simulations to work.
 
-      <Info>
+      <Note>
       Alert simulations use existing data, and can't predict future alerts.
-      </Info>
+      </Note>
 
      If your selected query returns too much data, the graph displays an error.
      Chronosphere recommends selecting shorter time periods for testing, when possible.
@@ -202,13 +202,13 @@ To edit a new or existing monitor:
    [Signals](/investigate/alerts/notifications/signals) use a unique set of labels to
    create groups of notifications when a monitor alert triggers or resolves.
 
-    <Info>
+    <Note>
     If you select **per signal (multiple alerts)** to generate multiple alerts, enter
       a label key that differs in name and casing from the label you enter in the
       **Key** field in the **Labels** section. For example, if you enter `environment`
       in the **Key** field, you might use `Environments` as the **Label Key** to match
       on. [Pinned scopes](/navigate/pinned-scopes) can be used as a **Label Key**.
-    </Info>
+    </Note>
 
 1. Define a condition and sustain period (duration of time) in the **Conditions**
    section, and assign the resulting alert a severity (warning or critical). In
@@ -217,10 +217,10 @@ To edit a new or existing monitor:
    (days). The dialog also displays the notifiers associated with the monitor for
    reference.
 
-    <Info>
+    <Note>
     To alert on missing or no data, select **not exists** in the **Alert when value**
       dropdown.
-    </Info>
+    </Note>
 
 1. In the **Resolve** field, enter a time period for the resolve window as a
    value followed by an abbreviated unit such as `30s`. Valid units are `s`

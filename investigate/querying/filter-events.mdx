@@ -62,11 +62,11 @@ To use basic filtering:
      category = "alerts"
      ```
 
-      <Info>
+      <Note>
       Change event categories are case sensitive, and must be all lowercase when
           entering values in the filter box. For example, `category = "alerts"` is valid,
           but entering `category = "Alerts"` returns no data.
-      </Info>
+      </Note>
 
      If you're unsure what attributes you can search for, click the filter box and
      press `Control+Space` to display all available attributes.
@@ -83,10 +83,10 @@ To use basic filtering:
     category = "alerts" AND type = "monitor_triggered_notification_sent"
     ```
 
-    <Info>
+    <Note>
     The operators `AND` plus `OR` are case insensitive, so you can use `AND`,
     `and`, `OR`, and `or` interchangeably.
-    </Info>
+    </Note>
 
 1. As you refine your filter, click and select a portion of the time chart to zoom in
    to a smaller time window.
@@ -131,11 +131,11 @@ To use advanced filtering:
    `title`, such as `production_cluster=production-east` and
    `production_cluster=production-west`.
 
-    <Info>
+    <Note>
     Including a `type` in your filter is a shortcut for narrowing focus to a particular
       change event category. For example, `type="deploy_end"` displays only change events
       of the `deploy` type, because only that `category` includes this `type`.
-    </Info>
+    </Note>
 
 1. Click **Run**, or press `Shift+Enter` (`Shift+Return` on
    macOS) to submit your filter.
@@ -218,7 +218,7 @@ For example, the following filter matches any `deploys` where the type is either
 category = "deploys" AND (type = "build_finished" OR type = "deploy_end") AND title =~ ".*production_cluster.*"
 ```
 
-<Info>
+<Note>
 Change Event categories are case sensitive. Each of the categories that Chronosphere
 [supports by default](/observe/enable-events/use-events#categorize-change-events-intentionally)
 are lowercase and must be queried in all lowercase. For example,
@@ -227,7 +227,7 @@ are lowercase and must be queried in all lowercase. For example,
 Any custom categories must be queried using the case they were created in. For
 example, if you created a category called `INGEST`, any queries in Changes Explorer
 must use `INGEST` in all uppercase as the category to query.
-</Info>
+</Note>
 
 ### Features
 

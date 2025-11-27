@@ -30,11 +30,11 @@ deploy to determine what's changed.
 Administrators can [promote top tags](#promote-top-tags) in your Observability
 Platform tenant so those tags always display in differential diagnosis results.
 
-<Check>
+<Tip>
 Learn more about differential diagnosis, see
 [Troubleshoot microservices issues faster with Differential Diagnosis](https://chronosphere.io/learn/troubleshoot-faster-with-ddx/)
 on the Chronosphere Blog.
-</Check>
+</Tip>
 
 ## Access and use differential diagnosis
 
@@ -57,11 +57,11 @@ investigating:
   complete an aggregate analysis for a larger set of similar spans to elicit a common
   trend that might explain unexpected or irregular behavior.
 
-<Info>
+<Note>
 You can query traces directly [from a dashboard](/observe/dashboards/query-traces),
 and then complete differential diagnosis on the defined query. Observability Platform
 applies the context from your query to Trace Explorer.
-</Info>
+</Note>
 
 To access and use differential diagnosis:
 
@@ -90,7 +90,7 @@ To access and use differential diagnosis:
    - Click the **Differential Diagnosis DDx** tab, and then select a service or service
      and operation.
 
-     <Info>
+     <Note>
       A shortcut to view traces related to your differential diagnosis query is to
          click **View traces** on the **Differential Diagnosis DDx** tab. The resulting
          dialog displays individual traces matching your query in the same view presented
@@ -98,7 +98,7 @@ To access and use differential diagnosis:
 
          Click **Update Trace Explorer query** to apply the differential diagnosis
          criteria you specified to the **Query builder** in Trace Explorer.
-      </Info>
+      </Note>
 
    - Click the **Trace list** tab. Click the name of a trace in the **Trace** column to
      open the trace details page. Select a span, and then click **Differential Diagnosis**.
@@ -139,14 +139,14 @@ results for all users in your Observability Platform tenant.
 
 You must have administrative privileges to complete this task.
 
-<Info>
+<Note>
 You can also promote top tags from the
 [Live Telemetry Analyzer](/investigate/analyze/trace-analyzer#promote-tags-for-differential-diagnosis).
-</Info>
+</Note>
 
 To promote tags to top tags:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and
    then select
    **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Trace Explorer**.
 

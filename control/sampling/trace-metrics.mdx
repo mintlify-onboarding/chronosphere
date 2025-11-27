@@ -61,7 +61,7 @@ the variables with matching criteria defined in the link.
 
 To view your existing trace metrics:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Metrics**.
 1. In the **Rule Name** column, click the name of a trace metric to view the dashboard
@@ -162,10 +162,10 @@ To create a new trace metric:
    that can include service, operation, and any other span tag. Dimensions to group
    by are inherited from the defined search query.
 
-    <Info>
+    <Note>
     Trace metrics don't support regular expression operators, such as the match (`=~`)
       or doesn't match (`!~`) operators.
-    </Info>
+    </Note>
 
 1. Click the <Icon icon="ellipsis-vertical" /> three vertical dots icon, and then select
    **Create Trace Metric**.
@@ -359,7 +359,7 @@ To update a trace metric, you must have administrative privileges.
 
 To edit or update a trace metric:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Metrics**.
 1. To the right of the date of the trace metric, click the <Icon icon="ellipsis-vertical" />
@@ -425,7 +425,7 @@ To delete a trace metric, you must have administrative privileges.
 
 To delete a trace metric:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Metrics**.
 1. To the right of the date of the trace metric, click the <Icon icon="ellipsis-vertical" />
@@ -526,10 +526,10 @@ API for a complete list of supported fields.
 The required `trace_filter` object supports the following optional fields, and you
 can use any combination of them:
 
-<Info>
+<Note>
 Unlike most Terraform resources, several child fields of `trace` and `span` are
 objects with a single field named `value`.
-</Info>
+</Note>
 
 - `trace`: Applies trace-level filtering. You can specify only one trace filter.
     - `duration`: Matches traces with a specified duration. You can specify only one

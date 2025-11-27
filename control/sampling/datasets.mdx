@@ -24,19 +24,19 @@ operations, customer IDs, and tags that relate to your shopping app. Viewing tha
 dataset provides a snapshot of trace data volume associated with the entire business
 unit related to your shopping app.
 
-<Info>
+<Note>
 Chronosphere recommends creating one dataset per team or per environment.
 Understanding data consumption for individual business units can highlight which
 [sampling rules](/control/sampling) to adjust so you can better control your trace
 data license consumption and remain within defined data limits.
-</Info>
+</Note>
 
 Datasets are part of the Trace Control Plane, which also includes trace behaviors and
 head and tail sampling rules. You need administrative access to use the Trace Control
 Plane.
 
 To access trace datasets, in the navigation menu, click
-**<Icon icon="shield" /> Go to Admin** and then select
+**<Icon icon="shield-user" /> Go to Admin** and then select
 **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control
 Plane**.
 
@@ -56,7 +56,7 @@ Select from the following methods to view and filter available trace datasets.
 
 To view trace datasets:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace
    Control Plane**.
@@ -148,7 +148,7 @@ Use one of the following methods to create a dataset.
 
 <Tab title="Web" id="view-datasets-cloud">
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. Click **Create dataset**.
@@ -173,7 +173,7 @@ Observability Platform creates your dataset and displays its definition. Next,
 
 <Tab title="Chronoctl" id="create-a-dataset-chronoctl">
 
-<Info>
+<Note>
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
@@ -183,7 +183,7 @@ chronoctl datasets scaffold
 
 You can redirect the results (using the redirection operator `>`) to a file for
 editing.
-</Info>
+</Note>
 
 To create a dataset with [Chronoctl](/tooling/chronoctl):
 
@@ -348,10 +348,10 @@ The following YAML definition consists of one dataset named
 `payment` service, the `payment_store` operation, and have a tag where
 `deployment.environment=production`.
 
-<Info>
+<Note>
 If you want to specify criteria at the trace level rather than the span level,
 define `trace` instead of `span` in your YAML definition.
-</Info>
+</Note>
 
 ```yaml
 api_version: v1/config
@@ -408,10 +408,10 @@ This dataset includes any spans that include the `payment` service, where the pa
 service matches either `us-east` or `us-west`, the parent operation begins with
 `/payment`, and a tag where `environment` includes `prod`.
 
-<Info>
+<Note>
 If you want to specify criteria at the trace level rather than the span level,
 define `trace` instead of `span` in your YAML definition.
-</Info>
+</Note>
 
 ```ruby
 resource "chronosphere_dataset" "prod_payment_us" {
@@ -504,12 +504,12 @@ levels:
 
 <BehaviorsManage />
 
-<Info>
+<Note>
 Assigning a behavior to a dataset is different than
 [editing the baseline behavior](/control/sampling/behaviors#customize-your-sampling-strategy),
 where you can modify the facets of a baseline behavior based on the sampling strategy
 you want to use.
-</Info>
+</Note>
 
 Select from the following methods to assign behaviors to a dataset.
 
@@ -518,12 +518,12 @@ Select from the following methods to assign behaviors to a dataset.
 
 To assign behaviors to a dataset:
 
-<Info>
+<Note>
 You can also [manage assigned behaviors](/control/sampling/behaviors#manage-assigned-behaviors)
 from the **Behaviors** tab of Trace Control Plane.
-</Info>
+</Note>
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. From the list of datasets, click the dataset you want to manage behaviors for.
@@ -547,7 +547,7 @@ from the **Behaviors** tab of Trace Control Plane.
 </Tab>
 <Tab title="Chronoctl" id="assign-a-behavior-chronoctl">
 
-<Info>
+<Note>
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
@@ -557,7 +557,7 @@ chronoctl trace-behavior-config scaffold
 
 You can redirect the results (using the redirection operator `>`) to a file for
 editing.
-</Info>
+</Note>
 
 To assign a behavior with [Chronoctl](/tooling/chronoctl):
 
@@ -678,7 +678,7 @@ Select from the following methods to edit trace datasets.
 
 <Tab title="Web" id="edit-a-dataset-web">
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. From the list of datasets, click the dataset you want to edit.
@@ -760,7 +760,7 @@ Complete the following steps before you delete a dataset:
 After removing any assigned behaviors and stopping active preview behaviors, delete
 the dataset:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. From the list of datasets, click the dataset you want to delete.

@@ -19,11 +19,11 @@ You can also install the Collector with Kubernetes
 [as a Deployment](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-using-a-deployment)
 or [as a sidecar](/ingest/metrics-traces/collector/install/kubernetes#install-the-collector-as-a-sidecar).
 
-<Info>
+<Note>
 The following steps assume that the applications running in the Kubernetes cluster
 expose Prometheus metrics. To ingest other metric types such as StatsD, refer to
 [Ingest additional metrics](/ingest/metrics-traces/collector/addl-metrics).
-</Info>
+</Note>
 
 To install the Collector:
 
@@ -247,10 +247,10 @@ on the number of metrics scraped every second by your Collector instance. The
 following table lists the recommended memory limits for a Collector instance, with
 its default settings based on observed usage:
 
-<Info>
+<Note>
 This information is both a starting point and an upper limit. Tune your Collectors
 after their deployments, based on practical usage.
-</Info>
+</Note>
 
 | Metrics/Second   | Recommended memory                            |
 | ---------------- | --------------------------------------------- |

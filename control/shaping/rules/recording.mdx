@@ -63,11 +63,11 @@ Rule fields:
   same execution group run at intervals. All rules in a group must complete
   before the rules in that group run again.
 
-  <Info>
+  <Note>
   Creating too many rules in an execution group can cause delays in execution of the
     next iteration. Chronosphere recommends limiting the number of rules in an
     execution group to 200-300 maximum.
-  </Info>
+  </Note>
 
 - `name`: The name of the rule. If `metric_name` is set, this is the human-readable
   name. Otherwise, it's the time series to output to.
@@ -109,7 +109,7 @@ Select from the following methods to view your recording rules.
 <Tabs>
 <Tab title="Web">
 
-In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
 **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Recording Rules**.
 
 The recording rules page is searchable by rule **Name** or **Execution group**.
@@ -158,7 +158,7 @@ Select from the following methods to create or update recording rules.
 To create a recording rule with [Chronoctl](/tooling/chronoctl), define the rule in a
 YAML file and apply it.
 
-<Info>
+<Note>
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
@@ -168,7 +168,7 @@ chronoctl recording-rules scaffold
 
 You can redirect the results (using the redirection operator `>`) to a file for
 editing.
-</Info>
+</Note>
 
 1. Create or edit a YAML configuration file to configure the recording rule. See the
    [Chronoctl example](#chronoctl-example) for a complete configuration file.

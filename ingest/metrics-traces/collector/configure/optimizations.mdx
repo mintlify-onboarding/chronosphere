@@ -15,10 +15,10 @@ on your needs.
 These configurations apply to running the Collector with either Kubernetes or
 Prometheus.
 
-<Info>
+<Note>
 If you modify a Collector manifest, you must
 [update it in the cluster and restart the Collector](/ingest/metrics-traces/collector/configure#modify-the-collector-manifest).
-</Info>
+</Note>
 
 ## Recommended optimizations
 
@@ -70,10 +70,10 @@ push:
 
 > Requires [Chronosphere Collector](/ingest/metrics-traces/collector) version 0.82.0 or later.
 
-<Info>
+<Note>
 Chronosphere Collector version 0.89 and later enables connection pooling by default.
 The default connection pool size as of Chronosphere Collector version 0.106.0 is 1.
-</Info>
+</Note>
 
 A single Collector instance is capable of high throughput. However, if the Collector
 sends metrics at more than 100 requests per second, increase the number of pooled
@@ -183,11 +183,11 @@ The following graph shows the compression difference between using `zstd` instea
 (10x) the amount of compression, `zstd` provides roughly twenty-five times (25x)
 compression.
 
-<Info>
+<Note>
 The compression savings realized in your environment greatly depends on the format of
 your data. For example, the Collector can achieve higher compression with Prometheus
 data, but each payload contains more data than StatsD.
-</Info>
+</Note>
 
 <Frame>
 ![Graph showing the compression gains of roughly 2.5 more when using zstd over snappy as the default compression algorithm](/public/doc-assets/collector-zstd-compression.png)
@@ -281,10 +281,10 @@ curl -X PUT http://localhost:3030/set_log_level -d '{"log_level": "debug", "dura
 - `duration`: Optional. Defines the duration to temporarily set the logging level
   for, in seconds. Default: `60`.
 
-<Info>
+<Note>
 If you send a new request before a previous request's duration has expired, the
 previous request is overridden with the latest request's parameters.
-</Info>
+</Note>
 
 ### Add global labels
 

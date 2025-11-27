@@ -11,12 +11,12 @@ import Params from '/snippets/_partials/processing-rule-params.mdx';
 The join records [processing rule](/pipeline-data/processing-rules) combines values
 from multiple records into an array of values within a single record.
 
-<Info>
+<Note>
 To determine which values to combine, this rule checks the timestamp of each record,
 then combines values from records that occur within the same nanosecond. This timestamp
 is a piece of metadata that Chronosphere Telemetry Pipeline assigns to all records that
 pass through a pipeline, and is unrelated to any keys within the record itself.
-</Info>
+</Note>
 
 ## Configuration parameters
 

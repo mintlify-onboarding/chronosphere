@@ -15,12 +15,12 @@ sampling rules to limit possible traces to a fraction of all possible traces. Yo
 define sampling strategies to target specific kinds of traces, focus on specific
 services, or concentrate on a combination of service and operation.
 
-<Info>
+<Note>
 Head sampling applies _only_ to root services, which are services that appear on the
 root span of a trace. Identifying root services can help identify where the most
 requests to a service originate, and can inform which service to increase sampling
 for to generate additional trace data.
-</Info>
+</Note>
 
 To instrument head sampling, Chronosphere Observability Platform supports the
 [OpenTelemetry JaegerRemoteSampler](https://opentelemetry.io/docs/specs/otel/trace/sdk/#jaegerremotesampler)
@@ -47,7 +47,7 @@ You need administrative access to complete this task.
 
 To view head sampling rules:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. Click the **Head sampling** tab.
@@ -219,10 +219,10 @@ strategy using the [Chronosphere Terraform provider](/tooling/infrastructure/ter
 your OpenTelemetry agents without modifying the JaegerRemoteSampler strategy
 directly.
 
-<Info>
+<Note>
 If you don't define a sampling strategy for a service, Observability Platform applies
 the default sampling rate of `0.001` (0.1%) to the service.
-</Info>
+</Note>
 
 The `applied_strategy` defines your sampling strategy, and can be one of the
 following values:
@@ -252,10 +252,10 @@ To define your head sampling strategy with [Chronoctl](/tooling/chronoctl):
 
 1. Create a YAML file and define your head sampling strategy.
 
-    <Info>
+    <Note>
     Use the `chronoctl trace-jaeger-remote-sampling-strategies scaffold` command to
         generate an example resource for a head sampling rule.
-    </Info>
+    </Note>
 
    The following head sampling strategy defines a probabilistic strategy that sets a
    default sampling rate for the `inventory-operation`, plus an upper and lower bound:

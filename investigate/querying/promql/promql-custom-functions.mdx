@@ -35,14 +35,14 @@ to understand cardinality costs across specific teams, services, and pools, and 
 help pinpoint specific sources of cardinality growth, such as a particular pool or
 priority group.
 
-<Info>
+<Note>
 The `cardinality_estimate` function doesn't measure cardinality in the same
 150-minute rolling time window used by license metrics.
 
 Instead, this function approximates relative cardinality using 120-minute disjointed
 blocks, which can create drift. When looking over historical periods of time, the
 `cardinality_estimate` function uses even longer blocks.
-</Info>
+</Note>
 
 This function supports grouping time series by labels, and returns an estimate
 cardinality for each unique value of the label using the `by` clause in a query. For
@@ -65,10 +65,10 @@ results might not be exact. This function also returns results with much lower
 resolution than the `count` function. The resolution aligns with the index block
 size.
 
-<Info>
+<Note>
 This function provides an alternative to the Prometheus `count_over_time` function,
 which isn't performant when viewing time series with high cardinality.
-</Info>
+</Note>
 
 The `cardinality_estimate` is affected by
 [long term downsampling](/control/shaping/downsampling) of the data it's based on,
@@ -138,12 +138,12 @@ sum_per_second(http_request_count{}[5m])
 sum_over_time(http_request_count{}[5m]) / 300
 ```
 
-<Info>
+<Note>
 To ensure the chart value at each step represents the sum of observations for each
 step's start and end time, you **must** set the query's step size to be equal to
 the sliding time window value. For more guidance, see
 [Best practices for adding dashboard charts](/investigate/querying/metrics/delta-queries#best-practices-for-adding-dashboard-charts).
-</Info>
+</Note>
 
 ## `__histogram_quantiles()`
 

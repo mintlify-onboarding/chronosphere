@@ -31,9 +31,9 @@ panel creation, or edit them at a later time.
 - **Type**: A panel's [_type_](#panel-types) defines its visualization method or
   content. By default, new panels are the
   [Time Series Chart](/observe/dashboards/panels/time-series-chart) type.
-- **<Icon icon="link" alt="Link icon"/> Links**: An icon that reveals any links
+- **<Icon icon="link-simple" alt="Link icon"/> Links**: An icon that reveals any links
   configured for the panel.
-- **<Icon icon="expand" alt="Expand arrow icon"/> Expand**: Expands the
+- **<Icon icon="up-right-and-down-left-from-center" alt="Expand arrow icon"/> Expand**: Expands the
   panel to a the full width and height of the browser for a more detailed view.
 - **<Icon icon="ellipsis-vertical" alt="Options icon"/> Options**: Opens a menu
   of panel-related actions, depending on the panel type.
@@ -87,7 +87,7 @@ To add a panel to a standard dashboard with no existing panel groups:
    [view a list of all dashboards](/observe/dashboards#view-dashboards) or select
    from a [list of dashboards in a collection](/administer/collections/home).
 1. Click **<Icon icon="pencil" alt="Edit icon"/> Edit** on the dashboard.
-1. Click **<Icon icon="chart-simple-plus" alt="Panel icon"/> Panel**.
+1. Click **<Icon icon="chart-column" alt="Panel icon"/> Panel**.
 1. In the **Add Panel** interface that appears, provide a **Name** for the new panel.
 1. Optional: Configure the panel based on the [panel options](#common-panel-elements) and
    [panel type](#panel-types) you want to use.
@@ -96,7 +96,7 @@ To add a panel to a standard dashboard with no existing panel groups:
 To add a new panel to a panel group:
 
 1. In the panel group to which you want to add a panel, click the
-   **<Icon icon="chart-simple-plus" alt="Add panel to group icon"/> Add panel to group**
+   **<Icon icon="chart-column" alt="Add panel to group icon"/> Add panel to group**
    icon.
 1. In the **Add Panel** interface that appears, provide a **Name** for the new panel.
 1. Click **Add** to add the panel or **Cancel** to discard it.
@@ -285,13 +285,13 @@ You can change the query a panel uses when the data doesn't match your needs.
 1. Optional: Add a **Series alias** to define the name displayed for the series
    in the panel's tooltip and legend.
 
-    <Info>
+    <Note>
     If you select a **Logs** query that includes a field which contains a period (`.`)
       in its name (such as `k8s.namespace`), and you want to use signals to group
       notifications, use an
       [alias for that field name](/investigate/querying/query-logs/query-syntax#alias-field-names).
       Otherwise, periods are converted to underscores in the generated visualization.
-    </Info>
+    </Note>
 
 1. Optional: Change the **Resolution** of a query. This setting controls the maximum
    data points per series. Options are:

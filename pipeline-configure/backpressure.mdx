@@ -83,12 +83,12 @@ The available methods for managing backpressure vary depending on your pipeline'
 [workload](/pipeline-configure/kubernetes/workloads) type. Because of this,
 choosing the right workload type is also a key part of managing backpressure.
 
-<Info>
+<Note>
 The primary factors that contribute to backpressure are independent of Telemetry
 Pipeline, like the amount of data that your sources emit and your destinations'
 capacity to receive data. To manage these factors, you must configure your sources
 and destinations directly.
-</Info>
+</Note>
 
 ### Deployment pipelines
 
@@ -136,10 +136,10 @@ Use the following methods to manage backpressure for StatefulSet pipelines:
 - Monitor the latency added by any active [processing rules](/pipeline-data/processing-rules).
   Complex processing operations can add delays and reduce throughput.
 
-<Info>
+<Note>
 The `mem_buf_limit` configuration parameter has no effect on source plugins in
 StatefulSet pipelines.
-</Info>
+</Note>
 
 ### DaemonSet pipelines
 
@@ -155,7 +155,7 @@ Use the following methods to manage backpressure for DaemonSet pipelines:
 - Monitor the latency added by any active [processing rules](/pipeline-data/processing-rules).
   Complex processing operations can add delays and reduce throughput.
 
-<Info>
+<Note>
 DaemonSet pipelines use a static number of replicas, which means they can't be
 scaled.
-</Info>
+</Note>

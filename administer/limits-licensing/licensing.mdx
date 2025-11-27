@@ -18,7 +18,7 @@ limits.
 ## License overview
 
 The **License Overview** is available in your Observability Platform tenant. In
-the navigation menu, click **<Icon icon="shield" /> Go to Admin** and
+the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and
 then select **<Icon icon="scroll" /> License Overview**.
 
 The **License Overview** page consists of these sections, selectable by tab:
@@ -209,11 +209,11 @@ types:
 - Delta counter
 - Gauge
 
-<Info>
+<Note>
 Because Observability Platform aggregates and persists legacy Prometheus histograms
 and OpenTelemetry explicit bucket layout histograms as cumulative or delta counters,
 these metrics consume Standard Metrics License capacity.
-</Info>
+</Note>
 
 ### Histogram Metrics License
 
@@ -274,12 +274,12 @@ your [metric pool allocations](/control/shaping/quotas/manage-pools), and the
 
 <Tab title="Processed writes (legacy)" id="legacy-writes">
 
-<Info>
+<Note>
 After July 2023, Chronosphere transitioned to using the newer licensing concept
 matched writes to measure aggregation workload. Matched writes is a simpler
 measurement that's easier to break down and forecast. Previously, Chronosphere
 measured aggregation workload in processed writes.
-</Info>
+</Note>
 
 The amount of data points processed per second in the Observability Platform
 aggregator tier.
@@ -389,9 +389,9 @@ bucket status:
 
 | Data point | Status                               | Description                          |
 |------------| ------------------------------------ | ------------------------------------ |
-| A3         | <Icon icon="circle-check" style={{ color: 'rgb(89, 204, 141)' }} alt="Accepted"/> | Time series A is in the bucket, so data point A3 is accepted. |
-| E1         | <Icon icon="circle-check" style={{ color: 'rgb(89, 204, 141)' }} alt="Accepted"/> | Time series E isn't in the bucket, but the bucket has space for one more time series, so data point E1 is accepted in time series E. |
-| F1         | <Icon icon="hexagon-exclamation" style={{ color: 'rgb(238, 108, 108)' }} alt="Rejected"/> | Time series F isn't in the bucket, and the bucket is at capacity, so data point F1 is rejected. |
+| A3         | <Icon icon="circle-check" color="#59cc8dff" alt="Accepted"/> | Time series A is in the bucket, so data point A3 is accepted. |
+| E1         | <Icon icon="circle-check" color="#59cc8dff" alt="Accepted"/> | Time series E isn't in the bucket, but the bucket has space for one more time series, so data point E1 is accepted in time series E. |
+| F1         | <Icon icon="hexagon-exclamation" color="#ee6c6cff" alt="Rejected"/> | Time series F isn't in the bucket, and the bucket is at capacity, so data point F1 is rejected. |
 
 Over time, data points expire based on when they entered the bucket. When data points
 exceed the 2.5 hour window, they're excluded from the persisted cardinality bucket.
@@ -403,9 +403,9 @@ time series in the bucket.
 
 | Data point | Status                               | Description                          |
 |------------| ------------------------------------ | ------------------------------------ |
-| A1         | <Icon icon="hexagon-exclamation" style={{ color: 'rgb(255, 178, 73)' }} alt="Expired"/> | Data point A1 expired, so it's excluded from the bucket. |
-| D1         | <Icon icon="hexagon-exclamation" style={{ color: 'rgb(255, 178, 73)' }}  alt="Expired"/> | Data point A1 expired, so it's excluded from the bucket. |
-| C1         | <Icon icon="hexagon-exclamation" style={{ color: 'rgb(255, 178, 73)' }}  alt="Expired"/> | Data point C1 is expiring, so it's excluded from the bucket. |
+| A1         | <Icon icon="hexagon-exclamation" color="#ffb249ff" alt="Expired"/> | Data point A1 expired, so it's excluded from the bucket. |
+| D1         | <Icon icon="hexagon-exclamation" color="#ffb249ff"  alt="Expired"/> | Data point A1 expired, so it's excluded from the bucket. |
+| C1         | <Icon icon="hexagon-exclamation" color="#ffb249ff"  alt="Expired"/> | Data point C1 is expiring, so it's excluded from the bucket. |
 
 ### Manage persisted cardinality limits
 

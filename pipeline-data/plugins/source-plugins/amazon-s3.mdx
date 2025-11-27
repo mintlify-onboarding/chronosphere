@@ -121,12 +121,12 @@ To use static credentials for authentication:
   that contain the values of your [IAM access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
   These secrets must use the key names `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 
-<Info>
+<Note>
 You don't need to add an explicit [reference](/pipeline-configure/secrets#reference-a-secret)
 to these secrets in your pipeline configuration file. If secrets with the correct
 key names are present, the S3 Input (One Time) plugin automatically detects these values
 and uses them for authentication.
-</Info>
+</Note>
 
 ## Supported data types
 

@@ -64,11 +64,11 @@ values for the `k8s_cluster` label:
 avg(node_network_receive_bytes_total{device="eth0"}) by (k8s_cluster)
 ```
 
-<Info>
+<Note>
 The interval you define in functions such as `rate()` and `increase()` must be greater
 than or equal to the scrape interval of the metrics which you apply the function
 to. The recommendation is to use at least twice the scrape interval.
-</Info>
+</Note>
 
 ## Querying histograms
 

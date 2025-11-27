@@ -31,20 +31,20 @@ that interact with the Chronosphere API.
 Observability Platform attributes all actions that a user takes to their user
 account.
 
-<Info>
+<Note>
 User accounts are distinct from *service accounts*, which provide identities for
 services and allow administrators to define what each service can access. Service
 accounts authenticate non-interactively using a unique API token permanently associated
 with each account.
 
 For details, refer to [Service accounts](/administer/accounts-teams/service-accounts).
-</Info>
+</Note>
 
 ## View accounts
 
 You can view accounts in the navigation menu, or by using Chronoctl.
 
-In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
 **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Users**.
 
 For details, see
@@ -52,17 +52,17 @@ For details, see
 
 ## Add a user account
 
-<Info>
+<Note>
 To add user accounts, you must use an account that belongs to a team with the
 `SysAdmin` role.
 
 This process applies only to accounts _without_ single sign-on enabled. For details,
 see [Authenticating with Chronosphere](/overview/authenticating).
-</Info>
+</Note>
 
 To add a user account, you must have administrative privileges:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
    **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Users**.
 1. Click **<Icon icon="plus" /> Add user**.
 1. Enter the user's email address into the field.
@@ -105,6 +105,6 @@ Deleted user accounts with access to a service account token can continue to acc
 Observability Platform when using tools like Chronoctl and Terraform. To avoid access
 by these accounts, delete any service accounts created by deleted user accounts. To
 find these accounts, in the navigation menu, click
-**<Icon icon="shield" /> Go to Admin** and then select
+**<Icon icon="shield-user" /> Go to Admin** and then select
 **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Service Accounts**
 and review the **Created By** column.

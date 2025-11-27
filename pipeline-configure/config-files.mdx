@@ -11,13 +11,13 @@ inside a dedicated configuration file. These files must follow a standard
 [format](#format), but you can customize their contents to control how your
 pipeline gathers, modifies, and sends data.
 
-<Info>
+<Note>
 Due to Kubernetes [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/)
 storage limitations, the total size of a pipeline and its associated resources
 can't exceed 1&nbsp;MiB. This limit includes the combined size of configuration files,
 [secrets](/pipeline-configure/secrets), [parsers](/pipeline-data/parsers),
 and [any other files](/pipeline-configure/files).
-</Info>
+</Note>
 
 ## Modify a pipeline's configuration file
 
@@ -88,9 +88,9 @@ pipeline:
         <...>
 ```
 
-<Info>
+<Note>
 Configuration files use two spaces per indent, not four.
-</Info>
+</Note>
 
 ## Sections
 
@@ -132,10 +132,10 @@ a `processors` section is grouped into subsections for `logs`, `metrics`, and
 `actions` object, which is a sequence of mappings that contains one or more
 processing rules and each rule's associated settings.
 
-<Info>
+<Note>
 If an input or output doesn't have processing rules associated with a particular
 type of telemetry data, the subsection for that telemetry type is omitted.
-</Info>
+</Note>
 
 These sections adhere to the following format:
 

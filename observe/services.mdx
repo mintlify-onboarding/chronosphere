@@ -34,7 +34,7 @@ Service pages take advantage of other Observability Platform features, including
 [collections](/administer/collections). To set up related
 monitors and alerts, see [Monitors](/investigate/alerts/monitors).
 
-<Info>
+<Note>
 The contents of service pages depend on configuration and metrics tagging methods
 that might require information provided in your Observability Platform tenant. This
 information might be tailored to your organization or a specific service.
@@ -42,7 +42,7 @@ information might be tailored to your organization or a specific service.
 The number of listed services might not match services found in
 [Trace Explorer](/investigate/querying/traces) due to
 [discovery job and merge rule configuration](/administer/service-discovery).
-</Info>
+</Note>
 
 ## Understand services
 
@@ -111,10 +111,10 @@ The **Status** column displays the status for each service next to its title:
 
 | Icon | Description |
 | ---- | ------------|
-| <Icon icon="hexagon-exclamation" style={{ color: 'rgb(238, 108, 108)' }}/> | Has a currently alerting monitor that exceeds the defined critical conditions. |
-| <Icon icon="circle-exclamation" style={{ color: 'rgb(255, 178, 73)' }}/> | Has a currently alerting monitor that exceeds the defined warning conditions. |
-| <Icon icon="circle-check" style={{ color: 'rgb(89, 204, 141)' }}/> | No monitors are currently alerting. |
-| <Icon icon="circle-xmark" style={{ color: 'rgb(42, 46, 66)' }}/> | No defined monitors. |
+| <Icon iconType="solid" icon="hexagon-exclamation" color="#ee6c6cff"/> | Has a currently alerting monitor that exceeds the defined critical conditions. |
+| <Icon iconType="solid" icon="circle-exclamation" color="#ffb249ff"/> | Has a currently alerting monitor that exceeds the defined warning conditions. |
+| <Icon iconType="solid" icon="circle-check" color="#59cc8dff"/> | No monitors are currently alerting. |
+| <Icon iconType="solid" icon="ban" color="#2a2e42ff" /> | No defined monitors. |
 
 ### Alerts
 

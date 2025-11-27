@@ -46,7 +46,7 @@ behavior for a dataset, Observability Platform uses defined
 [tail sampling](/control/sampling/tail-sampling) rules. However, you can use trace
 datasets and behaviors without needing to write tail sampling rules.
 
-<Info>
+<Note>
 To specify a sample rate for head sampling in the baseline behavior, you must
 instrument [head sampling](/control/sampling/head-sampling) first. Chronosphere
 supports the OpenTelemetry JaegerRemoteSampler head sampling standard.
@@ -55,7 +55,7 @@ Explicitly-defined [head sampling rules](/control/sampling/head-sampling#create-
 take precedence over head sampling rules defined by a behavior. To use behavioral
 head sampling, [edit the baseline behavior](#edit-the-baseline-behavior) to define a
 head sampling strategy, and then remove your existing head sampling rules.
-</Info>
+</Note>
 
 Behaviors are part of the Trace Control Plane, which also includes datasets and head
 and tail sampling rules. You need administrative access to use the Trace Control
@@ -97,7 +97,7 @@ return the trace behavior definition using Chronoctl.
 
 To view trace behaviors:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. Select the **Behaviors** tab to view the baseline, allow, and deny behaviors,
@@ -159,15 +159,15 @@ Select from the following methods to assign behaviors to a dataset.
 <Tabs>
 <Tab title="Web" id="assign-a-behavior-cloud">
 
-<Info>
+<Note>
 If a behavior isn't currently assigned to a dataset, you must
 [assign behaviors](/control/sampling/datasets#assign-behaviors) to the dataset by
 selecting a dataset from the **Overview** tab of Trace Control Plane.
-</Info>
+</Note>
 
 To assign behaviors to a dataset:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. Click the **Behaviors** tab, and then click the name of the behavior you want to
@@ -176,10 +176,10 @@ To assign behaviors to a dataset:
    for, click the <Icon icon="ellipsis-vertical" /> three vertical dots icon, and select
    **Manage behaviors**.
 
-   <Info>
+   <Note>
    The selected behavior must be assigned to a dataset to manage it from the
       **Behaviors** tab of Trace Control Plane.
-   </Info>
+   </Note>
 
 1. On the **Manage behaviors** page, in the **Main layer** pane, select a main
    behavior from the dropdown.
@@ -198,7 +198,7 @@ To assign behaviors to a dataset:
 </Tab>
 <Tab title="Chronoctl" id="assign-a-behavior-chronoctl">
 
-<Info>
+<Note>
 If you don't already have a YAML configuration file, use the `scaffold` Chronoctl
 parameter to generate a template for a specific resource type:
 
@@ -208,7 +208,7 @@ chronoctl trace-behavior-config scaffold
 
 You can redirect the results (using the redirection operator `>`) to a file for
 editing.
-</Info>
+</Note>
 
 To assign a behavior with [Chronoctl](/tooling/chronoctl):
 
@@ -259,15 +259,15 @@ promoted, preview behaviors inherit the same shaping order as your active behavi
 If no behaviors are active for the selected dataset for which you're previewing a
 behavior, the shaping order defaults to one, which is the highest priority.
 
-<Info>
+<Note>
 If you use datasets with tail sampling rules but have no active behaviors, any
 behaviors that you preview will default to shaping order `1` until you assign
 behaviors to your datasets.
-</Info>
+</Note>
 
 To preview behaviors:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. On the **Overview** tab, select the dataset you want to preview a behavior for.
@@ -279,10 +279,10 @@ To preview behaviors:
    dotted line indicating the effect of the preview if it's promoted. It can take up
    to two minutes before the dotted line displays on each of the charts.
 
-   <Info>
+   <Note>
    You might need to zoom in on the graphs to the current day or the last few minutes
       for the dotted line to display.
-   </Info>
+   </Note>
 
 1. To stop the preview, click **Stop**.
 
@@ -364,14 +364,14 @@ a trace inherits its sampling rate from.
 
 ### Edit the baseline behavior
 
-<Info>
+<Note>
 You can edit facets of the baseline behavior using the Observability Platform app
 only.
-</Info>
+</Note>
 
 To edit the baseline behavior:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. Click the **Behaviors** tab, and then click the **Baseline** behavior.
@@ -381,10 +381,10 @@ To edit the baseline behavior:
    - **Head sampling**: Specify the sample rate for head sampling to capture only a
      portion of possible traces from originating services.
 
-      <Info>
+      <Note>
       To specify a sample rate for head sampling in the baseline behavior, you must
          instrument [head sampling](/control/sampling/head-sampling) first.
-      </Info>
+      </Note>
 
    - **Tail sampling**: Specify the sample rate for each of the facets to drop
      low-value traces and keep high-value traces. Enable which facets to include in
@@ -434,14 +434,14 @@ To create a custom behavior, you duplicate the baseline behavior, define the tai
 sampling rules to apply, and set a default sampling rate for the behavior. You can
 then assign the custom behavior to a dataset.
 
-<Info>
+<Note>
 After creating a custom behavior, you can duplicate that behavior rather than
 duplicating the baseline behavior.
-</Info>
+</Note>
 
 To create a custom behavior:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. Click the **Behaviors** tab, and take one of the following actions to display the
@@ -474,7 +474,7 @@ behavior as you learn more about the dataset the behavior is assigned to.
 
 To modify a custom behavior:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. Click the **Behaviors** tab, and take one of the following actions to display the
@@ -497,7 +497,7 @@ won't let you delete a behavior that's assigned to a dataset.
 
 To delete a custom behavior:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Trace Control Plane**.
 1. Click the **Behaviors** tab, and take one of the following actions to display the

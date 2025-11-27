@@ -151,11 +151,11 @@ You can configure a `group_by` field in notification policies both on the defaul
 override levels. The value of `group_by` accepts a set of unique labels. For example,
 you can group by `env` for environments or by `endpoint`.
 
-<Info>
+<Note>
 Grouping notifications with the `group_by` field for a notification policy is applied
 only if the associated monitor doesn't have any custom
 [signals](/investigate/alerts/notifications/signals) configured.
-</Info>
+</Note>
 
 <Tabs>
 <Tab title="Web" id="create-a-notification-policy-cloud">
@@ -335,10 +335,10 @@ Select from the following methods to edit notification policies.
 <Tabs>
 <Tab title="Web" id="edit-a-notification-policy-cloud">
 
-<Info>
+<Note>
 You can use Observability Platform to edit only notification policies created in
 Observability Platform.
-</Info>
+</Note>
 
 To edit a notification policy:
 
@@ -402,10 +402,10 @@ Select from the following methods to delete notification policies.
 <Tabs>
 <Tab title="Web" id="delete-a-notification-policy-cloud">
 
-<Info>
+<Note>
 You can use Observability Platform to delete only notification policies created in
 Observability Platform.
-</Info>
+</Note>
 
 To delete a notification policy:
 
@@ -505,11 +505,11 @@ For example, the following YAML definition adds an override notifier when the
 `component` label has the value of `mysql`, and another if the `importance` label has
 the value `low`:
 
-<Info>
+<Note>
 This example uses the `type` value `EXACT` for exact label matching. To use regular
 expression matching, provide the `type` value `REGEX`. These are the resource's only
 `type` values.
-</Info>
+</Note>
 
 ```yaml
 routes:
@@ -615,11 +615,11 @@ policy type to determine:
   policy. The `bucket_slug` attribute for a notification policy entity declares an
   owned policy.
 
-  <Info>
+  <Note>
   Owned policies are deprecated. Refer to
     [migrate buckets to collections](/administer/collections/migration)
     to migrate from buckets to collections.
-  </Info>
+  </Note>
 
 From there, Observability Platform evaluates the alert severity:
 

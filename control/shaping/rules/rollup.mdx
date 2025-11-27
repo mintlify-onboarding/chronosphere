@@ -68,10 +68,10 @@ For information about viewing, copying, or downloading rule configurations, see
 Select from the following methods to apply rollup rules. Observability Platform
 doesn't limit the number of rollup rules a system can have.
 
-<Info>
+<Note>
 If you define a rollup rule using the Observability Platform app, you must download
 the rule configuration and apply it with one of the supported methods.
-</Info>
+</Note>
 
 <Tabs>
 <Tab title="Web" id="create-a-rollup-rule-cloud">
@@ -345,10 +345,10 @@ Use label policies to define which labels to preserve in the resulting metric. I
 rollup rule definition, add the appropriate field to specify which labels to retain
 or discard.
 
-<Info>
+<Note>
 You can set only one of `group_by` or `exclude_by` per rollup rule. Graphite metrics
 support only the `exclude_by` rule type.
-</Info>
+</Note>
 
 #### Keep specified labels
 
@@ -575,11 +575,11 @@ Measurements support all aggregation methods:
 
 ### Histograms aggregation operations
 
-<Info>
+<Note>
 If either the input histogram or resulting aggregation exceeds the 160-bucket limit,
 Observability Platform decreases the exponential histogram scale until the bucket
 count is within the limit. Downscaling reduces the exponential histogram's resolution.
-</Info>
+</Note>
 
 #### `CUMULATIVE_EXPONENTIAL_HISTOGRAM`
 

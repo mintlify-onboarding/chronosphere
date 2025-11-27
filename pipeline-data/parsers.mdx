@@ -18,10 +18,10 @@ analyze and process raw, unstructured data.
 Parsers address these issues by transforming your telemetry data into a
 predictable, structured format.
 
-<Info>
+<Note>
 The [parse](/pipeline-data/processing-rules/parse) processing rule
 transforms data in a similar way.
-</Info>
+</Note>
 
 ## Overview
 
@@ -69,13 +69,13 @@ key/value pairs. For example, this is the default NGINX parser:
 
 You can add new parsers or modify existing parsers in a pipeline's `parsers.conf` file.
 
-<Info>
+<Note>
 Due to Kubernetes [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/)
 storage limitations, the total size of a pipeline and its associated resources
 can't exceed 1&nbsp;MiB. This limit includes the combined size of
 [configuration files](/pipeline-configure/config-files), [secrets](/pipeline-configure/secrets),
 parsers, and [any other files](/pipeline-configure/files).
-</Info>
+</Note>
 
 ### Parser settings
 

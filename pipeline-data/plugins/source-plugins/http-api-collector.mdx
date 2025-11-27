@@ -16,7 +16,7 @@ your HTTP endpoints into a telemetry pipeline.
 
 <SourceStyle/>
 
-<Info>
+<Note>
 This plugin doesn't support duplicates of itself within the same pipeline.
 Additionally, this plugin can't be used in combination with these source plugins
 within the same telemetry pipeline:
@@ -27,7 +27,7 @@ within the same telemetry pipeline:
 - [Signal Sciences](/pipeline-data/plugins/source-plugins/signal-sciences)
 - [Slack](/pipeline-data/plugins/source-plugins/slack)
 - [Vectra M365](/pipeline-data/plugins/source-plugins/vectram365)
-</Info>
+</Note>
 
 ## Supported telemetry types
 
@@ -362,10 +362,10 @@ more interested in the time-range filtering, and mixing pagination with it.
 Control time range with either a combination of `time_range.start` and `time_range.end`,
 which are both fixed timestamps.
 
-<Info>
+<Note>
 There's also the option `range` a relative value (`-2h`). However, to have complete control,
 use fixed timestamps.
-</Info>
+</Note>
 
 Issue a `POST` request with a body like the following:
 
@@ -565,11 +565,11 @@ You can control for how much time the cookie is valid by using `auth_cookie_exp`
 which accepts a duration string. After the cookie is expired, the plugin will attempt
 to renew the cookie.
 
-<Info>
+<Note>
 This body doesn't support go-templates. The notation `{{ secrets.* }}` is a
 feature available in Telemetry Pipeline. Its syntax might resemble go-templates,
 but they are not go-templates.
-</Info>
+</Note>
 
 ### Dynatrace example
 

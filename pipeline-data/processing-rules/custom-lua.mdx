@@ -25,10 +25,10 @@ in protected mode to ensure that malformed Lua code doesn't harm pipelines.
 
 ## GPT generation
 
-<Info>
+<Note>
 Keep in mind that this feature is experimental, and that Chronosphere can't guarantee
 the accuracy or quality of generated scripts.
-</Info>
+</Note>
 
 {/* vale Chronosphere.Spelling = NO */}
 
@@ -182,11 +182,11 @@ Lua script to access that data.
 This example imports the Lua JSON library, then uploads a file called `schema`,
 and then converts and returns the data stored in that file.
 
-<Info>
+<Note>
 The processing rules playground can't access pipeline files. To test a Lua script
 that reads files, Chronosphere recommends creating a small pipeline that uses mock
 data.
-</Info>
+</Note>
 
 ```lua
 local json = require 'json'

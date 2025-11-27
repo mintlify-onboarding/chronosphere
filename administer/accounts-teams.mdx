@@ -30,7 +30,7 @@ Platform features, including team and account management and assignment.
 <Tabs>
 <Tab title="Web - accounts" id="view-accounts-cloud">
 
-In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
 **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Users**.
 
 The left-hand column lists all accounts. The list includes icons for
@@ -61,7 +61,7 @@ provides options to add or remove the account from teams.
 </Tab>
 <Tab title="Web - teams" id="view-accounts-cloud">
 
-In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and then select
+In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and then select
 **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Teams**.
 
 The table lists all teams by name and other details about their configuration:
@@ -89,11 +89,11 @@ slug at the `serviceaccount.chronosphere.io` domain, that
 member is a [service account](/administer/accounts-teams/service-accounts). Other
 email addresses represent user accounts.
 
-<Info>
+<Note>
 To view accounts and teams with Chronoctl, you must authenticate as a user
 that belongs to a team with the SysAdmin role, or as an unrestricted
 [service account](/administer/accounts-teams/service-accounts).
-</Info>
+</Note>
 
 To list each team and its member accounts in separate YAML documents with
 [Chronoctl](/tooling/chronoctl), use the `teams list` command. You can also use

@@ -81,12 +81,12 @@ window for the `http_request_count` time series where the `error_code` label equ
 sum_over_time(http_request_count{error_code="5xx", service="my-service"}[1m])
 ```
 
-<Info>
+<Note>
 To ensure the chart value at each step represents the sum of observations for each
 step's start and end time, you **must** set the query's step size to be equal to
 the sliding time window value. For more guidance, see
 [Best practices for adding dashboard charts](#best-practices-for-adding-dashboard-charts).
-</Info>
+</Note>
 
 #### Get the per-second error rate for a given service in 1-minute steps
 

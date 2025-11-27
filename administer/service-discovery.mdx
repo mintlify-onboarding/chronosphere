@@ -36,7 +36,7 @@ graph LR
 
 ## View service configuration
 
-In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
 and then select
 **<Icon icon="wrench" /> Platform <span aria-label="and then">></span> Service Configuration**
 to open the **Service Configuration** page.
@@ -317,7 +317,7 @@ To discard changes, click **Reset changes**.
 
 ### Create a merge rule
 
-<Info>
+<Note>
 You can merge a limited number of service names together. Merge rules can be
 used to group service names like `gateway` and `gateway-staging` together. They can't
 merge high cardinality service names together like `gateway-1` and `gateway-2` to
@@ -326,7 +326,7 @@ merge high cardinality service names together like `gateway-1` and `gateway-2` t
 It's always better to have a service label that already uses the correct service
 name rather than using merge rules to fix them afterwards. Merge rules use
 [regular expressions](/investigate/querying/regular-expressions).
-</Info>
+</Note>
 
 To create a merge rule:
 

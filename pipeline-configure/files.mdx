@@ -11,13 +11,13 @@ that govern a pipeline's settings, you can optionally add other kinds of files
 to pipelines, such as [parsers](/pipeline-data/parsers), certificates, and
 [custom Lua](/pipeline-data/processing-rules/custom-lua) scripts.
 
-<Info>
+<Note>
 Due to Kubernetes [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/)
 storage limitations, the total size of a pipeline and its associated resources
 can't exceed 1&nbsp;MiB. This limit includes the combined size of
 [configuration files](/pipeline-configure/config-files), [secrets](/pipeline-configure/secrets),
 [parsers](/pipeline-data/parsers), and any other files.
-</Info>
+</Note>
 
 ## Add a file to a pipeline
 
@@ -63,12 +63,12 @@ To encrypt your file, add the `--encrypt-files` flag.
 
 ## Add a file to a Core Instance
 
-<Info>
+<Note>
 Adding a file to a Core Instance doesn't circumvent the 1&nbsp;MiB resource limit
 for pipelines. If you add a file to a Core Instance, that file becomes a resource
 for every pipeline associated with that Core Instance, which increases the resource
 utilization for each pipeline accordingly.
-</Info>
+</Note>
 
 You can also add a file to a [Core Instance](/pipelines/concepts#core-operators-and-core-instances),
 which makes that file available to all pipelines associated with that Core Instance. To do

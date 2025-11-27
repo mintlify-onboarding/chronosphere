@@ -174,9 +174,9 @@ Transformation queries include operators that modify input records by adding,
 removing, or updating fields in the results set. Observability Platform supports the
 following transformation operators you can include in log queries.
 
-<Info>
+<Note>
 All transformation operators require a pipe (`|`) character in a query.
-</Info>
+</Note>
 
 #### `limit`
 
@@ -622,12 +622,12 @@ between fields and values:
 | `=~`     | Matches regular expression                                    |
 | `!~`     | Doesn't match regular expression                              |
 
-<Info>
+<Note>
 Queries that use regular expression operators match only on the first 1,024
 characters of a string. These operators won't match any characters in a string that
 exceed 1,024 characters. To change this match limit, contact
 [Chronosphere Support](/support).
-</Info>
+</Note>
 
 In the following example, consider that a field name `kubernetes.cluster_name`
 contains the following values: `production-1`, `production-2`, `production-3`,
@@ -1071,10 +1071,10 @@ The `dcountif` function calculates an estimated number of distinct values where 
 specified `EXPRESSION` filter evaluates to `true`. Use this function to estimate the
 cardinality of large data sets.
 
-<Info>
+<Note>
 The `dcountif` function trades accuracy for performance, and might return a result
 that varies between executions.
-</Info>
+</Note>
 
 **Syntax**
 

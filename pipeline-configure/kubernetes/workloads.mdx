@@ -42,9 +42,9 @@ Replace the following:
 - _`WORKLOAD`_: The workload type for your pipeline. Possible values: `deployment`,
   `statefulSet`, or `daemonSet`.
 
-<Info>
+<Note>
 After you create a pipeline, you can't change its workload type.
-</Info>
+</Note>
 
 ### Additional settings for StatefulSet pipelines
 
@@ -71,7 +71,7 @@ one required setting:
   and `Delete`. To use this flag, you must be running Kubernetes v1.32 or newer
   and must enable the `StatefulSetAutoDeletePVC` feature gate in Kubernetes.
 
-<Info>
+<Note>
 If you're using Kubernetes v1.31 or earlier, you can't set the `--pvc` flags to
 specify how Kubernetes handles PVC cleanup because older versions of Kubernetes
 don't handle PVC cleanup. Instead, Telemetry Pipeline handles the cleanup process by
@@ -81,7 +81,7 @@ If you're using Kubernetes v1.32 or later but don't enable the `StatefulSetAutoD
 feature gate, or if you attempt to set the `--pvc` flags in Kubernetes v1.31 or earlier,
 neither Kubernetes nor Telemetry Pipeline handles PVC cleanup. In this scenario,
 all PVCs persist until you delete them manually.
-</Info>
+</Note>
 
 For example, the following command creates a StatefulSet pipeline named `my-pipeline`
 associated with a Core Instance named `my-instance`. It uses a StorageClass named

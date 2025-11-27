@@ -39,11 +39,11 @@ information to your app. You can then add another span filter in a new row to ex
 traces where any other span contains a tag like `geo=fr` to filter out any payments
 made in France.
 
-<Info>
+<Note>
 You can define a search to query traces directly
 [from a dashboard](/observe/dashboards/query-traces). This ability lets you search
 your trace data without having to navigate to Trace Explorer.
-</Info>
+</Note>
 
 To search traces:
 
@@ -53,11 +53,11 @@ To search traces:
 1. Choose the time period to display results for, which defaults to the last 15
    minutes.
 
-    <Info>
+    <Note>
     When choosing a time window, selecting a period longer than one day greatly
       impacts load time for search results. For optimal results, scope search queries to
       shorter time periods.
-    </Info>
+    </Note>
 
 1. Use the **Query builder** to define the criteria of your search:
 
@@ -92,11 +92,11 @@ To search traces:
      service="billing-svc" operation=~"^execute*." build.version="v1.54"
      ```
 
-      <Info>
+      <Note>
       You can also click **Trace ID** to enter a unique trace ID to search for a
           specific trace, such as `19323ae9283b8fea000f63bff84524a0`. Use this feature if
           you received an alert containing a trace ID to go directly to that trace.
-      </Info>
+      </Note>
 
    - Enter any tags for matching as key/value pairs. For example, you might want to
      return traces with any span that has `environment=production` to focus your
@@ -121,11 +121,11 @@ To search traces:
 1. Click **<Icon icon="arrows-rotate" />Run** to submit your query. You must click
    **<Icon icon="arrows-rotate" />Run** after each time you modify the query criteria.
 
-    <Info>
+    <Note>
     You can press `Control+Return` or `Control+Enter` on your
     keyboard instead of clicking **<Icon icon="arrows-rotate" />Run** to submit a
     query.
-    </Info>
+    </Note>
 
    If the time range for your query is broad, such as the last five days, Trace
    Explorer loads results progressively. As results are available, you can click
@@ -147,7 +147,7 @@ To search traces:
 1. To refine your search, click <Icon icon="plus" />**Add span criteria** and
    specify additional span properties to include or exclude.
 
-    <Info>
+    <Note>
     Each row is a separate span filter that Observability Platform evaluates against
     individual spans. When you include
     [multiple span filter rows](#query-with-multiple-span-criteria), Observability
@@ -155,7 +155,7 @@ To search traces:
 
     Observability Platform finds traces where one span matches all criteria in the first row,
     and also where _at least one_ other span matches all criteria in subsequent rows.
-    </Info>
+    </Note>
 
    As you modify your search, the search timeline graph updates in real time, along
    with the statistics, traces, and topology views. The timeline shows an overview of
@@ -166,13 +166,13 @@ To search traces:
    </Frame>
 
 1. To copy a short URL to your clipboard you can share with other users,
-   click <Icon icon="link" /> **Copy URL**. Use this capability for sharing links
+   click <Icon icon="link-simple" /> **Copy URL**. Use this capability for sharing links
    of complicated queries that can generate long URLs.
 
-    <Info>
+    <Note>
     Observability Platform permanently stores short URLs in your tenant so that they
     don't expire.
-    </Info>
+    </Note>
 
 1. To learn more about the spans in a trace, click the **Trace list** tab. Click the name
    of a trace in the **Trace** column to open the trace details page, which displays
@@ -465,5 +465,5 @@ To save a search:
 To view your saved search, click **View searches**. Your saved search displays in the
 **Saved** tab.
 
-To share your search, click <Icon icon="link" /> the copy icon to copy a short URL
+To share your search, click <Icon icon="link-simple" /> the copy icon to copy a short URL
 to your clipboard that you can share with other users.

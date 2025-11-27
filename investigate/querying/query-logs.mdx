@@ -13,10 +13,10 @@ such as `service` or `severity`, and then use the
 [query syntax](/investigate/querying/query-logs/query-syntax) to incorporate
 additional attributes.
 
-<Info>
+<Note>
 Chronosphere recommends always including a filter with a primary key in your query
 for optimal performance.
-</Info>
+</Note>
 
 ## Basic querying
 
@@ -66,10 +66,10 @@ To use basic querying:
      severity = "ERROR AND service = "nginx"
      ```
 
-     <Info>
+     <Note>
       If you're unsure what syntax to use, click in the query box and press
          `Control+Space` to display values for a key or available operators.
-      </Info>
+      </Note>
 
    - **Attributes**: After expanding an individual log, click any key or value to
      display a menu with the following options:
@@ -97,10 +97,10 @@ To use basic querying:
    severity = "ERROR" and service = "gateway" AND "failed query token"
    ```
 
-   <Info>
+   <Note>
    The operators `AND` plus `OR` are case insensitive, so you can use `AND`,
       `and`, `OR`, and `or` interchangeably.
-   </Info>
+   </Note>
 
 1. As you refine your filter, click and select a portion of the time chart to zoom in
    to view a smaller time window.
@@ -317,7 +317,7 @@ To copy a URL to a defined query:
 1. [Construct a query](#basic-querying) that returns the log data you want to
    view.
 1. In the main header next to **Logs Explorer**, click
-   <Icon icon="link" /> **Copy URL** and choose type of time range to use for the URL:
+   <Icon icon="link-simple" /> **Copy URL** and choose type of time range to use for the URL:
 
    - **Copy with absolute time range**: Create a link that runs a query against the
      date and time interval from when you copied the link. For example, if your query
@@ -340,7 +340,7 @@ To copy a URL to a specific log:
 1. In the navigation menu select
    **<Icon icon="compass" /> Explorers <span aria-label="and then">></span> Logs Explorer**.
 1. [Construct a query](#basic-querying) that returns the log data you want to view.
-1. Expand an individual log you want to share, and then click <Icon icon="link" />
+1. Expand an individual log you want to share, and then click <Icon icon="link-simple" />
    **Copy URL** to copy a URL to the selected log.
 
 The URL is compressed to a short URL and copied to your clipboard. When another user

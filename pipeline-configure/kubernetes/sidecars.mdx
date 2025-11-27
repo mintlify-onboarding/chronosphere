@@ -34,10 +34,10 @@ specification file for an existing sidecar.
 
 ## Create a sidecar
 
-<Info>
+<Note>
 You can only create sidecars for existing pipelines. If you attempt to create
 a sidecar for a pipeline that doesn't exist, the operation will fail.
-</Info>
+</Note>
 
 To create a pipeline sidecar, run the following command:
 
@@ -75,13 +75,13 @@ Pipeline sidecars support these optional configuration settings.
 You can use [Kubernetes ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
 to mount volumes to a sidecar.
 
-<Info>
+<Note>
 Pipeline sidecars only support ConfigMap volumes, and no other types of volumes.
 
 Additionally, before you create a sidecar that will reference a ConfigMap, you must
 create the required ConfigMap in the Kubernetes cluster that contains your pipeline.
 The ConfigMap must also exist in the same namespace as your pipeline.
-</Info>
+</Note>
 
 The following example shows a [sidecar specification file](#sidecar-specification-files)
 that includes mounted volumes:

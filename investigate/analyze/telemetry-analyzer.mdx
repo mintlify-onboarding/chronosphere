@@ -12,18 +12,18 @@ Chronosphere Collector is aware of particular metrics. Use the metrics telemetry
 analyzer as a first step in identifying opportunities to reduce the overall volume of
 metrics.
 
-<Info>
+<Note>
 Chronosphere Observability Platform adaptively adjusts the metrics sampling rate
 based on the current workload. This behavior means that not all metrics are
 immediately visible in the Live Telemetry Analyzer.
-</Info>
+</Note>
 
 {/* vale off */}
 {/* This vale test is bad. */}
 
-<Check>
+<Tip>
 [See a demo of the live telemetry analyzer.](https://app.teamwalnut.com/player/?demoId=bc370030-8fed-44bd-a261-6328bac9a00c&screenId=b6aa4c42-4aa8-48fd-9a2a-23d3553263c9&showGuide=true&showGuidesToolbar=false&showHotspots=true&source=app)
-</Check>
+</Tip>
 
 {/* vale on */}
 
@@ -31,7 +31,7 @@ immediately visible in the Live Telemetry Analyzer.
 
 To use the metrics telemetry analyzer to capture live profiling data:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin** and
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin** and
    then select
    **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
 1. Click either the **Metrics** or **Traces** tab, depending on the data you want to
@@ -157,10 +157,10 @@ Use the **Search** text box to find a specific label. The **Search** text box fi
 as you type, reducing the label list displayed. Live Telemetry Analyzer uses
 [glob syntax](/investigate/querying/glob-syntax).
 
-<Info>
+<Note>
 Observability Platform glob syntax doesn't support using two asterisks where one of
 them is in the middle of a string. For example, `*k8s*staging` isn't valid.
-</Info>
+</Note>
 
 Select the checkbox next to any label to filter the **Label Values** table by the
 selected value.

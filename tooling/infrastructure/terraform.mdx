@@ -48,7 +48,7 @@ Observability Platform also prevents any attempts to modify these resources with
 | 0.29 through 0.32          | Monitors, mapping rules, rollup rules, and notification policies |
 | 0.28 and earlier           | Monitors                                                         |
 
-<Info>
+<Note>
 Dry runs can't validate resources or configurations that rely on uniqueness or the
 existence of other objects, because those traits can change during the dry run or
 before Terraform applies the configuration. For example, a dry run can't validate
@@ -57,7 +57,7 @@ guaranteed.
 
 Dry runs can therefore provide only a best-effort attempt to confirm a resource's
 validity.
-</Info>
+</Note>
 
 ### Disable dry run validation
 

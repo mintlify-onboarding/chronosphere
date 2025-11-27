@@ -40,7 +40,7 @@ Select from one of the following methods to view control rules.
 
 To view control rules:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Control Rules**.
 
@@ -96,7 +96,7 @@ Use one of the following methods to create control rules for log data:
 Define control rules in Observability Platform, and then
 [use the Code Config tool](/tooling/gitops) to apply the rule definition.
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Control Rules**.
 1. Click **Add control rule** to create a control rule.
@@ -117,7 +117,7 @@ Define control rules in Observability Platform, and then
    ingested.
 1. Review the returned data from the preview filter and make changes as necessary.
 
-   <Info>
+   <Note>
     Control rules are applied during ingestion, so the preview filter results might
     differ from a filter submitted in Logs Explorer after ingestion. By default,
     including a dot (`.`) in a filter indicates nesting within a field.
@@ -135,7 +135,7 @@ Define control rules in Observability Platform, and then
     ```sql
     service = "nginx" and severity = "INFO" and ["resource.type"] = "k8s_container"
     ```
-    </Info>
+    </Note>
 
 1. Enter additional information for the specified action:
    <Tabs>
@@ -450,7 +450,7 @@ Select from the following methods to edit control rules.
 <Tabs>
 <Tab title="Web" id="edit-control-rules-web">
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Control Rules**.
 1. In the row of the control rule you want to edit, click the <Icon icon="ellipsis-vertical" />
@@ -518,7 +518,7 @@ Select from the following methods to delete control rules.
 <Tabs>
 <Tab title="Web" id="delete-control-rules-web">
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="shapes" /> Control <span aria-label="and then">></span> Logs Control Rules**.
 1. In the row of the control rule you want to delete, click the <Icon icon="ellipsis-vertical" />

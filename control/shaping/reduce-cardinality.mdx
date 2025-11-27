@@ -12,11 +12,11 @@ comes online, you might see cardinality spikes. Cardinality spikes can occur whe
 - A metric or group of metrics has unexpectedly large numbers of labels.
 - A process or service creates many similarly named metrics.
 
-<Check>
+<Tip>
 For more information about cardinality, see
 [What is high cardinality in observability?](https://chronosphere.io/learn/what-is-high-cardinality/)
 on the Chronosphere Blog.
-</Check>
+</Tip>
 
 Cardinality spikes can cause storage and licensing issues. To reduce cardinality, or
 data storage for less important metrics:
@@ -45,7 +45,7 @@ targeted metric and its associated labels.
 
 If you have administrative privileges:
 
-1. In the navigation menu, click **<Icon icon="shield" /> Go to Admin**
+1. In the navigation menu, click **<Icon icon="shield-user" /> Go to Admin**
    and then select
    **<Icon icon="microscope" /> Analyzers <span aria-label="and then">></span> Live Telemetry**.
 1. The analyzer defaults to `_name_`. Sort **Label values** by name, or add a

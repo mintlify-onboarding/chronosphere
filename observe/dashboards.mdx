@@ -23,11 +23,11 @@ Chronosphere Observability Platform provides two types of dashboards:
 Standard dashboards are purpose-built for observability with Observability Platform,
 and are the only dashboards with a commitment to ongoing development.
 
-<Info>
+<Note>
 Standard dashboards aren't available to all Observability Platform users and might
 not be visible in your app. For information about enabling this feature in your
 environment, contact [Chronosphere Support](/support).
-</Info>
+</Note>
 
 Dashboards are individual pages made up of [panels](/observe/dashboards/panels).
 These panels can be [different types](/observe/dashboards/panels#panel-types),
@@ -45,14 +45,14 @@ To search for a dashboard from anywhere in Observability Platform:
 
 1. Click the global search bar to focus on it, or use the keyboard shortcut
    `Control+K` (`Command+K` on macOS).
-1. Click the **<Icon icon="dashboard" alt="Dashboard icon"/> Dashboards**
+1. Click the **<Icon icon="table-cells" alt="Dashboard icon"/> Dashboards**
    filter.
 1. Begin typing any part of the dashboard's name.
 1. Click a dashboard listed in the search results to view it, or use the arrow keys
    to select the result and press `Enter` (`Return` on macOS).
 
 To view all dashboards, in the navigation menu select
-**<Icon icon="dashboard" alt="Dashboards"/> Dashboards**. This displays
+**<Icon icon="table-cells" alt="Dashboards"/> Dashboards**. This displays
 a table listing every dashboard in your organization.
 
 In the table's **Owner** column, the <CollectionIcon /> collection icon indicates a
@@ -121,7 +121,7 @@ chronoctl dashboards list --names LIST
 Replace _`LIST`_ with a comma-separated list of dashboard names as a string, such as
 `"Infra Dashboard,Frontend Dashboard"`.
 
-<Info>
+<Note>
 Dashboard resources returned by `list` don't contain the dashboard's JSON definitions
 by default, but resources returned by `read` do. To include dashboard JSON with
 `dashboards list`, add the `--include-dashboard-json` option to the command:
@@ -129,7 +129,7 @@ by default, but resources returned by `read` do. To include dashboard JSON with
 ```shell
 chronoctl dashboards list --include-dashboard-json
 ```
-</Info>
+</Note>
 
 To return a single dashboard, use the `chronoctl dashboards read` command:
 
@@ -175,15 +175,15 @@ defining fields in code.
 <Tabs>
 <Tab title="Web" id="create-a-dashboard-cloud">
 
-<Info>
+<Note>
 These steps apply only to standard dashboards. For classic dashboards, see
 [Classic dashboards](/observe/dashboards/classic-dashboards).
-</Info>
+</Note>
 
 To create a new dashboard:
 
 1. In the navigation menu select
-   **<Icon icon="dashboard" alt="Dashboards"/> Dashboards**.
+   **<Icon icon="table-cells" alt="Dashboards"/> Dashboards**.
 1. Click **+ Add**.
 1. In the menu that appears, click **New dashboard** to open the **Add dashboard**
    dialog.
@@ -205,7 +205,7 @@ You can also create a new dashboard from an
 To create a new dashboard using [Chronoctl](/tooling/chronoctl), configure it in a YAML
 resource definition and apply it.
 
-<Info>
+<Note>
 If you don't already have a YAML configuration file, use the
 `chronoctl dashboards scaffold` command to generate a template for a specific
 resource type:
@@ -216,7 +216,7 @@ chronoctl dashboards scaffold
 
 You can redirect the results (using the redirection operator `>`) to a file for
 editing.
-</Info>
+</Note>
 
 To create a new dashboard as code:
 
@@ -322,7 +322,7 @@ Your duplicated dashboard opens and is ready to edit.
 Observability Platform lets you upload one or more dashboards as JSON files.
 To do so:
 
-1. In the navigation menu select **<Icon icon="dashboard" /> Dashboards**.
+1. In the navigation menu select **<Icon icon="table-cells" /> Dashboards**.
 1. Click **+ Add**.
 1. In the menu, click **Import dashboard** to open the **Import Dashboards** dialog.
 1. Click **Import or Drag and Drop dashboard JSON File** to upload one or more exported
@@ -519,10 +519,10 @@ Select from the following methods to delete a dashboard.
 <Tabs>
 <Tab title="Web" id="delete-a-dashboard-cloud">
 
-<Info>
+<Note>
 These steps apply only to standard dashboards. For classic dashboards, see
 [Classic dashboards](/observe/dashboards/classic-dashboards).
-</Info>
+</Note>
 
 To delete a dashboard while viewing it:
 

@@ -16,11 +16,11 @@ and for individual pipelines. Any tolerations set for a Core Instance apply to
 all pipelines associated with that Core Instance, but tolerations set for an individual
 pipeline override any tolerations set for its corresponding Core Instance.
 
-<Info>
+<Note>
 To set corresponding taints on nodes, use the
 [`kubectl taint`](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_taint/)
 command.
-</Info>
+</Note>
 
 ## Toleration parameters
 
@@ -138,9 +138,9 @@ foo=Equal:bar:NoExecute:3600,baz=Exists::PreferNoSchedule
 
 ### Toleration JSON syntax
 
-<Info>
+<Note>
 Per-pipeline tolerations require Chronosphere Telemetry Pipeline v2.34.0 or later.
-</Info>
+</Note>
 
 The JSON file that specifies your tolerations must follow this syntax:
 

@@ -83,11 +83,11 @@ You can define custom key:value pairs as parameters for Amazon Data Firehose to
 include in each HTTP call. Observability Platform treats all additional parameters
 as resource attributes and merges them into the time series.
 
-<Info>
+<Note>
 Your custom parameters take precedence over the default CloudWatch metrics resource
 attributes. To avoid accidentally overwriting CloudWatch-provided values, do not
 add custom parameters with key names that conflict with default CloudWatch key names.
-</Info>
+</Note>
 
 You can configure additional parameters using either the AWS Management Console
 or Terraform.
@@ -360,12 +360,12 @@ delivery stream will be created with the following permissions:
 You can configure CloudWatch Metric Streams either manually in the AWS Management
 Console or by using Terraform.
 
-<Info>
+<Note>
 Before configuring metric ingestion, you can set up a drop rule to drop all metrics
 sent by CloudWatch Metric Streams. Doing this avoids unexpected license
 consumption changes. For examples, see
 [Drop CloudWatch Metric Stream metrics](#drop-cloudwatch-metric-stream-metrics).
-</Info>
+</Note>
 
 <Tabs>
 
