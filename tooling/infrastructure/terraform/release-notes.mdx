@@ -15,26 +15,24 @@ explicitly instructed otherwise by Chronosphere Support. If you experience issue
 upgrade to the latest supported version.
 </Note>
 
-## Version 1.17.0
-
-Released 2025.11.03
+<Update label="Version 1.17.0" description="Released 2025.11.03">
 
 ### Feature [#features-v1-17-0]
 
 - Add `ROLLING_1_HOUR_VOLUME` and `ROLLING_3_HOUR_VOLUME` thresholds to `chronosphere_consumption_budget` resource.
 
-## Version 1.16.0
+</Update>
 
-Released 2025.10.22
+<Update label="Version 1.16.0" description="Released 2025.10.22">
 
 ### Feature [#features-v1-16-0]
 
 - Add `emit_metrics` and `replace_fields` control rule types to `chronosphere_log_control_config` resource.
 - Add `field_normalization` to `chronosphere_log_ingest_config` resource.
 
-## Version 1.15.0
+</Update>
 
-Released 2025.10.14
+<Update label="Version 1.15.0" description="Released 2025.10.14">
 
 ### Feature [#features-v1-15-0]
 
@@ -42,9 +40,9 @@ Released 2025.10.14
 - Add `alert_action_config` field to `chronosphere_consumption_budget` resource
   for customizing consumption budget alerts.
 
-## Version 1.14.0
+</Update>
 
-Released 2025.10.02
+<Update label="Version 1.14.0" description="Released 2025.10.02">
 
 ### Feature [#features-v1-14-0]
 
@@ -60,9 +58,9 @@ Released 2025.10.02
   `mode` field. This field can't be set to `false`, and is a breaking change that
   requires switching to the `mode` field.
 
-## Version 1.13.0
+</Update>
 
-Released 2025.08.27
+<Update label="Version 1.13.0" description="Released 2025.08.27">
 
 ### Feature [#features-v1-13-0]
 
@@ -72,9 +70,9 @@ Released 2025.08.27
 - Promote `chronosphere_consumption_budget` resource from unstable to `/v1`.
 - Add `span_tag` field to `chronosphere_derived_label` resource.
 
-## Version 1.12.0
+</Update>
 
-Released 2025.08.05
+<Update label="Version 1.12.0" description="Released 2025.08.05">
 
 ### Feature [#features-v1-12-0]
 
@@ -86,17 +84,17 @@ Released 2025.08.05
 
 - Deprecate `permissive` in `chronosphere_rollup_rule` resource.
 
-## Version 1.11.0
+</Update>
 
-Released 2025.05.15
+<Update label="Version 1.11.0" description="Released 2025.05.15">
 
 ### Feature [#features-v1-11-0]
 
 - Add timeslice indicator support to `chronosphere_slo` resource with `custom_timeslice_indicator` field.
 
-## Version 1.10.0
+</Update>
 
-Released 2025.04.24
+<Update label="Version 1.10.0" description="Released 2025.04.24">
 
 ### Feature [#features-v1-10-0]
 
@@ -107,9 +105,9 @@ Released 2025.04.24
 - Removed queryless SLO fields from the unstable `chronosphere_slo` resource.
 - Removed `reporting_windows` from the unstable `chronosphere_slo` resource.
 
-## Version 1.9.0
+</Update>
 
-Released 2025.04.03
+<Update label="Version 1.9.0" description="Released 2025.04.03">
 
 ### Features [#features-v1-9-0]
 
@@ -122,17 +120,17 @@ Released 2025.04.03
 - Deprecated queryless `additional_promql_filters` in unstable `chronosphere_slo`
   resource.
 
-## Version 1.8.0
+</Update>
 
-Released 2025.02.28
+<Update label="Version 1.8.0" description="Released 2025.02.28">
 
 ### Feature [#features-v1-8-0]
 
 - Adds `priority_thresholds` to `chronosphere_resource_pools_config` pools.
 
-## Version 1.7.0
+</Update>
 
-Released: 2025.02.13
+<Update label="Version 1.7.0" description="Released: 2025.02.13">
 
 ### Features [#features-v1-7-0]
 
@@ -145,15 +143,15 @@ Released: 2025.02.13
 
 - Fix dry-run for `chronosphere_recording_rule` with `bucket_slug` and `execution_group`.
 
-## Version 1.6.2
+</Update>
 
-Released: 2024.12.18
+<Update label="Version 1.6.2" description="Released: 2024.12.18">
 
 This release contains no user-facing changes in behavior or function.
 
-## Version 1.6.1
+</Update>
 
-Released: 2024.12.04
+<Update label="Version 1.6.1" description="Released: 2024.12.04">
 
 ### Fixes [#fixes-v1-6-1]
 
@@ -165,9 +163,9 @@ Released: 2024.12.04
 
 {/* vale Chronosphere.WordList = YES */}
 
-## Version 1.6.0
+</Update>
 
-Released: 2024.10.31
+<Update label="Version 1.6.0" description="Released: 2024.10.31">
 
 ### Features [#features-v1-6-0]
 
@@ -180,9 +178,9 @@ Released: 2024.10.31
   dynamic expressions, which aren't known at plan time.
 
 
-## Version 1.5.1
+</Update>
 
-Released: 2024.10.08
+<Update label="Version 1.5.1" description="Released: 2024.10.08">
 
 ### Fixes [#fixes-v1-5-1]
 
@@ -192,9 +190,9 @@ Released: 2024.10.08
   resource without a defined `interval` or `storage_policy` caused Terraform to continually
   detect a difference.
 
-## Version 1.5.0
+</Update>
 
-Released: 2024.08.29
+<Update label="Version 1.5.0" description="Released: 2024.08.29">
 
 ### Feature [#features-v1-5-0]
 
@@ -207,9 +205,9 @@ Released: 2024.08.29
   `default_pool.allocation` is now inferred to be any remaining quota unallocated across
   non-default pools.
 
-## Version 1.4.3
+</Update>
 
-Released: 2024.07.29
+<Update label="Version 1.4.3" description="Released: 2024.07.29">
 
 ### Features [#features-v1-4-3]
 
@@ -221,22 +219,22 @@ Released: 2024.07.29
   OpenTelemetry metrics are converted into Chronosphere format at ingestion.
 
 
-## Version 1.3.0
+</Update>
 
-Released: 2024.07.09
+<Update label="Version 1.3.0" description="Released: 2024.07.09">
 
 This release contains no user-facing changes in behavior or function.
 
-## Version 1.2.0
+</Update>
 
-### Features [#features-v1-2-0]
+<Update label="Version 1.2.0" description="### Features [#features-v1-2-0]">
 
 - Adds server-side validation support for `chronosphere_trace_metrics_rule`.
 - Adds `group_by` to `notification_routes` in `notification_policy` resources.
 
-## Version 1.1.0
+</Update>
 
-Released: 2024.06.12
+<Update label="Version 1.1.0" description="Released: 2024.06.12">
 
 ### Feature [#features-v1-1-0]
 
@@ -253,9 +251,9 @@ Released: 2024.06.12
   of allocation percents due to float arithmetic not adding to exactly 100 percent. The provider
   now relies on server-side validation of pools.
 
-## Version 1.0.0
+</Update>
 
-Released: 2024.05.15
+<Update label="Version 1.0.0" description="Released: 2024.05.15">
 
 As of version 1.0.0, the Chronosphere Terraform provider is now open source and
 hosted on the public
@@ -306,27 +304,24 @@ these release notes before upgrading.
 
 - Deprecates `chronosphere_rollup_rule.storage_policies` and
   `chronosphere_mapping_rule.storage_policy`, and recommends `interval`.
+</Update>
 
 ## Unsupported versions
 
 {/* markdownlint-disable MD033 */}
 
-<details>
-<summary>
-Click to view unsupported Terraform provider version release notes.
-</summary>
+<Accordion title="Click to view unsupported Terraform provider version release notes.">
 
 {/* markdownlint-enable MD033 */}
 
-### Version 0.46.0
 
-Released: 2024.02.06
+<Update label="Version 0.46.0" description="Released: 2024.02.06">
 
 This release contains no user-facing changes in behavior or function.
 
-### Version 0.45.0
+</Update>
 
-Released: 2024.01.18
+<Update label="Version 0.45.0" description="Released: 2024.01.18">
 
 #### Features [#features-v0-45-0]
 
@@ -334,26 +329,26 @@ Released: 2024.01.18
 - Adds `regex` match type for trace metrics filters.
 - Adds `group_by` field to `chronosphere_trace_metrics_rule` resource.
 
-### Version 0.44.0
+</Update>
 
-Released: 2023.12.13
+<Update label="Version 0.44.0" description="Released: 2023.12.13">
 
 #### Features [#features-v0-44-0]
 
 - Adds new `chronosphere_service` data source for services, which associates monitors
   with dashboards in service collections.
 
-### Version 0.43.0
+</Update>
 
-Released: 2023.11.30
+<Update label="Version 0.43.0" description="Released: 2023.11.30">
 
 #### Features [#features-v0-43-0]
 
 - Adds new resource `chronosphere_classic_dashboard`.
 
-### Version 0.42.0
+</Update>
 
-Released: 2023.11.15
+<Update label="Version 0.42.0" description="Released: 2023.11.15">
 
 #### Features [#features-v0-42-0]
 
@@ -368,30 +363,30 @@ Released: 2023.11.15
 - Fixes bug that caused `terraform plan` to fail when converting a notification
   policy from inline to independent.
 
-### Version 0.41.0
+</Update>
 
-Released: 2023.09.28
-
-This release contains no user-facing changes in behavior or function.
-
-### Version 0.40.0
-
-Released: 2023.09.15
+<Update label="Version 0.41.0" description="Released: 2023.09.28">
 
 This release contains no user-facing changes in behavior or function.
 
-### Version 0.39.0
+</Update>
 
-Released: 2023.09.05
+<Update label="Version 0.40.0" description="Released: 2023.09.15">
+
+This release contains no user-facing changes in behavior or function.
+
+</Update>
+
+<Update label="Version 0.39.0" description="Released: 2023.09.05">
 
 #### Features [#features-v0-39-0]
 
 - Update a monitor when changing its `bucket_id` instead of forcibly deleting and
   recreating it.
 
-### Version 0.38.0
+</Update>
 
-Released: 2023.08.28
+<Update label="Version 0.38.0" description="Released: 2023.08.28">
 
 #### Features [#features-v0-38-0]
 
@@ -408,18 +403,18 @@ Released: 2023.08.28
 - Fix diff suppression for dashboard resource. JSON payload registers null and empty
   fields as equivalent.
 
-### Version 0.37.0
+</Update>
 
-Released: 2023.07.26
+<Update label="Version 0.37.0" description="Released: 2023.07.26">
 
 #### Features [#features-v0-37-0]
 
 - Promote `Dashboard` resource for general availability.
 - Add `Dashboard` support to `chronotf export-config` and `chronotf import-state`.
 
-### Version 0.36.0
+</Update>
 
-Released: 2023.06.23
+<Update label="Version 0.36.0" description="Released: 2023.06.23">
 
 #### Features [#features-v0-36-0]
 
@@ -433,9 +428,9 @@ Released: 2023.06.23
 
 - Remove `one_of` between `service_key` and `routing_key` for PagerDuty notifiers.
 
-### Version 0.35.0
+</Update>
 
-Released: 2023.05.10
+<Update label="Version 0.35.0" description="Released: 2023.05.10">
 
 #### Features [#features-v0-35-0]
 
@@ -450,9 +445,9 @@ Released: 2023.05.10
 - Fix `chronotf import-state` timeout errors when importing a large number of resources.
 - Support monitor schedules without any ranges.
 
-### Version 0.34.0
+</Update>
 
-Released: 2023.04.07
+<Update label="Version 0.34.0" description="Released: 2023.04.07">
 
 #### Features [#features-v0-34-0]
 
@@ -468,43 +463,43 @@ Released: 2023.04.07
   if the notifier's type changed on the server.
 - Display all HTTP error responses in the Chronosphere UI and API responses.
 
-### Version 0.33.0
+</Update>
 
-Released: 2023.03.29
+<Update label="Version 0.33.0" description="Released: 2023.03.29">
 
 #### Feature [#features-v0-33-0]
 
 - Enable dry run validation support for collections, derived metrics, derived labels,
   drop rules, recording rules, teams, classic dashboards, and buckets.
 
-### Version 0.32.0
+</Update>
 
-Released: 2023.03.23
+<Update label="Version 0.32.0" description="Released: 2023.03.23">
 
 #### Feature [#features-v0-32-0]
 
 - Import-state and export-config for ResourcePoolsConfig.
 
-### Version 0.31.0
+</Update>
 
-Released: 2023.03.15
+<Update label="Version 0.31.0" description="Released: 2023.03.15">
 
 #### Feature [#features-v0-31-0]
 
 - Add support for managing derived labels, using the `chronosphere_derived_label`
   resource.
 
-### Version 0.30.0
+</Update>
 
-Released: 2023.03.09
+<Update label="Version 0.30.0" description="Released: 2023.03.09">
 
 #### Feature [#features-v0-30-0]
 
 - Improved whitespace formatting in `chronotf export-config`.
 
-### Version 0.29.0
+</Update>
 
-Released: 2023.02.27
+<Update label="Version 0.29.0" description="Released: 2023.02.27">
 
 #### Features [#features-v0-29-0]
 
@@ -516,9 +511,9 @@ Released: 2023.02.27
 
 - Fix exporting of buckets with notification policies that have a mismatched slug.
 
-### Version 0.28.0
+</Update>
 
-Released: 2023.02.03
+<Update label="Version 0.28.0" description="Released: 2023.02.03">
 
 #### Features [#features-v0-28-0]
 
@@ -527,15 +522,15 @@ Released: 2023.02.03
   and derived metrics. When Terraform creates or changes these objects, Chronosphere
   flags them as owned by Terraform and prevents overriding changes from other interfaces.
 
-### Version 0.27.0
+</Update>
 
-Released: 2023.01.30
+<Update label="Version 0.27.0" description="Released: 2023.01.30">
 
 This release contains no user-facing changes in behavior or function.
 
-### Version 0.23.1
+</Update>
 
-Released: 2022.11.29
+<Update label="Version 0.23.1" description="Released: 2022.11.29">
 
 #### Features [#features-v0-23-1]
 
@@ -556,9 +551,9 @@ Released: 2022.11.29
 - `chronotf import-state` correctly handles resources in modules.
 - `chronosphere_mapping_rule` validates that at most one aggregation is specified.
 
-### Version 0.22.0
+</Update>
 
-Released: 2022.10.11
+<Update label="Version 0.22.0" description="Released: 2022.10.11">
 
 #### Feature [#features-v0-22-0]
 
@@ -568,9 +563,9 @@ Released: 2022.10.11
 
 - Rename `value_based_drop_policy` to `value_based_drop`.
 
-### Version 0.21.0
+</Update>
 
-Released: 2022.10.11
+<Update label="Version 0.21.0" description="Released: 2022.10.11">
 
 #### Feature [#features-v0-21-0]
 
@@ -582,17 +577,17 @@ Released: 2022.10.11
 - Fix `chronotf import-state` re-importing resources that are already managed by
   Terraform due to an unknown/updated field requiring the resource to be re-created.
 
-### Version 0.20.0
+</Update>
 
-Released: 2022.09.27
+<Update label="Version 0.20.0" description="Released: 2022.09.27">
 
 #### Feature [#features-v0-20-0]
 
 - Drop empty fields when exporting email alert notifiers in `chronotf export-config`.
 
-### Version 0.19.0
+</Update>
 
-Released: 2022.09.07
+<Update label="Version 0.19.0" description="Released: 2022.09.07">
 
 #### Feature [#features-v0-19-0]
 
@@ -604,17 +599,17 @@ Released: 2022.09.07
   ordering diffs.
 - Symmetrically export and import `chronosphere_notification_policy` repeat intervals.
 
-### Version 0.18.1
+</Update>
 
-Released: 2022.08.23
+<Update label="Version 0.18.1" description="Released: 2022.08.23">
 
 #### Fix [#fixes-v0-18-1]
 
 - Don't show unnecessary diffs for monitor conditions.
 
-### Version 0.18.0
+</Update>
 
-Released: 2022.08.23
+<Update label="Version 0.18.0" description="Released: 2022.08.23">
 
 #### Features [#features-v0-18-0]
 
@@ -633,9 +628,9 @@ Released: 2022.08.23
 
 - `chronosphere_notification_policy.rule` is now deprecated. Use `route` instead.
 
-### Version 0.17.0
+</Update>
 
-Released: 2022.07.26
+<Update label="Version 0.17.0" description="Released: 2022.07.26">
 
 #### Feature [#features-v0-17-9]
 
@@ -647,9 +642,9 @@ Released: 2022.07.26
 - Fix `activated_drop_duration` in drop rules showing unexpected changes after
   an apply.
 
-### Version 0.16.0
+</Update>
 
-Released: 2022.06.21
+<Update label="Version 0.16.0" description="Released: 2022.06.21">
 
 #### Features [#features-v0-16-0]
 
@@ -665,24 +660,26 @@ Released: 2022.06.21
 
 - Handle 404 as success when attempting to delete an already-deleted resource.
 
-### Version 0.15.0
+</Update>
 
-Released: 2022.05.10
+<Update label="Version 0.15.0" description="Released: 2022.05.10">
 
 #### Features [#features-v0-15-0]
 
 - Add support for `drop_raw` with roll-up rules.
 - Add support for `slug` with `chronosphere_bucket` resources.
 
-### Version 0.14.1
+</Update>
 
-Released: 2022.04.26
+<Update label="Version 0.14.1" description="Released: 2022.04.26">
 
 #### Fix [#fixes-v0-14-1]
 
 - Fix an issue with webhook notifiers using `bearer_token`.
 
-### Version 0.14.0
+</Update>
+
+<Update label="Version 0.14.0">
 
 #### Feature [#features-v0-14-0]
 
@@ -694,16 +691,16 @@ Released: 2022.04.26
 #### Fixes [#fixes-v0-14-0]
 
 - Correctly handle the case of a notification policy introduced using the UI.
+</Update>
 
-### Version 0.13.0
+<Update label="Version 0.13.0">
 
 #### Feature [#features-v0-13-0]
 
 - Add support for new resources for distributed tracing.
+</Update>
 
-### Version 0.12.0
-
-Released: 2022.03.11
+<Update label="Version 0.12.0" description="Released: 2022.03.11">
 
 #### Features [#features-v0-12-0]
 
@@ -714,26 +711,26 @@ Released: 2022.03.11
 
 {/* vale Chronosphere.WordList = YES */}
 
-### Version 0.11.0
+</Update>
 
-Released: 2022.02.24
+<Update label="Version 0.11.0" description="Released: 2022.02.24">
 
 #### Fixes [#fixes-v0-11-0]
 
 - Fix an issue sending `chronosphere_export_job` on updates.
 
-### Version 0.10.0
+</Update>
 
-Released: 2022.02.17
+<Update label="Version 0.10.0" description="Released: 2022.02.17">
 
 #### Feature [#features-v0-10-0]
 
 - Add support for managing mapping rules, using the `chronosphere_mapping_rule`
   resource.
 
-### Version 0.9.0
+</Update>
 
-Released: 2022.02.03
+<Update label="Version 0.9.0" description="Released: 2022.02.03">
 
 #### Features [#features-v0-9-0]
 
@@ -744,9 +741,9 @@ Released: 2022.02.03
 
 - Import and export support for buckets without a notification policy.
 
-### Version 0.8.0
+</Update>
 
-Released: 2022.01.27
+<Update label="Version 0.8.0" description="Released: 2022.01.27">
 
 #### Features [#features-v0-8-0]
 
@@ -759,9 +756,9 @@ Released: 2022.01.27
 - Fix `chronotf import-state` errors regarding unresolved references with recent
   versions of Terraform.
 
-### Version 0.7.0
+</Update>
 
-Released: 2021.12.17
+<Update label="Version 0.7.0" description="Released: 2021.12.17">
 
 #### Feature [#features-v0-7-0]
 
@@ -772,9 +769,9 @@ Released: 2021.12.17
 - Correctly handle converting Chronosphere slugs to Terraform IDs. Escape strings
   to support quotes and other special characters.
 
-### Version 0.6.0
+</Update>
 
-Released: 2021.11.12
+<Update label="Version 0.6.0" description="Released: 2021.11.12">
 
 #### Feature [#features-v0-6-0]
 
@@ -791,30 +788,30 @@ Released: 2021.11.12
   in `chronotf export-config`.
 - Fix incorrect terraform IDs in the output of `chronotf export-config`.
 
-### Version 0.5.3
+</Update>
 
-Released: 2021.10.28
+<Update label="Version 0.5.3" description="Released: 2021.10.28">
 
 #### Feature [#features-v0-5-3]
 
 - Add support for managing roll-up rules, using the `chronosphere_rollup_rule`
   resource.
 
-### Version 0.5.2
+</Update>
 
-Released: 2021.10.14
+<Update label="Version 0.5.2" description="Released: 2021.10.14">
 
 #### Fixes [#fixes-v0-5-2]
 
 - Fix escaping of quotes for `chronotf export-config`.
 
-### Version 0.5.1
+</Update>
 
-Released: 2021.10.14
+<Update label="Version 0.5.1" description="Released: 2021.10.14">
 
 #### Feature [#features-v0-5-1]
 
 - Add support for managing recording rules, using the `chronosphere_recording_rule`
   resource.
-
-</details>
+</Update>
+</Accordion>
