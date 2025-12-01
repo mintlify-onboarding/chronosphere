@@ -9,7 +9,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.65.0" description="Released 2025.11.19">
 
-### Pipeline infrastructure [#infra-v2-65-0]
+### Pipeline infrastructure
 
 - Various performance improvements.
 - _Fix_: Fixed an issue where invalid fleet configuration files could cause
@@ -18,42 +18,42 @@ Information for each release is listed by component.
 
 <Update label="Version 2.64.0" description="Released 2025.11.12">
 
-### Pipeline infrastructure [#infra-v2-64-0]
+### Pipeline infrastructure
 
 - Various performance improvements.
 </Update>
 
 <Update label="Version 2.63.0" description="Released 2025.11.03">
 
-### Pipeline infrastructure [#infra-v2-63-0]
+### Pipeline infrastructure
 
 - Various performance improvements.
 </Update>
 
 <Update label="Version 2.62.0" description="Released 2025.10.28">
 
-### Pipeline infrastructure [#infra-v2-62-0]
+### Pipeline infrastructure
 
 - Various performance improvements.
 </Update>
 
 <Update label="Version 2.61.0" description="Released 2025.10.14">
 
-### Pipeline infrastructure [#infra-v2-61-0]
+### Pipeline infrastructure
 
 - Various performance improvements.
 </Update>
 
 <Update label="Version 2.60.0" description="Released 2025.10.07">
 
-### Pipeline infrastructure [#infra-v2-60-0]
+### Pipeline infrastructure
 
 - Various performance improvements.
 </Update>
 
 <Update label="Version 2.59.0" description="Released 2025.09.30">
 
-### Web interface [#ui-v2-59-0]
+### Web interface
 
 - Added the `mem_buf_limit` configuration parameter to all source plugins.
 - Added the ability to upgrade pipelines through the Telemetry Pipeline web interface.
@@ -64,31 +64,31 @@ Information for each release is listed by component.
 
 <Update label="Version 2.58.0" description="Released 2025.09.23">
 
-### Pipeline agent [#agent-v2-58-0]
+### Pipeline agent
 
 - Various performance improvements.
 </Update>
 
 <Update label="Version 2.57.0" description="Released 2025.09.16">
 
-### Web interface [#ui-v2-57-0]
+### Web interface
 
 - Improved the workflow for adding a pipeline to a new Core Instance.
 - _Fix_: Fixed an issue where invalid pipeline configuration files could affect
   the visibility of other pipelines in the Telemetry Pipeline web interface.
 
-### Pipeline agent [#agent-v2-57-0]
+### Pipeline agent
 
 - Various performance improvements.
 
-### Pipeline infrastructure [#infra-v2-57-0]
+### Pipeline infrastructure
 
 - Added more descriptive error messages to Pipeline CLI.
 </Update>
 
 <Update label="Version 2.56.0" description="Released 2025.09.10">
 
-### Pipeline infrastructure [#infra-v2-56-0]
+### Pipeline infrastructure
 
 - _Fix_: Fixed an issue where invalid pipeline configuration files could cause
   of unexpectedly high severity.
@@ -96,7 +96,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.55.0" description="Released 2025.09.02">
 
-### Pipeline agent [#agent-v2-55-0]
+### Pipeline agent
 
 - Removed unnecessary configuration parameters from the S3 Input (SQS) source plugin.
 - Various performance improvements.
@@ -104,14 +104,14 @@ Information for each release is listed by component.
 
 <Update label="Version 2.54.0" description="Released 2025.08.26">
 
-### Pipeline agent [#agent-v2-54-0]
+### Pipeline agent
 
 - Various performance improvements.
 </Update>
 
 <Update label="Version 2.53.0" description="Released 2025.08.19">
 
-### Pipeline agent [#agent-v2-53-0]
+### Pipeline agent
 
 - Updated the S3 Input (SQS) source plugin and S3 Input (One Time) source plugin,
   including their configuration parameters and supported authentication methods.
@@ -127,7 +127,7 @@ Information for each release is listed by component.
     guide.
   </Warning>
 
-### Web interface [#ui-v2-53-0]
+### Web interface
 
 - Updated the pipeline builder to clarify the relationship between active plugins
   and associated processing rules.
@@ -139,26 +139,26 @@ Information for each release is listed by component.
 
 <Update label="Version 2.52.0" description="Released 2025.08.12">
 
-### Pipeline infrastructure [#infra-v2-52-0]
+### Pipeline infrastructure
 
 - Various performance and stability improvements.
 </Update>
 
 <Update label="Version 2.51.0" description="Released 2025.08.05">
 
-### Pipeline infrastructure [#infra-v2-51-0]
+### Pipeline infrastructure
 
 - Various performance and stability improvements.
 - _Fix_: Fixed an issue that could cause the Cloudflare input plugin to ingest
   incomplete data.
 
-### Processing rules [#processing-rules-v2-51-0]
+### Processing rules
 
 - _Fix_: Fixed an issue that affected parsing for Unicode null characters.
 - _Fix_: Fixed an issue that caused malformed request errors to appear as server
   errors.
 
-### Web interface [#ui-v2-51-0]
+### Web interface
 
 - _Fix_: Fixed an issue where the pipeline builder removed valid but
   non-standard processors from pipeline configuration files.
@@ -166,11 +166,11 @@ Information for each release is listed by component.
 
 <Update label="Version 2.50.0" description="Released 2025.07.29">
 
-### Pipeline infrastructure [#infra-v2-50-0]
+### Pipeline infrastructure
 
 - Updated the default configuration for new agents in a fleet.
 
-### Processing rules [#processing-rules-v2-50-0]
+### Processing rules
 
 - _Fix_: Fixed an issue that caused errors when attempting to preview the output
   of processing rules in the Telemetry Pipeline web interface.
@@ -178,7 +178,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.49.0" description="Released 2025.07.22">
 
-### Web interface [#ui-v2-49-0]
+### Web interface
 
 - _Fix_: Fixed an issue that prevented StatefulSet and DaemonSet pipelines from
   appearing in the Telemetry Pipeline web interface.
@@ -186,7 +186,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.48.0" description="Released 2025.07.15">
 
-### Pipeline infrastructure [#infra-v2-48-0]
+### Pipeline infrastructure
 
 - Added the ability to update existing [resource profiles](/pipeline-configure/resource-profiles)
   in Pipeline CLI.
@@ -194,7 +194,7 @@ Information for each release is listed by component.
   [Cloudflare LogPush](/pipeline-data/plugins/source-plugins/cloudflare)
   source plugin.
 
-### Web interface [#ui-v2-48-0]
+### Web interface
 
 - Added the ability to specify the [workload type](/pipeline-configure/kubernetes/workloads)
   for new pipelines in the Telemetry Pipeline web interface.
@@ -202,21 +202,21 @@ Information for each release is listed by component.
 
 <Update label="Version 2.47.0" description="Released 2025.07.08">
 
-### Web interface [#ui-v2-47-0]
+### Web interface
 
 - _Fix_: Various security and stability improvements.
 </Update>
 
 <Update label="Version 2.46.0" description="Released 2025.07.01">
 
-### Web interface [#ui-v2-46-0]
+### Web interface
 
 - _Fix_: Various performance improvements.
 </Update>
 
 <Update label="Version 2.45.0" description="Released 2025.06.24">
 
-### Pipeline agent [#agent-v2-45-0]
+### Pipeline agent
 
 - Added the ability to create pipelines with the StatefulSet
   [deployment strategy](/pipeline-configure/deployment-strategies).
@@ -225,7 +225,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.43.1" description="Released 2025.06.18">
 
-### Web interface [#ui-v2-43-1]
+### Web interface
 
 - _Fix_: Fixed an issue where certain pipeline deployment strategies caused
   errors in the web interface.
@@ -233,7 +233,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.44.0" description="Released 2025.06.11">
 
-### Web interface [#ui-v2-44-0]
+### Web interface
 
 - Added a dialog to the workflow for deleting a Core Instance with information
   about how to delete Telemetry Pipeline resources locally.
@@ -244,14 +244,14 @@ Information for each release is listed by component.
 
 <Update label="Version 2.42.0" description="Released 2025.06.03">
 
-### Pipeline agent [#agent-v2-42-0]
+### Pipeline agent
 
 - Various stability improvements.
 </Update>
 
 <Update label="Version 2.41.0" description="Released 2025.05.27">
 
-### Pipeline agent [#agent-v2-41-0]
+### Pipeline agent
 
 - _Fix:_ Fixed an issue where invalid configuration parameter values could cause
   pipelines to crash.
@@ -259,18 +259,18 @@ Information for each release is listed by component.
 
 <Update label="Version 2.40.0" description="Released 2025.05.20">
 
-### Web interface [#ui-v2-40-0]
+### Web interface
 
 - Various security improvements.
 </Update>
 
 <Update label="Version 2.39.0" description="Released 2025.05.13">
 
-### Pipeline agent [#agent-v2-39-0]
+### Pipeline agent
 
 - Added support for global option schema validation.
 
-### Web interface [#ui-v2-39-0]
+### Web interface
 
 - Updated the default values for several parameters in the
   [Chronosphere Logs destination plugin](/pipeline-data/plugins/destination-plugins/chronosphere).
@@ -278,7 +278,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.38.0" description="Released 2025.05.06">
 
-### Web interface [#ui-v2-38-0]
+### Web interface
 
 - Improved the look and feel of the preview input pane and preview output pane in
   the processing rules builder.
@@ -287,19 +287,19 @@ Information for each release is listed by component.
 
 <Update label="Version 2.37.0" description="Released 2025.04.30">
 
-### Web interface [#ui-v2-37-0]
+### Web interface
 
 - Added the ability to exclude diagnostic logs from preview input data in the
   processing rules builder and processing rules playground.
 
-### Pipeline infrastructure [#infra-v2-37-0]
+### Pipeline infrastructure
 
 - Various bug fixes and performance improvements.
 </Update>
 
 <Update label="Version 2.36.0" description="Released 2025.04.22">
 
-### Core Operator [#operator-v2-36-0]
+### Core Operator
 
 - _Fix_: Fixed an issue that impacted Secret names.
 - _Fix_: Uninstalling a Core Operator no longer deletes the namespace where that
@@ -308,32 +308,32 @@ Information for each release is listed by component.
 
 <Update label="Version 2.35.0" description="Released 2025.04.15">
 
-### Web interface [#ui-v2-35-0]
+### Web interface
 
 - Added the ability to
   [use pipeline logs as preview input data](/pipeline-data/processing-rules/#use-pipeline-logs-as-preview-input-data)
   for processing rules.
 
-### Pipeline infrastructure [#infra-v2-35-0]
+### Pipeline infrastructure
 
 - Various bug fixes and performance improvements.
 </Update>
 
 <Update label="Version 2.34.0" description="Released 2025.04.08">
 
-### Pipeline agent [#agent-v2-34-0]
+### Pipeline agent
 
 - Added support for new parameters and other improvements to the
   [Cloudflare LogPush](/pipeline-data/plugins/source-plugins/cloudflare)
   source plugin.
 
-### Pipeline infrastructure [#infra-v2-34-0]
+### Pipeline infrastructure
 
 - Added the ability to set per-pipeline
   [tolerations](/pipeline-configure/kubernetes/tolerations).
 - Various bug fixes and performance improvements.
 
-### Web interface [#ui-v2-34-0]
+### Web interface
 
 - Added support for new parameters and other improvements to the
   [Cloudflare LogPush](/pipeline-data/plugins/source-plugins/cloudflare)
@@ -346,14 +346,14 @@ Information for each release is listed by component.
 
 <Update label="Version 2.33.0" description="Released 2025.04.02">
 
-### Pipeline infrastructure [#infra-v2-33-0]
+### Pipeline infrastructure
 
 - _Fix_: Various bug fixes and performance improvements.
 </Update>
 
 <Update label="Version 2.32.0" description="Released 2025.03.25">
 
-### Pipeline CLI [#cli-v2-32-0]
+### Pipeline CLI
 
 - Added commands to list and delete
   [individual resource profiles](/pipeline-configure/resource-profiles).
@@ -361,7 +361,7 @@ Information for each release is listed by component.
   CLI would incorrectly register those nonexistent resources in the Telemetry
   Pipeline backend.
 
-### Web interface [#ui-v2-32-0]
+### Web interface
 
 - Added support for Fluent Bit-style `service` information in pipeline configuration files.
 - _Fix_: Fixed an issue where empty arrays in pipeline configuration files could
@@ -371,14 +371,14 @@ Information for each release is listed by component.
 
 <Update label="Version 2.31.0" description="Released 2025.03.18">
 
-### Pipeline infrastructure [#infra-v2-31-0]
+### Pipeline infrastructure
 
 - _Fix_: Various bug fixes and performance improvements.
 </Update>
 
 <Update label="Version 2.30.0" description="Released 2025.03.11">
 
-### Web interface [#ui-v2-30-0]
+### Web interface
 
 - _Fix_: Fixed an issue that affected namespace filtering in
   [automated Kubernetes logging](/pipeline-data/automated-logging).
@@ -388,7 +388,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.29.1" description="Released 2025.02.25">
 
-### Web interface [#ui-v2-29-1]
+### Web interface
 
 - Added a warning about Fluent Bit version compatibility to the fleet configuration editor.
 - _Fix_: Fixed an issue that affected configuration parameters for the Loki destination plugin.
@@ -397,53 +397,53 @@ Information for each release is listed by component.
 
 <Update label="Version 2.28.0" description="Released 2025.02.13">
 
-### Web interface [#ui-v2-28-0]
+### Web interface
 
 - _Fix_: Fixed an error that caused discrepancies between the pipeline visualizer
   and pipeline configuration files.
 
-### Pipeline infrastructure [#infra-v2-28-0]
+### Pipeline infrastructure
 
 - _Fix_: Various bug fixes and performance improvements.
 </Update>
 
 <Update label="Version 2.27.0" description="Released 2025.02.04">
 
-### Web interface [#ui-v2-27-0]
+### Web interface
 
 - _Fix_: Fixed an error in the installation instructions for fleet agents.
 - _Fix_: Various bug fixes.
 
-### Pipeline agent [#agent-v2-27-0]
+### Pipeline agent
 
 - _Fix_: Various bug fixes.
 </Update>
 
 <Update label="Version 2.26.0" description="Released 2025.01.28">
 
-### Web interface [#ui-v2-26-0]
+### Web interface
 
 - _Fixed_: Fixed an issue that prevented certain projects from displaying in the
   project selection menu.
 
-### Pipeline infrastructure [#infra-v2-26-0]
+### Pipeline infrastructure
 
 - Various improvements to fleet performance.
 </Update>
 
 <Update label="Version 2.25.0" description="Released 2025.01.21">
 
-### Web interface [#ui-v2-25-0]
+### Web interface
 
 - Added support for YAML fleet configuration files.
 - Various security improvements.
 
-### Pipeline CLI [#cli-v2-25-0]
+### Pipeline CLI
 
 - _Fix_: Fixed an issue where file retrieval failed for fleets with more than ten
   files.
 
-### Pipeline infrastructure [#infra-v2-25-0]
+### Pipeline infrastructure
 
 - Improved the performance and behavior of the pipeline upgrade process.
 - _Fix_: Fixed an issue where port conflicts could affect health check pipelines.
@@ -452,7 +452,7 @@ Information for each release is listed by component.
 - _Fix_: Fixed multiple issues that affected token permissions.
 - _Fix_: Fixed multiple issues that affected agent metrics.
 
-### Pipeline agent [#agent-v2-25-0]
+### Pipeline agent
 
 - Added support for conditional operators.
 - _Fix_: Fixed an issue that affected the OpenTelemetry input and output plugins.
@@ -460,7 +460,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.24.0" description="Released 2025.01.14">
 
-### Web interface [#ui-v2-24-0]
+### Web interface
 
 - Updated the Telemetry Pipeline web interface to use Chronosphere styles and branding.
 - _Fix_: Various bug fixes.
@@ -468,18 +468,18 @@ Information for each release is listed by component.
 
 <Update label="Version 2.23.0" description="Released 2025.01.06">
 
-### Web interface [#ui-v2-23-0]
+### Web interface
 
 - _Fix_: Fixed an issue that affected pipeline deployment strategies.
 
-### Pipeline infrastructure [#infra-v2-23-0]
+### Pipeline infrastructure
 
 - Added Auth0 as an authentication method.
 - Changed how permissions are granted to agents within a fleet.
 - Various security and performance improvements.
 - _Fix_: Fixed an issue that affected pipeline deployment strategies.
 
-### Pipeline CLI [#cli-v2-23-0]
+### Pipeline CLI
 
 - Added support for [backing up](/pipeline-configure/metadata#back-up-pipeline-configuration-files)
   multiple pipeline configuration files simultaneously.
@@ -488,11 +488,11 @@ Information for each release is listed by component.
 
 <Update label="Version 2.22.0" description="Released 2024.12.12">
 
-### Web interface [#ui-v2-22-0]
+### Web interface
 
 - Various improvements to the processing rules interface.
 
-### Pipeline agent [#agent-v2-22-0]
+### Pipeline agent
 
 - Added the Azure Blob source plugin.
 - _Fix_: Fixed an issue that prevented certain plugins from detecting pipeline ports.
@@ -502,13 +502,13 @@ Information for each release is listed by component.
 - _Fix_: Fixed an issue where the `Preservey_Key` and `Reserve_Data` parser fields
   weren't behaving as expected.
 
-### Pipeline infrastructure [#infra-v2-22-0]
+### Pipeline infrastructure
 
 - _Fix_: Fixed an issue that impacted the performance of the `projects` endpoint.
 - _Fix_: Fixed an issue where pipelines failed to restart after an update to the
   pipeline infrastructure.
 
-### Core Operator [#operator-v2-22-0]
+### Core Operator
 
 - Added support for Kubernetes sidecar containers.
 - Various improvements to Core Operator behavior.
@@ -518,7 +518,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.21.0" description="Released 2024.12.05">
 
-### Web interface [#ui-v2-21-0]
+### Web interface
 
 - Updated the pipeline builder interface to convert the values of sensitive plugin
   parameters into pipeline secrets.
@@ -537,25 +537,25 @@ Information for each release is listed by component.
 
 <Update label="Version 2.20.0" description="Released: 2024.11.12">
 
-### Web interface [#ui-v2-20-0]
+### Web interface
 
 - Added more settings to the [S3 Input (SQS) source plugin](/pipeline-data/plugins/source-plugins/s3-sqs).
 
-### Pipeline agent [#agent-v2-20-0]
+### Pipeline agent
 
 - _Fix_: Reduced the memory usage of the block records processing rule.
 </Update>
 
 <Update label="Version 2.19.0" description="Released: 2024.11.05">
 
-### Web interface [#ui-v2-19-0]
+### Web interface
 
 - Various improvements to the fleet management interface.
 - _Fix_: Fixed an issue that made some processing rule templates unavailable in
   the Pipeline Builder.
 - _Fix_: Fixed an issue that hid pipelines' version numbers.
 
-### Core Operator [#operator-v2-19-0]
+### Core Operator
 
 - Added a host path volume to DaemonSet pipelines.
 - Added tolerations to the Core Operator chart.
@@ -563,7 +563,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.18.0" description="Released: 2024.10.30">
 
-### Web interface [#ui-v2-18-0]
+### Web interface
 
 - Various improvements to the processing rules interface.
 - Added documentation links for fleets.
@@ -574,14 +574,14 @@ Information for each release is listed by component.
 - _Fix_: Fixed an issue with the random sampling processing rule that could cause
   the web interface to crash and reload.
 
-### Pipeline agent [#agent-v2-18-0]
+### Pipeline agent
 
 - _Fix_: Fixed an issue that artificially limited the number of processing rules
   that could run in a single pipeline.
 - _Fix_: Fixed an issue with the `aws_sqs_enable_imds` parameter in the
   [S3 Input (SQS) source plugin](/pipeline-data/plugins/source-plugins/s3-sqs).
 
-### Core Operator [#operator-v2-18-0]
+### Core Operator
 
 - _Fix_: Fixed an issue that overwrote the standard label names provided by Kubernetes
   templates.
@@ -589,20 +589,20 @@ Information for each release is listed by component.
 
 <Update label="Version 2.17.0" description="Released: 2024.10.21">
 
-### Web interface [#ui-v2-17-0]
+### Web interface
 
 - Updated names and logos to match Chronosphere Telemetry Pipeline branding.
 - Added more descriptive error messages throughout the web interface.
 - _Fix_: Clarified the instructions for adding an agent to a fleet.
 - _Fix_: Fixed an issue that restricted the types of files that can be added to fleets.
 
-### Pipeline infrastructure [#infra-v2-17-0]
+### Pipeline infrastructure
 
 - Pipelines with the `Deployment` PipelineKind now use the rolling update strategy
   instead of the recreate strategy.
 - _Fix_: Added backwards compatibility for fleet agents.
 
-### Pipeline agent [#pipeline-agent-v2-17-0]
+### Pipeline agent
 
 - Added the [Cloudflare source plugin](/pipeline-data/plugins/source-plugins/cloudflare).
 - _Fix_: Fixed an issue that caused 404 errors from the OpenTelemetry destination plugin.
@@ -610,7 +610,7 @@ Information for each release is listed by component.
 
 <Update label="Version 2.16.0" description="Released: 2024.10.08">
 
-### Web interface [#ui-v2-16-0]
+### Web interface
 
 - Introduced character limits to Core Instance and pipeline names to prevent
   name-related errors. Core Instance names are limited to 20 characters, and
@@ -630,7 +630,7 @@ Information for each release is listed by component.
 - _Fix_: Fixed an issue where changing a project name through Pipeline CLI could
   cause synchronization errors.
 
-### Pipeline CLI [#cli-v2-16-0]
+### Pipeline CLI
 
 - Added the `--kind` flag to set the PipelineKind. The PipelineKind attribute
   determines whether a pipeline is run as a
@@ -641,7 +641,7 @@ Information for each release is listed by component.
 - Added the `--max-replicas` flag, which lets you specify the upper limit of
   replicas for a pipeline.
 
-### Pipeline infrastructure [#infra-v2-16-0]
+### Pipeline infrastructure
 
 - Added the filter option `exclude_internal=true` for retrieving Core Instances
   and pipelines. When retrieving Core Instances, using this option excludes
@@ -658,19 +658,19 @@ Information for each release is listed by component.
 - _Fix_: Pipeline name length errors now appear before a pipeline is deployed,
   not after.
 
-### Pipeline agent [#pipeline-agent-v2-16-0]
+### Pipeline agent
 
 - _Fix_: The `listen` parameter in networking plugins now works correctly.
 - _Fix_: Updated dependencies for increased security.
 
-### Core Operator [#core-operator-v2-16-0]
+### Core Operator
 
 - _Fix_: Validate pipeline names to ensure they don't exceed 27 characters.
 </Update>
 
 <Update label="Version 2.15.0" description="Released: 2024.09.24">
 
-### Web interface [#ui-v2-15-0]
+### Web interface
 
 - Updated the names of source and destination plugins for consistency.
 - Updated the appearance of alert popups.
@@ -687,19 +687,19 @@ Information for each release is listed by component.
 - _Fix_: Fixed an issue that made buttons inaccessible in the processing rules
   modal for certain screen resolutions.
 
-### Pipeline CLI [#cli-v2-15-0]
+### Pipeline CLI
 
 - Added more descriptive error messages for errors related to Core Instance timeouts.
 - _Fix_: Fixed a bug that returned an `ambiguous name` error for resources with similar names.
 
-### Pipeline infrastructure [#infra-v2-15-0]
+### Pipeline infrastructure
 
 - _Fix_: Fixed a bug where logs with invalid UTF-8 characters would cause a
   `500` server error. Null characters are now replaced with an empty string,
   and other invalid characters return the appropriate descriptive errors.
 - _Fix_: Metric labels are now deduplicated before entering storage.
 
-### Pipeline agent [#pipeline-agent-v2-15-0]
+### Pipeline agent
 
 - _Fix_: Setting a region in the Amazon S3 SQS plugin now sets the corresponding endpoint
    automatically.
@@ -710,7 +710,7 @@ Information for each release is listed by component.
 
 Released: 2024.09.11
 
-### Web interface [#ui-v2-14-0]
+### Web interface
 
 - Renamed the Teammates page to **Team**.
 - Core Instance tags can now include numbers.
@@ -733,7 +733,7 @@ Released: 2024.09.11
   plugin's configuration settings.
 - _Fix_: Fixed a bug related to reserved words in Core Instance names.
 
-### Pipeline CLI [#cli-v2-14-0]
+### Pipeline CLI
 
 - Added the ability to set proxy environment variables using the following flags:
   `–cloud-proxy`, `–http_proxy`, `–https_proxy`, and `–no_proxy`.
@@ -743,7 +743,7 @@ Released: 2024.09.11
   pipelines.
 - Improved the performance of the autocomplete feature and the quality of its results.
 
-### Pipeline infrastructure [#infra-v2-14-0]
+### Pipeline infrastructure
 
 - Added the new audit logs feature.
 - Users with read-only permissions (the `Viewer` role) can no longer create or
@@ -766,7 +766,7 @@ Released: 2024.09.11
 - _Fix_: The validation process for configuration files no longer returns an error
   for `core`-prefixed properties.
 
-### Pipeline agent [#pipeline-agent-v2-14-0]
+### Pipeline agent
 
 - Added support for raw messages to the [S3 Input (SQS)](/pipeline-data/plugins/source-plugins/s3-sqs)
   source plugin.
@@ -776,7 +776,7 @@ Released: 2024.09.11
 - _Fix_: Fixed a fatal error that stopped agent execution during a hot reload.
 - _Fix_: Various improvements to the Splunk source plugin.
 
-### Core Operator [#core-operator-v2-14-0]
+### Core Operator
 
 - Added support for proxies.
 - Improved image version replacement logic for Helm charts.
@@ -786,7 +786,7 @@ Released: 2024.09.11
 
 Released: 2024.06.12
 
-### Web interface [#ui-v2-13-0]
+### Web interface
 
 - Added support for the Kubernetes Metadata input plugin and the Datadog input
   plugin.
@@ -798,20 +798,20 @@ Released: 2024.06.12
 - _Fix_: Fixed an issue where switching to a new project would not hide pipelines from
   the previous project.
 
-### Pipeline CLI [#cli-v2-13-0]
+### Pipeline CLI
 
 - Added parameters to configure horizontal pod autoscaling.
 - _Fix_: Fixed an issue that automatically reverted a pipeline's service type to
   `LoadBalancer` when updating a pipeline without providing a `--service-type` flag.
 
-### Pipeline infrastructure [#infra-v2-13-0]
+### Pipeline infrastructure
 
 - Updated the plugins schema for pipeline configuration validation.
 - _Fix_: Added a detailed error response to handle duplicate pipeline aliases.
 - _Fix_: Metrics that are more than 30 minutes old are no longer ingested.
 - _Fix_: Improved the performance of the pipeline infrastructure's pipeline endpoint.
 
-### Pipeline agent [#pipeline-agent-cli-v2-13-0]
+### Pipeline agent
 
 - Added a [Datagen](/pipeline-data/plugins/source-plugins/datagen) input plugin that
   uses [Gofakeit](https://github.com/brianvoe/gofakeit) to generate simulated
@@ -819,7 +819,7 @@ Released: 2024.06.12
 - _Fix_: Fixed a potential security issue (Fluent Bit CVE-2024-4323) related to input
   requests.
 
-### Core Operator [#core-operator-v2-13-0]
+### Core Operator
 
 - Pipelines now support horizontal pod autoscaling.
 - _Fix_: Fixed an issue that prevented Core Instance from fetching more than 10 pipelines
@@ -831,7 +831,7 @@ Released: 2024.06.12
 
 <Update label="Version 2.12.3" description="Released: 2024.05.21">
 
-### Pipeline agent [#pipeline-agent-v2-12-3]
+### Pipeline agent
 
 - _Fix_: Fixed a potential security issue (Fluent Bit CVE-2024-4323) related to input
   requests.
@@ -839,7 +839,7 @@ Released: 2024.06.12
 
 <Update label="Version 2.12.0" description="Released: 2024.05.15">
 
-### Web interface [#ui-v2-12-0]
+### Web interface
 
 - Added output plugins for Exabeam, Oracle Logging Analytics, Azure Log Ingestion
   API, GELF (Graylog), Clickhouse DB, Scalyr DataSet, and Chronosphere logs.
@@ -858,7 +858,7 @@ Released: 2024.06.12
 - _Deprecated_: Removed Helm tags from Kubernetes aggregator onboarding instructions.
 - _Deprecated_: Removed **Validate** button from fleet management onboarding modal.
 
-### Pipeline CLI [#cli-v2-12-0]
+### Pipeline CLI
 
 - Added the ability to set a `tolerations` parameter for new Core Instances,
   which sets pod tolerations to the Core Instance and propagates that value to
@@ -871,7 +871,7 @@ Released: 2024.06.12
 - Added the ability to set permissions for new members when sending invites to a
   project.
 
-### Pipeline infrastructure [#infra-v2-12-0]
+### Pipeline infrastructure
 
 - Upgraded metrics backend to Prometheus.
 - Added the ability to immediately create a fleet with files by using the `create`
@@ -882,12 +882,12 @@ Released: 2024.06.12
 - _Fix_: Fixed an error that prevented users from deleting fleets.
 - _Deprecated_: Removed the ability to query metrics through the v1 API.
 
-### Pipeline agent [#pipeline-agent-v2-12-0]
+### Pipeline agent
 
 - Added the Scalyr DataSet output plugin.
 - Updated various dependencies.
 
-### Core Operator [#core-operator-v2-12-0]
+### Core Operator
 
 - Updated sync to accept the new `tolerations` parameter.
 - The Core Instance `tolerations` parameter is now propagated to pipeline
@@ -908,7 +908,7 @@ Released: 2024.06.12
 
 - _Fix_: Fixed an issue with annotations flag parsing that affected comma-separated values.
 
-### Processing rules [#processing-rules-v2-12-0]
+### Processing rules
 
 - Added multiple regular expression engine options for most processing rules that
   support regular expressions.

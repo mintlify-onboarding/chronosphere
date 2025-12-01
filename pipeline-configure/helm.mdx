@@ -157,7 +157,7 @@ checks:
 The `core-operator` chart packages the Telemetry Pipeline operator, also known as a
 [Core Operator](/pipelines/concepts#core-operators-and-core-instances).
 
-#### Global image [#global-image-core-operator]
+#### Global image
 
 The parameters in this table configure the settings for pipeline images:
 
@@ -167,7 +167,7 @@ The parameters in this table configure the settings for pipeline images:
 | `global.imagePullSecrets` | An array of the key names for pull secrets to use across all images. Any values in this array are added to the list of pull secret names specified in each image's `pullSecrets` parameter; they don't override per-image settings. | `["regcreds"]` |
 | `global.pullPolicy` | Sets the pull policy used by Kubernetes. If a value is specified, this setting overrides the associated `pullPolicy` in any per-image settings. | `""` |
 
-#### Deployment [#deployment-core-operator]
+#### Deployment
 
 The parameters in this table configure the Core Operator:
 
@@ -214,7 +214,7 @@ Operator:
 | `livenessProbe.initialDelaySeconds` | Specifies the initial delay for the liveness probe, in seconds. | `15` |
 | `livenessProbe.periodSeconds` | Specifies how often to run the liveness probe, in seconds. | `20` |
 
-#### RBAC [#rbac-core-operator]
+#### RBAC
 
 The parameters in this table configure
 [role-based access control (RBAC)](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
@@ -229,7 +229,7 @@ settings:
 | `fullnameOverride` | If set, overrides the default value of the `serviceAccount.name` parameter. | `""` |
 | `nameOverride` | If set, overrides the default value of the `fullnameOverride` parameter. | `""` |
 
-#### Pull secrets [#pull-secrets-core-operator]
+#### Pull secrets
 
 The parameters in this table configure the secrets used to pull images from a
 private registry:
@@ -249,7 +249,7 @@ The `core-instance` chart governs an associated
 syncs Telemetry Pipeline between your local environment and the Telemetry Pipeline
 backend.
 
-#### Global image [#global-image-core-instance]
+#### Global image
 
 The parameters in this table configure the settings for pipeline images:
 
@@ -259,7 +259,7 @@ The parameters in this table configure the settings for pipeline images:
 | `global.imagePullSecrets` | An array of the key names for pull secrets to use across all images. Any values in this array are added to the list of pull secret names specified in each image's `pullSecrets` parameter; they don't override per-image settings. | `["regcreds"]` |
 | `global.pullPolicy` | Sets the pull policy used by Kubernetes. If a value is specified, this setting overrides the associated `pullPolicy` in any per-image settings. | `""` |
 
-#### Deployment [#deployment-core-instance]
+#### Deployment
 
 The parameters in this table configure the Core Instance:
 
@@ -317,7 +317,7 @@ Instance:
 | `noProxy` | Sets the `NO_PROXY` environment variable for pipeline containers. | `""` |
 | `cloudProxy` | Specifies the HTTP proxy to use when connecting to the Telemetry Pipeline backend. | `""` |
 
-#### RBAC [#rbac-core-instance]
+#### RBAC
 
 The parameters in this table configure
 [role-based access control (RBAC)](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
@@ -332,7 +332,7 @@ settings:
 | `fullnameOverride` | If set, overrides the default value of the `serviceAccount.name` parameter. | `""` |
 | `nameOverride` | If set, overrides the default value of the `fullnameOverride` parameter. | `""` |
 
-#### Pull secrets [#rbac-core-operator]
+#### Pull secrets
 
 The parameters in this table configure the secrets used to pull images from a
 private registry:

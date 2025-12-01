@@ -91,7 +91,7 @@ graph TD
     style t fill:#60e684,stroke:495057,stroke-width:2px,color:#212529,stroke-dasharray: 5 5
 ```
 
-#### Advantages [#daemonset-pros]
+#### Advantages 
 
 Because the Collector resides on the same Kubernetes node as your app, latency is low. As your
 cluster grows, deploy a Collector on each new node to scale your cluster
@@ -102,7 +102,7 @@ This method allows for phased rollouts of new Collector versions and configurati
 changes to help avoid losing scrape coverage. Also, if you lose a node, you're only
 losing metrics for that node and not your entire cluster.
 
-#### Disadvantages [#daemonset-cons]
+#### Disadvantages
 
 Some environments, such as AWS Fargate, restrict you from deploying an app as a
 DaemonSet. Kubernetes applies resource requirements globally across your cluster,
@@ -151,14 +151,14 @@ graph TD
     style t fill:#60e684,stroke:495057,stroke-width:2px,color:#212529,stroke-dasharray: 5 5
 ```
 
-#### Advantages [#deployment-pros]
+#### Advantages
 
 Deployments work well for monitoring high cardinality endpoints. You can choose to
 either configure multiple Collectors in your cluster or deploy a singular Collector.
 You can also select the number of Collectors to run in your cluster. As your cluster
 grows, add more Pods to scale your Deployment horizontally.
 
-#### Disadvantages [#deployment-cons]
+#### Disadvantages
 
 If you deploy a singular Collector that's undersized for your workload, the Collector
 might experience delays in scrape latency or encounter out of memory situations. A
@@ -198,13 +198,13 @@ graph TD
     style g fill:#60e684,stroke:495057,stroke-width:2px,color:#212529,stroke-dasharray: 5 5
 ```
 
-#### Advantages [#sidecar-pros]
+#### Advantages
 
 If a Collector goes offline, you lose only the metrics for a single Pod. You have
 more control over resource usage for high cardinality apps and can customize the
 Collector per app.
 
-#### Disadvantages [#sidecar-cons]
+#### Disadvantages
 
 Each Pod requires a sidecar Container, which requires additional Kubernetes resources
 for your cluster. Sidecars require you to maintain the app manifest to include the
