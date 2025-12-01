@@ -1,291 +1,328 @@
 {
-  "consumes": [
-    "application/json"
-  ],
-  "definitions": {
-    "ListMonitorStatusesRequestSortOrder": {
-      "enum": [
-        "SORT_BY_STATE"
-      ],
-      "type": "string"
-    },
-    "MonitorStatusSignalStatus": {
-      "properties": {
-        "state": {
-          "$ref": "#/definitions/stateunstableAlertingState"
-        },
-        "severity": {
-          "type": "string"
-        },
-        "signal_labels": {
-          "description": "Signal labels.",
-          "items": {
-            "$ref": "#/definitions/commonLabel"
-          },
-          "type": "array"
-        },
-        "series": {
-          "items": {
-            "$ref": "#/definitions/SignalStatusSeriesStatus"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "SignalStatusSeriesStatus": {
-      "properties": {
-        "state": {
-          "$ref": "#/definitions/stateunstableAlertingState"
-        },
-        "severity": {
-          "type": "string"
-        },
-        "labels": {
-          "description": "Series labels.",
-          "items": {
-            "$ref": "#/definitions/commonLabel"
-          },
-          "type": "array"
-        },
-        "started_at": {
-          "format": "date-time",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "apiError": {
-      "properties": {
-        "code": {
-          "description": "An optional private error code whose values are undefined.",
-          "format": "int32",
-          "type": "integer"
-        },
-        "message": {
-          "description": "An error message describing what went wrong.",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "commonLabel": {
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "commonPromQLMatcher": {
-      "properties": {
-        "type": {
-          "$ref": "#/definitions/commonPromQLMatcherType"
-        },
-        "name": {
-          "description": "Prometheus label name for the matcher",
-          "type": "string"
-        },
-        "value": {
-          "description": "Prometheus label value for the matcher",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "commonPromQLMatcherType": {
-      "enum": [
-        "MatchEqual",
-        "MatchRegexp",
-        "MatchNotEqual",
-        "MatchNotRegexp"
-      ],
-      "type": "string"
-    },
-    "genericError": {
-      "additionalProperties": true,
-      "type": "object"
-    },
-    "protobufAny": {
-      "additionalProperties": {},
-      "properties": {
-        "@type": {
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "stateunstableAlertingState": {
-      "description": " - ALERTING_STATE_PASS: Monitor is not triggered.\n - ALERTING_STATE_PENDING: Monitor is triggered but not yet alerting.\n - ALERTING_STATE_ALERTING: Monitor is triggered and alerting.\n - ALERTING_STATE_MUTED: Monitor is triggered but is muted.",
-      "enum": [
-        "ALERTING_STATE_PASS",
-        "ALERTING_STATE_PENDING",
-        "ALERTING_STATE_ALERTING",
-        "ALERTING_STATE_MUTED"
-      ],
-      "type": "string"
-    },
-    "stateunstableEchoResponse": {
-      "properties": {
-        "message": {
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "stateunstableListMonitorStatusesResponse": {
-      "properties": {
-        "monitor_statuses": {
-          "items": {
-            "$ref": "#/definitions/stateunstableMonitorStatus"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "stateunstableMonitorStatus": {
-      "description": "MonitorStatus contains the status of a monitor.",
-      "properties": {
-        "slug": {
-          "type": "string"
-        },
-        "state": {
-          "$ref": "#/definitions/stateunstableAlertingState"
-        },
-        "severity": {
-          "type": "string"
-        },
-        "signals": {
-          "items": {
-            "$ref": "#/definitions/MonitorStatusSignalStatus"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    }
-  },
+  "openapi": "3.0.1",
   "info": {
-    "description": "\n\u003cb\u003eWARNING: This API is unstable and is meant for experimentation only. Do not\nuse this API in production. The endpoints and schemas referenced in this\ndocumentation will be changed or removed without notice and without any\nbackwards compatibility guarantee. Note that even though this API is unstable,\nit is still connected to production data, so use with caution.\u003c/b\u003e",
     "title": "State Unstable API",
+    "description": "\n<b>WARNING: This API is unstable and is meant for experimentation only. Do not\nuse this API in production. The endpoints and schemas referenced in this\ndocumentation will be changed or removed without notice and without any\nbackwards compatibility guarantee. Note that even though this API is unstable,\nit is still connected to production data, so use with caution.</b>",
     "version": "UNSTABLE"
   },
-  "paths": {
-    "/api/unstable/state/echo": {
-      "get": {
-        "operationId": "Echo",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "message",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/stateunstableEchoResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/apiError"
-            }
-          }
-        },
-        "tags": [
-          "StateUnstable"
-        ]
-      }
-    },
-    "/api/unstable/state/monitors-statuses": {
-      "get": {
-        "operationId": "ListMonitorStatuses",
-        "parameters": [
-          {
-            "collectionFormat": "multi",
-            "description": "Filter by monitor slug.\nIf all filters are empty, return status for all monitors.",
-            "in": "query",
-            "items": {
-              "type": "string"
-            },
-            "name": "monitor_slugs",
-            "type": "array"
-          },
-          {
-            "collectionFormat": "multi",
-            "description": "Filter monitor state by owning collection.",
-            "in": "query",
-            "items": {
-              "type": "string"
-            },
-            "name": "collection_slugs",
-            "type": "array"
-          },
-          {
-            "collectionFormat": "multi",
-            "description": "Filter monitor state by owning team.",
-            "in": "query",
-            "items": {
-              "type": "string"
-            },
-            "name": "team_slugs",
-            "type": "array"
-          },
-          {
-            "description": "include_signal_statuses must be true for include_series_statuses to be true.",
-            "in": "query",
-            "name": "include_signal_statuses",
-            "type": "boolean"
-          },
-          {
-            "description": "include_signal_statuses must be true for include_series_statuses to be true.",
-            "in": "query",
-            "name": "include_series_statuses",
-            "type": "boolean"
-          },
-          {
-            "enum": [
-              "SORT_BY_STATE"
-            ],
-            "in": "query",
-            "name": "sort_by",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/stateunstableListMonitorStatusesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/apiError"
-            }
-          }
-        },
-        "tags": [
-          "StateUnstable"
-        ]
-      }
+  "servers": [
+    {
+      "url": "/"
     }
-  },
-  "produces": [
-    "application/json"
   ],
-  "swagger": "2.0",
   "tags": [
     {
       "name": "StateUnstable"
     }
-  ]
+  ],
+  "paths": {
+    "/api/unstable/state/echo": {
+      "get": {
+        "tags": [
+          "StateUnstable"
+        ],
+        "operationId": "Echo",
+        "parameters": [
+          {
+            "name": "message",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stateunstableEchoResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/unstable/state/monitors-statuses": {
+      "get": {
+        "tags": [
+          "StateUnstable"
+        ],
+        "operationId": "ListMonitorStatuses",
+        "parameters": [
+          {
+            "name": "monitor_slugs",
+            "in": "query",
+            "description": "Filter by monitor slug.\nIf all filters are empty, return status for all monitors.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "collection_slugs",
+            "in": "query",
+            "description": "Filter monitor state by owning collection.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "team_slugs",
+            "in": "query",
+            "description": "Filter monitor state by owning team.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "include_signal_statuses",
+            "in": "query",
+            "description": "include_signal_statuses must be true for include_series_statuses to be true.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "include_series_statuses",
+            "in": "query",
+            "description": "include_signal_statuses must be true for include_series_statuses to be true.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SORT_BY_STATE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stateunstableListMonitorStatusesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ListMonitorStatusesRequestSortOrder": {
+        "type": "string",
+        "enum": [
+          "SORT_BY_STATE"
+        ]
+      },
+      "MonitorStatusSignalStatus": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/stateunstableAlertingState"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "signal_labels": {
+            "type": "array",
+            "description": "Signal labels.",
+            "items": {
+              "$ref": "#/components/schemas/commonLabel"
+            }
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SignalStatusSeriesStatus"
+            }
+          }
+        }
+      },
+      "SignalStatusSeriesStatus": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/stateunstableAlertingState"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "array",
+            "description": "Series labels.",
+            "items": {
+              "$ref": "#/components/schemas/commonLabel"
+            }
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "apiError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "An optional private error code whose values are undefined.",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string",
+            "description": "An error message describing what went wrong."
+          }
+        }
+      },
+      "commonLabel": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "commonPromQLMatcher": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/commonPromQLMatcherType"
+          },
+          "name": {
+            "type": "string",
+            "description": "Prometheus label name for the matcher"
+          },
+          "value": {
+            "type": "string",
+            "description": "Prometheus label value for the matcher"
+          }
+        }
+      },
+      "commonPromQLMatcherType": {
+        "type": "string",
+        "enum": [
+          "MatchEqual",
+          "MatchRegexp",
+          "MatchNotEqual",
+          "MatchNotRegexp"
+        ]
+      },
+      "genericError": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "protobufAny": {
+        "type": "object",
+        "properties": {
+          "@type": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "type": "object"
+        }
+      },
+      "stateunstableAlertingState": {
+        "type": "string",
+        "description": " - ALERTING_STATE_PASS: Monitor is not triggered.\n - ALERTING_STATE_PENDING: Monitor is triggered but not yet alerting.\n - ALERTING_STATE_ALERTING: Monitor is triggered and alerting.\n - ALERTING_STATE_MUTED: Monitor is triggered but is muted.",
+        "enum": [
+          "ALERTING_STATE_PASS",
+          "ALERTING_STATE_PENDING",
+          "ALERTING_STATE_ALERTING",
+          "ALERTING_STATE_MUTED"
+        ]
+      },
+      "stateunstableEchoResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "stateunstableListMonitorStatusesResponse": {
+        "type": "object",
+        "properties": {
+          "monitor_statuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/stateunstableMonitorStatus"
+            }
+          }
+        }
+      },
+      "stateunstableMonitorStatus": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/stateunstableAlertingState"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonitorStatusSignalStatus"
+            }
+          }
+        },
+        "description": "MonitorStatus contains the status of a monitor."
+      }
+    }
+  },
+  "x-original-swagger-version": "2.0"
 }
