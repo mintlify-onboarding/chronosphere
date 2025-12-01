@@ -923,5 +923,295 @@
       "github": "https://github.com/chronosphereio",
       "linkedin": "https://www.linkedin.com/company/chronosphereio"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/tooling/api-info/definition/operations/CreateTeam",
+      "destination": "/tooling/api-info/definition/team/get-apiv1configteams"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateTeam",
+      "destination": "/tooling/api-info/definition/team/put-apiv1configteams"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteTeam",
+      "destination": "/tooling/api-info/definition/team/delete-apiv1configteams"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListServiceAccounts",
+      "destination": "/tooling/api-info/definition/serviceaccount/get-apiv1configservice-accounts"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateServiceAccount",
+      "destination": "/tooling/api-info/definition/serviceaccount/post-apiv1configservice-accounts"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteServiceAccount",
+      "destination": "/tooling/api-info/definition/serviceaccount/delete-apiv1configservice-accounts"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListCollections",
+      "destination": "/tooling/api-info/definition/collection/get-apiv1configcollections"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateCollection",
+      "destination": "/tooling/api-info/definition/collection/post-apiv1configcollections"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateCollection",
+      "destination": "/tooling/api-info/definition/collection/put-apiv1configcollections"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteCollection",
+      "destination": "/tooling/api-info/definition/collection/delete-apiv1configcollections"
+    },
+    {
+      "source": "/tooling/api-info/data_definition/operations/CreateEvent",
+      "destination": "/tooling/api-info/data_definition/datav1/post-apiv1dataevents"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListDerivedLabels",
+      "destination": "/tooling/api-info/definition/derivedlabel/get-apiv1configderived-labels"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateDerivedLabel",
+      "destination": "/tooling/api-info/definition/derivedlabel/post-apiv1configderived-labels"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListDerivedLabel",
+      "destination": "/tooling/api-info/definition/derivedlabel/get-apiv1configderived-labels-1"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListDerivedMetric",
+      "destination": "/tooling/api-info/definition/derivedmetric/get-apiv1configderived-metrics"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateDerivedMetric",
+      "destination": "/tooling/api-info/definition/derivedmetric/post-apiv1configderived-metrics"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteDerivedMetric",
+      "destination": "/tooling/api-info/definition/derivedmetric/delete-apiv1configderived-metrics"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateServiceAttribute",
+      "destination": "/tooling/api-info/definition/configv1/post-apiv1configservices-attributes"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateServiceAttribute",
+      "destination": "/tooling/api-info/definition/configv1/put-apiv1configservices-attributes"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListSLOs",
+      "destination": "/tooling/api-info/definition/slo/get-apiv1configslos"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ReadSLO",
+      "destination": "/tooling/api-info/definition/slo/get-apiv1configslos-1"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateSLO",
+      "destination": "/tooling/api-info/definition/slo/post-apiv1configslos"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateSLO",
+      "destination": "/tooling/api-info/definition/slo/put-apiv1configslos"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteSLO",
+      "destination": "/tooling/api-info/definition/slo/delete-apiv1configslos"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListDashboards",
+      "destination": "/tooling/api-info/definition/dashboard/get-apiv1configdashboards"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateDashboard",
+      "destination": "/tooling/api-info/definition/dashboard/post-apiv1configdashboards"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateDashboard",
+      "destination": "/tooling/api-info/definition/dashboard/put-apiv1configdashboards"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteDashboard",
+      "destination": "/tooling/api-info/definition/dashboard/delete-apiv1configdashboards"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListTraceMetricsRules",
+      "destination": "/tooling/api-info/definition/tracemetricsrule/get-apiv1configtrace-metrics-rules"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ReadTraceMetricsRule",
+      "destination": "/tooling/api-info/definition/tracemetricsrule/get-apiv1configtrace-metrics-rules-1"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateTraceMetricsRule",
+      "destination": "/tooling/api-info/definition/tracemetricsrule/post-apiv1configtrace-metrics-rules"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateTraceMetricsRule",
+      "destination": "/tooling/api-info/definition/tracemetricsrule/put-apiv1configtrace-metrics-rules"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteTraceMetricsRule",
+      "destination": "/tooling/api-info/definition/tracemetricsrule/delete-apiv1configtrace-metrics-rules"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListTraceJaegerRemoteSamplingStrategies",
+      "destination": "/tooling/api-info/definition/tracejaegerremotesamplingstrategy/get-apiv1configtrace-jaeger-remote-sampling-strategies"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateTraceJaegerRemoteSamplingStrategy",
+      "destination": "/tooling/api-info/definition/tracejaegerremotesamplingstrategy/post-apiv1configtrace-jaeger-remote-sampling-strategies"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateTraceJaegerRemoteSamplingStrategy",
+      "destination": "/tooling/api-info/definition/tracejaegerremotesamplingstrategy/put-apiv1configtrace-jaeger-remote-sampling-strategies"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteTraceJaegerRemoteSamplingStrategy",
+      "destination": "/tooling/api-info/definition/tracejaegerremotesamplingstrategy/delete-apiv1configtrace-jaeger-remote-sampling-strategies"
+    },
+    {
+      "source": "/tooling/api-info/data_definition/operations/ListTraces",
+      "destination": "/tooling/api-info/data_definition/datav1/post-apiv1datatraces"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListDatasets",
+      "destination": "/tooling/api-info/definition/dataset/get-apiv1configdatasets"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateDataset",
+      "destination": "/tooling/api-info/definition/dataset/post-apiv1configdatasets"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateTraceBehaviorConfig",
+      "destination": "/tooling/api-info/definition/tracebehaviorconfig/put-apiv1configtrace-behavior-config"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateDataset",
+      "destination": "/tooling/api-info/definition/dataset/put-apiv1configdatasets"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteDataset",
+      "destination": "/tooling/api-info/definition/dataset/delete-apiv1configdatasets"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ReadTraceTailSamplingRules",
+      "destination": "/tooling/api-info/definition/tracetailsamplingrules/get-apiv1configtrace-tail-sampling-rules"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateTraceTailSamplingRules",
+      "destination": "/tooling/api-info/definition/tracetailsamplingrules/post-apiv1configtrace-tail-sampling-rules"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateTraceTailSamplingRules",
+      "destination": "/tooling/api-info/definition/tracetailsamplingrules/put-apiv1configtrace-tail-sampling-rules"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteTraceTailSamplingRules",
+      "destination": "/tooling/api-info/definition/tracetailsamplingrules/delete-apiv1configtrace-tail-sampling-rules"
+    },
+    {
+      "source": "/tooling/api-info/state_definition/operations/ListMetricUsagesByLabelName",
+      "destination": "/tooling/api-info/state_definition/metricusagesbylabelname/get-apiv1statemetric-usages-by-label-name"
+    },
+    {
+      "source": "/tooling/api-info/state_definition/operations/ListMetricUsagesByMetricName",
+      "destination": "/tooling/api-info/state_definition/metricusagesbymetricname/get-apiv1statemetric-usages-by-metric-name"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ReadTraceBehaviorConfig",
+      "destination": "/tooling/api-info/definition/tracebehaviorconfig/get-apiv1configtrace-behavior-config"
+    },
+    {
+      "source": "/tooling/api-info/data_definition/operations/ListEvents",
+      "destination": "/tooling/api-info/data_definition/datav1/get-apiv1dataevents"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListConsumptionBudgets",
+      "destination": "/tooling/api-info/definition/consumptionbudget/get-apiv1configconsumption-budgets"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ReadConsumptionBudget",
+      "destination": "/tooling/api-info/definition/consumptionbudget/get-apiv1configconsumption-budgets-1"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateConsumptionBudget",
+      "destination": "/tooling/api-info/definition/consumptionbudget/post-apiv1configconsumption-budgets-1"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateConsumptionBudget",
+      "destination": "/tooling/api-info/definition/consumptionbudget/put-apiv1configconsumption-budgets-1"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteConsumptionBudget",
+      "destination": "/tooling/api-info/definition/consumptionbudget/delete-apiv1configconsumption-budgets-1"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateMonitor",
+      "destination": "/tooling/api-info/definition/monitor/post-apiv1configmonitors"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListMutingRules",
+      "destination": "/tooling/api-info/definition/mutingrule/get-apiv1configmuting-rules"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateMutingRule",
+      "destination": "/tooling/api-info/definition/mutingrule/post-apiv1configmuting-rules"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteMutingRule",
+      "destination": "/tooling/api-info/definition/mutingrule/delete-apiv1configmuting-rules"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListMonitors",
+      "destination": "/tooling/api-info/definition/monitor/get-apiv1configmonitors"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateMonitor",
+      "destination": "/tooling/api-info/definition/monitor/put-apiv1configmonitors"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteMonitor",
+      "destination": "/tooling/api-info/definition/monitor/delete-apiv1configmonitors"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ListAzureMetricsIntegrations",
+      "destination": "/tooling/api-info/definition/azuremetricsintegration/get-apiv1configazure-metrics-integrations"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ReadAzureMetricsIntegration",
+      "destination": "/tooling/api-info/definition/azuremetricsintegration/get-apiv1configazure-metrics-integrations-1"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateAzureMetricsIntegration",
+      "destination": "/tooling/api-info/definition/azuremetricsintegration/post-apiv1configazure-metrics-integrations"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateAzureMetricsIntegration",
+      "destination": "/tooling/api-info/definition/azuremetricsintegration/put-apiv1configazure-metrics-integrations"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteAzureMetricsIntegration",
+      "destination": "/tooling/api-info/definition/azuremetricsintegration/delete-apiv1configazure-metrics-integrations"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/CreateResourcePools",
+      "destination": "/tooling/api-info/definition/resourcepools/post-apiv1configresource-pools"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/UpdateResourcePools",
+      "destination": "/tooling/api-info/definition/resourcepools/put-apiv1configresource-pools"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/DeleteResourcePools",
+      "destination": "/tooling/api-info/definition/resourcepools/delete-apiv1configresource-pools"
+    },
+    {
+      "source": "/tooling/api-info/definition/operations/ReadResourcePools",
+      "destination": "/tooling/api-info/definition/resourcepools/get-apiv1configresource-pools"
+    }
+  ]
 }
