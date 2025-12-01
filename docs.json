@@ -866,26 +866,425 @@
           {
             "dropdown": "Config V1 API",
             "icon": "gear",
-            "openapi": {
-              "directory": "/tooling/api-info/definition",
-              "source": "/openapi/api_v1_config_swagger_DOCUMENTATION_ONLY.json"
-            }
+            "groups": [
+              {
+                "group": "Endpoints",
+                "pages": [
+                  {
+                    "group": "ConfigV1",
+                    "pages": [
+                      "tooling/api-info/definition/operations/DeleteServiceAttribute",
+                      "tooling/api-info/definition/operations/ReadServiceAttribute",
+                      "tooling/api-info/definition/operations/CreateServiceAttribute",
+                      "tooling/api-info/definition/operations/UpdateServiceAttribute"
+                    ]
+                  },
+                  {
+                    "group": "AzureMetricsIntegration",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListAzureMetricsIntegrations",
+                      "tooling/api-info/definition/operations/CreateAzureMetricsIntegration",
+                      "tooling/api-info/definition/operations/DeleteAzureMetricsIntegration",
+                      "tooling/api-info/definition/operations/ReadAzureMetricsIntegration",
+                      "tooling/api-info/definition/operations/UpdateAzureMetricsIntegration"
+                    ]
+                  },
+                  {
+                    "group": "Bucket",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListBuckets",
+                      "tooling/api-info/definition/operations/CreateBucket",
+                      "tooling/api-info/definition/operations/DeleteBucket",
+                      "tooling/api-info/definition/operations/ReadBucket",
+                      "tooling/api-info/definition/operations/UpdateBucket"
+                    ]
+                  },
+                  {
+                    "group": "ClassicDashboard",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListClassicDashboards",
+                      "tooling/api-info/definition/operations/CreateClassicDashboard",
+                      "tooling/api-info/definition/operations/DeleteClassicDashboard",
+                      "tooling/api-info/definition/operations/ReadClassicDashboard",
+                      "tooling/api-info/definition/operations/UpdateClassicDashboard"
+                    ]
+                  },
+                  {
+                    "group": "Collection",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListCollections",
+                      "tooling/api-info/definition/operations/CreateCollection",
+                      "tooling/api-info/definition/operations/DeleteCollection",
+                      "tooling/api-info/definition/operations/ReadCollection",
+                      "tooling/api-info/definition/operations/UpdateCollection"
+                    ]
+                  },
+                  {
+                    "group": "ConsumptionBudget",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListConsumptionBudgets",
+                      "tooling/api-info/definition/operations/CreateConsumptionBudget",
+                      "tooling/api-info/definition/operations/DeleteConsumptionBudget",
+                      "tooling/api-info/definition/operations/ReadConsumptionBudget",
+                      "tooling/api-info/definition/operations/UpdateConsumptionBudget"
+                    ]
+                  },
+                  {
+                    "group": "ConsumptionConfig",
+                    "pages": [
+                      "tooling/api-info/definition/operations/DeleteConsumptionConfig",
+                      "tooling/api-info/definition/operations/ReadConsumptionConfig",
+                      "tooling/api-info/definition/operations/CreateConsumptionConfig",
+                      "tooling/api-info/definition/operations/UpdateConsumptionConfig"
+                    ]
+                  },
+                  {
+                    "group": "Dashboard",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListDashboards",
+                      "tooling/api-info/definition/operations/CreateDashboard",
+                      "tooling/api-info/definition/operations/DeleteDashboard",
+                      "tooling/api-info/definition/operations/ReadDashboard",
+                      "tooling/api-info/definition/operations/UpdateDashboard"
+                    ]
+                  },
+                  {
+                    "group": "Dataset",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListDatasets",
+                      "tooling/api-info/definition/operations/CreateDataset",
+                      "tooling/api-info/definition/operations/DeleteDataset",
+                      "tooling/api-info/definition/operations/ReadDataset",
+                      "tooling/api-info/definition/operations/UpdateDataset"
+                    ]
+                  },
+                  {
+                    "group": "DerivedLabel",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListDerivedLabels",
+                      "tooling/api-info/definition/operations/CreateDerivedLabel",
+                      "tooling/api-info/definition/operations/DeleteDerivedLabel",
+                      "tooling/api-info/definition/operations/ReadDerivedLabel",
+                      "tooling/api-info/definition/operations/UpdateDerivedLabel"
+                    ]
+                  },
+                  {
+                    "group": "DerivedMetric",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListDerivedMetrics",
+                      "tooling/api-info/definition/operations/CreateDerivedMetric",
+                      "tooling/api-info/definition/operations/DeleteDerivedMetric",
+                      "tooling/api-info/definition/operations/ReadDerivedMetric",
+                      "tooling/api-info/definition/operations/UpdateDerivedMetric"
+                    ]
+                  },
+                  {
+                    "group": "DropRule",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListDropRules",
+                      "tooling/api-info/definition/operations/CreateDropRule",
+                      "tooling/api-info/definition/operations/DeleteDropRule",
+                      "tooling/api-info/definition/operations/ReadDropRule",
+                      "tooling/api-info/definition/operations/UpdateDropRule"
+                    ]
+                  },
+                  {
+                    "group": "GcpMetricsIntegration",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListGcpMetricsIntegrations",
+                      "tooling/api-info/definition/operations/CreateGcpMetricsIntegration",
+                      "tooling/api-info/definition/operations/DeleteGcpMetricsIntegration",
+                      "tooling/api-info/definition/operations/ReadGcpMetricsIntegration",
+                      "tooling/api-info/definition/operations/UpdateGcpMetricsIntegration"
+                    ]
+                  },
+                  {
+                    "group": "GrafanaDashboard",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListGrafanaDashboards",
+                      "tooling/api-info/definition/operations/CreateGrafanaDashboard",
+                      "tooling/api-info/definition/operations/DeleteGrafanaDashboard",
+                      "tooling/api-info/definition/operations/ReadGrafanaDashboard",
+                      "tooling/api-info/definition/operations/UpdateGrafanaDashboard"
+                    ]
+                  },
+                  {
+                    "group": "LogAllocationConfig",
+                    "pages": [
+                      "tooling/api-info/definition/operations/DeleteLogAllocationConfig",
+                      "tooling/api-info/definition/operations/ReadLogAllocationConfig",
+                      "tooling/api-info/definition/operations/CreateLogAllocationConfig",
+                      "tooling/api-info/definition/operations/UpdateLogAllocationConfig"
+                    ]
+                  },
+                  {
+                    "group": "LogControlConfig",
+                    "pages": [
+                      "tooling/api-info/definition/operations/DeleteLogControlConfig",
+                      "tooling/api-info/definition/operations/ReadLogControlConfig",
+                      "tooling/api-info/definition/operations/CreateLogControlConfig",
+                      "tooling/api-info/definition/operations/UpdateLogControlConfig"
+                    ]
+                  },
+                  {
+                    "group": "LogIngestConfig",
+                    "pages": [
+                      "tooling/api-info/definition/operations/DeleteLogIngestConfig",
+                      "tooling/api-info/definition/operations/ReadLogIngestConfig",
+                      "tooling/api-info/definition/operations/CreateLogIngestConfig",
+                      "tooling/api-info/definition/operations/UpdateLogIngestConfig"
+                    ]
+                  },
+                  {
+                    "group": "LogScaleAction",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListLogScaleActions",
+                      "tooling/api-info/definition/operations/CreateLogScaleAction",
+                      "tooling/api-info/definition/operations/DeleteLogScaleAction",
+                      "tooling/api-info/definition/operations/ReadLogScaleAction",
+                      "tooling/api-info/definition/operations/UpdateLogScaleAction"
+                    ]
+                  },
+                  {
+                    "group": "LogScaleAlert",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListLogScaleAlerts",
+                      "tooling/api-info/definition/operations/CreateLogScaleAlert",
+                      "tooling/api-info/definition/operations/DeleteLogScaleAlert",
+                      "tooling/api-info/definition/operations/ReadLogScaleAlert",
+                      "tooling/api-info/definition/operations/UpdateLogScaleAlert"
+                    ]
+                  },
+                  {
+                    "group": "MappingRule",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListMappingRules",
+                      "tooling/api-info/definition/operations/CreateMappingRule",
+                      "tooling/api-info/definition/operations/DeleteMappingRule",
+                      "tooling/api-info/definition/operations/ReadMappingRule",
+                      "tooling/api-info/definition/operations/UpdateMappingRule"
+                    ]
+                  },
+                  {
+                    "group": "Monitor",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListMonitors",
+                      "tooling/api-info/definition/operations/CreateMonitor",
+                      "tooling/api-info/definition/operations/DeleteMonitor",
+                      "tooling/api-info/definition/operations/ReadMonitor",
+                      "tooling/api-info/definition/operations/UpdateMonitor"
+                    ]
+                  },
+                  {
+                    "group": "MutingRule",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListMutingRules",
+                      "tooling/api-info/definition/operations/CreateMutingRule",
+                      "tooling/api-info/definition/operations/DeleteMutingRule",
+                      "tooling/api-info/definition/operations/ReadMutingRule",
+                      "tooling/api-info/definition/operations/UpdateMutingRule"
+                    ]
+                  },
+                  {
+                    "group": "NotificationPolicy",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListNotificationPolicies",
+                      "tooling/api-info/definition/operations/CreateNotificationPolicy",
+                      "tooling/api-info/definition/operations/DeleteNotificationPolicy",
+                      "tooling/api-info/definition/operations/ReadNotificationPolicy",
+                      "tooling/api-info/definition/operations/UpdateNotificationPolicy"
+                    ]
+                  },
+                  {
+                    "group": "Notifier",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListNotifiers",
+                      "tooling/api-info/definition/operations/CreateNotifier",
+                      "tooling/api-info/definition/operations/DeleteNotifier",
+                      "tooling/api-info/definition/operations/ReadNotifier",
+                      "tooling/api-info/definition/operations/UpdateNotifier"
+                    ]
+                  },
+                  {
+                    "group": "OtelMetricsIngestion",
+                    "pages": [
+                      "tooling/api-info/definition/operations/DeleteOtelMetricsIngestion",
+                      "tooling/api-info/definition/operations/ReadOtelMetricsIngestion",
+                      "tooling/api-info/definition/operations/CreateOtelMetricsIngestion",
+                      "tooling/api-info/definition/operations/UpdateOtelMetricsIngestion"
+                    ]
+                  },
+                  {
+                    "group": "RecordingRule",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListRecordingRules",
+                      "tooling/api-info/definition/operations/CreateRecordingRule",
+                      "tooling/api-info/definition/operations/DeleteRecordingRule",
+                      "tooling/api-info/definition/operations/ReadRecordingRule",
+                      "tooling/api-info/definition/operations/UpdateRecordingRule"
+                    ]
+                  },
+                  {
+                    "group": "ResourcePools",
+                    "pages": [
+                      "tooling/api-info/definition/operations/DeleteResourcePools",
+                      "tooling/api-info/definition/operations/ReadResourcePools",
+                      "tooling/api-info/definition/operations/CreateResourcePools",
+                      "tooling/api-info/definition/operations/UpdateResourcePools"
+                    ]
+                  },
+                  {
+                    "group": "RollupRule",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListRollupRules",
+                      "tooling/api-info/definition/operations/CreateRollupRule",
+                      "tooling/api-info/definition/operations/DeleteRollupRule",
+                      "tooling/api-info/definition/operations/ReadRollupRule",
+                      "tooling/api-info/definition/operations/UpdateRollupRule"
+                    ]
+                  },
+                  {
+                    "group": "ServiceAccount",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListServiceAccounts",
+                      "tooling/api-info/definition/operations/CreateServiceAccount",
+                      "tooling/api-info/definition/operations/DeleteServiceAccount",
+                      "tooling/api-info/definition/operations/ReadServiceAccount"
+                    ]
+                  },
+                  {
+                    "group": "ServiceAttribute",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListServiceAttributes"
+                    ]
+                  },
+                  {
+                    "group": "Service",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListServices",
+                      "tooling/api-info/definition/operations/ReadService"
+                    ]
+                  },
+                  {
+                    "group": "SLO",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListSLOs",
+                      "tooling/api-info/definition/operations/CreateSLO",
+                      "tooling/api-info/definition/operations/DeleteSLO",
+                      "tooling/api-info/definition/operations/ReadSLO",
+                      "tooling/api-info/definition/operations/UpdateSLO"
+                    ]
+                  },
+                  {
+                    "group": "Team",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListTeams",
+                      "tooling/api-info/definition/operations/CreateTeam",
+                      "tooling/api-info/definition/operations/DeleteTeam",
+                      "tooling/api-info/definition/operations/ReadTeam",
+                      "tooling/api-info/definition/operations/UpdateTeam"
+                    ]
+                  },
+                  {
+                    "group": "TraceBehaviorConfig",
+                    "pages": [
+                      "tooling/api-info/definition/operations/DeleteTraceBehaviorConfig",
+                      "tooling/api-info/definition/operations/ReadTraceBehaviorConfig",
+                      "tooling/api-info/definition/operations/CreateTraceBehaviorConfig",
+                      "tooling/api-info/definition/operations/UpdateTraceBehaviorConfig"
+                    ]
+                  },
+                  {
+                    "group": "TraceBehavior",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListTraceBehaviors",
+                      "tooling/api-info/definition/operations/CreateTraceBehavior",
+                      "tooling/api-info/definition/operations/DeleteTraceBehavior",
+                      "tooling/api-info/definition/operations/ReadTraceBehavior",
+                      "tooling/api-info/definition/operations/UpdateTraceBehavior"
+                    ]
+                  },
+                  {
+                    "group": "TraceJaegerRemoteSamplingStrategy",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListTraceJaegerRemoteSamplingStrategies",
+                      "tooling/api-info/definition/operations/CreateTraceJaegerRemoteSamplingStrategy",
+                      "tooling/api-info/definition/operations/DeleteTraceJaegerRemoteSamplingStrategy",
+                      "tooling/api-info/definition/operations/ReadTraceJaegerRemoteSamplingStrategy",
+                      "tooling/api-info/definition/operations/UpdateTraceJaegerRemoteSamplingStrategy"
+                    ]
+                  },
+                  {
+                    "group": "TraceMetricsRule",
+                    "pages": [
+                      "tooling/api-info/definition/operations/ListTraceMetricsRules",
+                      "tooling/api-info/definition/operations/CreateTraceMetricsRule",
+                      "tooling/api-info/definition/operations/DeleteTraceMetricsRule",
+                      "tooling/api-info/definition/operations/ReadTraceMetricsRule",
+                      "tooling/api-info/definition/operations/UpdateTraceMetricsRule"
+                    ]
+                  },
+                  {
+                    "group": "TraceTailSamplingRules",
+                    "pages": [
+                      "tooling/api-info/definition/operations/DeleteTraceTailSamplingRules",
+                      "tooling/api-info/definition/operations/ReadTraceTailSamplingRules",
+                      "tooling/api-info/definition/operations/CreateTraceTailSamplingRules",
+                      "tooling/api-info/definition/operations/UpdateTraceTailSamplingRules"
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           {
             "dropdown": "Data V1 API",
             "icon": "database",
-            "openapi": {
-              "directory": "/tooling/api-info/data_definition",
-              "source": "/openapi/api_v1_data_swagger_DOCUMENTATION_ONLY.json"
-            }
+            "groups": [
+              {
+                "group": "Endpoints",
+                "pages": [
+                  {
+                    "group": "DataV1",
+                    "pages": [
+                      "tooling/api-info/data_definition/operations/ListEvents",
+                      "tooling/api-info/data_definition/operations/CreateEvent",
+                      "tooling/api-info/data_definition/operations/QueryLogsRange",
+                      "tooling/api-info/data_definition/operations/ListTraces"
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           {
             "dropdown": "State V1 API",
             "icon": "chart-bar",
-            "openapi": {
-              "directory": "/tooling/api-info/state_definition",
-              "source": "/openapi/api_v1_state_swagger_DOCUMENTATION_ONLY.json"
-            }
+            "groups": [
+              {
+                "group": "Endpoints",
+                "pages": [
+                  {
+                    "group": "MetricUsagesByLabelName",
+                    "pages": [
+                      "tooling/api-info/state_definition/operations/ListMetricUsagesByLabelName"
+                    ]
+                  },
+                  {
+                    "group": "MetricUsagesByMetricName",
+                    "pages": [
+                      "tooling/api-info/state_definition/operations/ListMetricUsagesByMetricName"
+                    ]
+                  },
+                  {
+                    "group": "RuleEvaluations",
+                    "pages": [
+                      "/tooling/api-info/state_definition/operations/ListRuleEvaluations"
+                    ]
+                  }
+                ]
+              }
+            ]
           }
         ]
       }
