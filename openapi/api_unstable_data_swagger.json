@@ -1,0 +1,2597 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "definitions": {
+    "AnalyzeAlertsRequestAlertFilter": {
+      "description": "AlertFilter contains semantic filter options for alert analysis queries (list, aggregate, etc).\nIMPORTANT: ALL fields in this message now use AND semantics when combined.\nTo achieve OR semantics between criteria, use multiple AlertFilter instances\nwith alert_filters_combine_mode = OR in the request.",
+      "properties": {
+        "monitor_slug": {
+          "$ref": "#/definitions/AnalyzeAlertsRequestStringMatcher"
+        },
+        "signals": {
+          "$ref": "#/definitions/AnalyzeAlertsRequestLabelsMatcher"
+        },
+        "monitor_labels": {
+          "$ref": "#/definitions/AnalyzeAlertsRequestLabelsMatcher"
+        },
+        "notification_policy_slug": {
+          "$ref": "#/definitions/AnalyzeAlertsRequestStringMatcher"
+        },
+        "is_muted": {
+          "description": "Filter alerts by mute status",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "AnalyzeAlertsRequestAlertFiltersCombineMode": {
+      "description": "- ALERT_FILTERS_OR: At least one filter must match",
+      "enum": [
+        "ALERT_FILTERS_OR"
+      ],
+      "title": "AlertFiltersCombineMode specifies how multiple AlertFilters are combined",
+      "type": "string"
+    },
+    "AnalyzeAlertsRequestLabelMatcher": {
+      "description": "LabelMatcher provides label matching with advanced string operations.\nCombines a specific label key with flexible value matching.",
+      "properties": {
+        "key": {
+          "description": "The label key to match against",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/definitions/AnalyzeAlertsRequestStringMatcher"
+        }
+      },
+      "type": "object"
+    },
+    "AnalyzeAlertsRequestLabelsMatcher": {
+      "description": "LabelsMatcher provides label matching with general per-label matching operations.",
+      "properties": {
+        "labels": {
+          "description": "List of label matchers to apply",
+          "items": {
+            "$ref": "#/definitions/AnalyzeAlertsRequestLabelMatcher"
+          },
+          "type": "array"
+        },
+        "min_matches": {
+          "description": "Minimum number of label matches required for this matcher to be satisfied.\nIf not set, defaults to requiring at least one match when labels are specified.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "AnalyzeAlertsRequestStringMatcher": {
+      "description": "StringMatcher provides advanced string matching operations.\nUsed throughout the API for flexible filtering of string fields.",
+      "properties": {
+        "operation": {
+          "$ref": "#/definitions/AnalyzeAlertsRequestStringMatcherOperation"
+        },
+        "single_value": {
+          "description": "Single value for operations that work with one value (EQUAL, REGEX_EQUAL, CONTAINS, etc.)",
+          "type": "string"
+        },
+        "multi_value": {
+          "description": "Multiple values for operations that work with multiple values (ANY_OF, NONE_OF)",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "AnalyzeAlertsRequestStringMatcherOperation": {
+      "description": "StringMatcherOperation defines the type of string matching operation.\n\n - EQUAL: Exact string equality\n - REGEX_EQUAL: Regular expression matching\n - CONTAINS: String contains (substring match)\n - NOT_EQUAL: Not equal to string\n - NOT_REGEX_EQUAL: Does not match regular expression\n - NOT_CONTAINS: Does not contain (no substring match)\n - ANY_OF: Matches any of the provided values\n - NONE_OF: Matches none of the provided values",
+      "enum": [
+        "EQUAL",
+        "REGEX_EQUAL",
+        "CONTAINS",
+        "NOT_EQUAL",
+        "NOT_REGEX_EQUAL",
+        "NOT_CONTAINS",
+        "ANY_OF",
+        "NONE_OF"
+      ],
+      "type": "string"
+    },
+    "AnalyzeAlertsRequestTimeFilter": {
+      "description": "TimeFilter provides a time range for filtering alert events.",
+      "properties": {
+        "start_time": {
+          "description": "Start time for the filter (inclusive)",
+          "format": "date-time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "End time for the filter (exclusive)",
+          "format": "date-time",
+          "type": "string"
+        },
+        "max_duration_seconds": {
+          "description": "Maximum alert duration in seconds. Filters alerts where duration \u003c= this value",
+          "format": "int32",
+          "type": "integer"
+        },
+        "min_duration_seconds": {
+          "description": "Minimum alert duration in seconds. Filters alerts where duration \u003e= this value",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "AnalyzeAlertsResponseAlert": {
+      "description": "Alert represents a logical alert with its lifecycle and history.\nThis type is specific to analytical access patterns in this package.\nContains complete alert metadata, timing, and historical events.",
+      "properties": {
+        "alert_id": {
+          "description": "Unique identifier for this alert instance",
+          "type": "string"
+        },
+        "monitor_slug": {
+          "description": "Slug of the monitor that generated this alert",
+          "type": "string"
+        },
+        "monitor_name": {
+          "description": "Human-readable name of the monitor",
+          "type": "string"
+        },
+        "signal": {
+          "description": "If configured, key-value pairs (labels, from telemetry) that semantically characterize the alert further.",
+          "items": {
+            "$ref": "#/definitions/dataunstableAnalyzeAlertsResponseLabel"
+          },
+          "type": "array"
+        },
+        "monitor_labels": {
+          "description": "Labels attached to the monitor that generated this alert",
+          "items": {
+            "$ref": "#/definitions/dataunstableAnalyzeAlertsResponseLabel"
+          },
+          "type": "array"
+        },
+        "is_muted": {
+          "description": "Whether this alert is currently muted",
+          "type": "boolean"
+        },
+        "start_time": {
+          "description": "When this alert first triggered",
+          "format": "date-time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "When this alert resolved (if it has resolved)",
+          "format": "date-time",
+          "type": "string"
+        },
+        "notification_policy_slug": {
+          "description": "Slug of the notification policy handling this alert",
+          "type": "string"
+        },
+        "notification_policy_name": {
+          "description": "Human-readable name of the notification policy",
+          "type": "string"
+        },
+        "ownership_context": {
+          "$ref": "#/definitions/AnalyzeAlertsResponseOwnershipContext"
+        },
+        "severity_history": {
+          "description": "Historical record of severity changes throughout the alert lifecycle",
+          "items": {
+            "$ref": "#/definitions/AnalyzeAlertsResponseSeverityChangeHistoryEntry"
+          },
+          "type": "array"
+        },
+        "mute_history": {
+          "description": "Historical record of mute/unmute actions",
+          "items": {
+            "$ref": "#/definitions/AnalyzeAlertsResponseMuteActionHistoryEntry"
+          },
+          "type": "array"
+        },
+        "notifier_history": {
+          "description": "Historical record of notification attempts",
+          "items": {
+            "$ref": "#/definitions/AnalyzeAlertsResponseNotifierHistoryEntry"
+          },
+          "type": "array"
+        },
+        "monitor_label_match_count": {
+          "description": "Number of monitor labels that matched the filter criteria (if monitor_labels filter was provided)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "signal_match_count": {
+          "description": "Number of signals that matched the filter criteria (if signals filter was provided)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "slo_metadata": {
+          "$ref": "#/definitions/AnalyzeAlertsResponseSloMetadata"
+        },
+        "signals_hash": {
+          "description": "Hash of signals for grouping alerts with identical signal combinations.",
+          "format": "int64",
+          "type": "string"
+        },
+        "monitor_labels_hash": {
+          "description": "Hash of monitor labels for grouping alerts from monitors with identical label sets.",
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AnalyzeAlertsResponseMuteActionHistoryEntry": {
+      "description": "MuteActionHistoryEntry represents a mute/unmute action during the alert lifecycle.\nTracks when an alert was manually muted or unmuted.",
+      "properties": {
+        "action": {
+          "description": "The action taken: \"MUTED\" or \"UNMUTED\"",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "When this mute action occurred",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AnalyzeAlertsResponseNotifierHistoryEntry": {
+      "description": "NotifierHistoryEntry represents a notifier send attempt during the alert lifecycle.\nTracks all notification attempts made for this alert.",
+      "properties": {
+        "severity": {
+          "description": "Severity level when this notification was sent",
+          "type": "string"
+        },
+        "notifier_slug": {
+          "description": "Slug identifier of the notifier",
+          "type": "string"
+        },
+        "notifier_name": {
+          "description": "Human-readable name of the notifier",
+          "type": "string"
+        },
+        "send_success": {
+          "description": "Whether the notification was successfully sent",
+          "type": "boolean"
+        },
+        "timestamp": {
+          "description": "When the notification attempt occurred",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AnalyzeAlertsResponseOwnershipContext": {
+      "description": "OwnershipContext contains ownership information for the monitor.\nProvides hierarchical ownership context from entity groups and collections.",
+      "properties": {
+        "entity_group_id": {
+          "description": "Entity group that owns the monitor",
+          "type": "string"
+        },
+        "entity_group_slug": {
+          "type": "string"
+        },
+        "collection_id": {
+          "description": "Collection that owns the monitor",
+          "type": "string"
+        },
+        "collection_slug": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AnalyzeAlertsResponseSeverityChangeHistoryEntry": {
+      "description": "SeverityChangeHistoryEntry represents a severity change during the alert lifecycle.\nTracks when an alert's severity level changed over time.",
+      "properties": {
+        "severity": {
+          "description": "The new severity level (e.g., \"critical\", \"warning\")",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "When this severity change occurred",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AnalyzeAlertsResponseSloMetadata": {
+      "description": "SloMetadata contains metadata about an SLO-generated monitor.\nOnly present when the alert originates from an SLO monitor.",
+      "properties": {
+        "slug": {
+          "description": "SLO slug identifier",
+          "type": "string"
+        },
+        "category": {
+          "description": "SLO category (e.g., \"availability\", \"latency\", \"error_rate\")",
+          "type": "string"
+        },
+        "name": {
+          "description": "SLO name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "EventBucketGroup": {
+      "description": "A single group of events within a bucket.",
+      "properties": {
+        "name": {
+          "description": "The name of this group within the bucket. Set to the value of the group_by field.\nUnset if group_by is unset.",
+          "type": "string"
+        },
+        "count": {
+          "description": "The count of events in this group within the bucket.",
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ExecutionSummaryDashboard": {
+      "properties": {
+        "slug": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GetLogClusterExecutionsRequestExecutionType": {
+      "enum": [
+        "LOG_EXPLORER",
+        "DASHBOARD"
+      ],
+      "type": "string"
+    },
+    "GetLogClusterExecutionsResponseExecutionSummary": {
+      "properties": {
+        "count": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "query": {
+          "description": "either `query` or `dashboard` will be set, depending on the first level of grouping",
+          "type": "string"
+        },
+        "dashboard": {
+          "$ref": "#/definitions/ExecutionSummaryDashboard"
+        },
+        "executions": {
+          "items": {
+            "$ref": "#/definitions/GetLogClusterExecutionsResponseExecutionSummaryExecutions"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "GetLogClusterExecutionsResponseExecutionSummaryExecutions": {
+      "properties": {
+        "count": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "user": {
+          "description": "`dashboard` or `user` will not be set if we're not grouping by it",
+          "type": "string"
+        },
+        "dashboard": {
+          "$ref": "#/definitions/ExecutionSummaryDashboard"
+        }
+      },
+      "type": "object"
+    },
+    "GetLogClusterUsageResponseRecommendation": {
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/RecommendationRecommendationType"
+        },
+        "header_text": {
+          "type": "string"
+        },
+        "body_text": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GetLogClusterUsageResponseReferences": {
+      "properties": {
+        "dashboards": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "monitors": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "saved_searches": {
+          "format": "uint64",
+          "type": "string"
+        }
+      },
+      "title": "not used initially",
+      "type": "object"
+    },
+    "GetLogClusterUsageResponseUsageBucket": {
+      "properties": {
+        "after": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "before": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "value": {
+          "format": "uint64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GetLoggingUsageRequestResponseOrderType": {
+      "enum": [
+        "UTILITY_ASC",
+        "UTILITY_DESC",
+        "VOLUME_ASC",
+        "VOLUME_DESC",
+        "VOLUME_24H_ASC",
+        "VOLUME_24H_DESC"
+      ],
+      "type": "string"
+    },
+    "GetLoggingUsageResponseMetadata": {
+      "properties": {
+        "total_patterns": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "total_logs": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "last_updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "total_bytes": {
+          "format": "uint64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GetRangeQueryResponseRangeQueryMetadata": {
+      "properties": {
+        "limit_enforced": {
+          "description": "This field indicates whether the result is truncated by the limit requested.",
+          "type": "boolean"
+        },
+        "page": {
+          "$ref": "#/definitions/dataunstableRangeQueryPageResult"
+        }
+      },
+      "type": "object"
+    },
+    "ListEventFieldValuesRequestScope": {
+      "description": "The scope to apply to the query.",
+      "properties": {
+        "categories": {
+          "description": "The list of categories to scope event field values by.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "types": {
+          "description": "The list of types to scope event field values by.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sources": {
+          "description": "The list of sources to scope event field values by.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ListTracesRequestQueryType": {
+      "enum": [
+        "TRACE_IDS",
+        "SERVICE_OPERATION"
+      ],
+      "type": "string"
+    },
+    "ListTracesRequestTagFilter": {
+      "properties": {
+        "key": {
+          "description": "The key (or name) of the span tag that is inspected by this filter.",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/definitions/TagFilterStringFilter"
+        },
+        "numeric_value": {
+          "$ref": "#/definitions/TagFilterNumericFilter"
+        }
+      },
+      "type": "object"
+    },
+    "LogQueryTimeSeriesDataLogQueryTimeSeries": {
+      "properties": {
+        "group_by_dimension_values": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "buckets": {
+          "items": {
+            "$ref": "#/definitions/LogQueryTimeSeriesLogQueryTimeSeriesBucket"
+          },
+          "type": "array"
+        },
+        "aggregation_name": {
+          "description": "aggregation_name is by default the name of the aggregation used to calculate\nthe values.\nIn the future we may support aliasing in query grammar.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "LogQueryTimeSeriesLogQueryTimeSeriesBucket": {
+      "properties": {
+        "start_time": {
+          "description": "The start time of the time range this bucket covers.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "The end time of the time range this bucket covers.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "float_value": {
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "NumericFilterComparisonType": {
+      "enum": [
+        "EQUAL",
+        "NOT_EQUAL",
+        "GREATER_THAN",
+        "GREATER_THAN_OR_EQUAL",
+        "LESS_THAN",
+        "LESS_THAN_OR_EQUAL"
+      ],
+      "type": "string"
+    },
+    "RecommendationRecommendationType": {
+      "enum": [
+        "DROP_LOG",
+        "ADD_METRIC",
+        "ADD_METRIC_AND_DROP"
+      ],
+      "type": "string"
+    },
+    "SpanLink": {
+      "description": "A pointer from the current span to another span in the same trace or in a\ndifferent trace. For example, this can be used in batching operations,\nwhere a single batch handler processes multiple requests from different\ntraces or when the handler receives a request from a different project.",
+      "properties": {
+        "trace_id": {
+          "description": "A unique identifier of a trace that this linked span is part of. The ID is a\n16-byte array.",
+          "format": "byte",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "A unique identifier for the linked span. The ID is an 8-byte array.",
+          "format": "byte",
+          "type": "string"
+        },
+        "trace_state": {
+          "description": "The trace_state associated with the link.",
+          "type": "string"
+        },
+        "attributes": {
+          "description": "attributes is a collection of attribute key/value pairs on the link.\nAttribute keys MUST be unique (it is not allowed to have more than one\nattribute with the same key).",
+          "items": {
+            "$ref": "#/definitions/v1KeyValue"
+          },
+          "type": "array"
+        },
+        "dropped_attributes_count": {
+          "description": "dropped_attributes_count is the number of dropped attributes. If the value is 0,\nthen no attributes were dropped.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "flags": {
+          "description": "Flags, a bit field.\n\nBits 0-7 (8 least significant bits) are the trace flags as defined in W3C Trace\nContext specification. To read the 8-bit W3C trace flag, use\n`flags \u0026 SPAN_FLAGS_TRACE_FLAGS_MASK`.\n\nSee https://www.w3.org/TR/trace-context-2/#trace-flags for the flag definitions.\n\nBits 8 and 9 represent the 3 states of whether the link is remote.\nThe states are (unknown, is not remote, is remote).\nTo read whether the value is known, use `(flags \u0026 SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK) != 0`.\nTo read whether the link is remote, use `(flags \u0026 SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK) != 0`.\n\nReaders MUST NOT assume that bits 10-31 (22 most significant bits) will be zero.\nWhen creating new spans, bits 10-31 (most-significant 22-bits) MUST be zero.\n\n[Optional].",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "SpanSpanKind": {
+      "description": "SpanKind is the type of span. Can be used to specify additional relationships between spans\nin addition to a parent/child relationship.\n\n - SPAN_KIND_INTERNAL: Indicates that the span represents an internal operation within an application,\nas opposed to an operation happening at the boundaries. Default value.\n - SPAN_KIND_SERVER: Indicates that the span covers server-side handling of an RPC or other\nremote network request.\n - SPAN_KIND_CLIENT: Indicates that the span describes a request to some remote service.\n - SPAN_KIND_PRODUCER: Indicates that the span describes a producer sending a message to a broker.\nUnlike CLIENT and SERVER, there is often no direct critical path latency relationship\nbetween producer and consumer spans. A PRODUCER span ends when the message was accepted\nby the broker while the logical processing of the message might span a much longer time.\n - SPAN_KIND_CONSUMER: Indicates that the span describes consumer receiving a message from a broker.\nLike the PRODUCER kind, there is often no direct critical path latency relationship\nbetween producer and consumer spans.",
+      "enum": [
+        "SPAN_KIND_INTERNAL",
+        "SPAN_KIND_SERVER",
+        "SPAN_KIND_CLIENT",
+        "SPAN_KIND_PRODUCER",
+        "SPAN_KIND_CONSUMER"
+      ],
+      "type": "string"
+    },
+    "StatusStatusCode": {
+      "description": "- STATUS_CODE_OK: The Span has been validated by an Application developer or Operator to \nhave completed successfully.\n - STATUS_CODE_ERROR: The Span contains an error.",
+      "enum": [
+        "STATUS_CODE_OK",
+        "STATUS_CODE_ERROR"
+      ],
+      "title": "For the semantics of status codes see\nhttps://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/api.md#set-status",
+      "type": "string"
+    },
+    "StringFilterStringFilterMatchType": {
+      "enum": [
+        "EXACT",
+        "REGEX",
+        "EXACT_NEGATION",
+        "REGEX_NEGATION",
+        "IN",
+        "NOT_IN"
+      ],
+      "type": "string"
+    },
+    "TagFilterNumericFilter": {
+      "properties": {
+        "comparison": {
+          "$ref": "#/definitions/NumericFilterComparisonType"
+        },
+        "value": {
+          "description": "The filter value used in comparison against match candidates.",
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "TagFilterStringFilter": {
+      "properties": {
+        "match": {
+          "$ref": "#/definitions/StringFilterStringFilterMatchType"
+        },
+        "value": {
+          "description": "The value the filter compares to the target trace or span field.",
+          "type": "string"
+        },
+        "in_values": {
+          "description": "Values the filter tests against when using IN or NOT_IN match type.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "apiError": {
+      "properties": {
+        "code": {
+          "description": "An optional private error code whose values are undefined.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "message": {
+          "description": "An error message describing what went wrong.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "configv1PageParams": {
+      "properties": {
+        "max_size": {
+          "description": "Sets the preferred number of items to return per page. If set to `0`, the\nserver will use its default value. Regardless of the value specified, clients\nmust never assume how many items will be returned.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "token": {
+          "description": "An opaque page token that identifies which page the client should request.\nAn empty value indicates the first page.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "configv1PageResult": {
+      "properties": {
+        "next_token": {
+          "description": "An opaque page token that identifies the next page of items that the\nclient should request. An empty value indicates that there are no\nmore items to return.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableAnalyzeAlertsRequest": {
+      "description": "AnalyzeAlertsRequest is the request for the AnalyzeAlerts API.\nRetrieves alerts (aggregated by alert_id) within a given time range that match the provided filters.",
+      "properties": {
+        "time_filter": {
+          "$ref": "#/definitions/AnalyzeAlertsRequestTimeFilter"
+        },
+        "alert_filters": {
+          "description": "Semantic filters to apply to alerts",
+          "items": {
+            "$ref": "#/definitions/AnalyzeAlertsRequestAlertFilter"
+          },
+          "type": "array"
+        },
+        "alert_filters_combine_mode": {
+          "$ref": "#/definitions/AnalyzeAlertsRequestAlertFiltersCombineMode"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableAnalyzeAlertsResponse": {
+      "description": "AnalyzeAlertsResponse is the response for the AnalyzeAlerts API.\nReturns a list of alerts matching the request criteria.",
+      "properties": {
+        "alerts": {
+          "description": "List of alerts matching the filter criteria",
+          "items": {
+            "$ref": "#/definitions/AnalyzeAlertsResponseAlert"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableAnalyzeAlertsResponseLabel": {
+      "description": "Label represents a key-value pair associated with a monitor.\nMonitor labels provide metadata about the monitor that generated the alert.",
+      "properties": {
+        "name": {
+          "description": "The name of the label (e.g., \"team\", \"environment\")",
+          "type": "string"
+        },
+        "value": {
+          "description": "The value of the label (e.g., \"platform\", \"production\")",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableAutocompleteResponse": {
+      "properties": {
+        "suggestions": {
+          "items": {
+            "$ref": "#/definitions/dataunstableSuggestion"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableCancelLogQueryResponse": {
+      "type": "object"
+    },
+    "dataunstableColumnMeta": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/dataunstableColumnMetaType"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableColumnMetaType": {
+      "enum": [
+        "BOOLEAN",
+        "FLOAT",
+        "STRING"
+      ],
+      "type": "string"
+    },
+    "dataunstableCreateEventRequest": {
+      "properties": {
+        "event": {
+          "$ref": "#/definitions/dataunstableEvent"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableCreateEventResponse": {
+      "type": "object"
+    },
+    "dataunstableDeleteEventResponse": {
+      "type": "object"
+    },
+    "dataunstableDiscoveredLogField": {
+      "properties": {
+        "name": {
+          "description": "Field name (label key).",
+          "type": "string"
+        },
+        "total_count": {
+          "description": "Total occurrences of this field across all logs.",
+          "format": "uint64",
+          "type": "string"
+        },
+        "top_values": {
+          "description": "Top values for this field, ordered by frequency.\nValues are truncated to 100 bytes to keep response size manageable.",
+          "items": {
+            "$ref": "#/definitions/dataunstableDiscoveredLogFieldValue"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableDiscoveredLogFieldValue": {
+      "properties": {
+        "value": {
+          "description": "The field value (truncated to 100 bytes).",
+          "type": "string"
+        },
+        "count": {
+          "description": "Number of occurrences of this value.",
+          "format": "uint64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableEvent": {
+      "properties": {
+        "title": {
+          "description": "A short description of the event that occurred, such as an email subject.\nMax length, 100 characters.",
+          "type": "string"
+        },
+        "happened_at": {
+          "description": "The time the event occurred. Must be between 24 hours in the past or 24 hours\nin the future. Defaults to `now` if not specified.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "category": {
+          "description": "The category the event belongs to. Must be one of these categories:\n`alerts`, `broadcasts`, `chronosphere`, `deploys`, `feature_flags`,\n`infrastructure`, `third_party`.",
+          "type": "string"
+        },
+        "type": {
+          "description": "The event type, used to group and differentiate events within a `category`\nor `source`.",
+          "type": "string"
+        },
+        "source": {
+          "description": "Identifies where the data originated, in cases where a change to the\ninstrumentation or integration is needed. Max length, 50 characters.",
+          "type": "string"
+        },
+        "labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Map of user-supplied key:value pairs associated with the event. Max 200 labels\nper event. Key max length, 200 characters. Value max length, 5,000\ncharacters.",
+          "type": "object"
+        },
+        "json_payload": {
+          "description": "A string representation of the original event JSON. Max length 100,000 characters. Only json_payload or\nraw_json_payload can be set.",
+          "type": "string"
+        },
+        "raw_json_payload": {
+          "description": "The JSON payload if the original event was in JSON format. Formatted as JSON. Max length,\n100,000 characters. Input Only. Only json_payload or raw_json_payload may be set.",
+          "type": "object"
+        },
+        "id": {
+          "description": "Unique identifier",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableEventBucket": {
+      "description": "A single histogram bucket.",
+      "properties": {
+        "groups": {
+          "description": "The grouped data in this bucket. Ordered alphabetically by group name.",
+          "items": {
+            "$ref": "#/definitions/EventBucketGroup"
+          },
+          "type": "array"
+        },
+        "start_time": {
+          "description": "The start time of the time range this bucket covers.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "The end time of the time range this bucket covers.",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableEventDetails": {
+      "properties": {
+        "happened_at": {
+          "description": "The time the event occurred.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "category": {
+          "description": "The category the event belongs to.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique identifier",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableEventField": {
+      "enum": [
+        "CATEGORY_EVENT_FIELD",
+        "TYPE_EVENT_FIELD",
+        "SOURCE_EVENT_FIELD",
+        "LABEL_NAME_EVENT_FIELD",
+        "LABEL_VALUE_EVENT_FIELD",
+        "LENS_SERVICE_EVENT_FIELD"
+      ],
+      "type": "string"
+    },
+    "dataunstableEventGrafanaAnnotation": {
+      "description": "EventGrafanaAnnotation represents Event as a grafana annotation.",
+      "properties": {
+        "id": {
+          "description": "Unique identifier.",
+          "type": "string"
+        },
+        "login": {
+          "description": "The email of the user that created the event if available.",
+          "type": "string"
+        },
+        "time": {
+          "description": "The happened_at of the event.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "time_end": {
+          "description": "The happened_at of the event",
+          "format": "date-time",
+          "type": "string"
+        },
+        "text": {
+          "description": "The title of the event.",
+          "type": "string"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "The properties and labels of the event. Grafana expects these to be a list of string\nbut to make it easier for our plugin we return it as a map of string.",
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableEventHistogramWithDetails": {
+      "properties": {
+        "event_bucket": {
+          "$ref": "#/definitions/dataunstableEventBucket"
+        },
+        "event": {
+          "$ref": "#/definitions/dataunstableEventDetails"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableFieldConfiguration": {
+      "properties": {
+        "list_logs_field_order": {
+          "description": "list_logs_field_order defines the order of priority fields in the expanded log view in logs explorer.",
+          "items": {
+            "$ref": "#/definitions/dataunstableFieldMeta"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableFieldMeta": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/dataunstableLogFieldType"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetEventHistogramResponse": {
+      "properties": {
+        "buckets": {
+          "description": "List of histogram buckets ordered in ASC order by start_time.",
+          "items": {
+            "$ref": "#/definitions/dataunstableEventBucket"
+          },
+          "type": "array"
+        },
+        "total_events": {
+          "description": "The total number of events with this filter and time range.",
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetEventResponse": {
+      "properties": {
+        "event": {
+          "$ref": "#/definitions/dataunstableEvent"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetEventsForMonitorResponse": {
+      "properties": {
+        "event_histogram_with_details": {
+          "description": "The buckets and individual events making up a time range",
+          "items": {
+            "$ref": "#/definitions/dataunstableEventHistogramWithDetails"
+          },
+          "type": "array"
+        },
+        "total_events": {
+          "description": "The total number of events in the time range",
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetInstantQueryResponse": {
+      "properties": {
+        "groups": {
+          "description": "The grouped data at this instant. Ordered alphabetically by group name.",
+          "items": {
+            "$ref": "#/definitions/dataunstableGroupByOutput"
+          },
+          "type": "array"
+        },
+        "grouped_by": {
+          "description": "The names of the labels by which the results are grouped by.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "limit_enforced": {
+          "description": "This field indicates whether the result is truncated by the limit requested.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetLogClusterExecutionsResponse": {
+      "properties": {
+        "summaries": {
+          "items": {
+            "$ref": "#/definitions/GetLogClusterExecutionsResponseExecutionSummary"
+          },
+          "type": "array"
+        },
+        "page": {
+          "$ref": "#/definitions/configv1PageResult"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetLogClusterUsageResponse": {
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "cluster_id": {
+          "format": "int64",
+          "type": "string"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "utility_score": {
+          "format": "float",
+          "type": "number"
+        },
+        "utility_score_previous": {
+          "format": "float",
+          "type": "number"
+        },
+        "volume_bytes": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "volume_bytes_previous": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "volume_bytes_24h": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "volume_bytes_24h_previous": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "executions": {
+          "$ref": "#/definitions/dataunstableGetLogClusterUsageResponseExecutions"
+        },
+        "volume_bytes_buckets": {
+          "items": {
+            "$ref": "#/definitions/GetLogClusterUsageResponseUsageBucket"
+          },
+          "type": "array"
+        },
+        "references": {
+          "$ref": "#/definitions/GetLogClusterUsageResponseReferences"
+        },
+        "recommendation": {
+          "$ref": "#/definitions/GetLogClusterUsageResponseRecommendation"
+        },
+        "log_query": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetLogClusterUsageResponseExecutions": {
+      "properties": {
+        "dashboards": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "explorer": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "unique_users": {
+          "format": "uint64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetLogDiscoveryResponse": {
+      "properties": {
+        "fields": {
+          "description": "Discovered log fields with their top values, ordered by frequency.\nNote: The \"message\" field is excluded from discovery as it's not useful for context.",
+          "items": {
+            "$ref": "#/definitions/dataunstableDiscoveredLogField"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetLogHistogramResponse": {
+      "properties": {
+        "buckets": {
+          "description": "List of histogram buckets ordered in ASC order by start_time.",
+          "items": {
+            "$ref": "#/definitions/dataunstableLogBucket"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetLoggingUsageResponse": {
+      "properties": {
+        "clusters": {
+          "items": {
+            "$ref": "#/definitions/dataunstableGetLoggingUsageResponseLogCluster"
+          },
+          "type": "array"
+        },
+        "meta": {
+          "$ref": "#/definitions/GetLoggingUsageResponseMetadata"
+        },
+        "page": {
+          "$ref": "#/definitions/configv1PageResult"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetLoggingUsageResponseLogCluster": {
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "cluster_id": {
+          "format": "int64",
+          "type": "string"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "utility_score": {
+          "format": "float",
+          "type": "number"
+        },
+        "utility_score_previous": {
+          "format": "float",
+          "type": "number"
+        },
+        "volume_bytes": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "volume_bytes_previous": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "volume_bytes_24h": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "volume_bytes_24h_previous": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "last_updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "log_query": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetRangeQueryResponse": {
+      "properties": {
+        "metadata": {
+          "$ref": "#/definitions/GetRangeQueryResponseRangeQueryMetadata"
+        },
+        "time_series_data": {
+          "$ref": "#/definitions/dataunstableLogQueryTimeSeriesData"
+        },
+        "grid_data": {
+          "$ref": "#/definitions/dataunstableLogQueryGridData"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGetTenantConfigurationResponse": {
+      "properties": {
+        "data_retention_days": {
+          "description": "Number of days the tenant is configured to",
+          "format": "int32",
+          "type": "integer"
+        },
+        "primary_keys": {
+          "description": "Names of primary key fields configured for the tenant",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGroupByInput": {
+      "properties": {
+        "field_names": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableGroupByOutput": {
+      "description": "A single group of logs within a bucket.",
+      "properties": {
+        "field_values": {
+          "description": "The name of this group within the bucket. Set to the value of the group_by field.\nUnset if group_by is unset.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "value": {
+          "description": "The value of the aggregation in this group within the bucket.",
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableListEventFieldValuesResponse": {
+      "properties": {
+        "values": {
+          "description": "Field values are ordered by frequency of occurrence and then alphabetical order is used\nas the tiebreaker.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableListEventGrafanaAnnotationsResponse": {
+      "properties": {
+        "events": {
+          "items": {
+            "$ref": "#/definitions/dataunstableEventGrafanaAnnotation"
+          },
+          "type": "array"
+        },
+        "page": {
+          "$ref": "#/definitions/configv1PageResult"
+        },
+        "query": {
+          "description": "Returns the query that was used to generate the request.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableListEventsResponse": {
+      "properties": {
+        "events": {
+          "items": {
+            "$ref": "#/definitions/dataunstableEvent"
+          },
+          "type": "array"
+        },
+        "page": {
+          "$ref": "#/definitions/configv1PageResult"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableListLogFieldNamesResponse": {
+      "properties": {
+        "suggestions": {
+          "items": {
+            "$ref": "#/definitions/dataunstableSuggestion"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableListLogFieldValuesResponse": {
+      "properties": {
+        "suggestions": {
+          "items": {
+            "$ref": "#/definitions/dataunstableSuggestion"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableListLogsRequestSortOrder": {
+      "enum": [
+        "ASC",
+        "DESC"
+      ],
+      "type": "string"
+    },
+    "dataunstableListLogsResponse": {
+      "properties": {
+        "logs": {
+          "items": {
+            "$ref": "#/definitions/dataunstableLog"
+          },
+          "type": "array"
+        },
+        "page": {
+          "$ref": "#/definitions/configv1PageResult"
+        },
+        "clusters": {
+          "description": "Clusters for the listed logs.",
+          "items": {
+            "$ref": "#/definitions/dataunstableLogCluster"
+          },
+          "type": "array"
+        },
+        "log_fields": {
+          "$ref": "#/definitions/dataunstableLogFields"
+        },
+        "field_config": {
+          "$ref": "#/definitions/dataunstableFieldConfiguration"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLog": {
+      "properties": {
+        "timestamp": {
+          "description": "Timestamp recorded on the log message.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Data contains all the data for the log.",
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogBucket": {
+      "description": "A single histogram bucket.",
+      "properties": {
+        "groups": {
+          "description": "The grouped data in this bucket. Ordered alphabetically by group name.",
+          "items": {
+            "$ref": "#/definitions/dataunstableGroupByOutput"
+          },
+          "type": "array"
+        },
+        "start_time": {
+          "description": "The start time of the time range this bucket covers.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "The end time of the time range this bucket covers.",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogCluster": {
+      "properties": {
+        "pattern": {
+          "description": "The pattern that represents this cluster.",
+          "type": "string"
+        },
+        "num_logs": {
+          "description": "Number of logs present in this cluster.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "filter": {
+          "description": "Filter expression that can be used to select logs matching the cluster.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogClusterId": {
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "cluster_id": {
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogField": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "count": {
+          "format": "uint64",
+          "type": "string"
+        },
+        "values": {
+          "items": {
+            "$ref": "#/definitions/dataunstableLogFieldValue"
+          },
+          "type": "array"
+        },
+        "field_type": {
+          "$ref": "#/definitions/dataunstableLogFieldType"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogFieldType": {
+      "enum": [
+        "PK",
+        "META",
+        "DERIVED",
+        "REGULAR"
+      ],
+      "type": "string"
+    },
+    "dataunstableLogFieldValue": {
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "count": {
+          "format": "uint64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogFields": {
+      "properties": {
+        "fields": {
+          "items": {
+            "$ref": "#/definitions/dataunstableLogField"
+          },
+          "type": "array"
+        },
+        "sample_count": {
+          "format": "uint64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogFilter": {
+      "properties": {
+        "happened_after": {
+          "description": "Only log messages with a timestamp after this time will be returned.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "happened_before": {
+          "description": "Only log messages with a timestamp before this time will be returned.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "query": {
+          "description": "Specifies the query to run to filter logs. Query defined using logql.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogQueryGridData": {
+      "properties": {
+        "columns": {
+          "items": {
+            "$ref": "#/definitions/dataunstableColumnMeta"
+          },
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/definitions/dataunstableRow"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogQueryListData": {
+      "properties": {
+        "logs": {
+          "items": {
+            "$ref": "#/definitions/dataunstableLog"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogQueryTimeSeriesData": {
+      "properties": {
+        "series": {
+          "items": {
+            "$ref": "#/definitions/LogQueryTimeSeriesDataLogQueryTimeSeries"
+          },
+          "type": "array"
+        },
+        "group_by_dimension_names": {
+          "description": "The names of the dimensions by which the results are grouped by.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableLogWithIngestionMatch": {
+      "properties": {
+        "log": {
+          "$ref": "#/definitions/dataunstableLog"
+        },
+        "matches_ingestion_filter": {
+          "description": "Whether this log would match the filter at ingestion time.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableMetricMetadata": {
+      "description": "MetricMetadata contains metadata information about a metric.",
+      "properties": {
+        "name": {
+          "description": "The name of the metric.",
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/dataunstableMetricType"
+        },
+        "description": {
+          "description": "Human-readable description of what the metric measures.",
+          "type": "string"
+        },
+        "resolution": {
+          "description": "The resolution of the metric (e.g., \"1m\", \"5s\").",
+          "type": "string"
+        },
+        "is_aggregated": {
+          "description": "Whether this metric is an aggregated metric derived from other metrics.",
+          "type": "boolean"
+        },
+        "aggregation_rule_slug": {
+          "description": "If this is an aggregated metric, the slug of the aggregation rule that created it.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableMetricType": {
+      "description": "MetricType defines the canonical metric types supported by the platform.\n\n - CUMULATIVE_COUNTER: A Prom-style cumulative counter, which stores a strictly increasing count\nof distinct events (but may reset to zero). Each datapoint stores the\nrunning total at the given timestamp.\n - GAUGE: A true gauge, which stores an observation of state at a point in time,\nwhere it is impossible to have two different states at a single point in\ntime. Each datapoint stores the value at the given timestamp.\n - DELTA_COUNTER: A delta counter, which stores the same type of data as COUNTER, but where\neach datapoint stores a strictly positive delta increment at the given\ntimestamp.\n - MEASUREMENT: A raw observation with some discrete value, e.g. individual request\nlatency, individual request size, etc. Unlike a counter, each MEASUREMENT\nevent has a discrete value. And unlike a gauge, there can be multiple\nvalues at any point in time.\n - CUMULATIVE_EXPONENTIAL_HISTOGRAM: An exponential histogram, where each datapoint is a structured value (not a\nfloat), which stores compressed buckets of cumulative measurement counts,\nalong with total sum and count.\n - DELTA_EXPONENTIAL_HISTOGRAM: An exponential histogram, where each datapoint is a structured value (not a\nfloat), which stores compressed buckets of measurement count deltas,\nalong with total sum and count.",
+      "enum": [
+        "CUMULATIVE_COUNTER",
+        "GAUGE",
+        "DELTA_COUNTER",
+        "MEASUREMENT",
+        "CUMULATIVE_EXPONENTIAL_HISTOGRAM",
+        "DELTA_EXPONENTIAL_HISTOGRAM"
+      ],
+      "type": "string"
+    },
+    "dataunstablePassThroughQueryResponse": {
+      "type": "object"
+    },
+    "dataunstablePollListLogFieldNamesResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "is_finished": {
+          "type": "boolean"
+        },
+        "progress": {
+          "format": "float",
+          "type": "number"
+        },
+        "suggestions": {
+          "items": {
+            "$ref": "#/definitions/dataunstableSuggestion"
+          },
+          "type": "array"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstablePollListLogFieldValuesResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "is_finished": {
+          "type": "boolean"
+        },
+        "progress": {
+          "format": "float",
+          "type": "number"
+        },
+        "suggestions": {
+          "items": {
+            "$ref": "#/definitions/dataunstableSuggestion"
+          },
+          "type": "array"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstablePollListLogFieldsResponse": {
+      "properties": {
+        "log_fields": {
+          "$ref": "#/definitions/dataunstableLogFields"
+        },
+        "query_id": {
+          "type": "string"
+        },
+        "is_finished": {
+          "type": "boolean"
+        },
+        "progress": {
+          "format": "float",
+          "type": "number"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstablePollListLogsResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "is_finished": {
+          "type": "boolean"
+        },
+        "progress": {
+          "format": "float",
+          "type": "number"
+        },
+        "logs": {
+          "items": {
+            "$ref": "#/definitions/dataunstableLog"
+          },
+          "type": "array"
+        },
+        "page": {
+          "$ref": "#/definitions/configv1PageResult"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "clusters": {
+          "description": "Clusters for the listed logs.",
+          "items": {
+            "$ref": "#/definitions/dataunstableLogCluster"
+          },
+          "type": "array"
+        },
+        "log_fields": {
+          "$ref": "#/definitions/dataunstableLogFields"
+        },
+        "field_config": {
+          "$ref": "#/definitions/dataunstableFieldConfiguration"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstablePollLogHistogramResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "is_finished": {
+          "type": "boolean"
+        },
+        "progress": {
+          "format": "float",
+          "type": "number"
+        },
+        "buckets": {
+          "description": "List of histogram buckets ordered in ASC order by start_time.",
+          "items": {
+            "$ref": "#/definitions/dataunstableLogBucket"
+          },
+          "type": "array"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstablePollRangeQueryResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "is_finished": {
+          "type": "boolean"
+        },
+        "progress": {
+          "format": "float",
+          "type": "number"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "metadata": {
+          "$ref": "#/definitions/GetRangeQueryResponseRangeQueryMetadata"
+        },
+        "time_series_data": {
+          "$ref": "#/definitions/dataunstableLogQueryTimeSeriesData"
+        },
+        "list_data": {
+          "$ref": "#/definitions/dataunstableLogQueryListData"
+        },
+        "grid_data": {
+          "$ref": "#/definitions/dataunstableLogQueryGridData"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstablePreviewLogsIngestionFilterRequestSortOrder": {
+      "enum": [
+        "ASC",
+        "DESC"
+      ],
+      "type": "string"
+    },
+    "dataunstablePreviewLogsIngestionFilterResponse": {
+      "properties": {
+        "logs": {
+          "description": "All logs returned from the query with ingestion filter match indicators.",
+          "items": {
+            "$ref": "#/definitions/dataunstableLogWithIngestionMatch"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableRangeQueryPageParams": {
+      "properties": {
+        "token": {
+          "description": "Opaque page token identifying which page to request. An empty token\nidentifies the first page.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableRangeQueryPageResult": {
+      "properties": {
+        "next_token": {
+          "description": "Opaque page token which identifies the next page of items which the\nclient should request. An empty next_token indicates that there are no\nmore items to return.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableReadMetricMetadataResponse": {
+      "description": "ReadMetricMetadataResponse contains the metadata for the requested metric.",
+      "properties": {
+        "metadata": {
+          "$ref": "#/definitions/dataunstableMetricMetadata"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableRow": {
+      "properties": {
+        "values": {
+          "items": {
+            "$ref": "#/definitions/dataunstableValue"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableStartListLogFieldNamesResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableStartListLogFieldValuesResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableStartListLogFieldsResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableStartListLogsResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableStartLogHistogramResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableStartRangeQueryResponse": {
+      "properties": {
+        "query_id": {
+          "type": "string"
+        },
+        "refresh_interval_ms": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableSuggestion": {
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "count": {
+          "description": "The number of times this suggested value is seen in the query result.\nThe value could be approximate and not complete.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "type": {
+          "$ref": "#/definitions/dataunstableSuggestionType"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableSuggestionType": {
+      "enum": [
+        "FIELD_NAME",
+        "FIELD_VALUE",
+        "FILTER"
+      ],
+      "type": "string"
+    },
+    "dataunstableTimestampFilter": {
+      "properties": {
+        "happened_after": {
+          "description": "Only log messages with a timestamp after this time will be returned.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "happened_before": {
+          "description": "Only log messages with a timestamp before this time will be returned.",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "dataunstableValue": {
+      "properties": {
+        "bool_value": {
+          "type": "boolean"
+        },
+        "float_value": {
+          "format": "double",
+          "type": "number"
+        },
+        "string_value": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "datav1ListTracesRequest": {
+      "properties": {
+        "query_type": {
+          "$ref": "#/definitions/ListTracesRequestQueryType"
+        },
+        "trace_ids": {
+          "description": "Trace IDs to search for.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "start_time": {
+          "description": "Start time for the search.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "End time for the search.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "service": {
+          "description": "Service to filter on. An empty value doesn't apply any service filter.",
+          "type": "string"
+        },
+        "operation": {
+          "description": "Operation to filter on. An empty value doesn't apply any operation filter.",
+          "type": "string"
+        },
+        "tag_filters": {
+          "description": "Tag filter to apply. An empty value doesn't apply any tag filter.",
+          "items": {
+            "$ref": "#/definitions/ListTracesRequestTagFilter"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "datav1ListTracesResponse": {
+      "properties": {
+        "traces": {
+          "items": {
+            "$ref": "#/definitions/v1TracesData"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "genericError": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "googlerpcStatus": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "protobufAny": {
+      "additionalProperties": {},
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "protobufNullValue": {
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\nThe JSON representation for `NullValue` is JSON `null`.",
+      "type": "string"
+    },
+    "resourcev1Resource": {
+      "description": "Resource information.",
+      "properties": {
+        "attributes": {
+          "description": "Set of attributes that describe the resource.\nAttribute keys MUST be unique (it is not allowed to have more than one\nattribute with the same key).",
+          "items": {
+            "$ref": "#/definitions/v1KeyValue"
+          },
+          "type": "array"
+        },
+        "dropped_attributes_count": {
+          "description": "dropped_attributes_count is the number of dropped attributes. If the value is 0, then\nno attributes were dropped.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "entity_refs": {
+          "description": "Set of entities that participate in this Resource.\n\nNote: keys in the references MUST exist in attributes of this message.\n\nStatus: [Development]",
+          "items": {
+            "$ref": "#/definitions/v1EntityRef"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "tracev1Status": {
+      "description": "The Status type defines a logical error model that is suitable for different\nprogramming environments, including REST APIs and RPC APIs.",
+      "properties": {
+        "message": {
+          "description": "A developer-facing human readable error message.",
+          "type": "string"
+        },
+        "code": {
+          "$ref": "#/definitions/StatusStatusCode"
+        }
+      },
+      "type": "object"
+    },
+    "v1AnyValue": {
+      "description": "AnyValue is used to represent any type of attribute value. AnyValue may contain a\nprimitive value such as a string or integer or it may contain an arbitrary nested\nobject containing arrays, key-value lists and primitives.",
+      "properties": {
+        "string_value": {
+          "type": "string"
+        },
+        "bool_value": {
+          "type": "boolean"
+        },
+        "int_value": {
+          "format": "int64",
+          "type": "string"
+        },
+        "double_value": {
+          "format": "double",
+          "type": "number"
+        },
+        "array_value": {
+          "$ref": "#/definitions/v1ArrayValue"
+        },
+        "kvlist_value": {
+          "$ref": "#/definitions/v1KeyValueList"
+        },
+        "bytes_value": {
+          "format": "byte",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "v1ArrayValue": {
+      "description": "ArrayValue is a list of AnyValue messages. We need ArrayValue as a message\nsince oneof in AnyValue does not allow repeated fields.",
+      "properties": {
+        "values": {
+          "description": "Array of values. The array may be empty (contain 0 elements).",
+          "items": {
+            "$ref": "#/definitions/v1AnyValue"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "v1EntityRef": {
+      "description": "A reference to an Entity.\nEntity represents an object of interest associated with produced telemetry: e.g spans, metrics, profiles, or logs.\n\nStatus: [Development]",
+      "properties": {
+        "schema_url": {
+          "description": "This schema_url applies to the data in this message and to the Resource attributes\nreferenced by id_keys and description_keys.\nTODO: discuss if we are happy with this somewhat complicated definition of what\nthe schema_url applies to.\n\nThis field obsoletes the schema_url field in ResourceMetrics/ResourceSpans/ResourceLogs.",
+          "title": "The Schema URL, if known. This is the identifier of the Schema that the entity data\nis recorded in. To learn more about Schema URL see\nhttps://opentelemetry.io/docs/specs/otel/schemas/#schema-url",
+          "type": "string"
+        },
+        "type": {
+          "description": "Defines the type of the entity. MUST not change during the lifetime of the entity.\nFor example: \"service\" or \"host\". This field is required and MUST not be empty\nfor valid entities.",
+          "type": "string"
+        },
+        "id_keys": {
+          "description": "Attribute Keys that identify the entity.\nMUST not change during the lifetime of the entity. The Id must contain at least one attribute.\nThese keys MUST exist in the containing {message}.attributes.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "description_keys": {
+          "description": "Descriptive (non-identifying) attribute keys of the entity.\nMAY change over the lifetime of the entity. MAY be empty.\nThese attribute keys are not part of entity's identity.\nThese keys MUST exist in the containing {message}.attributes.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "v1InstrumentationScope": {
+      "description": "InstrumentationScope is a message representing the instrumentation scope information\nsuch as the fully qualified name and version.",
+      "properties": {
+        "name": {
+          "description": "An empty instrumentation scope name means the name is unknown.",
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "attributes": {
+          "description": "Additional attributes that describe the scope. [Optional].\nAttribute keys MUST be unique (it is not allowed to have more than one\nattribute with the same key).",
+          "items": {
+            "$ref": "#/definitions/v1KeyValue"
+          },
+          "type": "array"
+        },
+        "dropped_attributes_count": {
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "v1KeyValue": {
+      "description": "KeyValue is a key-value pair that is used to store Span attributes, Link\nattributes, etc.",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/definitions/v1AnyValue"
+        }
+      },
+      "type": "object"
+    },
+    "v1KeyValueList": {
+      "description": "KeyValueList is a list of KeyValue messages. We need KeyValueList as a message\nsince `oneof` in AnyValue does not allow repeated fields. Everywhere else where we need\na list of KeyValue messages (e.g. in Span) we use `repeated KeyValue` directly to\navoid unnecessary extra wrapping (which slows down the protocol). The 2 approaches\nare semantically equivalent.",
+      "properties": {
+        "values": {
+          "description": "A collection of key/value pairs of key-value pairs. The list may be empty (may\ncontain 0 elements).\nThe keys MUST be unique (it is not allowed to have more than one\nvalue with the same key).",
+          "items": {
+            "$ref": "#/definitions/v1KeyValue"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "v1ResourceSpans": {
+      "description": "A collection of ScopeSpans from a Resource.",
+      "properties": {
+        "resource": {
+          "$ref": "#/definitions/resourcev1Resource"
+        },
+        "scope_spans": {
+          "description": "A list of ScopeSpans that originate from a resource.",
+          "items": {
+            "$ref": "#/definitions/v1ScopeSpans"
+          },
+          "type": "array"
+        },
+        "schema_url": {
+          "description": "The Schema URL, if known. This is the identifier of the Schema that the resource data\nis recorded in. Notably, the last part of the URL path is the version number of the\nschema: http[s]://server[:port]/path/\u003cversion\u003e. To learn more about Schema URL see\nhttps://opentelemetry.io/docs/specs/otel/schemas/#schema-url\nThis schema_url applies to the data in the \"resource\" field. It does not apply\nto the data in the \"scope_spans\" field which have their own schema_url field.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "v1ScopeSpans": {
+      "description": "A collection of Spans produced by an InstrumentationScope.",
+      "properties": {
+        "scope": {
+          "$ref": "#/definitions/v1InstrumentationScope"
+        },
+        "spans": {
+          "description": "A list of Spans that originate from an instrumentation scope.",
+          "items": {
+            "$ref": "#/definitions/v1Span"
+          },
+          "type": "array"
+        },
+        "schema_url": {
+          "description": "The Schema URL, if known. This is the identifier of the Schema that the span data\nis recorded in. Notably, the last part of the URL path is the version number of the\nschema: http[s]://server[:port]/path/\u003cversion\u003e. To learn more about Schema URL see\nhttps://opentelemetry.io/docs/specs/otel/schemas/#schema-url\nThis schema_url applies to all spans and span events in the \"spans\" field.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "v1Span": {
+      "description": "A Span represents a single operation performed by a single component of the system.\n\nThe next available field id is 17.",
+      "properties": {
+        "trace_id": {
+          "description": "A unique identifier for a trace. All spans from the same trace share\nthe same `trace_id`. The ID is a 16-byte array. An ID with all zeroes OR\nof length other than 16 bytes is considered invalid (empty string in OTLP/JSON\nis zero-length and thus is also invalid).\n\nThis field is required.",
+          "format": "byte",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "A unique identifier for a span within a trace, assigned when the span\nis created. The ID is an 8-byte array. An ID with all zeroes OR of length\nother than 8 bytes is considered invalid (empty string in OTLP/JSON\nis zero-length and thus is also invalid).\n\nThis field is required.",
+          "format": "byte",
+          "type": "string"
+        },
+        "trace_state": {
+          "description": "trace_state conveys information about request position in multiple distributed tracing graphs.\nIt is a trace_state in w3c-trace-context format: https://www.w3.org/TR/trace-context/#tracestate-header\nSee also https://github.com/w3c/distributed-tracing for more details about this field.",
+          "type": "string"
+        },
+        "parent_span_id": {
+          "description": "The `span_id` of this span's parent span. If this is a root span, then this\nfield must be empty. The ID is an 8-byte array.",
+          "format": "byte",
+          "type": "string"
+        },
+        "flags": {
+          "description": "Flags, a bit field.\n\nBits 0-7 (8 least significant bits) are the trace flags as defined in W3C Trace\nContext specification. To read the 8-bit W3C trace flag, use\n`flags \u0026 SPAN_FLAGS_TRACE_FLAGS_MASK`.\n\nSee https://www.w3.org/TR/trace-context-2/#trace-flags for the flag definitions.\n\nBits 8 and 9 represent the 3 states of whether a span's parent\nis remote. The states are (unknown, is not remote, is remote).\nTo read whether the value is known, use `(flags \u0026 SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK) != 0`.\nTo read whether the span is remote, use `(flags \u0026 SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK) != 0`.\n\nWhen creating span messages, if the message is logically forwarded from another source\nwith an equivalent flags fields (i.e., usually another OTLP span message), the field SHOULD\nbe copied as-is. If creating from a source that does not have an equivalent flags field\n(such as a runtime representation of an OpenTelemetry span), the high 22 bits MUST\nbe set to zero.\nReaders MUST NOT assume that bits 10-31 (22 most significant bits) will be zero.\n\n[Optional].",
+          "format": "int64",
+          "type": "integer"
+        },
+        "name": {
+          "description": "A description of the span's operation.\n\nFor example, the name can be a qualified method name or a file name\nand a line number where the operation is called. A best practice is to use\nthe same display name at the same call point in an application.\nThis makes it easier to correlate spans in different traces.\n\nThis field is semantically required to be set to non-empty string.\nEmpty value is equivalent to an unknown span name.\n\nThis field is required.",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/definitions/SpanSpanKind"
+        },
+        "start_time_unix_nano": {
+          "description": "start_time_unix_nano is the start time of the span. On the client side, this is the time\nkept by the local machine where the span execution starts. On the server side, this\nis the time when the server's application handler starts running.\nValue is UNIX Epoch time in nanoseconds since 00:00:00 UTC on 1 January 1970.\n\nThis field is semantically required and it is expected that end_time \u003e= start_time.",
+          "format": "uint64",
+          "type": "string"
+        },
+        "end_time_unix_nano": {
+          "description": "end_time_unix_nano is the end time of the span. On the client side, this is the time\nkept by the local machine where the span execution ends. On the server side, this\nis the time when the server application handler stops running.\nValue is UNIX Epoch time in nanoseconds since 00:00:00 UTC on 1 January 1970.\n\nThis field is semantically required and it is expected that end_time \u003e= start_time.",
+          "format": "uint64",
+          "type": "string"
+        },
+        "attributes": {
+          "description": "\"/http/user_agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36\"\n    \"/http/server_latency\": 300\n    \"example.com/myattribute\": true\n    \"example.com/score\": 10.239\n\nThe OpenTelemetry API specification further restricts the allowed value types:\nhttps://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/common/README.md#attribute\nAttribute keys MUST be unique (it is not allowed to have more than one\nattribute with the same key).",
+          "items": {
+            "$ref": "#/definitions/v1KeyValue"
+          },
+          "title": "attributes is a collection of key/value pairs. Note, global attributes\nlike server name can be set using the resource API. Examples of attributes:",
+          "type": "array"
+        },
+        "dropped_attributes_count": {
+          "description": "dropped_attributes_count is the number of attributes that were discarded. Attributes\ncan be discarded because their keys are too long or because there are too many\nattributes. If this value is 0, then no attributes were dropped.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "events": {
+          "description": "events is a collection of Event items.",
+          "items": {
+            "$ref": "#/definitions/v1SpanEvent"
+          },
+          "type": "array"
+        },
+        "dropped_events_count": {
+          "description": "dropped_events_count is the number of dropped events. If the value is 0, then no\nevents were dropped.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "links": {
+          "description": "links is a collection of Links, which are references from this span to a span\nin the same or different trace.",
+          "items": {
+            "$ref": "#/definitions/SpanLink"
+          },
+          "type": "array"
+        },
+        "dropped_links_count": {
+          "description": "dropped_links_count is the number of dropped links after the maximum size was\nenforced. If this value is 0, then no links were dropped.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "status": {
+          "$ref": "#/definitions/tracev1Status"
+        }
+      },
+      "type": "object"
+    },
+    "v1SpanEvent": {
+      "description": "Event is a time-stamped annotation of the span, consisting of user-supplied\ntext description and key-value pairs.",
+      "properties": {
+        "time_unix_nano": {
+          "description": "time_unix_nano is the time the event occurred.",
+          "format": "uint64",
+          "type": "string"
+        },
+        "name": {
+          "description": "name of the event.\nThis field is semantically required to be set to non-empty string.",
+          "type": "string"
+        },
+        "attributes": {
+          "description": "attributes is a collection of attribute key/value pairs on the event.\nAttribute keys MUST be unique (it is not allowed to have more than one\nattribute with the same key).",
+          "items": {
+            "$ref": "#/definitions/v1KeyValue"
+          },
+          "type": "array"
+        },
+        "dropped_attributes_count": {
+          "description": "dropped_attributes_count is the number of dropped attributes. If the value is 0,\nthen no attributes were dropped.",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "v1TracesData": {
+      "description": "TracesData represents the traces data that can be stored in a persistent storage,\nOR can be embedded by other protocols that transfer OTLP traces data but do\nnot implement the OTLP protocol.\n\nThe main difference between this message and collector protocol is that\nin this message there will not be any \"control\" or \"metadata\" specific to\nOTLP protocol.\n\nWhen new fields are added into this message, the OTLP request MUST be updated\nas well.",
+      "properties": {
+        "resource_spans": {
+          "description": "An array of ResourceSpans.\nFor data coming from a single resource this array will typically contain\none element. Intermediary nodes that receive data from multiple origins\ntypically batch the data before forwarding further and in that case this\narray will contain multiple elements.",
+          "items": {
+            "$ref": "#/definitions/v1ResourceSpans"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "info": {
+    "description": "\n\u003cb\u003eWARNING: This API is unstable and is meant for experimentation only. Do not\nuse this API in production. The endpoints and schemas referenced in this\ndocumentation will be changed or removed without notice and without any\nbackwards compatibility guarantee. Note that even though this API is unstable,\nit is still connected to production data, so use with caution.\u003c/b\u003e",
+    "title": "Data Unstable API",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/unstable/data/events": {
+      "get": {
+        "operationId": "ListEvents",
+        "parameters": [
+          {
+            "description": "Only events which happened_at after this time will be returned. If set, happened_before must also be set.\nIf no time range is set, defaults to 1 hour ago.",
+            "format": "date-time",
+            "in": "query",
+            "name": "happened_after",
+            "type": "string"
+          },
+          {
+            "description": "Only events which happened_at before this will be returned. If set, happened_after must also be set.\nIf no time range is set, defaults to now.",
+            "format": "date-time",
+            "in": "query",
+            "name": "happened_before",
+            "type": "string"
+          },
+          {
+            "description": "A query string specifying the query.",
+            "in": "query",
+            "name": "query",
+            "type": "string"
+          },
+          {
+            "description": "Sets the preferred number of items to return per page. If set to `0`, the\nserver will use its default value. Regardless of the value specified, clients\nmust never assume how many items will be returned.",
+            "format": "int64",
+            "in": "query",
+            "name": "page.max_size",
+            "type": "integer"
+          },
+          {
+            "description": "An opaque page token that identifies which page the client should request.\nAn empty value indicates the first page.",
+            "in": "query",
+            "name": "page.token",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dataunstableListEventsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "DataUnstable"
+        ]
+      }
+    },
+    "/api/unstable/data/logs:get-range-query": {
+      "get": {
+        "description": "GetRangeQuery returns a range query.",
+        "operationId": "GetRangeQuery",
+        "parameters": [
+          {
+            "description": "Specifies the query to run to filter logs. Query defined using logql.",
+            "in": "query",
+            "name": "query",
+            "type": "string"
+          },
+          {
+            "description": "Only log messages with a timestamp after this time will be returned.",
+            "format": "date-time",
+            "in": "query",
+            "name": "timestamp_filter.happened_after",
+            "type": "string"
+          },
+          {
+            "description": "Only log messages with a timestamp before this time will be returned.",
+            "format": "date-time",
+            "in": "query",
+            "name": "timestamp_filter.happened_before",
+            "type": "string"
+          },
+          {
+            "description": "Opaque page token identifying which page to request. An empty token\nidentifies the first page.",
+            "in": "query",
+            "name": "page.token",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dataunstableGetRangeQueryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "DataUnstable"
+        ]
+      }
+    },
+    "/api/unstable/data/traces": {
+      "post": {
+        "description": "Tracing",
+        "operationId": "ListTraces",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/datav1ListTracesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/datav1ListTracesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "DataUnstable"
+        ]
+      }
+    }
+  },
+  "produces": [
+    "application/json"
+  ],
+  "swagger": "2.0",
+  "tags": [
+    {
+      "name": "DataUnstable"
+    }
+  ]
+}

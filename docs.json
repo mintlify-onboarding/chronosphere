@@ -862,7 +862,36 @@
       },
       {
         "tab": "API Reference",
-        "openapi": "/openapi.yaml"
+        "dropdowns": [
+          {
+            "dropdown": "Config V1 API",
+            "openapi": {
+              "directory": "/tooling/api-info/definition",
+              "source": "/openapi/api_v1_config_swagger_DOCUMENTATION_ONLY.json"
+            }
+          },
+          {
+            "dropdown": "Data V1 API",
+            "openapi": {
+              "directory": "/tooling/api-info/data_definition",
+              "source": "/openapi/api_v1_data_swagger_DOCUMENTATION_ONLY.json"
+            }
+          },
+          {
+            "dropdown": "State V1 API",
+            "openapi": {
+              "directory": "/tooling/api-info/state_definition",
+              "source": "/openapi/api_v1_state_swagger_DOCUMENTATION_ONLY.json"
+            }
+          },
+          {
+            "dropdown": "Standard Dashboard Configuration",
+            "openapi": {
+              "directory": "/tooling/api-info/dashboard_schema",
+              "source": "/openapi/dashboard_schema.json"
+            }
+          }
+        ]
       }
     ],
     "global": {
