@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "/"
+      "url": "https://docs.chronosphere.io"
     }
   ],
   "security": [
