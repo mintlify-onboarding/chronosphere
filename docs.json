@@ -815,9 +815,9 @@
                     "pages": [
                       "tooling/api-info",
                       "tooling/api-info/pagination",
-                      "tooling/api-info/definition",
-                      "tooling/api-info/state_definition",
-                      "tooling/api-info/data_definition"
+                      "tooling/api-info/definition/index",
+                      "tooling/api-info/state_definition/index",
+                      "tooling/api-info/data_definition/index"
                     ]
                   },
                   {
