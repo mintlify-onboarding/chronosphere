@@ -1,5 +1,3 @@
-import { Icon } from "@mintlify/components";
-
 export const CustomCard = ({ title, titleBackgroundColor, titleTextColor, href, icon, children }) => {
   const renderIcon = () => {
     if (!icon) return null;
