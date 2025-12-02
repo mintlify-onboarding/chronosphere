@@ -26,3 +26,7 @@ ol ol {
 .card-group {
   row-gap: 20px;
 }
+
+.dark #chat-content {
+  color: #9fa3a1;
+}
