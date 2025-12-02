@@ -25,7 +25,9 @@ export const CustomCard = ({ title, titleBackgroundColor, titleTextColor, href, 
         {icon && <div className="flex-shrink-0 my-0">{renderIcon()}</div>}
         <h3 className="text-xl font-semibold my-0 text-white">{title}</h3>
       </div>
-      {children && <div className="px-6 py-4 space-y-3 flex-1">{children}</div>}
+      {children && (
+        <div className="text-[#3f4341] dark:text-[#9fa3a1] font-normal px-6 py-4 space-y-3 flex-1">{children}</div>
+      )}
     </div>
   );
 
