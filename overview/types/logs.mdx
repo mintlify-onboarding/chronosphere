@@ -5,6 +5,7 @@ sidebarTitle: Logs
 ---
 {/* -- dri: Adam Locke -- */}
 
+import {CustomCard} from "/snippets/CustomCard.jsx";
 
 Logs Explorer helps you search log data so your teams have more detailed context to
 help identify and fix the root cause of issues. Use the following documentation to
@@ -17,7 +18,7 @@ Ingest data from any of the supported sources. After ingesting log data,
 as anticipated.
 
  <Columns cols={1}>
-  <Card horizontal icon="paper-plane"
+  <CustomCard horizontal icon="paper-plane"
     title="Ingest data"
     titleBackgroundColor="#705DA0"
     titleTextColor="#FFFFFF"
@@ -33,7 +34,7 @@ organization. You can then use [shaping tools](/control/consumption/shape-logs) 
 Observability Platform to transform, reshape, retain, or exclude data.
 
  <Columns cols={1}>
-  <Card horizontal icon="shapes"
+  <CustomCard horizontal icon="shapes"
     title="Control data"
     titleBackgroundColor="#705DA0"
     titleTextColor="#FFFFFF"
@@ -49,7 +50,7 @@ important log data. Use the supported functions and
 you need.
 
  <Columns cols={1}>
-  <Card horizontal icon="magnifying-glass-plus"
+  <CustomCard horizontal icon="magnifying-glass-plus"
     title="Query data"
     titleBackgroundColor="#705DA0"
     titleTextColor="#FFFFFF"
@@ -66,7 +67,7 @@ specified in a monitor query, and receive notifications when the query matches
 specified logs.
 
  <Columns cols={1}>
-  <Card horizontal icon="display"
+  <CustomCard horizontal icon="display"
     title="Observe data"
     titleBackgroundColor="#705DA0"
     titleTextColor="#FFFFFF"
@@ -80,7 +81,7 @@ Create links to log data from other parts of Observability Platform, such as lin
 to logs from traces and linking to logs from dashboards.
 
  <Columns cols={1}>
-  <Card horizontal icon="link"
+  <CustomCard horizontal icon="link"
     title="Create links"
     titleBackgroundColor="#705DA0"
     titleTextColor="#FFFFFF"
@@ -95,7 +96,7 @@ utility of data patterns and where they're used, and identify opportunities for
 reducing, augmenting, or routing log data to lower costs.
 
  <Columns cols={1}>
-  <Card horizontal icon="chart-bar"
+  <CustomCard horizontal icon="chart-bar"
     title="Analyze data"
     titleBackgroundColor="#705DA0"
     titleTextColor="#FFFFFF"

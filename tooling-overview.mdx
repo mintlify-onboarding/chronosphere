@@ -5,12 +5,13 @@ sidebarTitle: Overview
 ---
 {/* -- dri: Lynette Miles -- */}
 
+import {CustomCard} from "/snippets/CustomCard.jsx";
 
 Chronosphere provides tools for interacting with the Observability Platform and
 Telemetry Pipeline products. These include command-line interfaces and APIs.
 
  <Columns cols={2} rowGroup="2">
-  <Card
+  <CustomCard
   title="Chronosphere Observability Platform"
   titleBackgroundColor="#28a561"
   titleTextColor="#FFFFFF"
@@ -28,8 +29,8 @@ Telemetry Pipeline products. These include command-line interfaces and APIs.
     - API
     - Infrastructure as code
     - Prometheus API
-  </Card>
-  <Card
+  </CustomCard>
+  <CustomCard
   title="Chronosphere Telemetry Pipeline"
   titleBackgroundColor="#705DA0"
   titleTextColor="#FFFFFF"
@@ -44,5 +45,5 @@ Telemetry Pipeline products. These include command-line interfaces and APIs.
   Learn about the tools and APIs you can use with Telemetry Pipeline:
 
     - Pipeline CLI
-  </Card>
+  </CustomCard>
 </Columns>

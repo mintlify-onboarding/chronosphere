@@ -1,14 +1,17 @@
 ---
 title: Chronosphere documentation
 'og:description': Learn about the various aspects of the Chronosphere documentation.
+mode: wide
 ---
+
 {/* -- dri: Adam Locke -- */}
 
+import {CustomCard} from "/snippets/CustomCard.jsx";
 
 Select your Chronosphere product to view its product documentation.
 
  <Columns cols={1}>
-  <Card
+  <CustomCard
   title="Chronosphere Observability Platform"
   titleBackgroundColor="#28a561"
   titleTextColor="#FFFFFF"
@@ -22,13 +25,13 @@ Select your Chronosphere product to view its product documentation.
 
     A SaaS-based observability and monitoring platform made for cloud-native
     infrastructures.
-
+    <br/>
     Monitor telemetry data across your entire system to identify and solve issues.
-
+    <br/>
     Minimize impact and downtime for your app and your users while controlling what
     data you pay for.
-  </Card>
-  <Card
+  </CustomCard>
+  <CustomCard
   title="Chronosphere Telemetry Pipeline"
   titleBackgroundColor="#705DA0"
   titleTextColor="#FFFFFF"
@@ -41,14 +44,14 @@ Select your Chronosphere product to view its product documentation.
     />}>
 
     An observability pipeline platform for routing and processing telemetry data.
-
+    <br/>
     Integrate with your existing observability tools to send logs, metrics, and
     traces from any source to any destination.
-
+    <br/>
     Connect to these sources and destinations through a variety of built-in
     integration plugins.
-  </Card>
-  <Card
+  </CustomCard>
+  <CustomCard
   title="Tools"
   titleBackgroundColor="#ff9d1c"
   titleTextColor="#FFFFFF"
@@ -61,11 +64,11 @@ Select your Chronosphere product to view its product documentation.
     />}>
 
     Use the provided tools to programmatically interact with Chronosphere entities.
-
+    <br/>
     Observability Platform includes the Chronoctl command line interface (CLI),
     while Telemetry Pipeline includes the Pipeline CLI.
-
+    <br/>
     Other tools for Observability Platform include APIs, infrastructure as code
     tools like Terraform, and the Prometheus API.
-  </Card>
+  </CustomCard>
 </Columns>

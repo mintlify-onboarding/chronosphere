@@ -18,3 +18,11 @@ div.tabs > div {
 ol ol {
   list-style-type: decimal !important;
 }
+
+.custom_card img {
+  margin: 0 !important;
+}
+
+.card-group {
+  row-gap: 20px;
+}
