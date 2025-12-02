@@ -1321,6 +1321,25 @@
       "x": "https://x.com/chronosphereio",
       "github": "https://github.com/chronosphereio",
       "linkedin": "https://www.linkedin.com/company/chronosphereio"
-    }
+    },
+    "links": [
+      {
+        "header": "Advanced",
+        "items": [
+          {
+            "label": "All Rights Reserved",
+            "href": "https://chronosphere.io/"
+          },
+          {
+            "label": "Privacy Policy",
+            "href": "https://chronosphere.io/privacy/"
+          },
+          {
+            "label": "EU Applicant Notice",
+            "href": "https://chronosphere.io/eu-applicant-policy/"
+          }
+        ]
+      }
+    ]
   }
 }
