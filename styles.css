@@ -30,3 +30,8 @@ ol ol {
 .dark #chat-content {
   color: #9fa3a1;
 }
+
+.mdx-content code {
+  padding-left: 0;
+  padding-right: 0;
+}
