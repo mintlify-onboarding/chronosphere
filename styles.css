@@ -42,11 +42,19 @@ ol ol {
 
 .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   font-weight: 500;
+  text-decoration: underline;
   color: #2cb46b;
+  border-bottom: 0 !important;
 }
 
 .dark .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)),
 .prose a:is(.dark *) {
   font-weight: 500;
   color: #2cb46b;
+}
+
+.prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover,
+.dark .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover,
+.prose a:is(.dark *):hover {
+  border-bottom: 0 !important;
 }

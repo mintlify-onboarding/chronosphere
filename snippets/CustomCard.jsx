@@ -3,7 +3,7 @@ export const CustomCard = ({ title, titleBackgroundColor, titleTextColor, href, 
     if (!icon) return null;
 
     if (typeof icon === "string") {
-      return <Icon color="#fff" icon={icon} size="26" />;
+      return <Icon color="#fff" icon={icon} size="24" />;
     }
 
     return icon;
