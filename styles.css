@@ -35,3 +35,18 @@ ol ol {
   padding-left: 0;
   padding-right: 0;
 }
+
+.prose :where(a code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  text-decoration: none !important;
+}
+
+.prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  font-weight: 500;
+  color: #2cb46b;
+}
+
+.dark .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+.prose a:is(.dark *) {
+  font-weight: 500;
+  color: #2cb46b;
+}
